@@ -34,7 +34,7 @@
 | DB | **Cloud SQL for PostgreSQL** (smallest HA-less tier for MVP) | Jobs, tenants, API keys, usage metering. |
 | Object storage | **GCS**, two buckets: `raw-videos-eu`, `outputs-eu` | Region-pinned; lifecycle rules for auto-deletion. |
 | Video tooling | **ffmpeg / ffprobe** in worker image | Segmentation, audio extraction, normalization, static-segment detection. |
-| AI | **Vertex AI, Gemini Flash (current generation)** with EU-regional endpoint; native video input from GCS URI | No self-managed GPUs, no separate STT+OCR+VLM pipeline in MVP. Verify model availability per EU region at implementation time. |
+| AI | **Vertex AI, `gemini-2.5-flash` @ `europe-central2`**; native video input from GCS URI | No self-managed GPUs, no separate STT+OCR+VLM pipeline in MVP. Verified 2026-07-14 (experiments/001): `gemini-2.5-flash`, `-flash-lite`, `-2.5-pro` served in `europe-central2`; only `gemini-2.5-flash` in `europe-west3` (fallback); no Gemini 3 in either EU region yet. |
 | Auth | API keys (hashed) for API; email magic link or Google OAuth for UI | Keep MVP simple; SSO/SAML is enterprise roadmap. |
 | Payments | Stripe (EU entity, EUR) | Subscriptions + metered overage. |
 | IaC | Terraform | Region pinning and org policy as code from day one. |
@@ -159,8 +159,8 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
 ## 8. Cost engineering (must-have, drives pricing)
 
 - Per-job ledger of tokens and cents (surfaced to the customer as transparency, used internally to watch margin).
-- Levers, in order of impact: (1) static-segment low-fps sampling, (2) ≤720p analysis rendition, (3) Flash-tier model for Stage B, better model only for Stage C fusion if quality demands, (4) batch/queue smoothing to stay within provider rate limits.
-- Benchmark task (week 1): process 3 reference videos (slide talk, product demo screen-recording, talking-head meeting) at 3 sampling configs; record cost/hour and quality notes. **Pricing in BUSINESS_MODEL.md is provisional until this benchmark exists.**
+- Levers, in order of impact: (1) static-segment **low media resolution** sampling (`mediaResolution: MEDIA_RESOLUTION_LOW` — measured ~45% cheaper; fps-reduction tested and rejected: destabilizes timestamps and coverage), (2) ≤720p analysis rendition, (3) Flash-tier model for Stage B, better model only for Stage C fusion if quality demands, (4) batch/queue smoothing to stay within provider rate limits, (5) bounded `thinkingBudget` (unbounded thinking blew one call to 63k thought tokens / 3× cost).
+- **Benchmark (2026-07-14, experiments/001-gemini-video-benchmark/RESULTS.md):** default config (720p, 1 fps, default media res) ≈ **€0.38/video-hour** all-in; low media res ≈ €0.21/h; ~67% of a real demo recording is static (runs ≥ 10 s) so a Stage A-driven mixed config lands ≈ €0.25–0.30/h — 4–7× inside the €1.50/h COGS guardrail. Missing categories (slide talk, talking-head meeting) still to be benchmarked. Stage B must deterministically normalize model timestamps (formats drift: mm:ss:centiseconds, absolute-vs-relative anchoring) and retry on under-coverage (blocks clustering at clip start on continuous demo footage).
 
 ## 9. MVP scope checklist (build order)
 

@@ -1,0 +1,81 @@
+"""Stage B runner: one segment -> structured JSON (ARCHITECTURE.md §3 schema).
+
+Saves out/<label>.json (raw model output) and out/<label>.norm.json (block timestamps
+converted from clip-relative to global video time). Usable as a module (run_stage_b)
+or CLI:  python 03_stage_b.py gs://bucket/seg.mp4 <segment_start_sec> <label> [fps]
+"""
+
+import json
+import sys
+
+from common import (OUT, build_stage_b_body, gemini_call, hhmmss, normalize_times,
+                    response_text)
+
+
+def _clip_times(parsed: dict, segment_start_s: int, clip_dur_s: int | None) -> list[int]:
+    """Clip-relative block seconds. The model sometimes anchors block times at the
+    segment_start given in the prompt (absolute in the full video) — detect and shift."""
+    times = normalize_times([b["t"] for b in parsed.get("blocks", [])], None)
+    if times and segment_start_s > 0 and abs(times[0] - segment_start_s) <= 30:
+        times = [t - segment_start_s for t in times]
+    else:
+        times = normalize_times([b["t"] for b in parsed.get("blocks", [])], clip_dur_s)
+    return times
+
+
+def run_stage_b(gcs_uri: str, segment_start_s: int, label: str, config: str,
+                fps: float | None = None, media_resolution: str | None = None,
+                clip_dur_s: int | None = None, _attempt: int = 1) -> dict:
+    seg_start = hhmmss(segment_start_s)
+    body = build_stage_b_body(gcs_uri, seg_start, fps=fps,
+                              media_resolution=media_resolution)
+    print(f"{label}: {gcs_uri} (start {seg_start}, fps={fps or 'default'}, "
+          f"res={media_resolution or 'default'}, attempt {_attempt})")
+    data = gemini_call(body, label=label, config=config)
+    text = response_text(data)
+    (OUT / f"{label}.raw.txt").write_text(text, encoding="utf-8")  # never lose a paid response
+
+    finish = data["candidates"][0].get("finishReason", "?")
+    covered = None
+    try:
+        parsed = json.loads(text)
+        if clip_dur_s and parsed.get("blocks"):
+            covered = _clip_times(parsed, segment_start_s, clip_dur_s)[-1] / clip_dur_s
+    except json.JSONDecodeError as e:
+        parsed = None
+        print(f"  finishReason={finish}, JSON parse failed: {e}")
+    # under-generation guard: truncated JSON, or long clip barely covered
+    bad = parsed is None or (clip_dur_s and clip_dur_s > 120
+                             and (len(parsed["blocks"]) < 3 or covered < 0.6))
+    if bad:
+        if _attempt >= 2:
+            raise RuntimeError(f"{label}: bad output twice (finish={finish}, "
+                               f"coverage={covered}), giving up")
+        print(f"  {label}: under-generated (finish={finish}, blocks="
+              f"{len(parsed['blocks']) if parsed else '-'}, coverage={covered}), retrying")
+        return run_stage_b(gcs_uri, segment_start_s, label, config, fps=fps,
+                           media_resolution=media_resolution, clip_dur_s=clip_dur_s,
+                           _attempt=_attempt + 1)
+    (OUT / f"{label}.json").write_text(
+        json.dumps(parsed, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    norm = dict(parsed)
+    times = _clip_times(parsed, segment_start_s, clip_dur_s)
+    norm["blocks"] = [
+        {**b, "t": hhmmss(segment_start_s + s)}
+        for b, s in zip(parsed.get("blocks", []), times)
+    ]
+    (OUT / f"{label}.norm.json").write_text(
+        json.dumps(norm, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    n_spoken = sum(1 for b in parsed["blocks"] if (b.get("spoken") or "").strip())
+    print(f"  {len(parsed['blocks'])} blocks ({n_spoken} with speech), "
+          f"language={parsed.get('language')}, coverage="
+          f"{f'{covered:.0%}' if covered is not None else 'n/a'}")
+    return parsed
+
+
+if __name__ == "__main__":
+    uri, start, label = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+    fps = float(sys.argv[4]) if len(sys.argv) > 4 else None
+    run_stage_b(uri, start, label, config="adhoc", fps=fps)

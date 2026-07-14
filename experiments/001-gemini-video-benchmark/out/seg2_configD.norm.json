@@ -1,0 +1,119 @@
+{
+  "segment_start": "00:12:30",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:12:30",
+      "spoken": "So, uh, platform services are different in the case that, well, they need to operate sometimes outside the instances. And the reason for that is because they need to do some of the platform level work. Uh, and well, like working inside the silos is not realistic for those services. Uh, so that's why we have this second, uh, second type of the service. An example of the of such service is like a user management. Uh, we have a integration management, which is for the App Store and apps, and we have like a settings management, right? And these are the services that will for for example, save some of the data without any isolation at all. And that's okay because they are platform services and they can work that way, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Business service VS Platform service",
+      "visual": "A slide titled 'Business service VS Platform service' is displayed, listing bullet points for each service type and examples at the bottom. The speaker is visible in a small window.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:13:22",
+      "spoken": "Um, right, so let's talk about the isolation levels that you might see on the business and platform services because like this is mainly the the the distinction between business and platforms. The the distinction is what actually isolation levels are available to you. So what the isolation level means is it's it's sort of configuration that you set on your table so then component recognize what kind of what kind of isolation needs to be applied on your table. And as I said, most of our tables will be instance isolated. So we will always have the tenant and instance for our data because we we for the most part, we are very interested in which customer and in which environment of the customer, we should save that data and then we should read and edit and then delete it.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Isolation dbLevels",
+      "visual": "The slide changes to 'Isolation dbLevels', showing two sections: 'BusinessIsolationDbContext' and 'PlatformIsolationDbContext', each with options for Global, Tenant, Instance, and MasterInstance. Example SQL queries and tables are also shown.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:14:23",
+      "spoken": "So, but yeah, as you can see, there are different different isolation levels. The the global tenant are relevant for platform services. And as you can see, like global is pretty straightforward. It has it has it has just no isolation at all on the table. You just query it as it would have like no isolation at all. The tenant isolation is that you just apply only tenant ID, so we just skipping the environment of the customer, uh, for for for this for this table. And an instance is that we have both, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Isolation dbLevels",
+      "visual": "The speaker continues to explain the 'Isolation dbLevels' slide, detailing Global, Tenant, and Instance isolation types with corresponding SQL examples.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:15:02",
+      "spoken": "Uh, yeah, and you can also, uh, I mentioned this master instance concept. I, to be honest, I don't think we have enough time in this demo to drive in details of what it is, but I just want to like briefly explain what we mean by tenant instance.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Isolation dbLevels",
+      "visual": "The speaker gestures towards the 'Isolation dbLevels' slide, specifically mentioning the 'MasterInstance' option, and prepares to explain it further.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:15:20",
+      "spoken": "So, oh sorry, the by the master instance, not tenant instance. So, master instance is, uh, thing that we figure out that sometimes we'll have this, um, enum/dictionary type of the tables for for example, for some types like property types for example, or lately we had an example of bookkeeping service that used chart of accounts that we have like some base chart of accounts that every user and every customer will need. So it's like a base that we want to add, but also on top of that, uh, we might want to actually add some of the types that customer, uh, needs. So they are free to expand that list, that base list. And I have like pretty silly, I guess example here with like a dish table that, um, this is just for for for presenting this concept, but, uh, you can see that this FFF, this dark blue tenant is actually again the unique tenant, right? And, uh, under this unique tenant, we have three instances and these are master instances. Let me just do the maybe the laser pointer here. So I'm I'm I mean this one, right? This this this is the unique tenant and these are the master instances. And the the basic, uh, why we have multiple is because we we anticipate that we will have master instance per country. So that means that we are for example, have some base information for Danish customers. So every customer will be assigned to some specific, uh, master instance. So here I have for example, the Danish dishes, the Danish master instance with the Danish base base dishes. They have a German master instance and a Polish one, right? So let's say that this AAA, uh, customer is is is Danish customer, so they will use the, uh, the Danish master instance. So now if they are in instance 111, when they select the data from master instance, they will see a sum of what is in the master instance and what is in their customer instance.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Master instance",
+      "visual": "A slide titled 'Master instance' shows a table of dishes with TenantId and InstanceId. Below, three instances (AAA, BBB, CCC) are depicted as containers, each with a 'Master instance' and 'Customer instance' box. The speaker uses a laser pointer to highlight parts of the diagram.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:18:40",
+      "spoken": "Uh, what is worth mentioning here as well is that the data in master instance is read only. They cannot really edit it, they cannot add stuff to this master instance, they cannot delete it. They can of course delete and edit, uh, stuff in their own, uh, instance. That's not a problem, but they cannot edit what is in that box.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Master instance",
+      "visual": "The speaker continues to explain the 'Master instance' slide, focusing on the read-only nature of master instance data and the editable nature of customer instance data. The SQL query at the bottom changes to reflect a different instance ID.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:19:00",
+      "spoken": "Um, yep, so, uh, Um, let's overview like a flow how this is how this can be played out and, uh, example micro services. So what I have here is starting from like a client, so what is calling our what is initiating some of our endpoint or entry point in our micro service and how this is then used inside our services. So you can see here that like the most, uh, like the most basic example would be the HTTP call to one of our end points in the in the micro service. So we assume that, uh, you need to send with your HTTP request, you need to put the JWT token, which will contain, uh, the tenant ID, instance ID, and master instance ID. And we need them for for later filtering and applying all the logic inside the component. So what will happen is that you will do HTTP request and let me just break the laser pointer again. So you're starting with just doing HTTP call to your controller, uh, in your micro service. It goes through some kind of business logic that you might have and you probably will end up with some kind of data access layer in your project. You might want, uh, use repository, that's not really important, but what what you should have is the some your your DB context, your entity framework DB context that you use. So in that DB context, I assume that you should have some of the DB sets and some of your configuration here. And all you have to do is you of course need to also inherit this DB context from the package. So on the right side you can see what is inside the component. So you are inheriting this business isolation DB context. And this is applying the filtering and the isolation for you. So you can see because the instance is actually default one, you don't really need to even specify that, it will be specified automatically. Well, that's it mean that if you then have entity one, if you do some kind of selecting for that data, the, uh, the filtering for this instance will be automatically added for you.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Overview of the component functionalities",
+      "visual": "A complex diagram titled 'Overview of the component functionalities' is shown. It illustrates the flow from a client's HTTP request with a JWT token through a microservice's controller, business logic, and data access layer to a custom DBContext, which inherits from a business-level isolation component.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:21:31",
+      "spoken": "Uh, the same goes for the platform, uh, isolation. The difference again in the platform is that we give you more freedom on setting what kind of isolation do you want. So you are free in the platform service to set something as global, for example, and then no isolation will be and no filtering will be applied. You also free to use tenant and then you just filtering the tenants.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Overview of the component functionalities",
+      "visual": "The speaker continues to explain the diagram, now focusing on the 'Platform-level Isolation Component' and its flexibility in setting global or tenant-level isolation.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:21:58",
+      "spoken": "Okay, so, uh, just to show you that if you will copy the current token, JWT token, uh, that we received from Azure B2C, you'll be already able to see, uh, that we have some kind of instance ID and we we have some kind of tenant ID. This is happening by usage of our tenant and user management microservices combined with Azure B2C. And, well, basically, if you are our customer, you always will receive you will have be under some tenant and some instance. Uh, notice that we have also the master instance ID, but this is still work in progress, so you will not always see some some value here, but that's that's for later.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "JWT Token payload",
+      "visual": "A slide titled 'JWT Token payload' displays a decoded JWT token. The 'tenantId', 'instanceId', and 'masterInstanceId' fields are highlighted.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:22:45",
+      "spoken": "Okay, guys, so, getting started demo. So what I want to jump into right now is I will just, uh, stop this presentation. Um, and I want to show you how this, uh, will look like if I would like to have an isolation in my micro service and I don't I'm not using any. I don't I'm not using the version one of the component. I just want to implement the latest version of the component now.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Getting started demo",
+      "visual": "The slide changes to a black screen with the text 'Getting started demo'. The speaker is visible in the corner.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:23:15",
+      "spoken": "So, uh, one thing that I also want to show you here, that there is actually, uh, documentation our wiki, uh, about the everything that I described here so far. So you can also go there and read, uh, stuff that we put here. And also we have a sections, uh, to getting started with the business service. So you can also see the code samples here, getting started for platform service.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Isolation",
+      "visual": "The speaker shares their screen, showing a web page titled 'Isolation' which appears to be documentation or a wiki. Sections like 'Fundamentals', 'Getting started with Business service', and 'Getting started with Platform service' are visible.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:23:42",
+      "spoken": "And also migration from version one from version two. So, it's not read maybe the documentation now. Uh, I will just showcase you how you can, uh, implement your the isolation in some business service. So what I have here is that tenant management service.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Migration from V1 to V2",
+      "visual": "The speaker navigates the documentation page, showing a 'Migration from V1 to V2' section, then returns to 'Getting started with Business service'. They then switch to Visual Studio Code.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:24:12",
+      "spoken": "And let me know if the font is big enough so you can you guys can see it. Yeah, it's fine. Right. Thank you. So, you can see that, well, basically what what is interesting for us in this scenario is that, um, well, we have we have some some, uh, DB context, our template management DB context that is inheriting the entity framework DB context right now. No isolation is in place. Uh, so we want to add it now with the component, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "TemplateManagementDbContext.cs",
+      "visual": "The speaker shows C# code in Visual Studio Code, specifically the `TemplateManagementDbContext` class which inherits from `DbContext`. The code is highlighted to show its current state without isolation.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:24:43",
+      "spoken": "So, um, just to show you, uh, that, uh, if I would add, uh, like a migration test now before doing anything, uh, I want to show you that it will be empty. So I actually like I'm up to date, nothing is missing, so, um, I'm up to date with my migration. So if I will show you, you can see that everything is empty inside. Uh, so that's good. Uh, let's remove this one and let's start to actually implementing this, um, there's a isolation component in the service.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Add-Migration Test",
+      "visual": "The speaker demonstrates in a PowerShell window that there are no pending database migrations by running `Add-Migration Test` and `Remove-Migration`. They then show the empty migration file in Visual Studio Code, confirming the current state before implementing the isolation component.",
+      "kind": "screen_share"
+    }
+  ],
+  "segment_summary": "This segment explains the difference between business and platform services, highlighting how platform services operate outside instances and require different isolation levels. The speaker then details various isolation levels (Global, Tenant, Instance) and introduces the 'Master instance' concept, which allows for a base set of data with customer-specific additions. Finally, the segment transitions to a demo, showing the current state of a `TemplateManagementDbContext` without isolation and confirming no pending database migrations before proceeding with the implementation of the isolation component."
+}

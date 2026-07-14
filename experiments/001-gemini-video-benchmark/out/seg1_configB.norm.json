@@ -1,0 +1,135 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": null,
+      "speaker": null,
+      "on_screen_text": "Microsoft TeamsIsolation Component V2 demo2023-01-23 09:00 UTCRecorded by Robert SztygowskiOrganized by Robert Sztygowski",
+      "visual": "The video opens with a title slide for a Microsoft Teams meeting, displaying 'Isolation Component V2 demo' and the date '2023-01-23 09:00 UTC'.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:03",
+      "spoken": null,
+      "speaker": null,
+      "on_screen_text": "",
+      "visual": "The screen switches to a video call interface showing four participants in a grid layout, with a list of other attendees on the right sidebar. The participants are mostly still, waiting for the meeting to begin.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:13",
+      "spoken": "Okay, let's let's just have like two minutes more. everybody to join and we'll start the demo.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "Speaker 1, a young man with headphones and a microphone, speaks to the camera, suggesting they wait a couple more minutes for others to join before starting the demo. Other participants remain visible in their video feeds.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:27",
+      "spoken": "Awesome.",
+      "speaker": "Speaker 2",
+      "on_screen_text": "",
+      "visual": "A participant in the bottom right corner briefly smiles and says 'Awesome'. The other participants are still visible, some adjusting their headphones or looking at their screens.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:52",
+      "spoken": null,
+      "speaker": null,
+      "on_screen_text": "",
+      "visual": "A new participant appears in the bottom left video feed, adjusting his headphones and getting ready for the meeting.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:02",
+      "spoken": "Okay guys, I think we can start. Uh this this call is recorded anyway, so if anybody is missing that they can just do the recording then. So I'll share my screen.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "Speaker 1 announces the start of the meeting, mentioning it's being recorded. He then prepares to share his screen, looking at his monitor.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:19",
+      "spoken": "So guys, uh hello. Welcome to this to this demo for the isolation component. I hope everybody had a wonderful weekend. And so I wants to do this down for you because as you might notice uh like I guess two weeks ago we released uh the version two of this isolation component. We still doing some work around it but it's um very soon all of the teams will need to start using that and since it's not easy to understand the whole concept of isolation how we want to actually use that. Um, we thought about doing like this this demo this presentation so you can see that in action. Uh we can also uh maybe talk about that on the Q&A Q&A on the end.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Isolation Component V2 PreviewUNIK",
+      "visual": "Speaker 1 shares his screen, displaying a presentation slide titled 'Isolation Component V2 Preview'. He welcomes attendees, mentions the recent release of version 2, and explains the purpose of the demo is to clarify the concept and usage of the isolation component.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:11",
+      "spoken": "So my plan here for today is just to give you a brief introduction for the isolation assuming that there are some people here that have no idea what the plan of the isolation is. maybe they don't even know what we mean by the. I hope we can explain that. Uh, I hope that I can give you like high level overview of the component itself. Uh, explain some of the concepts around it and I also really want to show you some of the demos. Uh, like we will just jump into ID and I will implement thetion component from scratch in one of the services from my team from. And I also will show you how to do the migration for from the version one. And on the end we'll do the Q&A. That's that's the plan.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AgendaIntroduction to the isolationOverview of the component functionalitiesAll isolation levels and idea behind themImplementation demoMigration from version 1 demoQ&A",
+      "visual": "The slide changes to an 'Agenda' outlining the presentation topics: introduction to isolation, component functionalities, isolation levels, implementation demo, migration demo, and a Q&A session. Speaker 1 elaborates on each point.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:03:13",
+      "spoken": "So let's start with what actually we trying to solve with this component. What problem we're trying to solve? So as you may know, our platform will be software as a service. So we will have a same application, same um, uh, serving multiple clients. So our system will be multitenant. So the important part of that that in multitenant system is that every customer uh will have its own tenant where the the data will live under this tenant. And what is pretty important, uh, I guess if you ask uh, stakeholders, uh, it's that the uh, the data and the tenant will be completely isolated from each other. So the idea is that the customer A cannot really see edits or delete data of customer be because if it will happen that means that will be very bad day for unique right like yeah probably will be on the news somewhere right that the data leaked from one customer to another.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "MultitenancyIn multi-tenant software architecture—a single instance of a software application serves multiple tenants.A tenant can be an individual user, but more frequently, it's a group of users—such as a customer organization—that shares common access to and privileges within the application instance.Each tenant's data is isolated from, and invisible to, the other tenants sharing the application instance, ensuring data security and privacy for all tenants.",
+      "visual": "The slide displays 'Multitenancy' and its definition. Speaker 1 explains that their platform is a multi-tenant SaaS, where each customer (tenant) has isolated data, emphasizing the importance of data security and privacy.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:04:23",
+      "spoken": "so that's the problem that we trying to address to address here. So I just like copy that from the internet this this graphic describing what can be the like approaches that one can take to actually solve this issue to have the the multitenancy. Um so that basically three main approaches that uh that you can use. First is to have the database isolation. So basically you're creating the individual databases for each of the customer The second approach is to have a single database but you creating individual schemas for each of the customers. And the third approach is the record level attendance where you have a same database, same schema but you just put something to discriminate what the tenant is on the in the table itself. And we took the third approach which is the record level.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "1. One database per user (Database level tenancy)2. One database for all users with unique schemas for each user (Schema level tenancy)3. One database and one schema for all users (Record level tenancy)SAAS APPPERISTENCE LAYERDATABASE Tables SCHEMA Tables SCHEMA Tables SCHEMA Tables SCHEMA Tables SCHEMA Tables SCHEMA",
+      "visual": "The slide shows three diagrams illustrating different multi-tenancy approaches: database-level, schema-level, and record-level tenancy. Speaker 1 describes each approach and states that their chosen method is record-level tenancy.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:05:31",
+      "spoken": "Yeah, and we take it even further, but because you might actually notice that we not really using only the um the tent word, but also in an instance. So I would like to uh describe what what what they are basically. So as you can see at the graphic by tent we actually means the customer environment. Right? So everything that is related to single customer will live in the single tenants. And we have also concepts of instances and instances are actually environments. You can think of instances like environments for the customer. So what they will mean is that as a customer, I will actually start with having my own tenant and then inside that tenant and I can create instances which will be my environment. Right? So the common example will be that I will have production instance where my actual real data the most important data will live in but I can I can also create like my test like sandbox instance that I will just play out with some new functionalities maybe I will just some testing on that instance etc, right? So this is how how how we did it. We have instances which are environments and customers are free to create how many instances they want. There is also this concept of master instance but actually I would like to leave it for later. and so just so just so you know we'll have also the talent that will be for us for you. and under that we will have the master instances which I will get back to later on this presentation.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Introduction to the isolationTenant = CustomerInstance = EnvironmentMaster Tenant = UnikMaster Instance = Country specific dataTenant1Instance1 Entity Entity Instance2 Entity Entity Instance3 Entity EntityTenant2Instance1 Entity Entity Instance2 Entity Entity Instance3 Entity EntityUnik TenantDanish Master InstanceGerman Master InstanceSwedish Master InstanceEntity Entity Entity Entity Entity Entity Entity Entity Entity",
+      "visual": "The slide presents a diagram explaining 'Tenant' as a customer environment and 'Instance' as an environment within a tenant. Speaker 1 clarifies that customers can have multiple instances (e.g., production, sandbox) within their tenant, and briefly mentions 'Master Tenant' and 'Master Instance' for Unik.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:23",
+      "spoken": "So let's see like the basic basically table that we can have in in in square server and let's consider how that look normally without isolation, right? So we will expect to have something like table for people. I have like internal public ID, the name of the person, date of birth. Just like normal table, right? And if I normally would do some of the query, I'm free to select all of the data and maybe include some filters for it later on.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Table dbo.people without isolationInternalId PublicId Name DateOfBirth1 7B5A9AFD... Mike 1987/01/302 BC8E7EDB... Bob 1969/07/303 4BCCF975... Jenny 1977/05/014 158A92E9... Rick 1999/11/115 BD3E7978... Anna 2001/03/046 9ADB3H+O... Jenifer 1989/09/13SELECT Name FROM PeopleMikeBobJennyRickAnnaJenifer",
+      "visual": "A slide shows a table named 'dbo.people' with columns like InternalId, PublicId, Name, and DateOfBirth, along with example data. Speaker 1 demonstrates a simple SQL query 'SELECT Name FROM People' and its expected output without any isolation applied.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:57",
+      "spoken": "And how isolation is changing that is that we are actually at the columns for the tenant and instances, right? So for customer and for the environment of the customer into every table that we will have. And when we will select the data, we we actually filtering out the the specific uh instance in this case for environments, right? So this is by the way something that the component will do for you behind the scenes. So you you'll don't really need to think about uh how this is happening in your code but the the the the important part is that we actually achieving having this cylinders, right? separating customers and their environments by doing this uh by adding these columns uh to the tables, right? with ID and instance ID.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Table dbo.people with isolationInternalId PublicId Name DateOfBirth TenantId InstanceId1 7B5A9AFD... Mike 1987/01/30 AAAAAAA 11111112 BC8E7EDB... Bob 1969/07/30 BBBBBBB 33333333 4BCCF975... Jenny 1977/05/01 AAAAAAA 11111114 158A92E9... Rick 1999/11/11 AAAAAAA 22222225 BD3E7978... Anna 2001/03/04 CCCCCCC 44444446 9ADB3H+O... Jenifer 1989/09/13 BBBBBBB 3333333SELECT Name FROM People WHERE InstanceId = \"1111111\"MikeJenny",
+      "visual": "The slide updates the 'dbo.people' table to include 'TenantId' and 'InstanceId' columns. Speaker 1 explains how these columns are added to every table and how queries are automatically filtered by InstanceId, ensuring data isolation between tenants and instances.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:09:04",
+      "spoken": "So what we are actually trying to achieve that if I can visualize uh how the separation would look like if you have the sample data of six records, right? You can see that we have uh talents which are customers and we just putting the the data in in individual instances, right? So you can see that for example Mike and Jen is in in in customer of AAA in their environment 111, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "InternalId PublicId Name DateOfBirth TenantId InstanceId1 7B5A9AFD... Mike 1987/01/30 AAAAAAA 11111112 BC8E7EDB... Bob 1969/07/30 BBBBBBB 33333333 4BCCF975... Jenny 1977/05/01 AAAAAAA 11111114 158A92E9... Rick 1999/11/11 AAAAAAA 22222225 BD3E7978... Anna 2001/03/04 CCCCCCC 44444446 9ADB3H+O... Jenifer 1989/09/13 BBBBBBB 33333331111111 Mike Jenny 2222222 Rick 3333333 Bob Jenifer 4444444 Anna",
+      "visual": "The slide shows the 'dbo.people' table at the top, and below it, three separate boxes representing different tenants (AAA, BBBBBBB, CCCCCCC). Inside these tenant boxes, smaller boxes represent instances, with specific records (Mike, Jenny, Rick, Bob, Jenifer, Anna) distributed among them, visually demonstrating data isolation.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:09:30",
+      "spoken": "All right, so that's the basic idea and now I would like to show you how actually what is the high overview of the uh of the isolation component? Um so we have this uh separation for business and platform uh services which I will mention in a minute on the next slide. But what you can see here, there is a all the functionality that are here to facilitate that we can actually like do this by the instances or by default, you don't really need to think about that. So what I guess what what is worth mentioning is that this implementation is based on entity framework. So what we will actually use in your code, you will use our context that we prepared for you from this package you use. The package is a nugget that you reference in your project and you're starting with selecting and inheriting one of the one of the DB context that we prepared and you also need to register some of the middleware that we also uh are using here. And this all things that you see here is just for for then that your service when you when you run it, it can read um the in which we are, what the filtering should be and it can apply all of that stuff behind the scenes, right? So then when you selecting the data, you will you will be sure to select the the the correct instances. When you're inserting, updating, deleting data, it also is taking care of that, for example, if you insert some records, the tenant and ID will be passed and we will save it in correct and not in instance.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "InternalIsolationDbContextAdd isolation propertiesQuery FiltersIsolation propagationPrevent acting in master instancePrevent out of isolation editingTenant Value GeneratorInstance Value GeneratorPublicBusinessIsolationDbContextAvailable Isolation LevelsInstanceDefaultMasterInstancePlatformIsolationDbContextAvailable Isolation LevelsGlobalTenantInstanceDefaultMasterInstanceIsolation Claims ProviderIsolation MiddlewareHelp middleware to propagate the Isolation Scopes and Claims to IsolationClaimsProviderBusiness MicroservicePlatform MicroserviceInheritsRegisters",
+      "visual": "The slide displays a complex diagram titled 'IsolationDbContext', showing internal and public components, including DBContexts, value generators, and middleware. Speaker 1 explains that the component, built on Entity Framework, handles isolation automatically, allowing services to read, insert, update, and delete data correctly without manual filtering.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:11:28",
+      "spoken": "Right, so next the separation between the business and platform service. So we did this separation on purpose. Um and the difference here is that the business service, what we mean by that is that the business service are have a very strict isolation, which means that they will they will always run in some specific instance. They will never run outside an instance. And that will be the case for most of the services in our system. That that's at least what we anticipate. right for now. So we will have 90 95% of all of our services that we create in Uni will be business services that will always work on the on the instance level. So what are the example of such services let's say like property, finance booking, document and template management these are the examples of such services. And on the other side we have a platform services. So so uh personnel services are different in the case that well, they need to operate sometimes outside the instances. And the reason for that is because they need to do some of the platform level work. Uh and well, like working inside the silos is not realistic.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Business service VS Platform serviceBusiness serviceYou only operate on instance and master instance isolation levelsYour data will always be assigned to some instanceNote: 90-95% of all our services in Unik will be business servicesProperty managementFinance bookkeepingDocument managementTemplate managementPlatform serviceYou can operate on all isolation levels including tenant and globalYour service is used as part of the infrastructure / platformYour service needs more control of data isolationNote: 5-10% of all our services in Unik will be platform servicesIntegration managementSettings managementUser managementTenant bookkeeping",
+      "visual": "The slide compares 'Business service' and 'Platform service'. Speaker 1 explains that business services (90-95% of services) operate with strict instance isolation, while platform services (5-10%) can operate outside instances for platform-level tasks, providing examples for each.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "This segment introduces the Isolation Component V2, explaining its purpose in a multi-tenant SaaS environment. The speaker defines key concepts like tenants (customers) and instances (environments), illustrating how data is isolated using TenantId and InstanceId columns in database tables. The presentation then provides a high-level overview of the IsolationDbContex, highlighting its Entity Framework-based implementation and automatic handling of isolation. Finally, it differentiates between business services (operating strictly within instances) and platform services (operating across isolation levels for infrastructure tasks)."
+}

@@ -1,0 +1,42 @@
+{
+  "A": {
+    "calls": 2,
+    "avg_latency_s": 94.0,
+    "video_tokens_per_call": 198660,
+    "audio_tokens_per_call": 19250,
+    "out_tokens_per_call": 6413,
+    "usd_per_call": 0.095,
+    "usd_per_video_hour": 0.444,
+    "eur_per_video_hour": 0.382
+  },
+  "B": {
+    "calls": 2,
+    "avg_latency_s": 70.1,
+    "video_tokens_per_call": 49794,
+    "audio_tokens_per_call": 19250,
+    "out_tokens_per_call": 6392,
+    "usd_per_call": 0.0503,
+    "usd_per_video_hour": 0.235,
+    "eur_per_video_hour": 0.202
+  },
+  "C": {
+    "calls": 2,
+    "avg_latency_s": 150.2,
+    "video_tokens_per_call": 198660,
+    "audio_tokens_per_call": 19250,
+    "out_tokens_per_call": 8589,
+    "usd_per_call": 0.1004,
+    "usd_per_video_hour": 0.47,
+    "eur_per_video_hour": 0.404
+  },
+  "D": {
+    "calls": 2,
+    "avg_latency_s": 60.5,
+    "video_tokens_per_call": 50820,
+    "audio_tokens_per_call": 19250,
+    "out_tokens_per_call": 7226,
+    "usd_per_call": 0.0527,
+    "usd_per_video_hour": 0.246,
+    "eur_per_video_hour": 0.212
+  }
+}

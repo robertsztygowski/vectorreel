@@ -26,7 +26,13 @@ from them may be committed to `tests/fixtures/videos/` later. Missing benchmark 
 
 ---
 
-## Phase 0 — Benchmark experiment (`experiments/001-gemini-video-benchmark/`)
+## Phase 0 — Benchmark experiment (`experiments/001-gemini-video-benchmark/`) ✅ DONE 2026-07-14
+
+> **Completed.** All 4 questions answered — see `experiments/001-gemini-video-benchmark/out/RESULTS.md`.
+> Headlines: `gemini-2.5-flash` @ `europe-central2` confirmed; €0.38/video-hour default
+> (€0.21 low-res, blended ~€0.25–0.30) vs €1.50 guardrail; no hallucinated speech on silent
+> video; 67% static-content lever. Spend: €1.91 of €5. Graduated to BUSINESS_MODEL §6 +
+> ARCHITECTURE §2/§8. Founder still to confirm the 10-moment spot-check table in RESULTS.md.
 
 **Goal: validate the 4 riskiest assumptions before any product code exists.** Python throwaway
 scripts (escape-hatch rules, `experiments/README.md`). Budget: ≲ €5 Vertex spend, one session.

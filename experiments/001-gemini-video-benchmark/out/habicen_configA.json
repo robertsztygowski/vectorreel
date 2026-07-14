@@ -1,0 +1,167 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Home > Dashboard, Good afternoon, System Administrator, TOTAL PROPERTIES 5, ACTIVE LEASES 15, MONTHLY REVENUE 97,750 DKK, OUTSTANDING ARREARS 30,100 DKK, Featured Properties, Aalborg Kollegiet, Engparken Ældreboliger, Havneparken, Tickets",
+      "visual": "The video opens on a dashboard displaying property overview statistics. The mouse cursor navigates to and clicks on the 'Tickets' option in the left-hand sidebar.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:04",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Home > Tickets > Ticket Queue, Ticket Queue, Manage incoming inquiries and requests, Search tickets, New (13), Assigned to me, Urgent, All Open, ID, SUBJECT, REQUESTER, TYPE, PRIORITY, STATUS, ASSIGNEE, CREATED, TKT-0001 – Spørgsmål om husleje regulering pr. 1. juli, Anna Jensen, Lease Question, High, In Progress, System Administrator, 14/04/2026, TKT-0002 – Ønske om ny parkeringsplads, Lars Nielsen, Inquiry, Normal, New, Unassigned, 14/04/2026, TKT-0003 – Vandhane drypper i køkken, Sofie Pedersen, Maintenance Request, High, In Progress, System Administrator, 14/04/2026, TKT-0004 – Klage over støj fra nabo, Peter Mortensen, Complaint, Normal, Resolved, System Administrator, 14/04/2026, TKT-0005 – Elevator ude af drift – Havnegade 30, Maria Holm, Maintenance Request, Urgent, In Progress, System Administrator, 14/04/2026, TKT-0006 – Forespørgsel om fremleje af lejlighed, Mikkel Rasmussen, Lease Question, Normal, New, Unassigned, 14/04/2026, TKT-0007 – Ruder i opgangen er knuste, Thomas Bak, Maintenance Request, Urgent, In Progress, System Administrator, 14/04/2026, TKT-0008 – Manglende aconto-afregning for 2025, Anna Jensen, Payment Question, Normal, Closed, 14/04/2026, TKT-0009 – Fejl i varmemåler – afvigende forbrug, Anna Jensen, Complaint, Normal, Resolved, System Administrator, 14/04/2026",
+      "visual": "The screen transitions to the 'Ticket Queue' page, displaying a list of incoming inquiries and requests. The mouse cursor hovers over the first ticket, 'TKT-0001'.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:07",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "TKT-0001 – Spørgsmål om husleje regulering pr. 1. juli, In Progress, High, Lease Question, Email, Created 14/04/2026 15:07, Timeline, Audit Trail, Anna Jensen Inbound Email, 14/04/2026 15:07, Tak for forklaringen. Jeg vil gerne have en kopi af selve beregningen tilsendt på mail, så jeg kan gennemgå den med min rådgiver. Mvh Anna, System Administrator Outbound Reply, 14/04/2026 15:07, Kære Anna Jensen, Tak for din henvendelse. Husleje reguleringen på 3,2% er baseret på nettoprisindekset fra januar 2026, som er den aftalte reguleringsmetode i din lejekontrakt (§ 7). Beregningen er: - Nettoprisindeks jan. 2025: 112,4 - Nettoprisindeks jan. 2026: 116,0 - Stigning: (116,0 – 112,4) / 112,4 = 3,2% Du er velkommen til at kontakte os, hvis du har yderligere spørgsmål. Med venlig hilsen Boligadministrationen, DETAILS, Assignee, System Administrator, Priority, High, Type, Lease Question, REQUESTER, Anna Jensen, anna.jensen@gmail.com, Previous Tickets, TKT-0008 Manglende aconto-afregning for 2025, TKT-0026 Spørgsmål om mulighed for altanprojekt, TKT-0035 Klage over lugt fra affaldsskur, CONTEXT, Tenant: Lars Mortensen",
+      "visual": "The user clicks on 'TKT-0001', opening its detailed view. The screen displays a timeline of communication, including an inbound email from Anna Jensen and an outbound reply from the System Administrator.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:12",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "System Administrator Internal Note, Tjek reguleringsberegning i budgetmodulet for Søndervang. Stigningen er baseret på nettoprisindeks., Anna Jensen Inbound Email, 14/04/2026 15:08, Kære boligadministration, Jeg har modtaget brev om husleje regulering pr. 1. juli 2026. Kan I forklare beregningsgrundlaget for stigningen på 3,2%? Med venlig hilsen Anna Jensen, Internal Note, Reply to Requester, Write an internal note..., Post Note, Test, Note added",
+      "visual": "The user scrolls down the ticket details to reveal an internal note and another inbound email. They then type 'Test' into the 'Write an internal note...' field and click 'Post Note', adding the note to the timeline.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:19",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Home > Tickets > TKT-0001 – Spørgsmål om husleje regulering pr. 1. juli, TKT-0001 – Spørgsmål om husleje regulering pr. 1. juli, In Progress, High, Lease Question, Email, Created 14/04/2026 15:07, Timeline, Audit Trail, Anna Jensen Inbound Email, 14/04/2026 15:07, Tak for forklaringen. Jeg vil gerne have en kopi af selve beregningen tilsendt på mail, så jeg kan gennemgå den med min rådgiver. Mvh Anna, System Administrator Outbound Reply, 14/04/2026 15:07, Kære Anna Jensen, Tak for din henvendelse. Husleje reguleringen på 3,2% er baseret på nettoprisindekset fra januar 2026, som er den aftalte reguleringsmetode i din lejekontrakt (§ 7). Beregningen er: - Nettoprisindeks jan. 2025: 112,4 - Nettoprisindeks jan. 2026: 116,0 - Stigning: (116,0 – 112,4) / 112,4 = 3,2% Du er velkommen til at kontakte os, hvis du har yderligere spørgsmål. Med venlig hilsen Boligadministrationen, DETAILS, Assignee, System Administrator, Priority, High, Type, Lease Question, REQUESTER, Anna Jensen, anna.jensen@gmail.com, Previous Tickets, TKT-0008 Manglende aconto-afregning for 2025, TKT-0026 Spørgsmål om mulighed for altanprojekt, TKT-0035 Klage over lugt fra affaldsskur, CONTEXT, Tenant: Lars Mortensen",
+      "visual": "The user scrolls back up the ticket details page and then navigates back to the main 'Ticket Queue' by clicking 'Tickets' in the breadcrumbs.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:25",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Home > Tickets > Ticket Queue, Ticket Queue, Manage incoming inquiries and requests, Search tickets, TKT-0001, subject, requester..., parkering, New (13), Assigned to me, Urgent, All Open, ID, SUBJECT, REQUESTER, TYPE, PRIORITY, STATUS, ASSIGNEE, CREATED, TKT-0001 – Spørgsmål om husleje regulering pr. 1. juli, Anna Jensen, Lease Question, High, In Progress, System Administrator, 14/04/2026, TKT-0002 – Ønske om ny parkeringsplads, Lars Nielsen, Inquiry, Normal, New, Unassigned, 14/04/2026, TKT-0003 – Vandhane drypper i køkken, Sofie Pedersen, Maintenance Request, High, In Progress, System Administrator, 14/04/2026, TKT-0004 – Klage over støj fra nabo, Peter Mortensen, Complaint, Normal, Resolved, System Administrator, 14/04/2026, TKT-0005 – Elevator ude af drift – Havnegade 30, Maria Holm, Maintenance Request, Urgent, In Progress, System Administrator, 14/04/2026, TKT-0006 – Forespørgsel om fremleje af lejlighed, Mikkel Rasmussen, Lease Question, Normal, New, Unassigned, 14/04/2026, TKT-0007 – Ruder i opgangen er knuste, Thomas Bak, Maintenance Request, Urgent, In Progress, System Administrator, 14/04/2026, TKT-0008 – Manglende aconto-afregning for 2025, Anna Jensen, Payment Question, Normal, Closed, 14/04/2026, TKT-0009 – Fejl i varmemåler – afvigende forbrug, Anna Jensen, Complaint, Normal, Resolved, System Administrator, 14/04/2026, TKT-0027 – Hærværk på cykelparkering, Peter Nielsen, Complaint, Normal, In Progress, System Administrator, 14/04/2026",
+      "visual": "Back on the Ticket Queue, the user types 'parkering' into the search bar, filtering the list to show relevant tickets.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:30",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Search tickets, parkering, New (1), Assigned to me, Urgent, All Open, ID, SUBJECT, REQUESTER, TYPE, PRIORITY, STATUS, ASSIGNEE, CREATED, TKT-0002 – Ønske om ny parkeringsplads, Lars Nielsen, Inquiry, Normal, New, Unassigned, 14/04/2026, TKT-0027 – Hærværk på cykelparkering, Peter Nielsen, Complaint, Normal, In Progress, System Administrator, 14/04/2026, Items per page: 50, 1 - 2 of 2",
+      "visual": "The search results display two tickets related to 'parkering'. The user then clears the search bar, restoring the full ticket list.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:36",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "New (13), Assigned to me, Urgent, All Open, Priority, Urgent, ID, SUBJECT, REQUESTER, TYPE, PRIORITY, STATUS, ASSIGNEE, CREATED, TKT-0005 – Elevator ude af drift – Havnegade 30, Maria Holm, Maintenance Request, Urgent, In Progress, System Administrator, 14/04/2026, TKT-0013 – Vandskade i kælderrum – akut!, Anne Sørensen, Maintenance Request, Urgent, In Progress, System Administrator, 14/04/2026, TKT-0020 – Skimmelsvamp i badeværelse, Emil Lund, Maintenance Request, Urgent, Resolved, System Administrator, 14/04/2026, TKT-0022 – Utæt tag – vand drypper ned i lejlighed, Birgitte Madsen, Maintenance Request, Urgent, Resolved, System Administrator, 14/04/2026, TKT-0025 – Dobbeltopkrævning af husleje for marts, Anne Sørensen, Payment Question, Urgent, Resolved, System Administrator, 14/04/2026, TKT-0036 – Brandalarmen bipper uden grund, Katrine Holm, Maintenance Request, Urgent, New, Unassigned, 14/04/2026",
+      "visual": "The user clicks the 'Urgent' filter button, narrowing the displayed tickets to only those with urgent priority.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:40",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Inbox, All Inboxes, Drift & Vedligehold, Henvendelser, Økonomi, Status, All, New, In Progress, Resolved, Closed, Priority, Urgent, All, Low, Normal, High, Urgent",
+      "visual": "The user interacts with the filter options, first clicking the 'Inbox' dropdown, then the 'Status' dropdown, and finally the 'Priority' dropdown, where 'Urgent' is already selected.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:49",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "New (1), New Ticket, Subject*, Test, Description, Test, Inbox*, Drift & Vedligehold, Type*, Inquiry, Priority, Normal, Requester Name, Requester Email, Requester Phone, Cancel, Create Ticket",
+      "visual": "The user clicks the 'New' button, which opens a 'New Ticket' modal. They fill in 'Test' for both the subject and description fields.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:56",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Create Ticket, Ticket created, New (1), Assigned to me, Urgent, All Open, ID, SUBJECT, REQUESTER, TYPE, PRIORITY, STATUS, ASSIGNEE, CREATED, TKT-0036 – Brandalarmen bipper uden grund, Katrine Holm, Maintenance Request, Urgent, New, Unassigned, 14/04/2026, TKT-0041 – Test, Inquiry, Normal, New, Unassigned, 14/04/2026",
+      "visual": "The user clicks 'Create Ticket'. A confirmation message 'Ticket created' appears, and a new ticket, 'TKT-0041 - Test', is added to the top of the ticket list.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:00",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Search tickets, Test, New (0), Assigned to me, Urgent, All Open, ID, SUBJECT, REQUESTER, TYPE, PRIORITY, STATUS, ASSIGNEE, CREATED, Items per page: 50, 0 of 0, New (14), Assigned to me, Urgent, All Open, ID, SUBJECT, REQUESTER, TYPE, PRIORITY, STATUS, ASSIGNEE, CREATED, TKT-0041 – Test, Inquiry, Normal, New, Unassigned, 14/04/2026",
+      "visual": "The user types 'Test' into the search bar, filtering the list to show only the newly created ticket. They then clear the search bar, and the full list of tickets reappears.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:07",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "New (14), Assigned to me, Urgent, All Open, ID, SUBJECT, REQUESTER, TYPE, PRIORITY, STATUS, ASSIGNEE, CREATED, TKT-0041 – Test, Inquiry, Normal, New, Unassigned, 14/04/2026, TKT-0001 – Spørgsmål om husleje regulering pr. 1. juli, Anna Jensen, Lease Question, High, In Progress, System Administrator, 14/04/2026, TKT-0002 – Ønske om ny parkeringsplads, Lars Nielsen, Inquiry, Normal, New, Unassigned, 14/04/2026, TKT-0003 – Vandhane drypper i køkken, Sofie Pedersen, Maintenance Request, High, In Progress, System Administrator, 14/04/2026, TKT-0004 – Klage over støj fra nabo, Peter Mortensen, Complaint, Normal, Resolved, System Administrator, 14/04/2026, Home > Tickets > TKT-0041 – Test, TKT-0041 – Test, New, Normal, Inquiry, Manual, Created 14/04/2026 15:09, Timeline, Audit Trail, No timeline entries yet, Internal Note, Reply to Requester, Write an internal note..., Post Note, DETAILS, Assignee, Priority, Normal, Type, Inquiry, REQUESTER, CONTEXT",
+      "visual": "The user clicks 'All Open' to display all tickets, then clicks on 'TKT-0041 - Test' to view its details. The ticket details page shows no timeline entries yet.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:13",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Home > Tickets > Ticket Queue, Ticket Queue, Manage incoming inquiries and requests, Search tickets, New (14), Assigned to me, Urgent, All Open, ID, SUBJECT, REQUESTER, TYPE, PRIORITY, STATUS, ASSIGNEE, CREATED, TKT-0041 – Test, Inquiry, Normal, New, Unassigned, 14/04/2026, TKT-0001 – Spørgsmål om husleje regulering pr. 1. juli, Anna Jensen, Lease Question, High, In Progress, System Administrator, 14/04/2026, TKT-0002 – Ønske om ny parkeringsplads, Lars Nielsen, Inquiry, Normal, New, Unassigned, 14/04/2026, TKT-0003 – Vandhane drypper i køkken, Sofie Pedersen, Maintenance Request, High, In Progress, System Administrator, 14/04/2026, TKT-0004 – Klage over støj fra nabo, Peter Mortensen, Complaint, Normal, Resolved, System Administrator, 14/04/2026",
+      "visual": "The user navigates back to the Ticket Queue and then clicks the 'Urgent' filter button again, displaying only urgent tickets.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:17",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Home > Tickets > TKT-0005 – Elevator ude af drift – Havnegade 30, TKT-0005 – Elevator ude af drift – Havnegade 30, In Progress, Urgent, Maintenance Request, Email, Created 14/04/2026 15:07, Timeline, Audit Trail, System Administrator Outbound Reply, 14/04/2026 15:07, Kære beboere i Havnegade 30, Teknikeren har identificeret en defekt i elevatorens styrekort. En reservedel er bestilt og forventes leveret inden for 2-3 hverdage. Vi beklager ulemperne og opfordrer til at bruge trapperne i mellemtiden. Kontakt kontoret hvis I har brug for hjælp. Med venlig hilsen Drift & Vedligehold, System Administrator Internal Note, 14/04/2026 15:07, KONE tekniker på stedet kl. 9:45. Problem: defekt styrekort. Reservedel skal bestilles – ETA 2-3 hverdage. Elevator fortsat ude af drift., System Administrator Outbound Reply, 14/04/2026 15:07, Kære Maria Holm, Tak for din henvendelse. Vi har kontaktet KONE Elevator som sender en tekniker inden for 2 timer. Vi beklager ulejligheden. Med venlig hilsen Drift & Vedligehold, System Administrator Internal Note, 14/04/2026 15:07, KONE Elevator kontaktet – akut udrykning bestilt. Forventet ankomst inden for 2 timer. Sag nr. KONE-2026-4412., Maria Holm Inbound Email, 14/04/2026 15:07, HASTER! Elevatoren i Havnegade 30 er gået i stå og virker ikke. Der bor ældre beboere på 4. sal som ikke kan komme ned. Venligst prioriter dette! Maria Holm, Internal Note, Reply to Requester, Write an internal note..., Post Note, DETAILS, Assignee, System Administrator, Priority, Urgent, Type, Maintenance Request, REQUESTER, Maria Holm, maria.holm@gmail.com, CONTEXT, Property: Havneparken",
+      "visual": "The user clicks on 'TKT-0005 – Elevator ude af drift – Havnegade 30', opening its detailed view. The timeline shows multiple interactions, including outbound replies and internal notes, related to the elevator issue.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:23",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Priority, Urgent, Low, Normal, High, Urgent, Change Status, New, In Progress, Resolved, Closed",
+      "visual": "The user changes the ticket's priority from 'Urgent' to 'High' using a dropdown menu. They then click 'Change Status' and hover over the 'Resolved' option in the dropdown.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:32",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Home > Settings > Inbox Settings, Ticket Inboxes, Configure email inboxes for the ticket system, Drift & Vedligehold, drift@habicen.dk, Active, Henvendelser vedr. drift, reparationer og vedligeholdelse, Last sync: 14/04 14:57, Henvendelser, henvendelser@habicen.dk, Active, Generel postkasse til beboerhenvendelser og forespørgsler, Last sync: 14/04 15:02, Økonomi, okonomi@habicen.dk, Active, Spørgsmål om husleje, aconto, deposita og regnskab, Last sync: 14/04 15:02, Archive, Delete, Edit",
+      "visual": "The user navigates to 'Inbox Settings' from the left sidebar. The screen displays three active email inboxes for the ticket system. The user hovers over the 'Archive' and 'Delete' icons for the first inbox, then clicks the 'Edit' icon.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:39",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Edit Inbox, Name*, Drift & Vedligehold, Description, Henvendelser vedr. drift, reparationer og vedligeholdelse, Email Address, drift@habicen.dk, Cancel, Save",
+      "visual": "An 'Edit Inbox' modal appears, showing the details for the 'Drift & Vedligehold' inbox. The user clicks 'Save'.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:42",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Edit Inbox, Name*, Henvendelser, Description, Generel postkasse til beboerhenvendelser og forespørgsler, Email Address, henvendelser@habicen.dk, Cancel, Save",
+      "visual": "The user clicks the 'Edit' icon for the 'Henvendelser' inbox, opening its 'Edit Inbox' modal. They then click 'Cancel'.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:46",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "New Inbox, Name*, Description, Email Address, Cancel, Create",
+      "visual": "The user clicks the 'New Inbox' button, which opens a 'New Inbox' modal. They then click 'Cancel' to close it.",
+      "kind": "screen_share"
+    }
+  ],
+  "segment_summary": "This segment demonstrates the ticket management system, starting from the dashboard and navigating to the ticket queue. It shows how to view ticket details, add internal notes, search and filter tickets by keywords and priority, and create new tickets. The segment concludes with a demonstration of managing email inbox settings for the ticket system."
+}

@@ -1,0 +1,231 @@
+{
+  "segment_start": "00:37:30",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:37:30",
+      "spoken": "Uh, what else? So, um, we adjusted the constructor. Uh, one thing to also notice is that the previous version of the of the component had this methodology of assigning what level you want to use for your, um, for your entities by assigning specific attribute to your class. We are placed that we just having the API approach with the entity type builder. So if you are using this attributes, now you need to replace them with this uh with this method call inside your configuration. Uh, actually didn't use that I believe because this brand entity, no, it was an instance uh isolated anyway, so it didn't really need it. So I don't have that here. And also we need to replace this registration in our program of startup. So let's go to that.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Migration plan From V1 to V2, How to migrate from V1 to V2 of Isolation Component, 3. Update your custom DBContext constructor, Example, public class Product, public long InternalId { get; set; }, public Guid PublicId { get; set; }, public string Name { get; set; }, public int LifeSpan { get; set; }, public bool IsSystem { get; set; }, public string IsolationId { get; set; }, New work item, public class ProductConfiguration : IEntityTypeConfiguration<Product>, public void Configure(EntityTypeBuilder<Product> builder), builder.HasKey(x => x.InternalId);, builder.Property(x => x.InternalId).ValueGeneratedOnAdd();, builder.Property(x => x.PublicId).IsRequired();, builder.Property(x => x.Name).IsRequired();, builder.Property(x => x.LifeSpan).IsRequired();, builder.Property(x => x.IsSystem).IsRequired();, builder.HasIsolation(x => x.IsolationId).SetIsolationLevel(IsolationLevel.Internal);, 5. Update middleware registration in Program.Startups, builder.Services.AddBusinessIsolationComponent<BusinessIsolationContext, BusinessIsolationProvider, BusinessIsolationComponent>();, builder.Services.AddBusinessIsolationComponent<BusinessIsolationContext, BusinessIsolationProvider, BusinessIsolationComponent>(options => options.SetIsolationLevel(IsolationLevel.MasterInstance));",
+      "visual": "The speaker is visible in a video call. The main screen shows a document titled 'Migration plan From V1 to V2', detailing steps to update a custom DBContext constructor and replace attribute-based isolation with a fluent API approach. Code examples illustrate the old and new methods for defining isolation levels.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:38:29",
+      "spoken": "So as you see, we had the two methods here. Now it's just uh at uh isolation. And and the middle where we had to two middle where, now we have a single one. So let's just do at isolation. Uh there's some problems with my test but let's not bother with that. And I assume that if I would now go up to my uh project. Yep. And now source. If I would to now energy migration at isolation for two. I assume it should work. Yeah, and it has been created.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "builder.Services.AddDbContext<BrandManagementContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString(",
+      "visual": "The speaker is visible in a video call. The main screen shows code in an IDE, specifically the `Program.cs` file. The speaker highlights changes in service registration, replacing two `AddBusinessIsolationComponent` calls with a single `AddIsolation` call. He then demonstrates running a migration command in a terminal, which successfully creates a new migration file.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:39:24",
+      "spoken": "And look, it's an up migration because in the version one, well, those columns already were in the tables, so that's actually what we want when we do the migration, right? Nothing should change because in the V1, we had already the 1000 instances. So they are still here. The migration is actually uh not needed. Uh but I recommend you to actually run it just to see if everything is set up correctly. So, yeah, so I can actually remove this from now.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "namespace Unik.BrandManagement.Data.Migrations, public partial class Isolation2 : Migration, protected override void Up(MigrationBuilder migrationBuilder), {, }, protected override void Down(MigrationBuilder migrationBuilder), {, }",
+      "visual": "The speaker is visible in a video call. The main screen shows the newly generated migration file in the IDE. The file is empty, indicating no changes are needed because the V1 setup already included the necessary isolation columns. The speaker advises running it to confirm correct setup.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:39:59",
+      "spoken": "Right, so guys, I think that's all that I prepared you for today, the demo for the getting started and migration. And I guess we can do a Q&A. We have some minutes left, so if you have any questions, uh, go for it now.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Getting started demo, Migration demo, UNIK, Solutions that work for you, UNIK System Design A/S, +45 70 42 2000, unik@unik.dk, unik.dk, Esbjerg, Kolding, Odense, Aarhus, København",
+      "visual": "The speaker is visible in a video call. The main screen transitions to a PowerPoint slide with the title 'Getting started demo', then 'Migration demo', and finally a slide with the UNIK logo and contact information.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:40:14",
+      "spoken": "Uh maybe I'll ask a question. Uh, do I understand correctly that there will be no, let's say clear cut distinction where master instance level for instance will always represent the country that this data is for. So for instance we couldn't theoretically replace master instance with country and have it work the same name. So for instance can can we have uh master instance level represent something else than just country specific data.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He is looking up and to the side, thinking.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:41:03",
+      "spoken": "No, I think that the consensus for now is that the master instance will always represent only the country uh country data. So, what that means is that, well, we will have uh instance master instances per countries that we want to operate in. And then we can have like this defaults like the good example is I guess the property type. Uh they might be different in Germany and they might be different in Denmark. But we want every new customer with every new instance to actually have see and be able to use this common uh common property types for the country. So that's how we will use that. So yes, I think that the master instance will be only for like country specific and we will have master instance per country.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He is explaining a concept, using hand gestures.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:41:59",
+      "spoken": "Okay. That that is very helpful and I was wondering perhaps sorry I haven't yet looked at the wiki but uh perhaps there would be it would be helpful in some way to have a little glossery where we could sort of compare think of master instance as country, think of this level as the base setup for all clients and then think of this level as any individual changes the customer might implement.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He is listening intently and then speaks, gesturing with his hands.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:42:22",
+      "spoken": "Yep, yep, and uh well, the master is the topic that is still under the discussion. So, uh I I would expect that you'll hear more about that soon in coming weeks or maybe months because when we will have a consensus how like we want to uh use it, how we want to see that when we will get like uh wrap our heads around how how to how to deal with that. Uh then I guess we will have some official documentation for that and and incoming demos. Yes, so, yeah, but I'm presenting that here because the master is very relevant for the isolation components since it's a part of configuration, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He is explaining, using hand gestures to emphasize points.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:43:08",
+      "spoken": "Okay, thanks Robert.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He nods and smiles.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:43:10",
+      "spoken": "No problem.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He smiles.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:43:10",
+      "spoken": "I have maybe a follow up question, right?",
+      "speaker": "Speaker 3",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He is looking at the camera.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:43:13",
+      "spoken": "Yeah, go for it.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He smiles.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:43:15",
+      "spoken": "So, uh what we notice is that for each instance there is a different master instance currently in the system, right? Are there any plans to prepare like test data that we can, you know, show to the business how the isolation works with the, you know, several instances for the same master instances and so on.",
+      "speaker": "Speaker 3",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He is looking at the camera and speaking.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:43:35",
+      "spoken": "Um, honest answer is that I don't know, but I would assume that it will happen very soon. Um, it will require some collaboration, I guess from the for our team about the opposition opponent, maybe from team Samurai. Um, because, well, this master instances and what master instances you are assigned to is uh like the logic for that is happening behind the scenes in the and and user management services that are on by Samurai. I don't know guys, uh, how do you want to comment maybe on that? Guys from Samurai.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He is explaining, using hand gestures.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:44:18",
+      "spoken": "Uh, right now we only have a couple master instances. So, uh, but but we don't expect, we expect pretty much that we'll only have one uh in in the coming period because we're going to have one that covers all of Denmark. So, uh, and yeah, or I guess two we have, we'll have one for Habison and one for just a case. So, that'll be about it.",
+      "speaker": "Speaker 4",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and looking at the camera. He is speaking and takes a sip from a mug.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:44:43",
+      "spoken": "Ah, so there will be two per country, right?",
+      "speaker": "Speaker 3",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and looking at the camera. He is speaking.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:44:47",
+      "spoken": "I I would say, Henrik, that this is this is something that actually I think we need to discuss in more details before. Like I, yeah, there may be some kind of distinction on the product part, so like, yeah, happy and just a case, but I wouldn't say that's like decided yet.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He is explaining, using hand gestures.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:45:11",
+      "spoken": "Okay.",
+      "speaker": "Speaker 4",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and looking at the camera. He nods.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:45:12",
+      "spoken": "Also when it comes to to seeding, I guess that uh how people are doing it right now is just to EF car uh sitting with the migrations. But yeah, that that might also change uh at some point.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He is explaining, using hand gestures.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:45:33",
+      "spoken": "Awesome, thank you.",
+      "speaker": "Speaker 3",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and looking at the camera. He smiles.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:45:35",
+      "spoken": "Yeah, no problem.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He smiles.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:46:25",
+      "spoken": "So do we have any other questions maybe?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He is looking at the camera and thinking.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:46:34",
+      "spoken": "Not me at least, thank you.",
+      "speaker": "Speaker 3",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and looking at the camera. He smiles and gives a thumbs up.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:46:37",
+      "spoken": "Yeah. Okay, I guess then we are good. So, guys, thank you very much for your time.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He smiles and thanks the audience.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:46:42",
+      "spoken": "Thanks, thank you.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and looking at the camera. He thanks the presenter.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:46:44",
+      "spoken": "Have a great day. Thanks, Robert.",
+      "speaker": "Speaker 4",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and looking at the camera. He thanks the presenter.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:46:47",
+      "spoken": "Yeah.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He smiles.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:46:48",
+      "spoken": "You're welcome, bye.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The speaker is visible in a video call, wearing headphones and sitting in front of a microphone. He smiles and waves goodbye.",
+      "kind": "talking_head"
+    }
+  ],
+  "segment_summary": "This segment demonstrates the migration process from version 1 to version 2 of an isolation component, focusing on updating the DBContext constructor and middleware registration. The speaker explains how to replace attribute-based isolation with a fluent API approach and shows that the migration generates an empty file, indicating no schema changes are needed due to existing V1 configurations. The segment concludes with a Q&A session where the speaker clarifies that master instances will represent country-specific data and discusses future plans for test data and documentation."
+}

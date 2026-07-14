@@ -1,0 +1,127 @@
+{
+  "segment_start": "00:25:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:25:00",
+      "spoken": "I'm up to date with my migrations.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Done of migrations add list",
+      "visual": "A man is speaking while a code editor (Visual Studio) and a terminal window are visible on the screen. The terminal shows a message about adding migrations.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:25:03",
+      "spoken": "So if I will show you, you can see that everything is empty inside. Uh, so that's good. Uh, let's remove this one.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Done of migrations remove",
+      "visual": "The speaker shows an empty migration file in the code editor and then uses the terminal to remove migrations.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:25:11",
+      "spoken": "And let's start to actually implementing this, um, this isolation component in the service. So, according to documentation,",
+      "speaker": "Speaker 1",
+      "on_screen_text": "public class TemplateManagementDbContext : DbContext",
+      "visual": "The speaker is back in the code editor, showing a C# class definition for `TemplateManagementDbContext` and discussing the implementation of an isolation component.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:25:22",
+      "spoken": "The first thing you need to do is you need to go to your NuGet and in, uh, like, uh, reference this, uh, unique infrastructure isolation component business.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Getting started with business service, Install the NuGet package Unik.Infrastructure.IsolationComponent.Business, public class FirstComponentDbContext : BusinessIsolationDbContext",
+      "visual": "The screen displays a documentation page titled 'Getting started with business service', highlighting the first step to install a NuGet package.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:25:37",
+      "spoken": "So, let's do that. If I go to my, uh, NuGet feeds, I can see that I I see business and platform. By the way, the important thing is that you should also include the pre-release if you want to do it now because we it's still in pre-release, uh, phase. Uh, so without it you will not be able to see it. Uh, but if I have this checked, I should be able to add it now.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Unik.Infrastructure.IsolationComponent.Business, Include prerelease checkbox",
+      "visual": "The speaker navigates to the NuGet Package Manager in Visual Studio, searches for the specified package, and explains the need to include pre-release versions.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:26:05",
+      "spoken": "And I can install it, right? And here I can see an exception because, well, uh, the component is using the latest version of, uh, SQL Server and the framework, uh, so I need to upgrade that actually first. So if I will, uh, bump the version of this, and then to the, I should be able to install it now. And it's installed. You can see now that I have this version 2.0.0-preview here, uh, of Isolation Component Business.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Confirm Operation, Install Unik.Infrastructure.IsolationComponent.Business, Microsoft.EntityFrameworkCore.SqlServer version change in .csproj",
+      "visual": "The speaker attempts to install the NuGet package, encounters an error, then modifies the `.csproj` file to update the `Microsoft.EntityFrameworkCore.SqlServer` version, and successfully installs the package.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:26:45",
+      "spoken": "So now I need to do a couple of things with my code. Uh, so what I didn't show you here is that, uh, I have like a couple of DB sets here, right? I have, uh, five, I guess, here. So, um, they will be also important. So, what I need to start with as a second step, I now need to inherit from this, uh, business isolation DB context instead of my DB context.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "public class TemplateManagementDbContext : DbContext, public class FirstComponentDbContext : BusinessIsolationDbContext",
+      "visual": "The speaker returns to the `TemplateManagementDbContext.cs` file, highlighting the class definition and then switches to the documentation to show the next step: inheriting from `BusinessIsolationDbContext`.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:27:12",
+      "spoken": "So let's do that. I will need to import this reference for the package. And, uh, I will also need to implement missing methods. So, you can see that we have two methods that we need to override. And the, the, the reason for that is that we actually using the `OnModelCreating` and `OnDatabaseCreating` methods inside our implementation. So they are taken. So if you want to do some model configuration or you want to do some, uh, invoke the methods on, uh, database creation, uh, you need to put it inside those inherited methods. You can no longer use this one. So what I need to do now is I would just to move this code to here, remove this method. And I didn't really use this one in my, uh, in this DB context, so I just will leave it empty for now.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "public class TemplateManagementDbContext : BusinessIsolationDbContext, protected override void OnDatabaseConfiguring(DbContextOptionsBuilder optionsBuilder), protected override void OnDatabaseCreating(ModelBuilder modelBuilder)",
+      "visual": "The speaker modifies the `TemplateManagementDbContext` to inherit from `BusinessIsolationDbContext`, implements the missing `OnDatabaseConfiguring` and `OnDatabaseCreating` methods, and moves existing code into the new methods.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:28:17",
+      "spoken": "Fine. So, that's that's the another step that you need to do. If you see the, uh, documentation, you also need to change your constructor. And what is important here, that you can see that in the base, uh, base, uh, the constructor for the for the business isolation DB context is also including the isolation claims provider. And this is the, uh, the interface that will be responsible for for taking care of passing through the, uh, the tenant ID, instance ID, master instance ID from our token and other places soon. So, let's let's add this. So, what I need to do is just do `IIsolationClaimsProvider`. Let's call it `IsolationClaimsProvider`. And now into the I will pass it to the base class. So, now I can do `IsolationClaimsProvider` and my options.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "public TemplateManagementDbContext(DbContextOptions<TemplateManagementDbContext> options) : base(options), public TemplateManagementDbContext(IIsolationClaimsProvider isolationProvider, DbContextOptions<TemplateManagementDbContext> options) : base(isolationProvider, options)",
+      "visual": "The speaker explains the need to update the constructor to include `IIsolationClaimsProvider` and demonstrates adding it as a parameter and passing it to the base constructor.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:29:19",
+      "spoken": "So, that's it. Uh, yeah, so, uh, if you now, uh, I am configuring all of my DB sets here, all of my, uh, data inside here. I'm using this `ApplyConfigurationFromAssembly`. So what it does, if you're not familiar with it, uh, you you can actually put this this classes for configuring individual properties, right? So, uh, that's the place, by the way, here. If I do like a builder now here, and I will do like, uh, isolation. You can see that I have two methods for this. I can set isolation level, uh, for instance and master instance. I cannot see the the global and tenant isolation instances here because I'm using the business, remember, the business, not the platform. If I would use the platform one, I would see four methods here. So, uh, yeah, so I want all of those, uh, all of those entities, all of those DB sets to be instance isolation. So, um, normally I will need to do it, but because this is the default one, I don't really need to pass it here. So that that this is actually redundant. It makes sense if you want to set master instance at some point, maybe on your, uh, on your entities because that's not the default one and you will override it with the actually master instance. But I want to use instance everywhere, so I just I don't need to do anything basically here. So this will be happening by default.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "modelBuilder.ApplyConfigurationFromAssembly(typeof(TemplateManagement).Assembly);, builder.SetInstanceIsolationLevel(IsolationLevel.Instance)",
+      "visual": "The speaker shows `ContentTemplateEntityConfiguration.cs` and explains how `ApplyConfigurationFromAssembly` works. He then demonstrates `SetInstanceIsolationLevel` and clarifies that explicit setting is redundant for default instance isolation in business services.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:30:57",
+      "spoken": "Um, yeah, so that's that's about setting the, the proper isolation level. And the last thing I need to do, or maybe not the last thing, but the next step is I need to register some of the stuff in my, uh, program or startup CS. And I need to do two things basically. So, I need to add the isolation component, uh, under, let's say that I will add it here. So, I need to register this by `AddUnikIsolationComponent`. This is the first, first method that I need to use. And then I need to add it here for using the middleware. So, I can do `UseUnikIsolationComponentMiddleware`. And with those two lines, uh, our registration should work. So, what I assume that, uh, yeah, what I can test right now is let's go back to my console. And I will now add new, uh, new migration step. And I will call it, uh, Isolation V2. Let's try this migration, add this, add this migration.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "builder.Services.AddUnikIsolationComponent();, app.UseUnikIsolationComponentMiddleware();, Add-Migration IsolationV2",
+      "visual": "The speaker explains how to register the isolation component in `Program.cs` by adding `AddUnikIsolationComponent()` and `UseUnikIsolationComponentMiddleware()`. He then attempts to add a new migration named 'IsolationV2' in the terminal.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:32:18",
+      "spoken": "Yeah. And as you can see, this is now failing. And the exception for that is maybe not really clear in this is something maybe to improve in the future. But this is failing for one reason. And the reason for that is that we have something called, uh, the `LocalEntity`. And if you go into that entity configuration, we are actually seeding this data, uh, using the `HasData` method. And the the reason why the migration is failing right now is because I have the seeding. And why is why is it failing? Well, now if it's trying to add this `LocalEntity`, it is missing for what tenant and instance this should be added. And you might ask, so how can you add such, how you can seed this? Because remember, the tenant and instance ID is really visible in your, uh, in your entities. It's something that is happening behind the scenes. It's actually the shadow property that will be added to this by Entity Framework. So how you can get around that? Well, you can pass it as anonymous object. So you can do it like that and just add the tenant ID and the instance ID here. So, let's just for for the demo purposes, I will just assign it to new good. And add the instance ID also to good you. If I will do this for the second record. Now, this should have some value for for tenant ID and instance ID. And I assume that it should at least work, uh, when adding a new migration. No, not really. You have a spelling error for instance ID. Oh, thank you. Yes, that's probably instance ID. Good catch. Yay, it worked.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "LocalEntity, builder.HasData, new { TenantId = Guid.NewGuid(), InstanceId = Guid.NewGuid(), Name = \"Danish\", TwoLetterCode = \"da\" }, new { TenantId = Guid.NewGuid(), InstanceId = Guid.NewGuid(), Name = \"English\", TwoLetterCode = \"en\" }",
+      "visual": "The migration fails, and the speaker explains that the `LocalEntity` seeding is missing `TenantId` and `InstanceId`. He corrects the code by adding `TenantId = Guid.NewGuid()` and `InstanceId = Guid.NewGuid()` to the `HasData` method. After a spelling correction by an audience member, the migration succeeds.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:34:35",
+      "spoken": "Cool. So, let's let's view it. Um, so yeah, this is deleting the old data that I seeded. That's not really relevant here. But you can see what happened behind the scenes is for all of my tables, uh, it recognized that now I'm using the isolation, so I'm missing the columns for instances and tenants. So you can see that they are added here, right? For every, every table that I will have as part of my DB context, uh, are now I can see that it's adding instance and tenant ID everywhere. And this is something that you should also notice when you will add your isolation that this this table for isolation, those sorry, those columns for isolation should be added here. And that's basically more or less it when it comes to actually start, um, and implementing that from scratch.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "migrationBuilder.AddColumn<Guid>( name: \"InstanceId\", table: \"Locale\", schema: \"TemplateManagement\", type: \"uniqueidentifier\", nullable: false, defaultValue: new Guid(\"00000000-0000-0000-0000-000000000000\")), migrationBuilder.AddColumn<Guid>( name: \"TenantId\", table: \"Locale\", schema: \"TemplateManagement\", type: \"uniqueidentifier\", nullable: false, defaultValue: new Guid(\"00000000-0000-0000-0000-000000000000\"))",
+      "visual": "The speaker reviews the generated migration file, highlighting the `AddColumn` operations for `InstanceId` and `TenantId` that were automatically added to all tables in the `TemplateManagement` schema.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:35:29",
+      "spoken": "Uh, so let's consider a second scenario because some of us already are using the, uh, the isolation component, which is the first version of this isolation. So, we have this, uh, instance DB context base was the class that was in the first, uh, in the first version of the, of the component. And if I want to do the migration, uh, I can open also this, uh, this page.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "public class BrandManagementContext : InstanceContextBase, Migration from V1 to V2",
+      "visual": "The speaker introduces a second scenario for migrating from an older version of the isolation component. He shows `BrandManagementContext` inheriting from `InstanceContextBase` and opens a documentation page titled 'Migration from V1 to V2'.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:36:03",
+      "spoken": "And, well, I need to change some of the stuff. So, first thing that I want to get rid of is, well, I actually want to remove the all the first version of this component. I want to just remove this. And I want to include the new one. So, let's let's import the, the version two, uh, to this, uh, project, right? So as you can see, some of my, uh, code is actually like it's it's blown up here. So I need to change, um, first, I need to change this instance DB context base, the name for this has changed. So again, we use this business DB context. Uh, we will need to implement the missing members. So this one was missing here. This one is, uh, actually okay. It this method didn't changed. The constructor is slightly different in it's different. So, uh, before we had the the special classes for the instance and, uh, and tenant. Now they have been merged to this, uh, the single, uh, interface, which is `IsolationClaimsProvider`. So we can we need only one. So those two can be replaced by this one. Uh, what else? So, um, we adjusted the constructor. Uh, one thing to also notice is that the previous version of the of the component had this methodology of assigning what level",
+      "speaker": "Speaker 1",
+      "on_screen_text": "public class BrandManagementContext : BusinessIsolationContext, IIsolationClaimsProvider isolationProvider",
+      "visual": "The speaker removes the old isolation component NuGet package from `BrandManagementContext.csproj` and installs the new version. He then updates `BrandManagementContext.cs` to inherit from `BusinessIsolationContext` and modifies the constructor to use `IIsolationClaimsProvider`.",
+      "kind": "screen_share"
+    }
+  ],
+  "segment_summary": "This segment demonstrates migrating a .NET project to a new version of an isolation component. The speaker first shows how to update NuGet packages and modify the `DbContext` to inherit from `BusinessIsolationDbContext`, implementing required override methods. He then updates the constructor to accept an `IIsolationClaimsProvider`. After configuring the isolation level for entities and registering the middleware, he encounters a migration error due to missing `TenantId` and `InstanceId` in seeded data, which he resolves by adding GUIDs. Finally, he shows the generated migration file with the new columns and begins to explain the migration process for an existing project using an older version of the component."
+}

@@ -64,7 +64,7 @@ Metric: **hours of video processed**. Simple, scales with value, easy to predict
 | API pay-as-you-go | €0.15/min (€9/h) | No subscription | For developers embedding the product in pipelines; stickiest revenue. |
 | Enterprise (later) | Annual contract | Custom volume, SSO, audit log, self-hosted option | Not in MVP scope. |
 
-Unit economics guardrail: COGS target < 20% of price per hour. Rough order of magnitude for Gemini Flash native video processing + fusion pass is expected in the **$0.3–2 per video hour** range depending on sampling resolution — **must be re-verified against current Vertex AI pricing and a real benchmark video before locking prices.** Cost controls (static-segment detection, low-fps sampling for slide-heavy content) are a core engineering task, not an optimization afterthought.
+Unit economics guardrail: COGS target < 20% of price per hour. **Measured 2026-07-14** (experiments/001, `gemini-2.5-flash` @ `europe-central2`, real 50-min demo recording): **≈ €0.38/video-hour** at default quality (720p, 1 fps), ≈ €0.21/h at low media resolution, ≈ €0.25–0.30/h expected blended (Stage A routes ~67% static content to the cheap config), plus ~1.3× retry overhead observed. Stage C fusion adds ≈ €0.09 per 50-min video. Even at Pro overage (€8/h) COGS is ~5%; at API pay-as-you-go (€9/h) ~4% — the €1.50/h guardrail holds with 4–7× margin. Numbers cover one content category (demo screen-recording); re-verify on slide-talk and talking-head footage at Phase 7 before locking prices. Cost controls (static-segment detection, low-media-resolution sampling) remain a core engineering task.
 
 ## 7. Go-to-market
 

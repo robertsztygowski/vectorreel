@@ -1,0 +1,111 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": null,
+      "speaker": null,
+      "on_screen_text": "Microsoft Teams, Isolation Component V2 demo, 2023-01-23 09:00 UTC, Recorded by Robert Sztygowski, Organized by Robert Sztygowski",
+      "visual": "The video displays a title slide for a Microsoft Teams meeting titled \"Isolation Component V2 demo\" with the date and organizer details.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:02",
+      "spoken": null,
+      "speaker": null,
+      "on_screen_text": "FL, Frederik Lønnum, Kasper Fjelsted, Mikael Kramer, Nicholas Aagaard..., Rebekka Skov Junker, Rikke Vester Svendsen, Henrik Kruse, Rene Schmidt, Oleksandr Shynov, Grzegorz Wróbel, Brian Krogh, Nick Christensen, Mads Bøgsted..., Sergiusz Brzozo..., Umut Kayahan, Nikolaj Brogger J..., Pawel Kowalski, +7, +8, +9, +10, +11",
+      "visual": "The screen shows a grid of video feeds from multiple participants in a Microsoft Teams call, with some names and initials visible.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:13",
+      "spoken": "Okay, let's let's just have like one or two minutes more. everybody to join and we'll start the demo. Awesome. Okay guys, I think we can start. Uh the this this call is recorded anyway, so if anybody is missing that they can just view the recording then. So I'll share my screen.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "FL, Frederik Lønnum, Kasper Fjelsted, Mikael Kramer, Nicholas Aagaard..., Rebekka Skov Junker, Rikke Vester Svendsen, Henrik Kruse, Rene Schmidt, Oleksandr Shynov, Grzegorz Wróbel, Brian Krogh, Nick Christensen, Mads Bøgsted..., Sergiusz Brzozo..., Umut Kayahan, Nikolaj Brogger J..., Pawel Kowalski, +7, +8, +9, +10, +11",
+      "visual": "Speaker 1, a man with headphones and a microphone, speaks to the camera, while other participants are visible in smaller windows on the right. He mentions waiting a couple more minutes before starting the demo and that the call is being recorded.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:20",
+      "spoken": "So guys, uh hello. Welcome to this to this demo for the isolation component. I hope everybody had a wonderful weekend. And so I wants to do this now for you because as you may notice uh like I guess two weeks ago, we released uh the version two of this isolation component. We still doing some work around it but it's uh very soon all all of the teams will need to start using that. And since it's not easy to understand the whole concept of isolation how we want to actually use that. Uh we thought about doing like this this demo this presentation so you can see that in action. Uh we can also uh maybe talk about that on the Q&A Q&A on the end.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Isolation Component V2 Preview, UNIK",
+      "visual": "The speaker shares his screen, displaying a presentation slide titled \"Isolation Component V2 Preview\". He welcomes attendees and introduces the demo for the recently released version 2 of the isolation component.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:02:12",
+      "spoken": "So my plan here for today is just to give you a brief introduction for the isolation assuming that there are some people here that have no idea what the plan of the isolation is. maybe they don't even know what we mean by the. I hope we can explain that. Uh, I hope that I can give you like high level overview of the component itself. Uh, explain some of the concepts around it. And I also really want to show you some of the demos. Uh, like we will just jump into ID and I will implement the isolation component from scratch in one of the services from my team from. And I also will show you how to do the migration for from the version one. And on the end we'll do the Q&A. That's that's the plan.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Agenda, • Introduction to the isolation, • Overview of the component functionalities, • All isolation levels and idea behind them, • Implementation demo, • Migration from version 1 demo, • Q&A",
+      "visual": "The speaker presents the agenda for the demo, which includes an introduction to isolation, an overview of component functionalities, isolation levels, an implementation demo, migration from version 1, and a Q&A session.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:03:17",
+      "spoken": "So, let's start with what actually we trying to solve with this component. What problem we're trying to solve? So, as you may know, our platform will be software as a service. So we will have a same application, same uh serving multiple clients. So our system will be multitenant. So the important part of that that in multitenant system is that every customer uh will have its own tenant where the the data will live under this tenant. And what is pretty important, uh I guess if you ask uh stakeholders, uh it's that the uh the data and the tenants will be completely isolated from each other. So the idea is that the customer A cannot really see edit or delete data of customer B. Because if it will happen that means that will be very bad day for unique, right? Like uh yeah, probably will be on the news somewhere, right? That the data leaked from one customer to another. Uh so that's the that problem that we trying to address uh to address here.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Multitenancy, • In multi-tenant software architecture—a single instance of a software application serves multiple tenants., • A tenant can be an individual user, but more frequently, it’s a group of users—such as a customer organization—that shares common access to and privileges within the application instance., • Each tenant’s data is isolated from, and invisible to, the other tenants sharing the application instance, ensuring data security and privacy for all tenants.",
+      "visual": "The speaker explains the concept of multitenancy using a slide that defines it and highlights the importance of data isolation between tenants.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:04:26",
+      "spoken": "So, I just like copy that from the internet this this graphic describing what can be the like approaches that one can take to actually solve this issue to have the the multitenancy. Um, so there are basically three main approaches that uh that you can use. First is to have the database isolation. So basically you're creating the individual databases for each of the customers. The second approach is to have a single database but you creating individual schemas for each of the customers. And the third approach is the record level uh tenancy where you have a same database, same schema but you just put something to discriminate what the tenant is on the in the table itself. And um we took uh the third approach which is the record level uh tenancy.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Multitenancy, 1. One database per user (Database level tenancy), SAAS APP, PERSISTENCE LAYER, Tenant 1 DATABASE, Tenant 2 DATABASE, Tenant 3 DATABASE, 2. One database for all users with unique schemas for each user (Schema level tenancy), SAAS APP, DATABASE, Tables, Tenant 1 SCHEMA, Tenant 2 SCHEMA, Tenant 3 SCHEMA, 3. One database and one schema for all users (Record level tenancy), SAAS APP, DATABASE, SCHEMA, Table, Table, Table",
+      "visual": "The speaker presents a slide illustrating three approaches to multitenancy: database-level, schema-level, and record-level tenancy, explaining that their solution uses the record-level approach.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:05:30",
+      "spoken": "Yeah, and we take it even further, but because you might actually notice that we not really using only the um the tent word, but also in an instance. So I would like to uh describe what what what they are basically. So as you can see at the graphic by tent we actually means the customer environment. Right? So everything that is related to single customer will live in the single tenant. And we have also concept of instances and instances are actually environments. You can think of instances like environments for the customer. So what they will mean is that as a customer, I will actually start with having my own tenant and then inside that tenant and I can create instances which will be my environment. Right? So the common example will be that I will have production instance where my actual real data the most important data will live in but I can I can also create like my test like sandbox instance that I will just play out with some new functionalities maybe I will do some testing on that instance etc, right? So this is how how how we did it. We have instances which are environments and customers are free to create how many instances they want. There is also this concept of master instance, but actually I would like to leave it for later. And so just so you just so you know, we'll have also the tenant that will be for us for you. And under that we will have the master instances which I will get back to later on this presentation.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Introduction to the isolation, Tenant = Customer, Instance = Environment, Master Tenant = Unik, Master Instance = Country specific data, Tenant1, Instance1, Instance2, Instance3, Entity, Entity, Entity, Entity, Entity, Entity, Entity, Entity, Entity, Tenant2, Instance1, Instance2, Instance3, Entity, Entity, Entity, Entity, Entity, Entity, Entity, Entity, Entity, Unik Tenant, Danish Master Instance, German Master Instance, Swedish Master Instance, Entity, Entity, Entity, Entity, Entity, Entity, Entity, Entity, Entity",
+      "visual": "The speaker introduces the concepts of \"Tenant\" (customer) and \"Instance\" (environment) within the isolation model, explaining how customers can have multiple instances for different purposes like production or testing. A diagram shows Tenant1, Tenant2, and Unik Tenant, each with multiple instances containing entities.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:24",
+      "spoken": "So, uh let's see like the basic basically table that we can have in in in square server. And uh let's consider how that look normally without isolation, right? So you would expect to have something like table for people. I have like internal public ID, the name of that person, date of birth. Just like normal table, right? And if I normally would do some of the query, I'm free to select all of the data and maybe include some filters for it later on.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Table dbo.people without isolation, InternalId, PublicId, Name, DateOfBirth, 1, 7B5A9AFD..., Mike, 1987/01/30, 2, BC8E7EDB..., Bob, 1969/07/30, 3, 4BCCF975..., Jenny, 1977/05/01, 4, 158A92E9..., Rick, 1999/11/11, 5, BD3E7978..., Anna, 2001/03/04, 6, 9ADB43+O..., Jenifer, 1989/09/13, SELECT Name FROM People, Mike, Bob, Jenny, Rick, Anna, Jenifer",
+      "visual": "The speaker displays a slide showing a simple database table named \"dbo.people\" with columns like InternalId, PublicId, Name, and DateOfBirth, and demonstrates a basic SQL query to select names without any isolation.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:08:00",
+      "spoken": "And how isolation is changing that is that we are actually at the columns for the tenant and instances, right? So for customer and for the environment of the customer into every table that we will have. And when we will select the data, we we actually filtering out the the specific uh instance in this case or environments, right? So this is by the way something that the component will do for you behind the scenes. So you you'll don't really need to think about uh how this is happening in your code, but uh the the the the important part is that we actually achieving having the silos, right? Separating customers and their environments by doing this uh by adding this columns uh to the tables, right? With tenant ID and instance ID.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Table dbo.people with isolation, InternalId, PublicId, Name, DateOfBirth, TenantId, InstanceId, 1, 7B5A9AFD..., Mike, 1987/01/30, AAAAAAA, 1111111, 2, BC8E7EDB..., Bob, 1969/07/30, BBBBBBBB, 3333333, 3, 4BCCF975..., Jenny, 1977/05/01, AAAAAAA, 1111111, 4, 158A92E9..., Rick, 1999/11/11, AAAAAAA, 2222222, 5, BD3E7978..., Anna, 2001/03/04, CCCCCCCC, 4444444, 6, 9ADB43+O..., Jenifer, 1989/09/13, BBBBBBBB, 3333333, SELECT Name FROM People WHERE InstanceId = \"1111111\", Mike, Jenny",
+      "visual": "The speaker shows a modified database table with added TenantId and InstanceId columns. He explains that the isolation component automatically filters data based on these IDs, ensuring data separation between customers and their environments.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:09:02",
+      "spoken": "So you can see that for example Mike and Jen is in in in customer of AAA in their environment 111, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "InternalId, PublicId, Name, DateOfBirth, TenantId, InstanceId, 1, 7B5A9AFD..., Mike, 1987/01/30, AAAAAAA, 1111111, 2, BC8E7EDB..., Bob, 1969/07/30, BBBBBBBB, 3333333, 3, 4BCCF975..., Jenny, 1977/05/01, AAAAAAA, 1111111, 4, 158A92E9..., Rick, 1999/11/11, AAAAAAA, 2222222, 5, BD3E7978..., Anna, 2001/03/04, CCCCCCCC, 4444444, 6, 9ADB43+O..., Jenifer, 1989/09/13, BBBBBBBB, 3333333, AAAAAAA, 1111111, 2222222, Mike, Rick, Jenny, BBBBBBBB, 3333333, Bob, Jenifer, CCCCCCCC, 4444444, Anna",
+      "visual": "The slide visually separates the data from the previous table into three distinct tenants (AAAAAAA, BBBBBBBB, CCCCCCCC), each containing specific instances and associated names, illustrating the data isolation.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:09:44",
+      "spoken": "All right, so that's the basic idea. And now I would like to show you uh how actually what is the high overview of the of the isolation component? Um, so we have this uh separation for business and platform uh services which I will mention in a minute on the next slide. But what you can see here, there are a lot of functionalities that are here to facilitate that we can actually like do this querying by the instances or tenants by default, you don't really need to think about that. So what I guess what what is worth mentioning is that this implementation is based on entity framework. So what we will actually use in your code, you will use our DB context that we prepared for you from this package you use. The package is a nugget that you reference in your project and you're starting with selecting and inheriting one of the uh one of the DB context that we prepared and you also need to register some of the middleware that we also uh are using here. And this all things that you see here is just for for then that your service when you when you run it, it can read um the in which we are, what the filtering should be and it can apply all of that stuff behind the scenes, right? So then when you selecting the data, you will you will be sure to select the the the correct and instances. When you're inserting, updating, deleting data, it also is taking care of that, for example, if you insert some records, the tenant and instance ID will be passed and we will save it in correct and not in instance.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Internal, IsolationDbContext, Add isolation properties, Query Filters, Isolation propagation, Prevent editing in master instance, Prevent out of isolation editing, Tenant Value Generator, Instance Value Generator, Public, BusinessIsolationDbContext, Available Isolation Levels, Instance, Default, MasterInstance, PlatformIsolationDbContext, Available Isolation Levels, Global, Tenant, Instance, Default, MasterInstance, Isolation Claims Provider, Hetz middleware to propagate the Isolation Scopes and Claims to IsolationClaimsProvider, Business Microservice, Platform Microservice, Inherits, Registers",
+      "visual": "The speaker presents a detailed architectural diagram of the IsolationDbContext, explaining its internal and public functionalities, including how it handles isolation levels, query filters, and integration with business and platform microservices.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:11:29",
+      "spoken": "Right, so next the separation between the business and platform service. So we did this separation on purpose. Uh and the difference here is that the business service, what we mean by that is that the business service are have a very strict isolation, which means that they will they will always run in some specific instance. They will never run outside an instance. And that will be the case for most of the services in our system. That that's at least what we anticipate. right for now. So we will have 90 95% of all of our services that we create in Uni will be business services that will always work on the on the instance level. So what are the example of such services let's say like property, finance booking, document and template management these are the examples of such services. And on the other side we have a platform services. So so uh personnel services are different in the case that well, they need to operate sometimes outside the instances. And the reason for that is because they need to do some of the platform level work. Uh and well, like working inside the silos is not realistic.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Business service VS Platform service, Business service, • You only operate on instance and master instance isolation levels, • Your data will always be assigned to some instance, Note: 90-95% of all our services in Unik will be business services, Property management, Finance bookkeeping, Document management, Template management, Platform service, • You can operate on all isolation levels including tenant and global, • Your service is used as part of the infrastructure / platform, • Your service needs more control of data isolation, Note: 5-10% of all our services in Unik will be platform services, Integration management, Settings management, User management, Tenant bookkeeping",
+      "visual": "The speaker explains the distinction between business services and platform services in their architecture. Business services operate strictly within an instance, while platform services can operate across isolation levels, including tenant and global, for infrastructure tasks. Examples of each type are provided.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "This segment introduces the Isolation Component V2 demo, outlining the agenda which includes an introduction to isolation, component functionalities, isolation levels, an implementation demo, migration from version 1, and a Q&A. The speaker explains multitenancy, detailing three approaches (database, schema, and record-level tenancy) and highlighting their use of record-level tenancy. He then introduces the concepts of tenants (customers) and instances (environments), showing how data is isolated within these structures. Finally, he presents the architectural overview of the IsolationDbContext, emphasizing its Entity Framework-based implementation and the distinction between business and platform services."
+}
