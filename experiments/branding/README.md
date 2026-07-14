@@ -3,7 +3,8 @@
 Design-asset spike. Generates logo/site graphics with **Vertex AI (Gemini image models)** via ADC.
 
 ⚠️ `experiments/**` is never authoritative (CLAUDE.md). This is a point-in-time exploration,
-not a brand spec, and nothing here is committed or deployed.
+not a brand spec. Nothing here is deployed, and no asset here is a chosen brand — the images in
+`assets/` are committed only so the candidates survive without re-paying for Vertex calls.
 
 ---
 
@@ -107,10 +108,10 @@ and center-cropped to exactly 1200×630 in `crop_to()`.
 
 - **The mark is NOT monochrome-safe.** Its play triangle and text bars are formed by the *white
   interior* of the frame, not by the silhouette. Fill it as one flat colour and it collapses into a
-  solid rounded-square blob (see `out/_favicon_check.png`, top-right). The spec asked for
+  solid rounded-square blob (see `assets/_favicon_check.png`, top-right). The spec asked for
   monochrome-friendly; **this does not meet it.**
-- **16px is marginal.** It reads from ~32px up. `out/favicon.ico` is generated anyway, multi-size.
-- **A raster logo is not a production logo.** Real logos are vector. Treat everything in `out/` as
+- **16px is marginal.** It reads from ~32px up. `assets/favicon.ico` is generated anyway, multi-size.
+- **A raster logo is not a production logo.** Real logos are vector. Treat everything in `assets/` as
   *design direction to hand off or trace into SVG*, not as a shippable asset. The 429 quota on
   `europe-west4` is also tight — expect `RESOURCE_EXHAUSTED` retries on a full run.
 
@@ -128,7 +129,7 @@ hundreds of bézier points: a vector-shaped copy of an imprecise drawing. **Don'
 This also **fixes the monochrome failure** described above, by construction. The frame is a
 *stroked* rect with no fill, so the interior is a true hole and the counters are formed by
 geometry, not by white paint. Fill every shape one flat colour and it still reads — verified in
-`out/_svg_check.png` (ink-on-white and white-on-dark rows).
+`assets/_svg_check.png` (ink-on-white and white-on-dark rows).
 
 | File | Notes |
 |---|---|
@@ -161,7 +162,7 @@ but it is a real difference from the PNG. Lower it to keep them.
 ### Rendering / exporting
 
 `resvg` (pure-Python wheel; `cairosvg` needs native Cairo, which isn't available here) renders SVG
-back to PNG at any size — that's how `out/logo-*@*.png` and the multi-size `out/favicon.ico` are
+back to PNG at any size — that's how `assets/logo-*@*.png` and the multi-size `assets/favicon.ico` are
 produced, crisply, straight from the vector.
 
 ⚠️ **Unverified:** resvg ignores `@media (prefers-color-scheme)`, so the favicon's dark-mode

@@ -19,7 +19,7 @@ import os
 import vtracer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "out")
+OUT = os.path.join(HERE, "assets")
 SVG_DIR = os.path.join(HERE, "svg")
 
 # Flat vector art -> few colours, polygonal fitting, aggressive speckle filtering.

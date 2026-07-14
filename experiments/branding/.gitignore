@@ -2,5 +2,5 @@
 __pycache__/
 .fonts/
 
-# out/ is intentionally COMMITTED: the generated images are the point of this spike and
+# assets/ is intentionally COMMITTED: the generated images are the point of this spike and
 # regenerating them costs real Vertex calls. Keep .venv/ and the downloaded font binary out.

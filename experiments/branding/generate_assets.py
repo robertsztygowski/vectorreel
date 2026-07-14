@@ -29,7 +29,7 @@ from PIL import Image, ImageFilter
 # Config
 # --------------------------------------------------------------------------------------
 
-OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
+OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
 
 # The task spec named VERTEXREEL_*; the product is "vectorreel". Accept both so neither
 # spelling silently falls back to the default and looks like it was ignored.
