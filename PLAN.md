@@ -180,10 +180,13 @@ Deliverables:
 **This is the phase that decides the business, and it must start now and run in parallel with
 every engineering phase below.** Do not serialize it after the build.
 
-Rationale: with no outreach, the funnel needs a **content-engine-sized** number of qualified
-visitors to produce a handful of paying customers (METRICS.md §1.4, N14–N15 — and note both input
-rates are *assumptions*). Content compounds over **months**. Building for three months and *then*
-starting to post serializes the two slowest processes in the company.
+Rationale: with no outreach, **traffic is the only way any evidence reaches us.** The target is
+METRICS.md **N15** — and it is doing double duty: the visitors that cover infra (N1a) are the same
+visitors that reach the A2 sample floor. **Both input rates are assumptions.** Content compounds
+over **months**; building for three months and *then* starting to post serializes the two slowest
+processes in the company.
+
+⏱️ **T0 — the time-box (METRICS.md §2.2) starts on the day the first post ships.** Record the date.
 
 Work:
 
@@ -250,8 +253,8 @@ offset-based segmentation) lands here as a parallel, simpler pipeline. Free/publ
   2 h free. Nothing else.
 
 Infra: Cloud Run + GCS + in-process queue. **No Cloud SQL, no Cloud Tasks, no Terraform yet** —
-Cloud SQL idles at ~€25–50/mo, which is real burn for a bootstrapped business whose break-even
-is ~47 accounts.
+Cloud SQL idles at ~€25–50/mo, which is a meaningful fraction of the entire fixed base we are
+trying to cover (METRICS.md N2/N1a). **At survival scale, an idle database is a real tax.**
 
 **Explicitly NOT built:** dashboard, job list, usage page, markdown preview, connectors, plan
 tiers, DPA self-service flow, MCP server.
@@ -272,10 +275,12 @@ signup, 2 h free → payment.
 - **Instrumentation — the whole point of the phase.** Events: signup, YT-tool use, upload,
   download, **second upload**, checkout click.
 - 🚨 **Cohort hour-decay, instrumented before the first user.** Hours uploaded in week 1 vs.
-  week 4, per signup cohort. **This is the A3 test, and A3 decides what business we are in:**
-  if month-2 hours < 20% of month-1, this is a **backfill business** and the correct product is
-  a **prepaid credit pack** (*"€200 for 20 hours"*), **not** a €149/mo subscription. That
-  question cannot be answered retroactively — instrument it first or lose the data forever.
+  week 4, per signup cohort. **This is the A3 test, and A3 decides what business we are in**
+  (decision rule: METRICS.md A3). If it says backfill, the correct product is a **prepaid credit
+  pack**, not a monthly subscription. **The question cannot be answered retroactively — instrument
+  it first or lose the data forever.**
+- **The N20 signup field** (METRICS.md) ships here too: archive-hours vs monthly-hours, one
+  skippable control. **It reads A3 roughly two months before the cohort data can.**
 
 ## Phase 5 — Read the data → choose the pricing model
 
