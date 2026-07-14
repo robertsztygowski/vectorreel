@@ -4,7 +4,39 @@
 > **Inputs:** assumption-mapping (VUBF) → before-you-build (pre-mortem) → startup-analyst
 > (TAM/SAM/SOM + unit economics) → ux-researcher (validation design).
 > Grounded in `experiments/001-gemini-video-benchmark/` (real Vertex spend, measured today).
-> Point-in-time memo — not a living doc.
+
+---
+
+# 🛑 STATUS: SUPERSEDED IN PART — DO NOT ACT ON THIS FILE
+
+**This is a frozen historical memo, not an instruction set.** It was written *before* two
+decisions that reversed its central recommendations, both taken later the same day:
+
+1. **The founder ruled out customer outreach** ("I don't have time to reach out to customers").
+   The GTM became **self-serve / inbound**. Everything in this memo that depends on *talking to
+   people* — the concierge test, the interview script, the cold-outreach A/B, "sell it by hand" —
+   **is dead.**
+2. **The YouTube public-ingestion path was adopted** (free tool + curated gallery as the
+   distribution engine). This memo predates it entirely and never mentions it.
+
+**If anything here contradicts a living doc, the living doc wins. Always.**
+
+| Section | Status | Authority now |
+|---|---|---|
+| Riskiest Assumptions (A1–A4) | ✅ **Still holds** | BUSINESS_MODEL §8 |
+| **A5** ("CAC low enough for €149–690 ACV", ranked #5) | ⚠️ **Redefined & re-ranked.** A5 is now **"distribution works" — the TOP risk**, because with no outreach, traffic is the long pole. | **DISTRIBUTION.md** |
+| Verdict: RESHAPE + the 3 reasons | ✅ **Still holds** | — |
+| Market sizing (TAM/SAM/SOM) | ✅ **Still holds** — graduated | **BUSINESS_MODEL §5a** |
+| Unit economics + break-even | ✅ **Still holds** — graduated | **BUSINESS_MODEL §6** |
+| **"How We'll Validate"** (concierge test, interviews, outreach A/B) | 🛑 **DEAD — outreach ruled out** | **DISTRIBUTION.md + METRICS.md** |
+| **"Recommendation"** ("do not write product code", "sell by hand", "design-partner-funded") | 🛑 **DEAD — reversed** | **PLAN.md** |
+| Cheap-to-fix items (token caps, ffmpeg metering, missing categories) | ✅ All graduated | CLAUDE.md r8/r9, ARCHITECTURE §3/§8, PLAN Phase 0.2 |
+
+**Where to actually look:** `PLAN.md` for what to do next · `DISTRIBUTION.md` for how customers
+are reached · `METRICS.md` for what each number makes us do.
+
+*Per DEVELOPMENT.md §7: a memo's analysis is immutable — it records what was believed on a date.
+Only this status banner and the inline supersession marks below have been added.*
 
 ---
 
@@ -116,6 +148,25 @@ acquisition-month ARPA.** Any ARR projection built on list prices is fiction unt
 
 ## How We'll Validate
 
+> # 🛑 THIS ENTIRE SECTION IS DEAD — DO NOT EXECUTE IT
+>
+> **Every experiment below requires talking to customers. The founder ruled that out hours after
+> this memo was written.** The concierge test, the 5 recruited companies, the 8–10 interviews and
+> the cold-outreach A/B **will not happen** and must not be planned around.
+>
+> **What replaced it:** the *product itself* became the validation instrument — a free public
+> YouTube tool as the top-of-funnel hook, then upload-your-own, then one Stripe link. Every
+> assumption below is now tested by **instrumentation instead of conversation**:
+> the landing-page headline A/B tests A1, the Stripe link tests A2, cohort hour-decay tests A3,
+> the second-upload rate tests A4.
+>
+> **The honest cost of that swap, recorded here so it isn't forgotten:** removing the
+> conversation means **the Stripe link now carries the entire burden of detecting a vitamin.**
+> There is no longer any human signal upstream of payment.
+>
+> → **DISTRIBUTION.md** (the funnel) and **METRICS.md** (the decision rules) are authoritative.
+> Kept below purely as the reasoning trail for *why* these assumptions matter.
+
 **Primary — Manual Concierge Test (no product built).** `experiments/001/` already produces a
 complete `output.md` for a 50-min video. *That is the product for this test.*
 
@@ -154,6 +205,26 @@ positioning must move to the capability story.**
 ---
 
 ## Recommendation
+
+> # 🛑 REVERSED — PLAN.md IS AUTHORITATIVE
+>
+> **The "Proceed" verdict stands. Everything about *how* is reversed.**
+>
+> | This memo said | Now |
+> |---|---|
+> | *"Sell the pipeline by hand"* / design-partner-funded | **Self-serve, inbound. No outreach.** |
+> | **"Do not write product code until ≥2 of 5 prepay"** | **Build the thin slice — it *is* the instrument.** With no outreach, code is the only way evidence reaches us. |
+> | Delay "self-serve onboarding" | **Self-serve onboarding is the core of PLAN.md Phase 3.** |
+> | Kill criteria: 10 interviews + 5 concierge deliveries | **~100 trials, plus the traffic threshold** (BUSINESS_MODEL §9). |
+> | *(no YouTube path existed)* | **Free public YouTube tool + curated gallery = the distribution engine.** |
+> | "Add ffmpeg cost in Phase 4" | Phases renumbered — **it's Phase 2 now.** |
+>
+> **What survived, and matters most:** *"COGS is measured at 7× headroom — further optimization
+> is procrastination in a lab coat."* Still true. The risk was never the engineering.
+>
+> **What changed underneath:** this memo assumed *demand* was the top risk and that a conversation
+> would settle it. With outreach off the table, **distribution replaced demand as the top risk** —
+> because traffic is now the only path to any evidence at all. See DISTRIBUTION.md.
 
 **Proceed — but stop building the SaaS and start selling the pipeline by hand.**
 

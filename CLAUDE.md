@@ -1,9 +1,26 @@
 # CLAUDE.md — vectorreel
 
 EU SaaS: video → structured, timestamped Markdown for AI knowledge bases.
-**Read the living docs before non-trivial work:** ARCHITECTURE.md (what/how),
-BUSINESS_MODEL.md (why), INFRA.md (GCP state), PLAN.md (phase-by-phase execution plan),
-**DEVELOPMENT.md (full guidelines — this file is the summary).**
+
+## Which doc is authoritative for what
+
+**Read the living docs before non-trivial work. They are the source of truth — always current,
+rewritten in place.**
+
+| Doc | Authoritative for |
+|---|---|
+| **PLAN.md** | *What to do next.* Phase-by-phase execution order. **Start here.** |
+| **ARCHITECTURE.md** | What/how — pipeline, stack, ingestion paths, API, data model |
+| **BUSINESS_MODEL.md** | Why — problem, ICP, pricing, market size, risks, unit economics |
+| **DISTRIBUTION.md** | How customers are reached. Owns **A5, the top risk** |
+| **METRICS.md** | What we measure + **the decision rule attached to each number** |
+| **INFRA.md** | Current GCP state |
+| **DEVELOPMENT.md** | Full guidelines (this file is the summary) |
+
+⚠️ **`experiments/**/*.md` is NEVER authoritative.** Those are point-in-time memos and raw
+results: true on the date written, frozen afterwards, and routinely **superseded** by later
+decisions. They are a reasoning trail, not instructions. **If an experiment memo contradicts a
+living doc, the living doc wins — always.** Check the memo's status banner before quoting it.
 
 ## Hard rules
 

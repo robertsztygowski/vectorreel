@@ -52,7 +52,35 @@ Honesty rule for all marketing/compliance copy: current stack is **EU data resid
 
 Beachhead geography: Poland + Nordics/DACH (founder network: Denmark via Conscensia/Unik). GDPR sensitivity is highest and willingness to pay for EU processing is real in these markets.
 
-## 6. Pricing (initial hypothesis — validate with design partners)
+### 5a. Market size (bottom-up, 2026-07-14)
+
+No top-down "video AI market = $X bn" figure is used — for a wedge this specific those reports
+are noise. Built bottom-up instead, **every input an assumption, all to verify**:
+
+*450k EU orgs ≥50 employees* (**⚠️ verify vs Eurostat SBS — unverified**) × *40% with meaningful
+internal video* × *15% with an active AI/RAG initiative by 2027* → **27,000 accounts.**
+
+| | Accounts | @ €2,400 blended ACV |
+|---|---|---|
+| **TAM** — EU orgs with internal video **and** an active AI/RAG initiative | 27,000 | **€65M/yr** (range €50–110M) |
+| **SAM** — beachhead PL + Nordics + DACH (~30%) | 8,100 | **€19M/yr** |
+| **SAM (narrow)** — where EU residency is an actual *decision driver* | 3,200 | **€7.8M/yr** |
+| **SOM** — 3 yr, founder-led, no sales team | 125–200 | **€300–500k ARR** |
+
+ACV is set at **€2,400 — deliberately *below* the §6 list prices** — because of A3 (§8): if usage
+is backfill rather than flow, steady-state ARPA lands 3–5× below acquisition-month ARPA. Sizing
+off list price would be fiction.
+
+> **🚩 A €65M TAM is a good bootstrapped business and a bad venture business** (most VC theses
+> need ~€1bn+). **Fund this with customers, not a seed round.** This single number should govern
+> how much is spent, how fast, and on what.
+
+**Note the dependency:** SAM-narrow is the *only* segment that exists if A1 (EU-as-driver) holds.
+If A1 fails, there is no EU premium and we compete on features inside the €19M SAM against
+Cloudglue — a materially worse business. That is why the A1 headline A/B (DISTRIBUTION.md) is the
+cheapest high-value experiment available.
+
+## 6. Pricing (initial hypothesis — validate against A3, not with design partners)
 
 Metric: **hours of video processed**. Simple, scales with value, easy to predict.
 
@@ -114,10 +142,27 @@ caps and result caching (PLAN.md Phase 3).
 
 ## 7. Go-to-market
 
-1. **Design partners first (weeks 0–8):** 3–5 companies from the founder's network (Denmark/Poland). Offer: free/cheap processing of a real video library in exchange for feedback, a testimonial, and pricing validation. One question validates the whole thing: *"You have recordings your AI agents can't see — will you pay to turn them into searchable docs that never leave the EU?"*
-2. **Developer-led motion:** public API docs, an honest technical blog (chunking strategy, cost engineering, GDPR architecture), llms.txt, MCP server. Channels: HN, r/LocalLLaMA, r/RAG, LinkedIn (founder has an audience in the .NET/architecture space).
-3. **Compliance-led landing page:** /security and /gdpr pages are sales collateral for the buyer's DPO — subprocessor list, retention policy, DPA download, data-flow diagram.
-4. **Later:** connectors marketplace (Teams/Zoom/Drive) as the expansion wedge; self-hosted enterprise edition as the top tier.
+> **Rewritten 2026-07-14.** The previous plan opened with *"Design partners first — 3–5 companies
+> from the founder's network."* **That is outreach, and the founder has ruled it out (no time).**
+> The motion is **self-serve / inbound**. → **DISTRIBUTION.md is authoritative**; this is the summary.
+
+**The consequence, stated plainly:** with no outreach, **traffic becomes the long pole and the
+top risk (A5)** — every other question is only *reachable* through it. Distribution therefore
+starts at PLAN.md Phase 0.3 and runs **in parallel with all engineering**, never after it.
+
+1. **The product is the marketing.** Free public YouTube tool → paste a URL, get real Markdown in
+   60 s, no signup, no trust required. It replaces *"upload your confidential internal recording
+   to a stranger's website"* as the first ask — which was the biggest leak in the old funnel.
+   Then: *"now try it on your own recording"* → 2 h free → one Stripe link.
+2. **Curated public gallery** — 10–25 processed CC-licensed talks; a compounding SEO asset and a
+   permanent live demo. **Curated, attributed — never a scaled transcript farm** (CLAUDE.md r8).
+3. **Developer-led content:** honest technical blog (chunking, cost engineering, GDPR
+   architecture — *sell the boring hard parts*), public API docs, llms.txt, MCP server later.
+   Channels: **LinkedIn first** (founder's existing .NET/architecture audience — cheapest by an
+   order of magnitude; *broadcasting is not outreach*), then HN, r/RAG, r/LocalLLaMA.
+4. **Compliance-led landing page:** /security and /gdpr as collateral for the buyer's DPO.
+   **Gated on A1** — if the EU headline arm loses the A/B, this stops being the lead message.
+5. **Later:** connectors marketplace as the expansion wedge; self-hosted enterprise edition on top.
 
 ## 8. Key risks & mitigations
 

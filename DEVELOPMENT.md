@@ -146,10 +146,23 @@ Real GCP from the local machine (via gcloud ADC):
   INFRA.md / PLAN.md / DEVELOPMENT.md is committed **together with the doc update**. The living
   docs are the source of truth; no ADRs.
 - **Living docs live at root; point-in-time memos live in `experiments/`.** A living doc states
-  what is true *now* and gets rewritten in place. A memo (e.g.
-  `experiments/workflow1-decision-memo.md`) captures what was decided *on a date, with the
-  evidence available then*, and is never edited afterwards — supersede it with a new one.
-  Don't let a memo rot at root pretending to be current.
+  what is true *now* and is rewritten in place. A memo captures what was believed *on a date,
+  with the evidence available then*.
+- **Memos are never authoritative.** `experiments/**/*.md` is a reasoning trail, not instructions.
+  **If a memo contradicts a living doc, the living doc wins** (CLAUDE.md says this too, because
+  it is the rule most likely to be forgotten by a fresh session).
+- **A memo's *analysis* is immutable — its *status* is not.** Never revise the reasoning; that
+  destroys the record of what was believed and why. But the moment a memo's conclusions are
+  overtaken, **add a status banner to the top and supersession marks to the affected sections**,
+  pointing at the living doc that now governs. A memo that silently contradicts the plan is worse
+  than no memo — it actively misleads the next session. *(This rule exists because
+  `workflow1-decision-memo.md` did exactly that within a day of being written: it recommended a
+  concierge test and "do not write product code", both reversed hours later when outreach was
+  ruled out.)*
+- **Graduate before you archive.** Anything in a memo that is still true and has no other home
+  (a number, a decision, a constraint) must be moved *into* a living doc first — otherwise
+  superseding the memo silently deletes it. Market sizing lived only in the Workflow-1 memo until
+  it was graduated to BUSINESS_MODEL §5a.
 
 ## 8. Definition of done & deploy
 
