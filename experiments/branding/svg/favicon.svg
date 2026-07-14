@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="vectorreel">
+  <title>vectorreel favicon</title>
+  <!-- Deliberately NOT the same geometry as logo-mark.svg. At 16px the full mark's three
+       bars mush together, so this drops to two bars, fattens the strokes and tightens the
+       margins. A favicon is a redraw, not a scale-down.
+
+       Two classes, split by role: `frame` only ever sets stroke (fill stays none), `solid`
+       only ever sets fill. Sharing one class for both made the dark-mode rule fill the
+       frame into a solid slab. -->
+  <style>
+    .frame { fill: none; stroke: #0B1020; }
+    .solid { fill: #0B1020; }
+    /* The ink frame vanishes against dark browser chrome, leaving the bars floating. */
+    @media (prefers-color-scheme: dark) {
+      .frame { stroke: #FFFFFF; }
+      .solid { fill: #FFFFFF; }
+    }
+  </style>
+  <rect class="frame" x="1.75" y="4.75" width="28.5" height="22.5" rx="5" stroke-width="3.5"/>
+  <path class="solid" d="M8 10.5 L8 21.5 L15.5 16 Z"/>
+  <rect x="19" y="12" width="9" height="3" rx="1.5" fill="#4F6BFF"/>
+  <rect x="19" y="17" width="6" height="3" rx="1.5" fill="#2DD4BF"/>
+</svg>

@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 
 from google import genai
 from google.genai import types
-from PIL import Image
+from PIL import Image, ImageFilter
 
 # --------------------------------------------------------------------------------------
 # Config
@@ -149,17 +149,21 @@ ASSETS: dict[str, Asset] = {
         notes="Primary mark. Favicon-safe, monochrome-friendly.",
         prompt=(
             "A single abstract geometric logo mark for a developer infrastructure company. "
-            "The mark fuses two ideas into ONE compact glyph: a film/video frame and a "
-            "stack of structured text lines. Concretely: a bold rounded-square bracket or "
-            "aperture form, and inside it three horizontal bars of decreasing length that "
-            "read simultaneously as lines of text and as a bar-code/waveform. "
-            "Perfectly symmetrical, centred, built on a strict geometric grid, thick "
-            "confident strokes of uniform weight. "
+            "The mark must express ONE transformation: VIDEO becoming STRUCTURED TEXT. "
+            "Both halves must be unmistakably present -- a mark that reads as only a "
+            "document, a list or a text file is a failure. "
+            "Construction: a bold rounded-square outer aperture (a video frame). Its LEFT "
+            "half contains a solid triangular PLAY symbol. Its RIGHT half contains three "
+            "stacked horizontal bars of decreasing length (lines of structured text). The "
+            "play triangle and the text bars sit on a shared centreline so the eye reads "
+            "left-to-right as 'play becomes text'. "
+            "Perfectly balanced, centred, built on a strict geometric grid, thick confident "
+            "strokes of uniform weight. "
             "It must survive being scaled down to a 16x16 favicon: no thin lines, no fine "
-            "detail, at most 4 shapes, and it must still read when filled in one flat "
+            "detail, at most 5 shapes, and it must still read when filled in one flat "
             "colour. "
-            f"{STYLE} {PALETTE} The mark itself is {INK} and {SIGNAL} with one small {VECTOR} "
-            "accent bar. "
+            f"{STYLE} {PALETTE} The aperture and play triangle in {INK} and {SIGNAL}; the "
+            f"shortest text bar in {VECTOR} as the single accent. "
             "Pure flat WHITE background, no shadow, mark floating centred with wide margin. "
             f"{NEGATIVE}"
         ),
@@ -295,25 +299,55 @@ ASSETS: dict[str, Asset] = {
 # --------------------------------------------------------------------------------------
 
 
-def knockout_white(img: Image.Image, thresh: int = 238) -> Image.Image:
-    """Cut a near-white background to transparent alpha.
+def knockout_white(img: Image.Image, thresh: int = 232) -> Image.Image:
+    """Cut the background to transparent alpha.
 
     Gemini image models cannot emit an alpha channel, so a 'transparent' logo has to be
-    made here. Feathered on luminance so edges stay smooth rather than jagged.
+    made here.
+
+    This flood-fills the light background inward from the image border rather than
+    thresholding on luminance globally. That distinction matters: a global threshold also
+    eats any white *inside* the mark (it punched a hole straight through the middle of the
+    first logo_mark), and it leaves a faint alpha residue wherever the model's "white"
+    background is actually 253-254 rather than a true 255. Only light pixels reachable from
+    the edge are background; enclosed light pixels are part of the artwork and stay opaque.
     """
     img = img.convert("RGBA")
-    px = img.load()
     w, h = img.size
+    px = img.load()
+
+    def light(x: int, y: int) -> bool:
+        r, g, b, _ = px[x, y]
+        return (r * 299 + g * 587 + b * 114) // 1000 >= thresh
+
+    # BFS inward from every light border pixel -> the connected background region.
+    bg = bytearray(w * h)
+    stack: list[tuple[int, int]] = []
+    for x in range(w):
+        for y in (0, h - 1):
+            if light(x, y) and not bg[y * w + x]:
+                bg[y * w + x] = 1
+                stack.append((x, y))
     for y in range(h):
-        for x in range(w):
-            r, g, b, _ = px[x, y]
-            lum = (r * 299 + g * 587 + b * 114) // 1000
-            if lum >= 255:
-                px[x, y] = (r, g, b, 0)
-            elif lum > thresh:
-                # feather: ramp alpha across the near-white band
-                a = int(255 * (255 - lum) / max(1, 255 - thresh))
-                px[x, y] = (r, g, b, a)
+        for x in (0, w - 1):
+            if light(x, y) and not bg[y * w + x]:
+                bg[y * w + x] = 1
+                stack.append((x, y))
+
+    while stack:
+        x, y = stack.pop()
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < w and 0 <= ny < h and not bg[ny * w + nx] and light(nx, ny):
+                bg[ny * w + nx] = 1
+                stack.append((nx, ny))
+
+    # Mask -> blur -> alpha. The slight blur feathers the cut so edges stay anti-aliased
+    # instead of going jagged; the artwork's own edge pixels keep partial alpha.
+    mask = Image.frombytes("L", (w, h), bytes(255 if v else 0 for v in bg))
+    mask = mask.filter(ImageFilter.GaussianBlur(0.6))
+    alpha = Image.eval(mask, lambda v: 255 - v)
+    img.putalpha(alpha)
     return img
 
 
@@ -393,12 +427,42 @@ def generate(asset: Asset, retries: int = 2) -> str | None:
         except Exception as e:  # noqa: BLE001
             msg = str(e).replace("\n", " ")[:180]
             if attempt <= retries:
-                print(f"  retry {attempt}/{retries}: {msg}")
-                time.sleep(2 * attempt)
+                # 429 RESOURCE_EXHAUSTED is common on europe-west4 image quota and the
+                # window is per-minute, so back off in tens of seconds, not seconds.
+                wait = 30 * attempt if "429" in msg or "RESOURCE_EXHAUSTED" in msg else 3
+                print(f"  retry {attempt}/{retries} in {wait}s: {msg}")
+                time.sleep(wait)
             else:
                 print(f"  FAILED: {msg}")
                 return None
     return None
+
+
+def rework(key: str) -> str | None:
+    """Re-run post-processing on an already-generated PNG. No API call, no cost.
+
+    Lets us repair a bad alpha cut without re-rolling the image -- which matters most for
+    the wordmark, where a re-roll risks losing a correctly-spelled 'vectorreel'.
+    """
+    asset = ASSETS[key]
+    path = os.path.join(OUT_DIR, f"{key}.png")
+    if not os.path.exists(path):
+        print(f"[{key}] nothing to rework at {path}")
+        return None
+
+    img = Image.open(path).convert("RGBA")
+    # Flatten any previous (bad) alpha back onto white; the RGB underneath is intact.
+    flat = Image.new("RGBA", img.size, (255, 255, 255, 255))
+    flat.alpha_composite(img)
+    img = flat.convert("RGB")
+
+    if asset.knockout:
+        img = knockout_white(img)
+    if asset.exact_size:
+        img = crop_to(img, asset.exact_size)
+    img.save(path)
+    print(f"[{key}] reworked {img.size[0]}x{img.size[1]} (no API call)")
+    return path
 
 
 def main() -> int:
@@ -407,6 +471,11 @@ def main() -> int:
     ap.add_argument("--list", action="store_true", help="list asset keys and exit")
     ap.add_argument("--model", help="override model for this run")
     ap.add_argument("--suffix", default="", help="append to output filename (for variants)")
+    ap.add_argument(
+        "--rework",
+        action="store_true",
+        help="re-run post-processing on existing PNGs; no API call, no cost",
+    )
     args = ap.parse_args()
 
     if args.list:
@@ -425,6 +494,11 @@ def main() -> int:
         return 2
 
     os.makedirs(OUT_DIR, exist_ok=True)
+
+    if args.rework:
+        done = [p for k in keys if (p := rework(k))]
+        print(f"\nreworked {len(done)}/{len(keys)} (no API calls, $0.00)")
+        return 0 if len(done) == len(keys) else 1
 
     loc = "global" if MODEL in GLOBAL_ONLY_MODELS else LOCATION
     print(f"project={PROJECT}  location={loc}  model={MODEL}")

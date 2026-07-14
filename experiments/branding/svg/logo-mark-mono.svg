@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="currentColor" role="img" aria-label="vectorreel">
+  <title>vectorreel mark (monochrome)</title>
+  <!-- Inherits the CSS `color` of its parent. Every shape is one colour and the counters
+       are holes, so this reads at any single colour, on light or dark, and when filled
+       black for print or stamped into a favicon. -->
+  <rect x="3.5" y="8.5" width="57" height="47" rx="9.5"
+        fill="none" stroke="currentColor" stroke-width="5"/>
+  <path d="M16 21.5 L16 42.5 L31 32 Z"/>
+  <rect x="36" y="21.5" width="17" height="5" rx="2.5"/>
+  <rect x="36" y="29.5" width="17" height="5" rx="2.5"/>
+  <rect x="36" y="37.5" width="10" height="5" rx="2.5"/>
+</svg>
