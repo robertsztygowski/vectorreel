@@ -7,20 +7,33 @@ EU SaaS: video → structured, timestamped Markdown for AI knowledge bases.
 **Read the living docs before non-trivial work. They are the source of truth — always current,
 rewritten in place.**
 
-| Doc | Authoritative for |
-|---|---|
-| **PLAN.md** | *What to do next.* Phase-by-phase execution order. **Start here.** |
-| **ARCHITECTURE.md** | What/how — pipeline, stack, ingestion paths, API, data model |
-| **BUSINESS_MODEL.md** | Why — problem, ICP, pricing, market size, risks, unit economics |
-| **DISTRIBUTION.md** | How customers are reached. Owns **A5, the top risk** |
-| **METRICS.md** | What we measure + **the decision rule attached to each number** |
-| **INFRA.md** | Current GCP state |
-| **DEVELOPMENT.md** | Full guidelines (this file is the summary) |
+**🎯 The goal: ~47 retained paying accounts** (METRICS.md N1). Everything below serves that.
+**The top risk is A5 — distribution.** Read PLAN.md's STATUS block first.
 
-⚠️ **`experiments/**/*.md` is NEVER authoritative.** Those are point-in-time memos and raw
-results: true on the date written, frozen afterwards, and routinely **superseded** by later
-decisions. They are a reasoning trail, not instructions. **If an experiment memo contradicts a
-living doc, the living doc wins — always.** Check the memo's status banner before quoting it.
+| Doc | Sole authority for |
+|---|---|
+| **PLAN.md** | *What to do next, and in what order.* **Start here** — the STATUS block is the 60-second brief. |
+| **METRICS.md** | 🔢 **Every load-bearing number, the five assumptions (A1–A5), and the decision rule attached to each.** |
+| **ARCHITECTURE.md** | The *target design* — pipeline, stack, ingestion paths, API, data model. (Not the build order; that's PLAN.md.) |
+| **BUSINESS_MODEL.md** | Problem, solution, positioning, ICP, pricing, non-goals. |
+| **DISTRIBUTION.md** | How customers are reached. Owns **A5**. |
+| **INFRA.md** | Current GCP state. |
+| **DEVELOPMENT.md** | Full guidelines (this file is the summary). |
+
+### 🚨 One fact, one home
+
+**A number or decision rule lives in exactly ONE doc. Everywhere else cites it by name.**
+*"Below break-even (METRICS.md N6)"* — never a second copy of the figure.
+
+On 2026-07-14 a superseded memo contradicted four living docs because the same numbers had been
+copied into all of them and only some were updated. **A number that lives in five files has five
+chances to be wrong and one chance to be right.** `scripts/check-docs.sh` enforces this and is part
+of the definition of done (rule 4).
+
+⚠️ **`experiments/**/*.md` is NEVER authoritative.** Point-in-time memos and raw results: true on
+the date written, frozen afterwards, routinely **superseded**. A reasoning trail, not instructions.
+**If an experiment memo contradicts a living doc, the living doc wins — always.** Check the memo's
+status banner before quoting it.
 
 ## Hard rules
 
@@ -30,7 +43,8 @@ living doc, the living doc wins — always.** Check the memo's status banner bef
 3. **Strict build:** `TreatWarningsAsErrors` + `Nullable` on; `dotnet format` before commit.
 4. **Definition of done** (before any commit to main): build clean → integration tests green
    (docker compose) → affected flow exercised e2e locally (real Vertex if pipeline/prompts touched)
-   → no secrets in diff → impacted living doc updated in the same commit.
+   → no secrets in diff → impacted living doc updated in the same commit →
+   **`scripts/check-docs.sh` passes** (no number restated outside METRICS.md).
 5. **Deploy is deliberate**, from local, after `tests/Live/` passes. Never auto-deploy.
 6. Every LLM call **and every compute step** records cost in the per-job ledger — product feature,
    not optional. (ffmpeg/Cloud Run transcode is ~30% of true COGS; metering only LLM calls

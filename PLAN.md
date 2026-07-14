@@ -1,8 +1,46 @@
 # PLAN — Benchmark, Demand Instrument & MVP Implementation
 
-> Session-by-session execution plan. Companion to ARCHITECTURE.md (§9 build order is the
-> authority on *what*; this file adds *how to run the sessions*). Check off / update as
-> phases complete — living doc rules apply (DEVELOPMENT.md §7).
+> **Living doc, and the authority on sequencing — what to do next, in what order.**
+> ARCHITECTURE.md is the authority on the *target design*; this file owns the *order it gets
+> built in*. Numbers and decision rules live in METRICS.md and are never restated here.
+> Living-doc rules apply (DEVELOPMENT.md §7).
+
+---
+
+# 🎯 STATUS — read this first
+
+**The goal.** **≈47 retained paying accounts** (METRICS.md N1). That covers the founder's salary
+and infra, and it is the only finish line. Not ARR, not signups, not COGS.
+
+**The bet.** EU teams building internal AI assistants have recordings their assistant cannot see.
+We turn those into timestamped Markdown it can cite, without the footage leaving the EU.
+
+**What is already settled.** Feasibility and margin. The pipeline works and COGS is measured at
+~7× inside the cheapest price (METRICS.md §1.2, A8). **Further cost engineering is procrastination
+in a lab coat.**
+
+**What is not settled — and it is everything that matters.** Demand, pricing, retention, and above
+all **whether anyone can be reached at all.** All five open assumptions live in **METRICS.md §2**.
+
+> ## 🚨 The one risk that governs the plan: **A5 — distribution.**
+> The founder has ruled out outreach, so the motion is **self-serve / inbound**. That makes
+> **traffic the long pole**: A1, A2, A3 and A4 are each only *reachable* through it, and content
+> compounds over **months**. Building for three months and *then* starting to publish serializes
+> the two slowest processes in the company.
+>
+> **⇒ The governing rule: start the slowest thing (distribution) first, and run it in parallel
+> with all engineering.** That single rule is why the phases below are ordered as they are.
+
+**Where we are now.** Phase 0 ✅ done. **Next: Phase 0.1** (YouTube `fileUri` spike, ½ session,
+≲ €1) — it is the critical path, because 0.1 gates 0.2, and 0.2 gates the entire demand
+instrument in 0.3.
+
+**How this ends.** The kill criteria are real and pre-committed — METRICS.md §2. If a genuine
+content effort cannot move traffic, **the business dies at A5, before product quality or pricing
+ever get a vote.** Say so early and out loud rather than building more product to avoid the
+finding.
+
+---
 
 ## How to use this file
 
@@ -15,27 +53,21 @@ CLAUDE.md auto-loads the hard rules; the prompt only needs to point at the phase
 
 ---
 
-## Governing principle (added 2026-07-14, after `experiments/workflow1-decision-memo.md`)
+## Which phase settles which assumption
 
-The de-risking pass ("should I build this at all?") produced one structural finding:
+**The assumptions themselves, their evidence, and their decision rules live in METRICS.md §2 —
+they are not restated here.** This table is only the map from assumption → phase.
 
-> **Feasibility and margin are measured and safe. Demand, pricing and retention have zero
-> evidence. The previous plan deferred all demand evidence to its final phase.**
-
-Because the GTM is **self-serve/inbound, with no founder outreach**, traffic is the long pole —
-it compounds over months. So the plan is reordered on one rule:
-
-**Start the slowest thing (distribution) first, and run it in parallel with all engineering.**
-
-The five open assumptions this plan exists to answer — full detail in the memo:
-
-| | Assumption | Where it gets tested |
+| | Assumption (METRICS.md §2) | Settled in |
 |---|---|---|
-| **A1** | EU residency is a *purchase driver*, not a checkbox | Phase 0.3 landing-page headline A/B |
-| **A2** | Buyers will buy rather than DIY with Gemini | Phase 4 Stripe checkout |
-| **A3** | Usage is recurring **flow**, not one-time **backfill** | Phase 4 cohort hour-decay metric |
-| **A4** | Output is accurate enough to be *citable* in a KB | Phase 0.2 public benchmark corpus |
-| **A5** | **Distribution works** — traffic can be acquired inbound | Phase 0.3 onward. **Top risk.** |
+| **A5** | Distribution works. **Top risk.** | **Phase 0.3 onward** |
+| **A1** | EU residency is a purchase driver | Phase 0.3 landing-page headline A/B |
+| **A2** | Buyers buy rather than DIY | Phase 4 Stripe checkout |
+| **A3** | Recurring flow, not one-time backfill | Phase 4 cohort hour-decay — **plus the N20 signup field, which reads it two months earlier** |
+| **A4** | Output is citable in a KB | Phase 0.2 public benchmark corpus; extended by `upload_repeat` in Phase 3 |
+
+⚠️ **Do not invoke a decision rule below its sample floor (METRICS.md §2.1).** The most likely way
+this plan fails is not a bad number — it is a *verdict called on 40 visitors*.
 
 ---
 
@@ -90,8 +122,9 @@ Questions:
    simpler parallel pipeline (no Stage A, offsets instead of ffmpeg). If no, we're capped at
    whatever fits one request.
 3. Confirm cost. **Stage A cannot run on a YouTube URL** (no local bytes → no ffmpeg → no
-   static-content detection), so the 67% cost lever is **unavailable** on this path. Expect the
-   full ~€0.38–0.45/video-hour, not the blended €0.26. Verify.
+   static-content detection), so the ~67% static-content lever is **unavailable** on this path.
+   Expect the **un-blended** figure, materially above the blended one (METRICS.md §1.2). Verify —
+   this is what sizes the abuse caps (METRICS.md N10).
 
 ⚠️ **Known constraint, do not design around it:** VPC Service Controls **disables `fileUri`
 media URLs entirely.** If the project is ever locked down for enterprise compliance, the
@@ -137,10 +170,10 @@ Deliverables:
 **This is the phase that decides the business, and it must start now and run in parallel with
 every engineering phase below.** Do not serialize it after the build.
 
-Rationale: with no outreach, the funnel needs roughly **2,000–5,000 qualified visitors to
-produce ~5 paying customers** (2–5% visitor→trial, 5–15% trial→paid). Content compounds over
-months. Building for three months and *then* starting to post serializes the two slowest
-processes in the company.
+Rationale: with no outreach, the funnel needs a **content-engine-sized** number of qualified
+visitors to produce a handful of paying customers (METRICS.md §1.4, N14–N15 — and note both input
+rates are *assumptions*). Content compounds over **months**. Building for three months and *then*
+starting to post serializes the two slowest processes in the company.
 
 Work:
 
@@ -195,9 +228,10 @@ offset-based segmentation) lands here as a parallel, simpler pipeline. Free/publ
   internal recording to a stranger's website" as the first ask — which was a brutal opening
   move and the biggest leak in the old funnel.
   - ⚠️ **Abuse controls, day one:** cap at first ~10–15 min, **cache by video ID**, rate-limit
-    per IP. The YouTube path can't use the static-content lever (~€0.45/video-hour), so
-    1,000 abusive hour-long videos ≈ €450 — real money against a ~€300/mo fixed base. Caching
-    makes a popular gallery page cost €0 on repeat views.
+    per IP. The YouTube path can't use the static-content lever, so it runs at the un-blended cost
+    (METRICS.md §1.2) — **1,000 abusive hour-long videos is real money against a fixed base this
+    small.** Enforce METRICS.md N10 (daily spend) and N11 (cache-hit rate); caching makes a popular
+    gallery page cost ≈ €0 on repeat views.
 - **Curated public gallery — 10–25 processed talks**, each with attribution + the original video
   embedded. **Not a scaled content farm.** Mass auto-generated transcript pages are exactly what
   Google's scaled-content-abuse policy targets, and republishing copyrighted transcripts at
@@ -239,9 +273,10 @@ Was *"lock pricing / onboard design partner #1"*. Pricing is now an **output** o
 data, not an input decided in advance. Rerun the benchmark matrix through the real pipeline;
 set pricing from A3; write the verdict into BUSINESS_MODEL §6.
 
-**Kill criteria — the honest version.** If, after ~100 trials: nobody pays, the EU headline arm
-loses the A/B, and cohort hour-decay says backfill — **stop.** The ~€65M TAM does not justify
-pushing uphill against a DIY alternative our own customers are qualified to build.
+**Kill criteria — the honest version.** If, past the sample floors (METRICS.md §2.1): nobody pays,
+the EU headline arm loses the A/B, and cohort hour-decay says backfill — **stop.** The TAM
+(METRICS.md N16) does not justify pushing uphill against a DIY alternative our own customers are
+qualified to build.
 
 ---
 

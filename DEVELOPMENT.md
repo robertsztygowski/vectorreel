@@ -156,13 +156,24 @@ Real GCP from the local machine (via gcloud ADC):
   overtaken, **add a status banner to the top and supersession marks to the affected sections**,
   pointing at the living doc that now governs. A memo that silently contradicts the plan is worse
   than no memo — it actively misleads the next session. *(This rule exists because
-  `workflow1-decision-memo.md` did exactly that within a day of being written: it recommended a
+  `w1-decision-memo.md` did exactly that within a day of being written: it recommended a
   concierge test and "do not write product code", both reversed hours later when outreach was
   ruled out.)*
 - **Graduate before you archive.** Anything in a memo that is still true and has no other home
   (a number, a decision, a constraint) must be moved *into* a living doc first — otherwise
   superseding the memo silently deletes it. Market sizing lived only in the Workflow-1 memo until
-  it was graduated to BUSINESS_MODEL §5a.
+  it was graduated to METRICS.md §1.5.
+- 🚨 **One fact, one home.** **A number or a decision rule lives in exactly ONE doc; everywhere else
+  cites it by name** — *"below break-even (METRICS.md N6)"*, never a second copy of the figure.
+  **METRICS.md owns every load-bearing number and every decision rule. PLAN.md owns the build
+  order. ARCHITECTURE.md owns the target design.** Enforced by `scripts/check-docs.sh`, which is
+  part of the definition of done.
+
+  *Why this is a rule and not a preference:* the W1 memo went stale in a day, but the reason it
+  went **undetected** is that its figures had been copied into four living docs. Prose that
+  contradicts prose is easy to spot; **a number that contradicts a number is not.** Duplication is
+  the mechanism of doc rot — the memo was only the symptom. When a value legitimately changes,
+  updating one row in METRICS.md must be sufficient.
 
 ## 8. Definition of done & deploy
 

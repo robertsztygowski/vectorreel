@@ -1,65 +1,110 @@
 # vectorreel — Workflow 2 Validation Kit
 
-> **Date:** 2026-07-14 · **Question:** Will anyone actually buy this?
-> **Inputs:** `experiments/workflow1-decision-memo.md` (W1) · `BUSINESS_MODEL.md` · `PLAN.md`
-> **Agents:** volt/product-manager → wshobson/content-marketer → wshobson/sales-automator → volt/ux-researcher
-> **Scope:** demand validation only. **No product code.** Landing page + 20 outreach sends + 5–8 interviews.
-> Point-in-time artifact — not a living doc.
+> **Date:** 2026-07-14 · **Question:** Will anyone want this — and can we even reach them?
+> **Authority:** PLAN.md · BUSINESS_MODEL.md · DISTRIBUTION.md · METRICS.md.
+> W1 (`experiments/agents/out/w1-decision-memo.md`) is a **superseded** reasoning trail, quoted
+> here only where its status banner says it still holds. Per CLAUDE.md: **the living doc wins.**
+> **Scope:** demand instrument only. **No product code.**
+> Point-in-time artifact — not a living doc, **not authoritative** (CLAUDE.md).
+
+> ## ✅ Graduated 2026-07-14 — these are now owned by living docs, not by this memo
+>
+> Per DEVELOPMENT.md §7 (*"graduate before you archive"*), everything here that was a **decision**
+> rather than a **draft** has been moved into a living doc. **Those copies govern; if this file
+> disagrees with them, they win.**
+>
+> | From this kit | Now lives in |
+> |---|---|
+> | The signup one-field question (archive-hours vs monthly-hours) — the early A3 read | **METRICS.md N20** |
+> | The checkout-abandon micro-survey — the only place "I could build this myself" can be said | **METRICS.md N21** |
+> | The reply-to invitation — *receiving* a reply is not *doing* outreach | **METRICS.md N22 + DISTRIBUTION.md §6** |
+> | The minimum-sample rule — no verdict below the floor; don't celebrate a false win either | **METRICS.md §2.1** |
+> | The positioning statement (EU clause deliberately second) | **BUSINESS_MODEL.md §4** |
+> | Trial-start-rate-by-referrer as the earliest high-value read | **METRICS.md §4 (A5)** |
+>
+> **What remains here and has *not* graduated:** the landing-page copy, the lifecycle email drafts,
+> and the channel yield estimates. These are **drafts to be executed in Phase 0.3**, not decisions —
+> they graduate into `web/` when the page is built, and should be rewritten freely before then.
 
 ---
 
-## 0. Context Recap
+## 0. Context Recap — and the reshape W2 had to undergo
 
-**Where the W1 memo actually located the risk.** Every High-importance / Weak-evidence
-assumption is **Value** or **Business viability**. Feasibility — the axis a technical founder
-de-risks first — is the one quadrant already closed (A8: COGS measured at €0.65/video-hour
-all-in, 7× under the cheapest price point). The verdict was 🟡 **RESHAPE**, not BUILD:
-*"stop building the SaaS and start selling the pipeline by hand."*
+### What the docs say, in the five bullets that shape this kit
 
-- **The riskiest DEMAND assumption W1 says to test first is A2 — "buyers will buy rather than
-  DIY."** Value risk, **weak** evidence. Gemini ingests native video; the ICP is dev teams
-  building AI assistants — the audience best equipped to build this in a weekend. We are
-  selling a wrapper to wrapper-builders. W1's primary instrument for A2 is the **concierge
-  test ending in a request for money** (*"€200 to process your next 20 hours"*). Everything in
-  this kit is built to get to that ask.
-- **Riding alongside: A1 — "EU residency is a purchase driver, not a checkbox."** Also Value /
-  weak. It is the entire differentiator and the most attackable claim we own (BUSINESS_MODEL §4
-  already concedes GCP is US-controlled under the CLOUD Act). W1 tests it with a headline A/B.
-  **See §6 for a correction: at n=20 the email A/B cannot carry this. The A1 signal in W2 comes
-  from whether GDPR surfaces *unprompted* in interviews.**
-- **ICP is BUSINESS_MODEL §5 #1, verbatim:** software companies / IT departments, 50–500
-  employees, building internal AI assistants — Teams/Zoom recordings, demo libraries, an "AI
-  adoption" mandate, developer buyer, uses the API. Beachhead **Poland + Denmark/Nordics/DACH**
-  (founder network via Conscensia/Unik). Secondary: AI consultancies/software houses (§5 #3) —
-  easiest to reach, and the harshest DIY audience, which is a feature for an A2 test.
-- **Pricing frame is fixed by measurement, not by guesswork.** All-in COGS **€0.011/video-minute
-  (€0.65/video-hour)**. The ask in this kit is W1's: **€200 for the next 20 hours** = €10/hour =
-  **€0.167/video-min → ~93% gross margin**. That is *above* API PAYG list (€0.15/min) and well
-  above Pro-at-full-usage (€0.099/min), so it does not undercut BUSINESS_MODEL §6 and does not
-  pre-commit us to a subscription. Deliberate: **BUSINESS_MODEL §6 is explicitly gated on A3**
-  (backfill vs. flow) and must not be locked until PLAN.md Phase 5. A prepaid pack is the one
-  ask that is valid under *either* answer.
-- **Where W2 sits in PLAN.md:** it is the demand half of **Phase 0.3** ("Demand instrument:
-  publish — 🚨 THE LONG POLE"), running in parallel with Phases 0.1/0.2. It consumes the Phase
-  0.2 public CC corpus as its demo asset and it **gates Phase 3** (thin trial slice). W1's rule
-  stands: **do not write product code until ≥2 of 5 prepay.**
+- **The riskiest assumption is no longer a demand assumption. It is A5 — distribution.** The
+  founder ruled out customer outreach, so **traffic is the long pole and it kills the company
+  first** (DISTRIBUTION.md). A1/A2/A3 are still weak-evidence Value/Business risks, but they are
+  now only *reachable through traffic*. W1 ranked A5 fifth; the living docs rank it first, and
+  the living docs win.
+- **The riskiest *demand* assumption, once traffic exists, is A2 — "buyers will buy rather than
+  DIY."** Weak evidence. The ICP is the audience best equipped to build this in a weekend; we are
+  selling a wrapper to wrapper-builders. **A1 (EU-as-purchase-driver) is the co-risk**, and
+  BUSINESS_MODEL §5a makes its stakes explicit: if A1 fails there is no EU premium, and we compete
+  on features inside a €19M SAM against Cloudglue — *"a materially worse business."*
+- **ICP: BUSINESS_MODEL §5 #1** — software companies / IT departments, **50–500 employees**,
+  building internal AI assistants. Developer buyer, uses the API, has Teams/Zoom recordings and an
+  AI-adoption mandate. Beachhead **Poland + Nordics/DACH**.
+- **Pricing frame is measured and safe.** All-in COGS **€0.011/video-minute (€0.65/video-hour)**,
+  ~7× inside the cheapest list price (Business @ full 150 h = €0.077/min, 85.7% margin). COGS is
+  solved and is *not* a risk. But **BUSINESS_MODEL §6's tier table is explicitly gated on A3** and
+  must not be locked until Phase 5 — so **this kit publishes no prices.**
+- **W2 is PLAN.md Phase 0.3** — *"Demand instrument: publish (no product code) — 🚨 THE LONG
+  POLE."* It runs **in parallel** with Phases 0.1/0.2, never after them, and it consumes Phase
+  0.2's public CC corpus as its raw material.
 
-### ⚠️ Conflict between the source docs — and how this kit resolves it
+### 🛑 Two of the four requested steps are dead. Here is what replaced them.
 
-W1 prescribes hand-selling. PLAN.md §"Governing principle" and BUSINESS_MODEL §9 state the
-founder has **ruled out design-partner outreach** — the motion is self-serve/inbound — and
-re-rank **A5 (distribution)** to top risk. These cannot both be followed literally.
+The workflow brief asked for **cold outreach to ~20 target users** and a **20-minute discovery
+interview guide**. Both are now explicitly forbidden:
 
-**Resolution used throughout this kit:** the A5 arithmetic (Pro contributes ~€131/mo; CAC above
-~€800 breaks payback) kills outbound as a **scaled acquisition channel**. It says nothing about
-outbound as a **research instrument**. Twenty emails that buy five conversations cost €0 and
-are the only way to hold A1/A2/A3 evidence inside a month; the inbound funnel that PLAN.md is
-built on takes months to compound and cannot answer them sooner.
+> *"The founder ruled out customer outreach. Everything in this memo that depends on talking to
+> people — the concierge test, the interview script, the cold-outreach A/B, 'sell it by hand' —
+> **is dead**."* — W1 memo, supersession banner
+>
+> *"The previous plan opened with 'Design partners first'. **That is outreach, and the founder has
+> ruled it out.** The motion is self-serve / inbound."* — BUSINESS_MODEL §7
 
-> **W2 is research, not sales. It does not reopen outbound as a GTM channel, and nothing here
-> should be read as a commitment to one.** PLAN.md Phase 0.3's landing page + LinkedIn/HN
-> broadcasting proceeds unchanged and in parallel. If W2 produces paying users, that is a
-> bonus, not the mechanism.
+**I have not written them.** Writing a cold-email sequence and an interview guide would produce a
+document that reads well and that the founder has already decided not to execute — the exact
+failure mode the `ead7c89` commit was written to stop. Instead, each agent's craft is redirected
+to its inbound equivalent:
+
+| Requested step | Status | What this kit contains instead |
+|---|---|---|
+| 1 · product-manager — positioning + ICP | ✅ **Alive** | Same, but *"where to find 20 of them"* becomes **"which channel puts 20 of them in front of us"** — a channel spec, not a prospect list. |
+| 2 · content-marketer — landing page | ✅ **Alive, and now the centre of gravity** | The landing page *is* the experiment. Both A/B arms + the launch artifact + the LinkedIn post that drives the traffic. |
+| 3 · sales-automator — cold outreach | 🛑 **Dead** | **Lifecycle email.** Same craft — sequences, one CTA, objection handling — pointed at people who *already raised their hand*. Automated, 1-to-many, **zero 1:1 contact**. |
+| 4 · ux-researcher — interview guide | 🛑 **Dead** | **The no-conversation evidence design.** What removing the interview *costs* us, and the cheapest instruments that recover part of it without a single outbound message. |
+
+### ⚠️ And a third correction: "landing page + no product" no longer reaches the wow
+
+DISTRIBUTION.md's core insight is *"the product is the marketing"* — the free YouTube tool is the
+hook. But that tool is **product code** (PLAN.md Phase 3), and W2 is explicitly a no-code pass.
+
+**The resolution — and it costs nothing.** The Phase 0.2 CC corpus is processed **by hand**,
+through the `experiments/001/` harness that already exists, and the resulting Markdown is
+published as **static pages**. A pre-rendered gallery is indistinguishable from a live tool for
+the only purpose that matters right now — *proving the output is real and getting an email
+address*. It is the free YouTube tool with the interactivity removed and **~€3 of Vertex spend**
+in place of a sprint.
+
+> **W2 therefore ships: a landing page (A/B), a statically pre-rendered gallery, the artifact
+> post, email capture, and analytics. Nothing else. No product code.**
+
+### ⚠️ Fourth correction: "~20 target users this week" is not achievable, and shouldn't be the goal
+
+Under an outbound motion, 20 users this week is a send list. Under an **inbound** motion it is
+not a thing you can decide to have. DISTRIBUTION.md's own math is **2,000–5,000 qualified
+visitors → ~5 paying customers**, and *"content compounds over months."* One LinkedIn post to a
+warm audience plausibly yields a few hundred impressions and a few dozen clicks — **not 20
+qualified trials, and certainly not in seven days.**
+
+**So W2's honest deliverable is not 20 users. It is: the instrument is live, the events are
+firing, and the tripwires are armed** — so that the 20th, 100th and 2,000th visitor each get
+counted correctly whenever they arrive. **See §5: at W2 scale, none of METRICS.md's thresholds
+can legitimately fire, and pretending otherwise is how a founder talks himself into a false
+positive.**
 
 ---
 
@@ -71,448 +116,443 @@ built on takes months to compound and cannot answer them sooner.
 > your assistant can't see — demos, trainings, incident reviews — into timestamped Markdown it
 > can cite, without the footage ever leaving the EU.**
 
-Anchored on *agents / knowledge bases*, never on "transcription" (BUSINESS_MODEL §8, the
-buyer-confusion risk). The EU clause is deliberately placed **second, as a qualifier** — that
-is the honest reflection of A1's evidence level. If interviews show GDPR surfacing unprompted,
-it earns promotion to the front of the sentence; if not, it gets cut, per the A1 decision rule.
+The EU clause sits **second, as a qualifier**, which is the honest reflection of A1's evidence
+level. It gets promoted to the front of the sentence **if and only if Arm A wins the headline
+A/B**; if it loses, it is cut from the positioning entirely and demoted to a trust section
+(DISTRIBUTION.md decision rule — *"do not rationalize a loss"*).
 
-**What we are NOT saying:** not "EU-sovereign" (Google is US-controlled — BUSINESS_MODEL §4
-honesty rule), not "better than Cloudglue", not "transcription".
+**Not saying:** "EU-sovereign" (Google is US-controlled — BUSINESS_MODEL §4 honesty rule) ·
+"better than Cloudglue" · **"transcription"**, ever (BUSINESS_MODEL §8, buyer-confusion risk).
 
-### ICP — one segment, three sourcing lanes
+### ICP
 
 | | |
 |---|---|
-| **Who** | Software company or in-house IT/platform team, **50–500 employees**, EU-domiciled. Buyer/champion is a **hands-on engineer or eng lead** — Head of Platform / AI Lead / Principal Engineer / CTO at the smaller end — who has personally been told to "make the company's knowledge available to an AI assistant". |
-| **Trigger** | An active RAG / internal-assistant / MCP project shipped or in flight **in the last 6 months**. Without this, they are not in market and the interview is worthless. **This is the single hard screen.** |
-| **Specific pain** | Their knowledge base has the wiki, Confluence, Slack and the repo in it. It does **not** have the 40-minute architecture walkthrough, the customer demo, the incident post-mortem call, or the onboarding series. So the assistant confidently answers from a stale wiki page while the correct answer is a thing someone *said and showed* in a recording six months ago. **The sharp edge: what was on the screen — the config, the diagram, the UI path — is exactly what nobody wrote down, and exactly what a transcript throws away.** |
-| **Current workaround (what to listen for)** | In rough order of what we expect to hear: (1) **nothing — video is silently out of scope** (most likely; the assistant is simply blind to it and everyone has quietly accepted that); (2) somebody dumped Whisper/Teams transcripts into the KB and the answers got *worse*, so they pulled them back out; (3) an engineer spent a weekend piping video into Gemini, it worked on one file, and it is now unmaintained; (4) a human is manually writing summaries of important recordings. **(1) and (2) are our buyers. (3) is the A2 threat, in person.** |
-| **Where to find ~20** | **Lane A — founder network (target 8–10, highest reply rate; PL + DK via Conscensia/Unik).** Warm-ish intros beat cold every time and cost nothing. **Lane B — public evidence of the trigger (target 6–8).** People who have *published* about building internal RAG: LinkedIn posts in the .NET/architecture circle the founder already has reach into; speakers at PL/DACH/Nordic AI-engineering meetups; authors of "we built an internal assistant" write-ups. Their post *is* the personalization. **Lane C — AI consultancies / software houses (target 3–4; §5 #3).** Public "we build RAG for clients" positioning; reachable via LinkedIn; they hold the DIY answer most brutally. |
-| **Disqualify immediately** | No AI/RAG project in flight · <50 or >500 staff · non-EU-domiciled · the recordings are *public marketing* video (that is the free YouTube tool, never the paid product — BUSINESS_MODEL §10). |
+| **Who** | Software company or in-house platform/IT team, **50–500 employees**, EU-domiciled. The person who acts is a **hands-on engineer or eng lead** — Head of Platform, AI Lead, Principal Engineer, CTO at the small end — who has personally been told to *"make our knowledge available to an AI assistant."* |
+| **Trigger (the hard screen)** | An **active RAG / internal-assistant / MCP project**, shipped or in flight, in the last 6 months. Without it they are not in market and no amount of copy converts them. |
+| **The specific pain** | Their knowledge base has the wiki, Confluence, Slack, the repo. It does **not** have the 40-minute architecture walkthrough, the customer demo, the incident post-mortem, the onboarding series. So the assistant answers confidently from a stale wiki page while the correct answer is something a colleague **said and showed** in a recording six months ago. **The sharp edge: what was on the screen — the config value, the diagram, the click path — is exactly what nobody wrote down, and exactly what a transcript throws away.** |
+| **Current workaround** | In expected order: (1) **nothing — video is silently out of scope**, and everyone has quietly accepted the assistant is blind to it; (2) somebody piped Whisper/Teams transcripts in, answers got *worse*, and they were pulled back out; (3) an engineer spent a weekend wiring video into Gemini, it worked on one file, and it is now unmaintained; (4) a human writes summaries by hand. **(1) and (2) are the buyers. (3) is A2 walking around in the wild.** |
+| **Disqualify** | No AI/RAG project in flight · <50 or >500 staff · non-EU · the recordings are *public marketing* video (that's the free tool, never the paid product — BUSINESS_MODEL §10). |
 
-**Why deliberately target the segment most able to DIY:** because A2 is the assumption under
-test. Validating "will they buy rather than build" against an audience that *cannot* build is
-worthless evidence. If ICP #1 pays, the business is real. If ICP #1 says *"we'd just pipe it to
-Gemini ourselves"*, that is W1's stated kill signal and we would rather hear it in week one
-than after Phase 3.
+### Where 20 of them find *us* — the channel spec
+
+**This replaces "where to find 20 of them." We do not go and get them.** Ranked by
+DISTRIBUTION.md's priority order, with the honest yield estimate for **week 1**:
+
+| # | Channel | Why it reaches this ICP | Realistic week-1 yield |
+|---|---|---|---|
+| **1** | **LinkedIn — the founder's .NET/architecture audience.** Broadcasting, not outreach: zero 1:1 contact. | Cheapest available by an order of magnitude, and **it already exists.** An owned audience is a bootstrapper's single biggest asset. | A few hundred impressions; **tens of clicks; low single-digit email captures.** Not 20 trials. |
+| **2** | **The curated gallery** (statically pre-rendered from the Phase 0.2 CC corpus). | Compounding SEO asset + permanent live demo + proof the output is real. **Curated, CC-only, attributed — never a transcript farm** (CLAUDE.md r8). | **~Zero in week 1.** This is a months-scale asset. Ship it now *because* it is slow. |
+| **3** | **HN / r/RAG / r/LocalLLaMA** — the artifact post. | Highest-variance surface. Right audience, wrong reliability. | 0 or 2,000. **One-shot, non-compounding — a spike, not a strategy** (DISTRIBUTION.md). |
+| **4** | Technical blog — *sell the boring hard parts*. | Directly answers A2/DIY: chunking, cost engineering, runaway generation, GDPR honesty. | Months. Start now anyway. |
+
+> 🚩 **The uncomfortable open question, straight from DISTRIBUTION.md, and W2's most valuable
+> byproduct:** *is the .NET/architecture audience the actual **buyer**, or a friendly crowd that
+> claps and doesn't convert?* **An owned audience that isn't the ICP is a vanity asset.**
+> `page_view` and `signup` both carry `referrer` — **watch trial-start rate by referrer from the
+> very first visitor.** If LinkedIn traffic bounces and r/RAG traffic converts, the entire
+> channel strategy is wrong and cheap to fix. If we learn that in week one, W2 has paid for itself
+> regardless of what A1 or A2 do.
 
 ---
 
 ## 2. Landing Page Copy  *(agent: wshobson/content-marketer)*
 
-> One page. One CTA. No pricing table (A3 is unanswered — publishing tiers now would pre-commit
-> the business model). Ships to the Cloud Run page already deployed per PLAN.md Phase 0.3.
+> One page. One CTA. **No pricing table** — A3 is unanswered, and publishing tiers now would
+> pre-commit the business model that METRICS.md exists to *derive*.
 
-### Hero — the A1 A/B
+### Hero — the A1 experiment
 
-Two arms, identical below the fold. **Arm B is the default** unless/until A1 earns the promotion.
+Identical below the fold. Assign `ab_arm` on first `page_view`, sticky per session.
 
-**Arm A — EU-lead** *(tests A1)*
+**Arm A — EU-lead**
 > # Your recordings never leave the EU.
 > Turn internal video — demos, trainings, incident reviews — into timestamped Markdown your AI
 > assistant can cite. Processed entirely in EU regions. Source video deleted after processing.
 
-**Arm B — capability-lead** *(the control)*
+**Arm B — capability-lead**
 > # Your AI assistant can't see what's on screen in your videos.
-> It reads your wiki, your repo, your tickets. It has never seen the 40-minute demo where
-> someone actually showed how the thing works. vectorreel turns that recording into timestamped
+> It has read your wiki, your repo, your tickets. It has never seen the 40-minute demo where
+> someone actually *showed* how the thing works. vectorreel turns that recording into timestamped
 > Markdown your assistant can cite — and it never leaves the EU.
 
-### Three value props — each tied to a W1 assumption
+> **Primary metric: `signup` rate, not click-through.** Clicks measure curiosity; signups measure
+> intent (METRICS.md A1). **If Arm A does not clearly beat Arm B, EU is a checkbox — move all
+> positioning to the capability story, and do not rationalize the loss.**
 
-**1. A transcript throws away the answer.** *(→ A4 / the core capability claim)*
-The config value, the architecture diagram, the exact UI path, the code on the slide — none of
-it is spoken aloud, so none of it survives transcription. We capture **what was shown**
-separately from **what was said**, so your retrieval layer can weight them differently. The
-demo below answers a question that is *only* answerable from a screen.
+### Three value props
+
+**1. A transcript throws away the answer.** *(→ A4, and the whole capability claim)*
+The config value, the architecture diagram, the exact UI path, the code on the slide — none of it
+is spoken aloud, so none of it survives transcription. We capture **what was shown** separately
+from **what was said**, so your retrieval layer can weight them differently. *The demo below
+answers a question that is only answerable from a screen.*
 
 **2. Every claim carries a timestamp, so your assistant can cite it.** *(→ A4)*
 Every section is anchored `[00:14:32]`. When the assistant answers, it links to the second the
-answer came from — a human can verify it in one click. **A hallucinated timestamp poisons a
-knowledge base, and trust doesn't come back**, so the output is designed to be checkable, not
+answer came from, and a human verifies it in one click. **A hallucinated timestamp poisons a
+knowledge base and the trust doesn't come back** — so the output is built to be *checkable*, not
 merely fluent.
 
-**3. Plain Markdown files. No lock-in, and nothing to rip out.** *(→ A2 — the honest version)*
-You get files. Put them in your repo, your GCS bucket, Obsidian, SharePoint, your vector DB.
-There is no retrieval stack of ours to adopt and no proprietary format to escape. We do the
-part nobody enjoys — chunking long video, holding cost down, keeping the schema identical
-across 500 files, retrying the runs that fall over — and then we get out of the way.
+**3. Plain Markdown files. No lock-in, nothing to rip out.** *(→ A2, honestly)*
+You get files. Put them in your repo, your bucket, Obsidian, SharePoint, your vector DB. There is
+no retrieval stack of ours to adopt and no format to escape. We do the part nobody enjoys —
+chunking long video, holding cost down, keeping the schema identical across 500 files, retrying
+the runs that fall over — and then we get out of the way.
 
 ### How it works
 
-1. **Video in.** Upload a file, or POST it to the API. Meetings, demos, trainings, talks.
-2. **We read it twice — audio *and* screen.** Speech is transcribed and cleaned; frames are read
-   for on-screen text, slides, code and UI state; the two are fused into one document.
-3. **Markdown out.** YAML frontmatter, topic sections, `[hh:mm:ss]` anchors, and a clean
-   separation of *spoken* vs *shown on screen*. Identical schema on every file.
-4. **The source video is deleted.** Default, not a setting you have to find.
+1. **Video in.** Upload a file, or POST to the API.
+2. **We read it twice — audio *and* screen.** Speech transcribed and cleaned; frames read for
+   on-screen text, slides, code, UI state; the two fused into one document.
+3. **Markdown out.** YAML frontmatter, topic sections, `[hh:mm:ss]` anchors, and a clean split
+   between *spoken* and *shown on screen*. **Identical schema on every file.**
+4. **The source video is deleted.** Default — not a setting you have to go and find.
 
-*(→ link: side-by-side "plain transcript vs. vectorreel Markdown" + a RAG answering a
-screen-only question. Built on a **public CC-licensed video** from PLAN.md Phase 0.2, so it can
-actually be shared. This artifact is the single highest-value inbound asset we own.)*
+*(→ The artifact: side-by-side **plain transcript vs. vectorreel Markdown**, plus a RAG answering
+a question only answerable from on-screen content. Built on a **public CC-licensed video** from
+Phase 0.2, so it can actually be shared. **This is the entire pitch in one image** and the single
+highest-value inbound asset we own — DISTRIBUTION.md.)*
 
 ### EU & GDPR — the honest version
 
-> **What is true today.** Processing runs in **EU regions only** (GCP `europe-central2` /
-> `europe-west3`), under Google's DPA with Vertex AI **no-training terms**. Your source video is
-> **deleted after processing** by default. We never train on customer data — contractually,
-> ever. The subprocessor list is short and published.
+> **True today.** Processing runs in **EU regions only** (GCP `europe-central2` / `europe-west3`),
+> under Google's DPA with Vertex AI **no-training terms**. Your source video is **deleted after
+> processing**, by default. We never train on customer data — contractually, ever. The
+> subprocessor list is short and published.
 >
-> **What is not true today, and we will not pretend otherwise.** This is **EU data residency,
-> not EU sovereignty.** Google is a US company and therefore in scope of the CLOUD Act. Any
-> vendor telling you "EU region" means your data is beyond US legal reach is telling you
-> something your DPO will take apart in ten minutes.
+> **Not true today, and we won't pretend otherwise.** This is **EU data residency, not EU
+> sovereignty.** Google is a US company and therefore in scope of the CLOUD Act. Any vendor
+> telling you "EU region" means your data is beyond US legal reach is telling you something your
+> DPO will take apart in ten minutes.
 >
 > **Where we're going.** An **EU-owned infrastructure option** (OVHcloud / Scaleway) is on the
-> roadmap, and a self-hosted edition after it. If full sovereignty is a hard requirement for you
-> today, say so on the call — it moves up the roadmap, and we would rather lose the deal than
-> win it on a claim that doesn't hold.
+> roadmap; a self-hosted edition after it.
 
-*(Rationale — BUSINESS_MODEL §4 honesty rule: overclaiming gets destroyed by any competent DPO,
-and this page's actual reader is that DPO. Honesty here is the sales asset.)*
+*(BUSINESS_MODEL §4 honesty rule. This page's real reader is the buyer's DPO, and overclaiming
+gets destroyed by a competent one. **Honesty is the sales asset.** Note this section is
+**gated on A1** — if Arm A loses, it stays on the page but stops being the lead message.)*
 
 ### FAQ
 
 **Is this just transcription?**
-No — and if transcription were enough, you'd already be done: Whisper is free. The value is in
-what the transcript *cannot* contain: the slide, the config, the diagram, the UI path. We
-produce one document that keeps *shown* and *said* apart and timestamps both.
+No — and if transcription were enough you'd be done already: Whisper is free. The value is in what
+a transcript *cannot* contain: the slide, the config, the diagram, the click path. We produce one
+document that keeps *shown* and *said* apart, and timestamps both.
 
 **Why wouldn't I just send the video to Gemini myself?**
 For one video, you should — genuinely, it works, and we'd rather you find that out than be sold
-something. It stops working around video number fifty: chunking an hour-long recording within
-context limits, keeping the schema stable across every file so retrieval doesn't degrade,
-capping cost per hour, and retrying the ~8% of model calls that run away. That plumbing is the
-product. **We publish our real cost per video-hour so you can check the maths yourself.**
+something. It stops working somewhere around video fifty: chunking an hour-long recording without
+losing context at the segment boundary, keeping the schema stable across every file so retrieval
+doesn't degrade, capping cost per hour, and retrying the **~8% of model calls that try to emit 60k
+tokens and fall over.** That plumbing is the product. **We publish our real cost per video-hour so
+you can check the arithmetic against your own.**
 
 **What happens to our video?**
 Deleted after processing, by default. We keep the Markdown you asked for and the job's cost
-ledger. We do not build a video library — there is nothing here to breach.
+ledger. We are not building a video library — **there is nothing here to breach.**
 
 **Is it accurate enough to put in a knowledge base?**
-That is the right question, and *"wrong is worse than absent"* is the standard we hold
-ourselves to. Every claim is timestamped so any answer is verifiable in one click. We publish
-benchmarks per content type — screen-recording, slide-talk, talking-head — including where the
-output is weakest.
+The right question, and *"wrong is worse than absent"* is the standard. Every claim is timestamped,
+so any answer is verifiable in one click. We publish benchmarks per content type — screen
+recording, slide talk, talking head — **including where the output is weakest.**
 
 **What does it cost?**
-We're setting pricing with our first users rather than guessing at it, so there's no pricing
-page yet. What we can tell you: our measured all-in cost is **€0.65 per video-hour**, and we
-publish it. If you want to move now, the first working arrangement is **€200 for your next 20
-hours of video** — flat, prepaid, no subscription.
+There's no pricing page yet, deliberately: we're setting pricing from what early users actually
+do, not from a guess. What we can tell you is our measured all-in cost — **€0.65 per video-hour** —
+and we publish how it breaks down.
 
-### Primary CTA
+### Primary CTA — one, and only one
 
-> ### Send us one recording. Get the Markdown back. Free.
-> One real internal video — the one your assistant should have seen and hasn't. We'll process it
-> and send back the Markdown within 48 hours. Drop it in your own RAG and ask it five questions
-> you actually care about. **No signup, no card, no product to install — just reply to a human.**
+> ### See it on a video you already know.
+> Pick a talk from the gallery. Read the Markdown it produced. Then ask yourself whether your
+> assistant could answer from that.
 >
-> **[ Book 20 minutes → ]**
+> **[ Browse the gallery → ]**  ·  *secondary, below the fold:* **[ Tell me when I can upload my own → ]** (email)
 
-*(Single CTA. The email-capture field is the fallback for the not-yet-ready — PLAN.md Phase 0.3:
-"Email capture. Nothing more.")*
+**Why the gallery, not the email box, is the primary CTA:** DISTRIBUTION.md is explicit that the
+old funnel's biggest leak was opening with *"upload your confidential internal recording to a
+stranger's website."* An email field is a smaller ask than that, but it is still an ask **placed
+before any value has been delivered.** The gallery costs the visitor nothing, risks nothing, and —
+because they already know the talk — lets them **verify the output is good without trusting us at
+all.** The email capture comes *after* the wow, which is the entire architecture of this funnel.
 
 ---
 
-## 3. Cold Outreach Sequence  *(agent: wshobson/sales-automator)*
+## 3. Lifecycle Email  *(agent: wshobson/sales-automator — redirected)*
 
-**Target:** 20 sends (Lane A 8–10 · Lane B 6–8 · Lane C 3–4).
-**Ask:** 20-minute call. **Not** a demo, **not** a trial — a call. The concierge delivery is
-what happens *after* the call, and the €200 ask happens after that.
-**Sequence:** Day 0 → Day 4 → Day 10. Then stop. Three touches, no more.
+> 🛑 **The cold-outreach sequence this step originally called for is not written, and must not
+> be.** Outreach is ruled out. **What survives is the craft:** short, one-CTA, value-first
+> sequences with real objection handling — pointed at people who **already raised their hand.**
+> Every message below is **automated and 1-to-many. Zero 1:1 contact. This is not outreach.**
 
-**Personalization variables**
-`{first_name}` · `{company}` · `{trigger}` — the specific public evidence they are in market
-(their LinkedIn post, their meetup talk, the assistant they shipped). **No `{trigger}`, no
-send.** · `{recording_type}` — the recording *their* company obviously has (sprint demos,
-customer calls, onboarding series) · `{referrer}` — Lane A only.
+**Trigger:** the visitor gave an email address after seeing the gallery. That is the *only* entry
+point. There is no list, and there is no send button.
 
-### A1 A/B split
+### Email 1 — immediate, on email capture · 71 words
 
-10 sends use the **EU-lead** subject; 10 use the **capability-lead** subject. Stratify across
-lanes so one arm doesn't get all the warm intros — that would confound the result completely.
-**Log it, but read §6 before believing it: n=20 cannot settle A1.**
+**Subject:** the Markdown from that talk
 
-| Arm | Subject A/B pair |
-|---|---|
-| **EU-lead** | "your recordings, processed without leaving the EU" · "{company}'s recordings + a US processor?" |
-| **Capability-lead** | "the part of {company}'s demos your assistant can't see" · "your AI assistant hasn't watched the demo" |
-
-*(Lowercase, lightly informal. Nothing that reads like a mail-merge.)*
-
----
-
-### Email 1 — Day 0 · 98 words
-
-**Subject:** *(per arm, above)*
-
-> Hi {first_name} — {trigger}, which is why I'm writing.
+> Thanks for the address.
 >
-> A question I keep hearing when teams do this: the assistant reads the wiki and the repo, but
-> it's never seen {recording_type}. And the useful part of those — the config on screen, the
-> diagram, the actual click path — was never spoken aloud, so a transcript loses it anyway.
+> Here's the full output for the talk you were looking at, as a file: [link]. Drop it into your own
+> RAG and ask it something that's only shown on screen, never said out loud. That's the test that
+> matters — and it's the one a transcript fails.
 >
-> I turn recordings into timestamped Markdown that keeps *shown* and *said* separate, so a RAG
-> can cite it. Processed in the EU, source deleted after.
->
-> Worth 20 minutes to hear how you handled video? I'm not selling — I want to know if this is
-> even a real problem.
-
-*(Lane A opener swaps to: "{referrer} suggested I talk to you — {trigger}.")*
-
----
-
-### Email 2 — Day 4 · 92 words
-
-**Subject:** Re: *(same thread)*
-
-> Hi {first_name} — following up with something concrete instead of another ask.
->
-> Here's a public conference talk run through the pipeline: [link]. Plain transcript on the
-> left, the Markdown on the right. At the bottom, a RAG answers a question that's **only**
-> answerable from a slide — the transcript version can't touch it.
->
-> That's the whole pitch, and it takes 30 seconds to judge.
->
-> If it's interesting: send me one real internal recording and I'll process it and send the
-> Markdown back, free. If it isn't — reply "not a problem we have" and I'll leave you alone.
-
-*(This email is the workhorse. It is the Phase 0.2 artifact doing the selling, and "reply and
-I'll leave you alone" reliably harvests the honest no — which for a research instrument is a
-**successful outcome**, not a failure.)*
-
----
-
-### Email 3 — Day 10 · 74 words
-
-**Subject:** last one — closing the loop on video + RAG
-
-> {first_name} — closing this out, no reply needed.
->
-> I'm trying to settle one question this month: whether "our AI assistant can't see our
-> recordings" is a real problem people would pay to fix, or just a nice-to-have everyone lives
-> with. Genuinely useful answers so far have included "we tried transcripts and pulled them back
-> out" and "honestly, nobody's asked".
->
-> If either is true at {company}, I'd still take the 20 minutes. If not, thanks for reading.
+> Private uploads open shortly. I'll send you one email when they do, and nothing else.
 >
 > — {name}
 
-*(The break-up asks for the *answer*, not the meeting. At n=20 an honest "nobody's asked" is
-worth more than a polite call.)*
+*(The promise "nothing else" is load-bearing. It is also the reason this list stays clean.)*
 
----
+### Email 2 — when private upload opens · 84 words
 
-### Objection handling
+**Subject:** you can upload your own recording now
 
-| They say | You say |
+> You asked to know when this opened — it's open.
+>
+> **Two hours of video, free, no card.** Magic link, no password: [link]
+>
+> The one to try first is the recording your assistant *should* have seen and hasn't — the
+> architecture walkthrough, the demo, the incident review. Not the polished marketing video.
+>
+> Processed in the EU. **Your source file is deleted after processing.** You get Markdown files
+> you own outright — there's nothing here to migrate off later.
+
+### Email 3 — on `job_completed`, the wow moment · 66 words
+
+**Subject:** your Markdown is ready
+
+> Done — [download].
+>
+> **The test I'd run:** ask your assistant something that was only ever *shown* on screen in that
+> recording. A config value, a diagram, a click path. If it answers and cites the timestamp,
+> that's the whole product.
+>
+> **It cost us €{cost} to process. Reply and tell me what it got wrong** — I read every one.
+
+> 🔑 **"Reply and tell me what it got wrong" is the most important line in this kit.**
+> The founder ruled out *doing* outreach. He did not rule out *receiving* a reply. This costs zero
+> founder-hours until someone writes back, and anyone who does is self-selected, high-intent, and
+> holding the exact qualitative signal METRICS.md admits we threw away. **It is the only surviving
+> channel through which a human sentence can reach us — and it does not violate the constraint.**
+> Publishing the per-job cost in the same breath is not a flex; it is the A2 argument (*"here is
+> what DIY would cost you, before your time"*) made without a single sales word.
+
+### Email 4 — day 3 after first job, only if no second upload · 58 words
+
+**Subject:** one more?
+
+> One question, then I'll stop.
+>
+> You processed one recording. **Did it earn a second?**
+>
+> If yes: [upload another]. If no — hit reply with the reason, even one word. *"Timestamps were
+> off"* or *"nobody's asked for this"* are both genuinely more useful to me than silence.
+
+*(This email is instrumentation wearing a friendly hat. **`upload_repeat` is the A4 signal** —
+METRICS.md: *"satisfaction surveys measure politeness; a second upload measures trust."* The
+reply-with-a-reason ask is the cheapest possible recovery of the interview we're not allowed to
+run.)*
+
+### Objection handling — relocated
+
+**There is no call, so there is no objection-handling script.** Every objection must be pre-answered
+in copy, or it is never answered at all. That is the real cost of removing the conversation, and
+it is why the FAQ above is written the way it is.
+
+| The objection | Where it now lives |
 |---|---|
-| **"We'd just use Gemini directly."** | **Do not fight this — it is the A2 data point, and this is the single most important sentence in the whole workflow. Log it verbatim, then get curious:** "Totally fair — has anyone actually done it yet? What happened?" *If someone tried and it's rotting unmaintained, that's a buyer. If they shipped it and it works, that's the DIY gap closing, and we need to know.* |
-| **"Send me pricing."** | "There isn't a pricing page — I'm setting it with the first few users. Measured cost is €0.65/video-hour, and I publish that. If you want to move now: €200 for your next 20 hours, flat, no subscription." |
-| **"GDPR/DPO would need to review."** | **A1 gold — dig, don't reassure.** "What did your DPO block last time? What made a vendor easy to approve?" *Then the honest line:* EU regions, no training, source deleted — but Google is US-owned and I won't pretend that's sovereignty. |
-| **"We don't have that much video."** | "How much is 'not much'? And is it a back catalogue, or does it keep arriving?" **← This is A3, and it is the most valuable answer in the email thread. Ask it of everyone, including the ones who say no.** |
-| **Silence.** | Three touches, then stop. A non-reply is data (weak trigger, or a non-problem); it is not an invitation to a fourth email. |
+| *"We'd just use Gemini directly."* | FAQ #2 + the technical blog. **The only honest answer is to concede the easy case and show the hard one.** |
+| *"Send me pricing."* | FAQ #5. No pricing page — A3 is unanswered. |
+| *"Our DPO would have to review this."* | The GDPR section, with the CLOUD Act conceded up front. |
+| *"We don't have that much video."* | 🚨 **Nowhere — and this is A3.** It cannot be pre-answered in copy because **it is a question we need to ask *them*.** See §4. |
 
 ### Tracking
 
-Per send, one row: `lane · arm · trigger · sent · opened · replied · reply sentiment
-(interested / honest-no / DIY / silent) · call booked · recording received · €200 asked · paid`.
-A spreadsheet. Do not build a CRM.
-
-**The metric that matters is not reply rate — it is `calls booked` and, downstream, `paid`.**
-A 40% reply rate that produces zero recordings has taught us nothing.
+Per METRICS.md's event schema — `page_view`, `signup`, `upload_started`, `job_completed`,
+`output_downloaded`, **`upload_repeat`**, `checkout_clicked`, `payment_succeeded` — all carrying
+`referrer` and `ab_arm`. **Not a CRM. Not a marketing automation suite.** A table.
 
 ---
 
-## 4. Interview Guide — 20 minutes  *(agent: volt/ux-researcher)*
+## 4. Evidence Without Conversation  *(agent: volt/ux-researcher — redirected)*
 
-**Objective:** decide A2 (buy vs. DIY), collect A3 (backfill vs. flow), and detect A1 *without
-ever naming GDPR*.
+> 🛑 **The 20-minute discovery interview guide is not written.** Interviews are outreach.
+> **The honest work of this step is to state what that costs, and to design the cheapest
+> instruments that recover part of it without a single outbound message.**
 
-**Rules of engagement — the whole validity of this rests on these:**
+### What we gave up — METRICS.md says this itself, and it should not be softened
 
-1. **Never describe the product before question 6.** Every question up to that point is about
-   **past behaviour**, never about a hypothetical future. "Would you use a tool that…" produces
-   polite, worthless yeses.
-2. **Never say "GDPR", "EU", "residency" or "compliance" first.** If we introduce it, we have
-   destroyed the A1 test — the buyer will agree it matters, because who wouldn't. **A1 is only
-   validated if the buyer raises it unprompted.**
-3. **Chase the specific, past, concrete instance.** "The last time", not "generally".
-4. **Shut up.** Silence after a question is the instrument. The interviewer talks < 20% of the
-   time.
+> *"Removing the conversation means **the Stripe link now carries the entire burden of detecting a
+> vitamin.** There is no longer any human signal upstream of payment."* — W1 memo supersession
+> banner
+>
+> *"Enthusiasm without payment is the single most common way a vitamin gets mistaken for a
+> painkiller, and it is precisely what the concierge test was designed to expose."* — METRICS.md,
+> Anti-metrics
 
-### Questions
+**The three things the interview would have caught that nothing else now catches:**
 
-**Warm-up (2 min)** — "Tell me about the AI assistant you've built — what's in it, who uses it,
-what's it actually good at?" *(Also re-confirms the trigger. If there is no assistant, end the
-interview politely; they are not the ICP.)*
+1. **The *why* behind a non-conversion.** A funnel tells you 95% didn't click checkout. It never
+   tells you whether that was price, trust, output quality, or *"nobody has ever asked me for
+   this."* **Those four require four completely different responses, and the funnel cannot
+   distinguish them.**
+2. **A1 unprompted.** The headline A/B measures *which sentence converts better*. It cannot tell
+   you whether GDPR is a genuine blocker or a form field, because we are the ones who raised it.
+   **A/B-testing our own claim is a weaker instrument than hearing a stranger raise it first, and
+   we should be honest that we downgraded here.**
+3. **A3 before the cohort matures.** Cohort hour-decay is the *right* metric and it takes **two
+   months** to read. A single interview question — *"archive hours vs. hours recorded per month"* —
+   predicts it in thirty seconds.
 
-**Q1 — The pain, if it exists (4 min)** *→ A2 precondition*
-> "Walk me through the last time someone at {company} needed information that only existed in a
-> recording. What did they actually do?"
+### The four instruments that recover what can be recovered — all zero-outreach
 
-*Listen for:* did they find it, or give up? How long? Did they ask a human instead?
-🔴 **Kill signal:** *"they just asked a colleague"* — and nobody minds. Then the pain is social,
-not informational, and we are selling a vitamin.
+**Instrument 1 — the one-field signup question.** *(A3, early read)*
+METRICS.md explicitly asks for this: *"capture at signup, if it can be asked in one field without
+friction: archive hours vs. hours recorded per month."*
 
-**Q2 — Is video even missed? (3 min)** *→ A2*
-> "What's in the assistant's knowledge base today, and who did the work to get each source in?"
-> Then: **"Was video ever considered? What happened to that idea?"**
+> **On the magic-link screen, one control, skippable:**
+> *"Roughly how much video do you have?"*
+> `[ ~___ hours in the archive ]` and `[ ~___ hours added per month ]`
 
-*The gold is in the second half.* "Never came up" and "we tried and it made things worse" are
-completely different businesses. The first is a missing-category problem — we must create the
-demand. The second is a failed-attempt problem — the demand exists and is unmet, which is much
-better news.
+- **A ratio > 20:1 predicts backfill** — two months before the cohort data can say so.
+- **Skippable, and the skip rate is itself data.** If 80% skip, we've learned they don't know —
+  which for a "we have a video problem" claim is a finding in its own right.
+- **This is the single highest-value non-code line in the kit**: one form field, answering the
+  assumption that decides *what business this is*.
 
-**Q3 — The A1 trap (3 min)** *→ A1. Do not lead.*
-> "Has anything ever been blocked from, or pulled out of, that knowledge base — and why?"
+**Instrument 2 — the checkout-abandon micro-survey.** *(A2, the *why*)*
+One question, one click, fires on `checkout_clicked` without `payment_succeeded` inside 24h:
 
-*Sit in the silence.* If GDPR / legal / "we couldn't send that to a US service" / the DPO
-surfaces here **unprompted**, A1 is live. If they talk only about accuracy, noise or effort —
-**EU is hygiene, not a wedge**, and the positioning must move to the capability story.
+> **"What stopped you?"** → `Too expensive` · `Output wasn't good enough` · `I could build this
+> myself` · `Not my decision to make` · `Just looking`
 
-**Q4 — Procurement reality (3 min)** *→ A1, confirmation*
-> "Last time you onboarded an AI vendor that touched your data — what did procurement or your
-> DPO actually ask you? What made a vendor easy or hard to approve?"
+**"I could build this myself" is the A2 kill signal**, and this is the only place in a
+conversation-free funnel where it can ever be uttered. Five radio buttons is a poor substitute for
+an interview — **it is also infinitely better than the zero we currently have.**
 
-*Listen for:* was "US processor" ever an actual **blocker**, or just a form field? "We asked and
-moved on" = checkbox. "We rejected a vendor over it" = wedge. **This distinction is the entire
-A1 verdict.**
+**Instrument 3 — the reply-to invitation.** *(A1/A2/A4, qualitative)*
+Every lifecycle email invites a reply (§3). **Inbound replies are not outreach**, they cost nothing
+until they arrive, and every one is a self-selected high-intent user. **Read every reply. Log
+GDPR mentions separately** — an *unprompted* GDPR mention in an inbound reply is the closest thing
+to the real A1 test that survives, and it is worth more than the headline A/B.
 
-**Q5 — The volume question (3 min)** *→ A3. The most valuable 3 minutes in the kit.*
-> "If someone had to make your last 20 recordings searchable next week — who'd do it, how long,
-> and out of whose budget?" Then, explicitly:
-> **"And how many hours of recording sit in the archive versus how many hours get recorded in a
-> normal month?"**
-
-*Write both numbers down.* Archive hours : monthly hours **is A3**, and A3 decides whether this
-is a subscription business or a prepaid-credit business. 200:5 is a backfill business.
-40:20 is a flow business. **Ask this of everyone — including the people who tell you no.**
-
-**Q6 — The DIY question (3 min)** *→ **A2, the core.** First time the product may be named.*
-> "If I told you this existed — video in, timestamped Markdown out, EU-processed, files you own —
-> what's your honest first reaction?"
-> Then, **and this is the question that matters:** **"Would you build it or buy it? Walk me
-> through how you'd decide."**
-
-*Do not defend.* Let them talk through the build. Listen for whether they estimate the *weekend*
-version (naive: one file, one prompt) or the *real* one (chunking, schema stability, cost caps,
-the ~8% of runs that fall over, 500 files staying consistent). **If they estimate the real one
-and still say build — A2 is in serious trouble, and we should be grateful to know.**
-
-**Q7 — The ask (2 min)** *→ A2, the only answer that counts*
-> "Send me one real recording. I'll process it and send back the Markdown in 48 hours — free,
-> no strings. Drop it in your RAG, ask it five questions you care about. If it's useful:
-> **€200 for your next 20 hours**, flat, no subscription. Fair?"
-
-*Then say nothing.* **Enthusiasm is not the signal. The card is the signal.** Note precisely
-where they flinch — at sending a recording (trust), or at the €200 (value)? Those are two
-entirely different diagnoses and they need two different fixes.
-
-**Q8 — The referral (1 min)**
-> "Who else is wrestling with this? I'll take the intro."
-
-*A weak referral answer after enthusiastic noises is itself a signal — nobody forwards a vitamin.*
+**Instrument 4 — `upload_repeat`.** *(A4)*
+Not a survey. **A user who uploads once and never returns did not find the output citable,
+whatever they would have said in an interview** (METRICS.md). This is the one place where removing
+the conversation made the instrument *better*.
 
 ---
 
 ## 5. Validation Criteria
 
-**Sample:** 20 sends → target 5–8 interviews → target 5 concierge deliveries → 5 €200 asks.
-**Cost:** ~€0.40 Vertex spend per delivered video ≈ **€2–5 total.** Time: one week of sends +
-two weeks of calls.
+### The thresholds — METRICS.md is authoritative, reproduced so this kit is self-contained
 
-### The three signals that decide it
-
-| # | Signal | ✅ Validated | ❌ Kill / Reshape |
+| | Assumption | Metric | Decision rule |
 |---|---|---|---|
-| **1** | **A2 — money (the primary)** | **≥ 2 of 5 concierge recipients prepay €200.** | Enthusiasm, zero payment → **vitamin, not painkiller.** Or, worse, *"we'd just do it ourselves"* recurring at Q6 → **the DIY gap is too small. Stop.** (W1 kill criteria, verbatim.) |
-| **2** | **A1 — is EU a wedge?** | **GDPR / DPO / "not a US processor" surfaces UNPROMPTED at Q3 or Q4 in ≥ 4 of 8 interviews**, *and* at least one names a vendor actually rejected over it. | Surfaces only when we raise it, or only as a form field → **EU is a checkbox.** Not a kill — a **reposition**: capability-lead becomes the permanent headline, Arm A is retired, and the EU story demotes to a trust section. |
-| **3** | **A3 — flow or backfill?** | **Median archive:monthly-flow ratio < 10:1** across ≥ 6 answers → recurring usage is plausible → BUSINESS_MODEL §6 subscription tiers survive. | **Ratio > 20:1** → **backfill business.** Not a kill — a **repricing**: BUSINESS_MODEL §6 becomes a **prepaid credit pack** ("€200 for 20 hours"), the €149/mo tier is deleted, and PLAN.md Phase 4's Stripe link changes shape. |
+| **A5** | Distribution works (**top risk**) | Qualified visitors | **< 2,000 reachable ⇒ the business dies here.** Nothing downstream gets a vote. |
+| **A1** | EU is a purchase driver | `signup` rate, headline A/B | Arm A doesn't clearly beat Arm B ⇒ **move all positioning to capability.** |
+| **A2** | Buy, not DIY | `checkout_clicked`; **`payment_succeeded`** | < 5% of trials reach checkout, or **0 payments after ~100 trials ⇒ it's a vitamin. Stop.** |
+| **A3** | Flow, not backfill | Cohort hour-decay | Month-2 hours < 20% of month-1 ⇒ **not a subscription. Prepaid credit packs.** |
+| **A4** | Output is citable | `upload_repeat` | < 30% second-upload ⇒ **the output didn't earn trust.** |
 
-### The honest reading of a mixed result
+### 🚨 The statistical honesty section — read this before reading any dashboard
 
-- **Money but no GDPR** (very plausible): the business is real, the *positioning* is wrong. Ship
-  it, drop the EU headline. This is a **good** outcome wearing a disappointing hat.
-- **GDPR but no money:** the most dangerous result, because it *feels* like validation. A DPO's
-  enthusiasm is not a purchase. Treat as A2-invalidated.
-- **Neither:** W1's kill criteria are met. Stop, and do not let the sunk benchmark cost argue
-  otherwise — the €65M TAM does not justify pushing uphill against a DIY alternative our own
-  customers are qualified to build.
-- **Zero replies to 20 sends:** **this is not an A1/A2 result, it is an A5 result** — and A5 is
-  BUSINESS_MODEL's top risk. Do not conclude "no demand" from an empty inbox; conclude "we
-  cannot reach these people," which is a different and equally serious finding.
+**At W2 scale, not one of the five rules above can legitimately fire.** They need ~2,000 visitors
+and ~100 trials. Week one will produce tens of visitors and, plausibly, zero trials.
 
-### ⚠️ Statistical honesty — read before trusting the email A/B
+**This is the single most dangerous moment in the whole plan.** A founder staring at a dashboard
+with 40 visitors, 2 signups and 0 payments will be *powerfully* tempted to read a verdict into it
+— and every available verdict is wrong:
 
-**n=20 cannot settle A1.** At a realistic 15–30% reply rate, each arm has 10 sends and yields
-1–3 replies. The difference between arms will be **pure noise**, and Lane A's warm intros will
-swamp the subject-line effect entirely. W1 itself specified **~100 sends per arm** and called
-even that *"directional, not significant."*
+- **"Arm A got 3 signups and Arm B got 1 — EU is the wedge!"** At n=4 this is coin-flipping.
+  DISTRIBUTION.md pre-commits to *"do not rationalize a loss"*; the symmetric discipline is **do
+  not celebrate a win either.** The A1 A/B needs *hundreds* of visitors per arm before it says
+  anything. Until then it is a chart, not evidence.
+- **"Nobody paid — it's a vitamin."** With no checkout link built and no trials run, **zero
+  payments is not an A2 result.** It is the absence of a result.
+- **"Only 40 visitors — distribution is dead."** With one LinkedIn post published, **this is not
+  an A5 result either.** A5 is a verdict on a *sustained content effort*, not on a first post.
 
-**Therefore, in W2:**
-- The email A/B is **logged, not read.** It is a seed for the Phase 0.3 landing-page A/B, which
-  is where A1 actually gets tested at volume.
-- **The A1 signal in W2 is Q3 + Q4 — unprompted mention.** That is a qualitative instrument and
-  it is legitimate at n=8, where a subject-line A/B is not.
-- Anyone who reports "Arm A got more replies, EU is validated" off 20 sends should be ignored,
-  including us.
+**Therefore W2 defines its own, honest, exit conditions:**
+
+| W2 is **done** when | W2 has **failed** when |
+|---|---|
+| The page is live with both arms and `ab_arm` is sticky and recorded | — |
+| The gallery renders ≥ 4 CC talks with attribution + embedded original | Phase 0.2 didn't produce publishable output ⇒ **A4 is the blocker, not demand** |
+| The artifact post is published and LinkedIn has seen it | — |
+| **Every METRICS.md event fires and lands in a table you can query** | Events are missing ⇒ **stop everything.** Cohort hour-decay *cannot be reconstructed retroactively.* |
+| The signup form asks archive-hours vs monthly-hours | — |
+| **A written "first honest read" date is set — ≥ 6 weeks out — and no verdict is called before it** | A verdict gets called at n=40 |
+
+> **W2's deliverable is a working instrument and an armed tripwire. It is not a verdict, and
+> anyone who reports one from this week's data — including me — should be ignored.**
+
+### The one thing W2 *can* read early, and it is worth the whole exercise
+
+**Trial-start rate by `referrer`, from the very first visitors.** It needs far less volume than the
+A/B, because the effect size is potentially enormous: if LinkedIn traffic browses and bounces
+while r/RAG traffic signs up, **the owned audience is a vanity asset** (DISTRIBUTION.md's own
+uncomfortable open question) — and the whole channel strategy is wrong, cheaply, in week one,
+before months of content get poured into the wrong pipe. **That is the highest-value thing this
+workflow can learn, and it is not on the assumption list.**
 
 ---
 
-## 6. Feedback Loop — how the results re-rank the assumptions
+## 6. Feedback Loop — how results re-rank the assumptions
 
-### Back into `experiments/agents/volt/assumption-mapping.md` (W1)
+### Back into `experiments/agents/volt/assumption-mapping.md`
 
-The W1 assumption table is scored **Importance × Evidence**. W2 changes only the **Evidence**
-column — and that is enough to move assumptions between quadrants and re-order everything
-downstream. Re-run the mapping agent with the interview notes as input and apply:
+The mapping scores **Importance × Evidence**. W2 changes the **Evidence** column — but only after
+the ≥6-week honest-read date, **never from week-one data.**
 
-| Assumption | Evidence today | After W2, becomes | Consequence |
+| Assumption | Evidence now | W2 can move it to | Consequence |
 |---|---|---|---|
-| **A2** — buy, not DIY | **Weak** | **Strong** if ≥2/5 prepay → *Monitor* quadrant.<br>**Dead** if the modal Q6 answer is "we'd build it." | The single gate on PLAN.md Phase 3. Nothing is built until this moves. |
-| **A1** — EU is a driver | **Weak** | **Medium** if unprompted in ≥4/8 → keep testing at volume in Phase 0.3.<br>**Refuted** if never unprompted → **drop from the assumption map**, rewrite BUSINESS_MODEL §4's buyer message. | Decides the permanent headline and whether the `/gdpr` page is sales collateral or hygiene. |
-| **A3** — flow, not backfill | **None** | **Medium** — the first evidence this assumption has *ever* had. Cannot reach Strong without cohort data (Phase 4). | Decides **subscription vs. prepaid pack**, i.e. what business we are in. |
-| **A5** — distribution works | **Weak** | **Unchanged.** 20 hand-sent emails say nothing about an inbound funnel. | Still the top risk. Phase 0.3 owns it. **W2 must not be mistaken for progress on A5.** |
-| **A4** — output is citable | Medium | **Strong** if concierge recipients get useful RAG answers on *their own* footage; **weakened** if they find a wrong timestamp. | A real-footage test that Phase 0.2's CC corpus cannot provide. |
+| **A5** — distribution works | **Weak** — and *the top risk* | **Medium**, in either direction, once a real content effort has run. **W2 is the first genuine evidence A5 has ever had.** | Everything. If traffic can't be moved, **the business dies here, before product quality or pricing get a vote.** |
+| **A1** — EU is a driver | **Weak** | **Medium** at best — the A/B needs volume, and an A/B of our own claim is a weaker instrument than an unprompted mention. **Watch for GDPR in inbound replies (§4).** | Decides the permanent headline, whether `/gdpr` is the lead message, and whether the €7.8M SAM-narrow (BUSINESS_MODEL §5a) exists at all. |
+| **A2** — buy, not DIY | **Weak** | **Unchanged by W2** — there is no checkout link yet. **Phase 4 owns this.** The abandon micro-survey (§4) is built now so it's live when the link is. | Nothing is proven until a euro moves. |
+| **A3** — flow, not backfill | **None** | **Weak→Medium** via the signup one-field question — **a two-month early read on the assumption that decides what business this is.** | Subscription vs. prepaid credit packs. BUSINESS_MODEL §6 stays unlocked until Phase 5. |
+| **A4** — output is citable | **Medium** | **Strong or weakened** — but from **Phase 0.2's** category verdicts, not from W2. `upload_repeat` extends it in Phase 3. | Gates whether the gallery is publishable at all. |
 
-**Then re-rank.** W1's top-3 were A1, A2, A3 — all Value/Business, all weak. If W2 lands as
-hoped, **A2 closes and A5 is left alone at the top**, which converts vectorreel from a
-"does anyone want this?" problem into a "can we reach them?" problem — a strictly better place
-to be, and the one PLAN.md is already organised around.
+**The re-rank to expect:** if W2 lands well, **A5 stays at #1 but stops being a pure unknown**, and
+A3 gets its first data point from a form field. If W2 lands badly — a real content effort moves no
+traffic — **A5 fires the kill criterion and the other four assumptions never get asked.** That is
+the correct order, and it is the order the living docs already put them in.
 
-**Write the output to a new point-in-time memo** (`experiments/agents/out/w2-results-memo.md`) —
-do **not** edit the W1 memo, which is explicitly a point-in-time artifact. Then update the
-living docs in the same commit (CLAUDE.md rule 4): **BUSINESS_MODEL §5** (ICP, sharpened by real
-answers), **§6** (pricing — only if A3 is decisive), **§8** (risk re-rank).
+**Write results to a new memo** (`experiments/agents/out/w2-results-memo.md`) — **do not edit the
+W1 memo** (DEVELOPMENT.md §7: a memo's analysis is immutable; only its status changes). Graduate
+anything durable into the living docs **in the same commit** (CLAUDE.md rule 4): DISTRIBUTION.md
+(measured conversion rates replacing the assumed 2–5% / 5–15%), METRICS.md (real funnel numbers),
+BUSINESS_MODEL §8 (risk re-rank).
 
 ### What this unblocks in PLAN.md
 
-- **✅ ≥2 of 5 prepay → PLAN.md Phase 3 (thin trial slice) is unblocked, and only then.** W1's
-  rule holds: *"Do not write product code until ≥2 of 5 prepay."* The prepayers are Phase 3's
-  first users, and their footage is the golden-test corpus. Phases 0.1/0.2 (YouTube spike, CC
-  corpus) run in parallel regardless — they are cheap, they feed the Phase 0.3 artifact, and
-  they are not gated on demand.
-- **↩️ A1 refuted → PLAN.md Phase 0.3's headline A/B collapses to one arm.** Arm B (capability)
-  ships as the permanent headline; the A/B is retired before it runs, saving weeks of waiting on
-  a question already answered qualitatively.
-- **↩️ A3 says backfill → PLAN.md Phase 4's "ONE Stripe payment link" becomes a prepaid credit
-  pack, not a subscription** — and BUSINESS_MODEL §6's tier table is deleted rather than
-  refined. Phase 5 ("read the data → choose the pricing model") gets its input a month early.
-- **❌ Nobody pays + no unprompted GDPR + "we'd build it ourselves" → stop.** This is W1's kill
-  criteria, met. The correct action is to write the negative result up honestly and keep the
-  benchmark harness — it is a genuinely useful €1.91 artifact, and it will still be true.
+- **W2 *is* Phase 0.3.** Completing it means the long pole is in the ground and **the clock on
+  content compounding has started** — which is the entire reason PLAN.md was reordered.
+- **Phase 0.2 is the hard dependency.** No CC corpus ⇒ no gallery ⇒ no artifact post ⇒ **no
+  credible landing page.** If Phase 0.2 slips, W2 slips with it. *(Phase 0.1 — the YouTube
+  `fileUri` spike — gates 0.2. It is the true critical path, and it is half a session.)*
+- **W2 does not gate Phases 1–2.** Engineering runs **in parallel** — that is the governing
+  principle. W2 is not a checkpoint to wait at.
+- **W2 arms Phase 4.** The event schema, the `ab_arm` assignment and the archive-hours field must
+  all exist *before* the first user, or **A3 is lost forever.** This is the one irreversible item
+  in the workflow.
+- **The kill path stays open and explicit.** If a genuine content effort cannot move traffic
+  toward 2,000 qualified visitors — **say so early and out loud, rather than building more product
+  to avoid the finding** (DISTRIBUTION.md).
 
 ---
 
 ### Non-goals of W2 (guardrails)
 
-- **No product code.** None. Not "just the upload endpoint."
-- **No pricing page.** A3 is unanswered; publishing tiers now pre-commits the business model.
-- **No YouTube processing offered as the paid thing** (BUSINESS_MODEL §10). The public tool is
-  distribution; the paid product is private recordings. Vertex cannot ingest a customer's
-  unlisted recording anyway, so promising it in an email would be a lie we could not deliver.
-- **No `yt-dlp`, no scraping** — including for the Phase 0.2 demo assets (CLAUDE.md rule 8).
-- **No claim of "EU sovereignty"** anywhere in this kit's copy. Residency, stated plainly, with
-  the CLOUD Act conceded. A DPO will check.
+- **No product code.** The gallery is statically pre-rendered from the `experiments/001/` harness.
+- **No cold outreach, no interviews, no concierge test, no design partners.** Outreach is ruled
+  out. **Broadcasting is not outreach; a cold email is.**
+- **No pricing page.** A3 is unanswered; publishing tiers pre-commits the business model.
+- **No YouTube processing sold as the paid product** (BUSINESS_MODEL §10) — Vertex cannot ingest a
+  customer's unlisted recording anyway, so offering it would be a promise we cannot keep.
+- **No `yt-dlp`, no scraping** — including for the gallery. CC-licensed, attributed, curated
+  (CLAUDE.md rule 8).
+- **No claim of EU sovereignty.** Residency, stated plainly, CLOUD Act conceded. A DPO will check.
+- **No verdict called before the honest-read date.** §5.

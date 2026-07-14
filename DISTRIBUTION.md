@@ -2,7 +2,7 @@
 
 > Living doc. Owns **A5 — the top risk in the business.** Companion to BUSINESS_MODEL.md (§7 is
 > the strategic sketch; this file is the operating plan) and PLAN.md Phase 0.3.
-> Created 2026-07-14 from `experiments/workflow1-decision-memo.md`.
+> Created 2026-07-14 from `experiments/agents/out/w1-decision-memo.md`.
 
 ## Why this document exists
 
@@ -18,23 +18,18 @@ its own document.
 
 ## The traffic math — the number that governs everything
 
-| Step | Rate (industry-typical, **assumption — instrument and replace**) |
-|---|---|
-| Qualified visitor → trial start | 2–5% |
-| Trial → paid | 5–15% |
+**→ METRICS.md §1.4 (N12–N15).** The rates are not restated here; they are **assumptions**, and the
+whole plan is sensitive to them.
 
-> **⇒ ~2,000–5,000 qualified visitors to produce ~5 paying customers.**
-> **⇒ ~47 retained paying accounts = founder salary + infra** (BUSINESS_MODEL §9).
-> **⇒ therefore roughly 20,000–50,000 qualified visitors, cumulative, to reach break-even.**
+What the math *means*, which is this document's job:
 
-That is a content-engine-sized number, not a launch-post-sized number. Internalize it before
-optimizing anything else. Replace these rates with measured ones as soon as METRICS.md has data —
-the whole plan is sensitive to them.
+**The cumulative visitor count needed to reach break-even is a content-engine-sized number, not a
+launch-post-sized number.** Internalize that before optimizing anything else. One good launch post
+does not move it perceptibly; a compounding asset published every week for a year does.
 
 **The corollary that reorders the roadmap:** content compounds over *months*. Building for three
 months and *then* starting to publish serializes the two slowest processes in the company.
-**Distribution starts at Phase 0.3, in parallel with all engineering.** (PLAN.md is built around
-exactly this.)
+**Distribution starts at PLAN.md Phase 0.3, in parallel with all engineering.**
 
 ## The core insight: the product is the marketing
 
@@ -78,7 +73,8 @@ attributed, original video embedded, human-selected.** See CLAUDE.md rule 8.
 The differentiation *is* the unglamorous engineering, so write about it (BUSINESS_MODEL §8 —
 "Gemini makes DIY trivial" is answered by showing the parts DIY gets wrong):
 - Chunking long video without losing context at segment boundaries
-- Cost engineering: what €0.65/video-hour actually consists of, and the static-content lever
+- Cost engineering: what our real all-in cost per video-hour consists of (METRICS.md §1.2), and the
+  static-content lever
 - Timestamp normalization (model output drifts across three different formats)
 - Runaway generation: how ~8% of calls tried to emit 60k tokens, and how we capped them
 - GDPR architecture, honestly — *including* the CLOUD Act limitation (BUSINESS_MODEL §4)
@@ -91,6 +87,21 @@ spikes, not a strategy. A launch post is not a distribution plan.
 
 ### 5. `llms.txt` + public API docs
 Long game: be the thing an agent recommends.
+
+### 6. 🔑 Inbound replies — the one conversation channel that survives
+
+Every lifecycle email ends with *"Reply and tell me what it got wrong — I read every one."*
+(METRICS.md **N22**.)
+
+**The founder ruled out *doing* outreach. He did not rule out *receiving* a reply.** This costs
+**zero founder-hours until someone writes back**, and anyone who does is self-selected and
+high-intent — so it does not violate the constraint that reshaped this plan, and it is the **only
+channel through which a human sentence can still reach us.**
+
+It matters most for **A1**. The headline A/B tests *which sentence converts*; it can never tell us
+whether GDPR is a genuine blocker or a form field, **because we were the ones who raised it.** An
+**unprompted** GDPR mention in an inbound reply is a strictly stronger A1 signal than the A/B.
+**Log those separately.**
 
 ## The launch artifact (Phase 0.3) — already written
 
@@ -107,19 +118,23 @@ Landing-page headline A/B (PLAN.md Phase 0.3):
 - **Arm A —** *"Your recordings never leave the EU."*
 - **Arm B —** *"Your AI assistant can't see what's on screen in your videos."*
 
-Measure trial-start rate. Directional, not statistically significant — that's fine, we need a
-signal, not a paper.
+Measure **trial-start rate, not click-through** — clicks measure curiosity, signups measure intent.
+Directional, not statistically significant; we need a signal, not a paper.
 
-> **🚨 Decision rule: if Arm A does not clearly beat Arm B, EU residency is a checkbox, not a
-> purchase driver — and ALL positioning moves to the capability story.** This is the cheapest
-> possible test of the assumption the entire differentiation strategy rests on. Do not skip it,
-> and do not rationalize a loss.
+> **🚨 The decision rule is METRICS.md A1** — *if Arm A does not clearly beat Arm B, all positioning
+> moves to the capability story.* This is the cheapest possible test of the assumption the entire
+> differentiation strategy rests on. **Do not skip it, and do not rationalize a loss.**
+>
+> ⚠️ **And do not celebrate a false win either.** The A/B is subject to the minimum-sample rule
+> (METRICS.md §2.1): it needs **hundreds of visitors per arm.** At n=4 it is coin-flipping.
 
 ## Kill criteria
 
-If, after a genuine content effort, qualified traffic cannot be moved toward the 2,000-visitor
-mark — **the business dies here, before product quality or pricing ever get a vote.** Say so
-early and out loud rather than building more product to avoid the finding.
+**→ METRICS.md A5.** If, after a *genuine* content effort, qualified traffic cannot be moved toward
+the threshold — **the business dies here, before product quality or pricing ever get a vote.**
+
+**Say so early and out loud, rather than building more product to avoid the finding.** That
+sentence is the entire reason this document exists.
 
 ## Open questions
 

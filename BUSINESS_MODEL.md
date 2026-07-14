@@ -32,6 +32,19 @@ Delivery: web UI for manual use + first-class REST API (and later an MCP server)
 
 ## 4. Positioning & differentiation
 
+### The positioning statement
+
+> **For EU engineering teams building an internal AI assistant, vectorreel turns the recordings
+> your assistant can't see — demos, trainings, incident reviews — into timestamped Markdown it can
+> cite, without the footage ever leaving the EU.**
+
+⚠️ **Note where the EU clause sits: second, as a qualifier.** That is the honest reflection of A1's
+evidence level. **It gets promoted to the front of the sentence if and only if the EU arm wins the
+headline A/B (METRICS.md A1); if it loses, it is cut from the positioning entirely and demoted to a
+trust section.** Never say "EU-sovereign" (see the honesty rule below). Never say "transcription".
+
+### Differentiation
+
 Direct competitor: **Cloudglue** (US, launched 2025; multimodal transcripts, extraction API, MCP server). Their existence validates demand. We do not out-feature them; we out-position them:
 
 | Axis | Cloudglue / US tools | The Product |
@@ -52,33 +65,20 @@ Honesty rule for all marketing/compliance copy: current stack is **EU data resid
 
 Beachhead geography: Poland + Nordics/DACH (founder network: Denmark via Conscensia/Unik). GDPR sensitivity is highest and willingness to pay for EU processing is real in these markets.
 
-### 5a. Market size (bottom-up, 2026-07-14)
+### 5a. Market size
 
-No top-down "video AI market = $X bn" figure is used — for a wedge this specific those reports
-are noise. Built bottom-up instead, **every input an assumption, all to verify**:
+**→ METRICS.md §1.5 (N16–N19).** Bottom-up, no top-down market-report figures — for a wedge this
+specific they are noise. Every input is an assumption.
 
-*450k EU orgs ≥50 employees* (**⚠️ verify vs Eurostat SBS — unverified**) × *40% with meaningful
-internal video* × *15% with an active AI/RAG initiative by 2027* → **27,000 accounts.**
+Two things that shape strategy rather than sizing, and belong here:
 
-| | Accounts | @ €2,400 blended ACV |
-|---|---|---|
-| **TAM** — EU orgs with internal video **and** an active AI/RAG initiative | 27,000 | **€65M/yr** (range €50–110M) |
-| **SAM** — beachhead PL + Nordics + DACH (~30%) | 8,100 | **€19M/yr** |
-| **SAM (narrow)** — where EU residency is an actual *decision driver* | 3,200 | **€7.8M/yr** |
-| **SOM** — 3 yr, founder-led, no sales team | 125–200 | **€300–500k ARR** |
-
-ACV is set at **€2,400 — deliberately *below* the §6 list prices** — because of A3 (§8): if usage
-is backfill rather than flow, steady-state ARPA lands 3–5× below acquisition-month ARPA. Sizing
-off list price would be fiction.
-
-> **🚩 A €65M TAM is a good bootstrapped business and a bad venture business** (most VC theses
-> need ~€1bn+). **Fund this with customers, not a seed round.** This single number should govern
-> how much is spent, how fast, and on what.
-
-**Note the dependency:** SAM-narrow is the *only* segment that exists if A1 (EU-as-driver) holds.
-If A1 fails, there is no EU premium and we compete on features inside the €19M SAM against
-Cloudglue — a materially worse business. That is why the A1 headline A/B (DISTRIBUTION.md) is the
-cheapest high-value experiment available.
+- **The TAM is small enough to decide how this company is funded.** It is a good bootstrapped
+  business and a bad venture business. **Fund it with customers, not a seed round** — that one
+  fact should govern how much is spent, how fast, and on what.
+- **The EU-premium segment exists only if A1 holds.** If EU residency is not a purchase driver
+  there is no premium, and we compete on features against Cloudglue inside the broader SAM — a
+  materially worse business. **That is why the A1 headline A/B is the cheapest high-value
+  experiment available.**
 
 ## 6. Pricing (initial hypothesis — validate against A3, not with design partners)
 
@@ -99,46 +99,21 @@ Metric: **hours of video processed**. Simple, scales with value, easy to predict
 
 ### Unit economics — measured, and no longer the risk
 
-Guardrail was: COGS < 20% of price/hour. **Measured 2026-07-14** (experiments/001,
-`gemini-2.5-flash` @ `europe-central2`, real 50-min demo recording):
+**→ METRICS.md §1.2 (N4–N6) for every figure, and §1.3 (N8) for the guardrail.** Not restated here.
 
-| Component | €/video-hour | €/video-min | |
-|---|---|---|---|
-| Stage B, blended (Stage A routes ~67% static content to the cheap config) | 0.261 | 0.0044 | measured |
-| × 1.3 retry overhead (see the ~8% degenerate-generation finding, PLAN.md Phase 0) | 0.340 | 0.0057 | measured |
-| Stage C fusion | 0.110 | 0.0018 | measured |
-| **LLM subtotal** | **0.45** | **0.0075** | **measured** |
-| ffmpeg transcode/segmentation on Cloud Run | 0.15 | 0.0025 | ⚠️ **estimate — not yet metered** |
-| GCS transient + orchestration | 0.05 | 0.0008 | ⚠️ **estimate** |
-| **All-in COGS** | **≈ 0.65** | **≈ 0.011** | |
+What matters at the business level, and only this:
 
-> ⚠️ **The ledger currently omits ~30% of true COGS.** ffmpeg/Cloud Run compute is real money
-> and is metered nowhere. CLAUDE.md rule 6 is hereby extended from "every LLM call" to
-> "every LLM call **and every compute step**". Implemented in PLAN.md Phase 2.
-
-**🚩 Break-even price: €0.011/video-minute (€0.65/video-hour) all-in** — €0.0075/min LLM-only.
-
-| Price point | €/video-min | Gross margin |
-|---|---|---|
-| API PAYG €0.15/min | 0.150 | 92.7% |
-| Pro overage (€8/h) | 0.133 | 91.8% |
-| Pro €149 @ full 25 h | 0.099 | 89.0% |
-| Business overage (€6/h) | 0.100 | 89.0% |
-| **Business €690 @ full 150 h** (worst case) | **0.077** | **85.7%** |
-
-**The lowest realizable price sits 7× above break-even. Gemini pricing would have to rise ~6×
-before the cheapest tier stops earning.** The €1.50/h guardrail holds with enormous headroom.
-
-**Conclusion: COGS is a solved problem and is not a risk.** Further cost engineering optimizes
-the one variable that is already safe. The binding constraint is **~47 retained paying accounts**
-(≈ €176/mo contribution each) to cover ~€300/mo fixed infra + an €8,000/mo founder salary —
-that, not COGS, is the finish line.
-
-Caveats: numbers cover one content category (demo screen-recording); slide-talk and
-talking-head are closed in PLAN.md Phase 0.2. Note also that the **YouTube ingestion path
-cannot use the static-content lever** (no local bytes → no ffmpeg → no static detection), so it
-costs the full ~€0.45/video-hour — which is why the free public YouTube tool needs hard abuse
-caps and result caching (PLAN.md Phase 3).
+- **Every list price above sits ~7× or more above break-even.** Even the worst case — Business at
+  full utilization — earns ~86% gross margin. Gemini pricing would have to rise ~6× before the
+  cheapest tier stops earning.
+- ✅ **COGS is a solved problem and is not a risk.** The old *"COGS < 20% of price"* guardrail is
+  retired as a goal and demoted to a regression alarm. **Further cost engineering optimizes the one
+  variable that is already safe.**
+- 🎯 **The binding constraint is ~47 retained paying accounts (METRICS.md N1)** — that, not COGS,
+  is the finish line. Everything in this document should be read against it.
+- ⚠️ **Two caveats that could still move the numbers:** the ledger currently omits ~30% of true
+  COGS (ffmpeg/Cloud Run compute is metered nowhere — CLAUDE.md rule 6, closed in PLAN.md Phase 2),
+  and the figures cover **one** content category so far (PLAN.md Phase 0.2 closes the other two).
 
 ## 7. Go-to-market
 
@@ -166,40 +141,29 @@ starts at PLAN.md Phase 0.3 and runs **in parallel with all engineering**, never
 
 ## 8. Key risks & mitigations
 
-> Re-ranked 2026-07-14 after `experiments/workflow1-decision-memo.md`. **Every high-importance /
-> weak-evidence risk is Value or Business viability. Feasibility — the axis a technical founder
-> de-risks first — is the one quadrant already closed.**
+> **The five open assumptions (A1–A5), their evidence, and their decision rules live in
+> METRICS.md §2 — not here.** Every high-importance / weak-evidence risk is **Value** or
+> **Business viability**. Feasibility — the axis a technical founder de-risks first — is the one
+> quadrant already closed. **A5 (distribution) is the top risk, and it gates the other four.**
+
+Risks *not* on the assumption list, and how we answer them:
 
 | Risk | Mitigation |
 |---|---|
-| 🚨 **A5 — Distribution doesn't work (TOP RISK).** GTM is self-serve/inbound with no founder outreach, so traffic is the long pole. The funnel needs ~2,000–5,000 qualified visitors to yield ~5 paying customers; content compounds over months. At Pro's ~€131/mo contribution, **any CAC above ~€800 breaks payback, and outbound sales is arithmetically impossible at this ACV.** | Start distribution *first* and run it parallel to all engineering (PLAN.md Phase 0.3 — the plan was reordered around exactly this). Free public YouTube tool + curated gallery = the product markets itself. LinkedIn (.NET/architecture audience) is the cheapest channel by an order of magnitude. |
-| 🚨 **A3 — Backfill, not flow.** If the job is "process our 200 h archive", revenue spikes for one month and collapses. **Steady-state ARPA is plausibly 3–5× below acquisition-month ARPA**, which makes subscription pricing a category error no engineering can fix. | Instrument cohort hour-decay (week 1 vs. week 4) **before the first user** — PLAN.md Phase 4. It cannot be answered retroactively. If month-2 < 20% of month-1: switch to **prepaid credit packs**, not monthly tiers. |
-| 🚨 **A1 — EU residency is a checkbox, not a purchase driver.** The entire differentiator, squeezed from both sides: a serious DPO notes GCP is US-controlled (CLOUD Act — see §4) and may reject "EU region" outright; a buyer who doesn't care won't pay a premium over Cloudglue. The wedge lives in a narrow band nobody has confirmed exists. | Landing-page headline A/B (PLAN.md Phase 0.3): EU-lead vs. capability-lead. **If the EU arm doesn't clearly win, move all positioning to the capability story.** |
-| Gemini/OpenAI make DIY trivial ("just send the video to the model") | Value shifts to pipeline: chunking of long videos, cost control, consistent schema, batch reliability, compliance packaging. Sell the boring hard parts. **Note the sharp edge: ICP #1 and #3 are dev teams building AI assistants — the audience best equipped to build this themselves. Tested by the Stripe checkout in PLAN.md Phase 4.** |
-| Cloudglue moves into EU | Speed + EU-owned-infra roadmap + no-lock-in file model they won't copy (it undermines their platform play). |
-| Output quality disappoints on messy real-world video | Design-partner phase exists exactly to tune prompts/schema on real corporate footage before public launch. |
-| Vertex model pricing/availability changes | Provider abstraction layer from day one (see ARCHITECTURE.md); Mistral (EU) as planned second backend. |
-| Buyer confusion: "is this a transcription tool?" | All messaging anchors on *agents/knowledge bases*, never on "transcription". Demo shows RAG answering a question only answerable from on-screen content. |
+| **Gemini/OpenAI make DIY trivial** ("just send the video to the model") | Value shifts to the pipeline: chunking long video without losing boundary context, cost control, a consistent schema across hundreds of files, batch reliability, compliance packaging. **Sell the boring hard parts.** ⚠️ **The sharp edge:** ICP #1 and #3 are dev teams building AI assistants — *the audience best equipped to build this themselves.* This is A2, and only the Stripe checkout settles it. |
+| **Cloudglue moves into the EU** | Speed, the EU-owned-infra roadmap, and a no-lock-in file model they won't copy — it would undermine their own platform play. |
+| **Output quality disappoints on messy real-world video** | ⚠️ **This mitigation is now weaker than it was.** It used to read *"the design-partner phase tunes prompts on real corporate footage before launch"* — **there is no design-partner phase; outreach is ruled out.** What remains: the public CC corpus (PLAN.md Phase 0.2) tunes against three content categories, and `upload_repeat` (METRICS.md A4) detects failure *after* launch rather than before it. **We now find out in production. Accept that consciously.** |
+| **Vertex model pricing/availability changes** | Provider abstraction from day one (ARCHITECTURE.md); Mistral (EU) as the planned second backend. |
+| **Buyer confusion: "is this a transcription tool?"** | All messaging anchors on *agents / knowledge bases* — **never on "transcription"**. The demo shows a RAG answering a question that is only answerable from on-screen content. |
 
-## 9. Success criteria for MVP (first 90 days after launch)
+## 9. Success criteria
 
-> Rewritten 2026-07-14. The old criteria assumed **design-partner outreach**, which the founder
-> has ruled out — the motion is self-serve/inbound. Every criterion below is therefore
-> measurable **without a single conversation**.
+**→ METRICS.md.** The goal is **N1: ~47 retained paying accounts.** The pass/fail rules for A1–A5
+are METRICS.md §2, and none of them may be invoked below its sample floor (§2.1).
 
-- ~~COGS < €1.50/h~~ ✅ **Already met — €0.65/h all-in, measured 2026-07-14.** Retired as a goal.
-- **Traffic (A5, top risk):** ≥ 2,000 qualified visitors reached inbound. *If this fails, nothing
-  else matters — the business dies here first.*
-- **A1:** the EU-lead headline arm clearly beats the capability-lead arm. (If not: reposition.)
-- **A2:** ≥ 5% of trials click through to Stripe checkout, and **≥ 1 person actually pays.**
-- **A3:** cohort hour-decay measured. Month-2 hours ≥ 20% of month-1 ⇒ subscription is valid;
-  below ⇒ switch to prepaid credit packs.
-- **A4:** output confirmed citable across all three content categories (screen-recording,
-  slide-talk, talking-head).
-- Time from upload to Markdown for a 1 h video: < 15 min. *(Gated on the Phase 2 output-token
-  caps — ~8% of benchmark calls ran away and would blow this SLO.)*
-
-**The number that actually matters:** ~47 retained paying accounts = founder salary + infra.
+Nothing else is a success criterion. In particular: **traffic, signups and enthusiasm are not
+success** — they are inputs to A5 and A2, and METRICS.md §6 lists them as anti-metrics for a
+reason.
 
 ## 10. Explicit non-goals for MVP
 

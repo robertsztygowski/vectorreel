@@ -35,7 +35,7 @@
 | Ingestion | Signed upload → GCS URI | `fileData.fileUri` = YouTube URL. **We never download bytes.** |
 | Stage A | Yes — ffmpeg, segmentation, static detection | **No.** No local bytes → no ffmpeg → **the static-content cost lever is unavailable.** |
 | Segmentation | ffmpeg cuts | `videoMetadata.startOffset/endOffset` (verify: PLAN.md Phase 0.1) |
-| Cost | ≈ €0.65/video-h all-in (blended) | ≈ €0.45/video-h — **no static lever**, hence hard abuse caps + result caching |
+| Cost | All-in, blended (METRICS.md N6) | **Materially higher — no static lever** (METRICS.md §1.2), hence hard abuse caps + result caching (METRICS.md N10) |
 | Constraint | — | Vertex accepts **public videos only, or ones owned by *our* GCP account** → customers' unlisted/private recordings can **never** use this path. |
 
 ⚠️ **VPC Service Controls disables `fileUri` media URLs entirely.** If the project is ever locked
@@ -190,46 +190,43 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
 - **Encryption:** GCP default at-rest + TLS in transit; CMEK on roadmap.
 - **Provider abstraction:** `IVideoAnalyzer` / `ITextFuser` interfaces; Vertex implementation now, Mistral (EU) implementation planned — this is also the seam for the future self-hosted edition.
 
-## 8. Cost engineering (must-have, drives pricing)
+## 8. Cost engineering (the mechanisms — **not** the numbers)
 
-- Per-job ledger of tokens and cents (surfaced to the customer as transparency, used internally to watch margin).
+> **All cost figures, thresholds and the break-even price live in METRICS.md §1.2–§1.3 and are not
+> restated here.** This section owns the *mechanisms* that produce them.
+>
+> ✅ **COGS is measured, solved, and is not a business risk.** Every lever below exists to **guard**
+> the margin against regression — **not to chase it.** Further cost engineering optimizes the one
+> variable that is already safe; the binding constraint is METRICS.md N1.
+
+- **Per-job ledger of tokens and cents.** Surfaced to the customer as transparency; used internally
+  to watch margin. This is a product feature, not ops telemetry.
 - 🚨 **The ledger must meter compute, not just LLM calls.** ffmpeg transcode/segmentation on Cloud
-  Run is ≈ €0.15/video-hour — **~30% of true COGS — and is currently metered nowhere.**
-  CLAUDE.md rule 6 is extended from "every LLM call" to "every LLM call **and every compute step**".
-  All-in COGS is ≈ **€0.65/video-hour = €0.011/video-minute** (BUSINESS_MODEL §6), not the €0.45
-  LLM-only figure.
-- **Break-even ≈ €0.011/video-minute.** The lowest realizable price (Business tier, fully utilized,
-  €0.077/video-min) sits **7× above it**; Gemini pricing would need to rise ~6× before the cheapest
-  tier stops earning. **COGS is a solved problem and is not a business risk** — further cost
-  engineering optimizes the one variable already safe. The binding constraint is ~47 retained
-  paying accounts (BUSINESS_MODEL §9). Guard the margin; stop *chasing* it.
-- Levers, in order of impact: (1) static-segment **low media resolution** sampling (`mediaResolution: MEDIA_RESOLUTION_LOW` — measured ~45% cheaper; fps-reduction tested and rejected: destabilizes timestamps and coverage), (2) ≤720p analysis rendition, (3) Flash-tier model for Stage B, better model only for Stage C fusion if quality demands, (4) batch/queue smoothing to stay within provider rate limits, (5) bounded `thinkingBudget` (unbounded thinking blew one call to 63k thought tokens / 3× cost).
-- **Benchmark (2026-07-14, experiments/001-gemini-video-benchmark/RESULTS.md):** default config (720p, 1 fps, default media res) ≈ **€0.38/video-hour** all-in; low media res ≈ €0.21/h; ~67% of a real demo recording is static (runs ≥ 10 s) so a Stage A-driven mixed config lands ≈ €0.25–0.30/h — 4–7× inside the €1.50/h COGS guardrail. Missing categories (slide talk, talking-head meeting) still to be benchmarked. Stage B must deterministically normalize model timestamps (formats drift: mm:ss:centiseconds, absolute-vs-relative anchoring) and retry on under-coverage (blocks clustering at clip start on continuous demo footage).
+  Run is **~30% of true COGS and is currently metered nowhere** — every cost figure we hold is
+  optimistic by roughly a third until this lands. CLAUDE.md rule 6 is extended from "every LLM
+  call" to "every LLM call **and every compute step**". → PLAN.md Phase 2.
+- **Levers, in order of impact:**
+  1. **Static-segment low media resolution** (`mediaResolution: MEDIA_RESOLUTION_LOW`) — measured
+     ~45% cheaper. **fps-reduction was tested and rejected:** it destabilizes timestamps and
+     coverage. ~67% of a real demo recording is static (runs ≥ 10 s), which is what makes this
+     lever large. **Unavailable on the public YouTube path** (no local bytes → no ffmpeg → no
+     static detection) — see §1.
+  2. ≤720p analysis rendition.
+  3. Flash-tier model for Stage B; a better model only for Stage C fusion, and only if quality
+     demands it.
+  4. Batch/queue smoothing to stay inside provider rate limits.
+  5. **Bounded `thinkingBudget`** — unbounded thinking blew one benchmark call to 63k thought
+     tokens at ~3× cost. See the mandatory guards in §3.
+- **Two correctness requirements that fall out of the benchmark** (`experiments/001-*/RESULTS.md`):
+  Stage B must **deterministically normalize model timestamps** (formats drift between
+  mm:ss:centiseconds and absolute-vs-relative anchoring) and **retry on under-coverage** (blocks
+  cluster at clip start on continuous demo footage).
 
-## 9. MVP scope checklist (build order)
+## 9. Build order
 
-> **Reordered 2026-07-14** after `experiments/workflow1-decision-memo.md`. PLAN.md is the
-> authority on sequencing; this list mirrors it. The old order front-loaded Terraform and
-> deferred all demand evidence to the final step — with a self-serve/inbound GTM and no founder
-> outreach, **traffic is the long pole and must start first.**
-
-0. ✅ **Benchmark** (`experiments/001`) — done.
-1. **YouTube-ingestion spike** — does `europe-central2` accept a YouTube `fileUri`? Does
-   `videoMetadata` offset-clipping work? (≲ €1.)
-2. **Public CC-licensed benchmark & demo corpus** — closes the slide-talk / talking-head category
-   gap, produces publishable demos, seeds committable `tests/fixtures/videos/`.
-3. 🚨 **Demand instrument: publish** (no product code) — landing-page headline A/B + the artifact
-   post. **Starts now and runs in parallel with everything below.** See DISTRIBUTION.md.
-4. **Core + Stage A** (ffprobe/ffmpeg + segmentation + static detection), golden tests on the
-   public CC clips.
-5. **Stages B/C/D** + record/replay fixtures + `tests/Live/`. **Includes the mandatory runaway
-   guards (§3) and the compute-metering ledger (§8).** Plus the public YouTube path.
-6. **Thin trial slice** — free YouTube tool (with abuse caps + result caching) + curated gallery;
-   magic-link → upload → Markdown by email. **Cloud Run + GCS + in-process queue only.**
-7. **One Stripe payment link + funnel instrumentation** (METRICS.md). Not tiers, not metered
-   overage. Cohort hour-decay must be instrumented *before the first user* — it cannot be
-   reconstructed retroactively.
-8. **Read the data → choose the pricing model** (subscription vs. prepaid credit packs).
+**→ PLAN.md is the sole authority on sequencing.** It used to be mirrored here, which is exactly
+how two documents drift apart. ARCHITECTURE.md owns the *target design*; PLAN.md owns the *order it
+gets built in*.
 
 ## 10. Deliberately deferred
 
