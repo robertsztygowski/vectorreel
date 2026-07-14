@@ -21,8 +21,11 @@ DOCS=(PLAN.md ARCHITECTURE.md BUSINESS_MODEL.md DISTRIBUTION.md CLAUDE.md DEVELO
 PATTERNS=(
   '0\.65'          # N6  all-in COGS / video-hour
   '0\.011'         # N6  all-in COGS / video-minute
-  '0\.45'          # N4  LLM subtotal
+  '0\.45'          # N4  LLM subtotal   /  N4a public-path Stage B, default media resolution
   '0\.0075'        # N4  LLM subtotal / video-minute
+  '0\.28'          # N4b public-path Stage B at MEDIA_RESOLUTION_LOW
+  '0\.38'          # N4c public-path LLM subtotal — sizes N10
+  '258'            # §1.2b video tokenization rate; the coverage-guard denominator
   '63 retained'    # N1b job-replacement accounts
   '€131'           # N0  contribution per account
   '€390'           # N23 CAC ceiling

@@ -1,0 +1,239 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": "Code's not even the right verb anymore, right? But I have to express my will to my agents for 16 hours a day.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "CODE IS NOT EVEN",
+      "visual": "A woman with blonde hair is speaking into a microphone, gesturing with her hands. A man is visible in the background, laughing.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:06",
+      "spoken": "Manifest.",
+      "speaker": "Speaker 2",
+      "on_screen_text": "MANIFEST",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The word 'MANIFEST' appears in large white letters on a purple background.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:07",
+      "spoken": "How can I have not just a single session of Claude Code or Codex or some of these agent harnesses?",
+      "speaker": "Speaker 2",
+      "on_screen_text": "",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The background is a room with blue and purple decor.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:09",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Claude Code, Codex, A powerful coding agent that helps developers ship faster and more confidently.",
+      "visual": "Two overlapping computer screens show interfaces for 'Claude Code' and 'Codex', both appearing to be coding environments or agent interfaces.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:11",
+      "spoken": "How can I have more of them? How can I do that appropriately?",
+      "speaker": "Speaker 2",
+      "on_screen_text": "",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The background is a room with blue and purple decor.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:14",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "acme/order-service, Fix lint tests, Add unit tests to the checkout flow to",
+      "visual": "A screen shows a coding interface with a small pixelated robot icon. There are text fields for 'acme/order-service' and 'Fix lint tests', and a larger text area for 'Add unit tests to the checkout flow to'.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:16",
+      "spoken": "The agent part is now taken for granted. Now the claw-like entities are taken for granted, and now you can have multiple of them.",
+      "speaker": "Speaker 2",
+      "on_screen_text": "New thread, Automations, Skills, Photobooth polish, Brainstorming new features, Clarify ambiguous request, Add drag and drop to gallery photos, Edited page.tsx",
+      "visual": "A screen shows a coding interface with a sidebar listing 'New thread', 'Automations', 'Skills', and various tasks. The main area shows 'Add drag and drop to gallery photos' and a list of edited files.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:18",
+      "spoken": "And now you can have instructions to them, and now you can have optimization over the instructions.",
+      "speaker": "Speaker 2",
+      "on_screen_text": "",
+      "visual": "The man and woman are seated in armchairs facing each other, with microphones in front of them. A fireplace with a blue marble surround is behind them.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:23",
+      "spoken": "But there, I mean, this is why it gets to the psychosis, is that this is like infinite, and everything is skill issue.",
+      "speaker": "Speaker 2",
+      "on_screen_text": "",
+      "visual": "The woman is laughing, looking at the man. The man is speaking, gesturing with his hands.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:28",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "",
+      "visual": "The screen fades to black, then shows abstract purple and white particles forming into two faces, a man and a woman, with the text 'NO PRIORS With Elad Gil and Sarah Guo'.",
+      "kind": "other"
+    },
+    {
+      "t": "00:00:34",
+      "spoken": "Hi listeners, welcome back to No Priors. Today I'm here with Andre Karpathy, and we have a wide-ranging conversation for you about code agents, the future of engineering and AI research, how more people can contribute to research, what's happening in robotics, his prediction for how agents can reach out into the real world, and education in this next age. Welcome, Andre.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NO PRIORS, Sarah Guo Host, No Priors",
+      "visual": "The woman is speaking directly to the camera, seated in a purple armchair with a microphone in front of her. On-screen text identifies her as Sarah Guo, Host of No Priors.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:55",
+      "spoken": "Andre, thanks for doing this. Yeah, thank you for having me. Uh, so it's been a very exciting couple of months in AI.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The man and woman are seated in armchairs facing each other. The man is smiling and speaking into a microphone.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:00",
+      "spoken": "Oh, yeah, you could say that. I remember, um, walking into the office at some point and you were like really locked in. And I was asking what you were up to and you're like, I just, I have to code for 16 hours a day. Or code's not even the right verb anymore, right? But I have to, um, express my will to my agents for 16 hours a day. Manifest.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The woman is speaking into a microphone, gesturing with her hands. The man is visible in the background, smiling.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:19",
+      "spoken": "Um, because like there's been a jump in capability. Uh, what's happening? Tell me about your experience.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The woman is speaking into a microphone, gesturing with her hands. The man is visible in the background, smiling.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:28",
+      "spoken": "Yeah, I kind of feel like I was this in this perpetual, I still am often in this state of AI psychosis just like all the time. Uh, because there was a huge unlock in what you can achieve as a person, as an individual, right? Because you were bottlenecked by, you know, your typing speed and so on. But now with these agents, it really, I would say in December is when it really just, something flipped where I kind of went from 80/20 of like, you know, uh, to like 20/80 of writing code by myself versus just delegating to agents. And I don't even think it's 20/80 by now. I think it's a lot more than that. I don't think I've typed like a line of code probably since December, basically.",
+      "speaker": "Andrej Karpathy",
+      "on_screen_text": "NO PRIORS, Andrej Karpathy Founder, Eureka Labs",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. On-screen text identifies him as Andrej Karpathy, Founder, Eureka Labs.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:02:00",
+      "spoken": "Um, which is like an extremely large, uh, change. Um, I was talking to it, like, for example, I was talking about it to, for example, my parents and so on. And I don't think like a normal person actually realizes that this happened or how dramatic it was. Like literally like if you just find a random software engineer or something like that at their, at their desk and what they're doing, like their default workflow of, you know, building software is completely different as of basically December.",
+      "speaker": "Andrej Karpathy",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The woman is listening intently.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:02:25",
+      "spoken": "Uh, so I'm just like in this state of psychosis of trying to figure out like what's possible, uh, trying to push it to the limit. How is it, how can I have not just a single session of, you know, uh, Claude Code or Codex or some of these agent harnesses? How can I have more of them? How can I do that appropriately? And then how can I use these claws? What are these claws? Uh, and uh, so there's like a lot of new things. I want to be at the forefront of it, you know, and I'm very antsy that I'm not at the forefront of it. And I see lots of people on Twitter doing all kinds of things and they all sound like really good ideas and I need to be at the forefront, or I feel extremely nervous. And so I guess I'm just in this psychosis of like, what's possible, like, because it's unexplored fundamentally.",
+      "speaker": "Andrej Karpathy",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The woman is listening intently. The background is a room with blue and purple decor and a fireplace.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:03:00",
+      "spoken": "Well, if you're nervous, the rest of us are nervous. We have a, uh, we have a team that we work with at conviction that their setup is everybody is like, you know, none of the engineers write code by hand and they, they're all microphone and they just like whisper to their agents all the time. It's the strangest work setting ever. Uh, and I thought they were crazy and now I like, I fully accept I was like, oh, this was the way. Like you're just ahead of it. Um, what, uh, what, how do you think about your own capacity now to like explore or to do projects? Like, what is it limited by?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The woman is speaking into a microphone, gesturing with her hands. The man is visible in the background, smiling.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:03:32",
+      "spoken": "Yeah, what is it limited by? Uh, just I think everything, like so many things, even if they don't work, I think to a large extent you feel like it's a skill issue. It's not that the capability is not there. It's that you just haven't found a way to string it together of what's available.",
+      "speaker": "Andrej Karpathy",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The woman is listening intently.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:03:42",
+      "spoken": "Yeah. Like I just don't, I didn't give good enough instructions in the agent's D file or whatever it may be. I don't have a nice enough memory tool that I put in there or something like that. So it all kind of feels like skill issue when it doesn't work to some extent. You want to see how you can paralyze them, et cetera, and you want to be Peter Steinberger, basically. Uh, so Peter is famous, he has a funny photo where he's in front of a monitor with lots of, uh, like, uh, he uses Codex. So lots of Codex agents tiling the, the monitor. And they all take about 20 minutes if you prompt them correctly and you use the high effort. And so they all take about 20 minutes to have multiple, you know, 10 repos checked out. And so he's just, um, going between them and giving them work. It's just like you can, you can move in much larger macro actions. It's not just like here's a line of code, here's a new function. It's like, here's a new functionality and delegate it to agent one. Here's a new functionality that's not going to interfere with the other one, give it agent two. And then try to, uh, review their work as best as you can, depending on how much you care about that code. Like where are these macro actions that I can like manipulate my software repository by. And like another agent is doing some like research, another agent is writing code, another one is coming up with a plan for some new implementation. And so everything just like happens in these like macro actions over your repository. Um, and you're just trying to become like really good at it and develop like a muscle memory for it is extremely, um, yeah, it's very rewarding, number one, because it actually works. Uh, but it's also kind of like the new thing to learn. So that's why, hence the psychosis.",
+      "speaker": "Andrej Karpathy",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The woman is listening intently. The background is a room with blue and purple decor and a fireplace.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:05:07",
+      "spoken": "Yeah, I, I do feel like my instinct is like, whenever I'm waiting for an agent to complete something, the obvious thing to do is like, well, I can do more work, right? Like if I have access to more tokens, then like, I should just paralyze at my tasks. And so that's, that's very stressful because if you don't feel very bounded by your ability to spend on tokens, then, you know, you are the bottleneck in the system that is max capability.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The woman is speaking into a microphone, gesturing with her hands. The man is visible in the background, smiling.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:05:31",
+      "spoken": "If you're not maximizing your subscription at least. And ideally for multiple agents, like if you run out of the quota on Codex, you should switch to Claude or what not, I don't know. Like that's what I've been trying to do a little bit. And I feel nervous when I have subscription left over, that just means I haven't maximized my token throughput. So I actually kind of experienced this when I was a PhD student, you would feel nervous when your GPUs are not running. Like you have GPU capability and you're not maximizing the available flops to you. But now it's not about flops, it's about tokens. Uh, so what is your token throughput and what token throughput do you command?",
+      "speaker": "Andrej Karpathy",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The woman is listening intently. The background is a room with blue and purple decor and a fireplace.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:06:01",
+      "spoken": "I would actually argue that it's very interesting that we had, you know, at least 10 years where in many engineering tasks, people just did, they didn't feel compute bound, right? Um, and now the entire industry feels that now, they feel like they, they felt resource bound. Uh, and now that you have this big capability jump, you're like, oh, actually, it's not, you know, my ability to access the compute anymore. Like I'm, I'm the binding constraint.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The woman is speaking into a microphone, gesturing with her hands. The man is visible in the background, smiling.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:06:29",
+      "spoken": "Yes, a skill issue. Which is very empowering because, um, yeah, because you could be getting better. So that's why, that's why I think it's very addictive because there's unlocks when you, when you get better.",
+      "speaker": "Andrej Karpathy",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The woman is listening intently. The background is a room with blue and purple decor and a fireplace.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:06:37",
+      "spoken": "Where do you think it goes? Like if you just think about like, okay, you know, Andre's iterating and everybody else is for 16 hours a day getting better at using coding agents, like what does it look like in a year? Of like you've reached mastery.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The woman is speaking into a microphone, gesturing with her hands. The man is visible in the background, smiling.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:06:49",
+      "spoken": "Yeah, what does mastery look like, right? At the end of the year or like two, three years, five years, 10 years, etc. Well, I think everyone is basically interested in like going up the stack. So I would say it's, yeah, it's not about a single session with your agent. Um, multiple agents, how they collaborate and teams and so on. So everyone's trying to figure out what that looks like. And then I would say Claw is also kind of an interesting direction because it really, when I say a claw, I mean this like layer that, uh, kind of takes persistence to a whole new level. Like it's something that like keeps looping is like, um, it's not something that you are interactively in the middle of. It kind of like has its own little sandbox, its own little, you know, it, it kind of like does stuff on your behalf even if you're not looking, kind of thing. Um, and then also has like maybe more sophisticated memory systems, etcetera, that are not yet implemented in agents. So, uh, Open Claw has a lot more sophisticated memory, I would say than what you would get by default, uh, which is just a memory compaction when your context runs out, right?",
+      "speaker": "Andrej Karpathy",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The woman is listening intently. The background is a room with blue and purple decor and a fireplace.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:07:40",
+      "spoken": "You think that's the piece that resonated for more users versus like perhaps like broader tool access for Open Claw? Yeah. There's like, I think there's at least five things that are really good ideas in here. Yeah, good job, Peter. I mean, Peter has done a really amazing job. Um, I saw him recently. Uh, and I talked to him about it and I, he's very humble about it, but I think he innovated simultaneously in like five different ways and put it all together. Um, so for example, like the Soul and D document, like he actually really crafted a personality that is kind of compelling and interesting. And I feel like a lot of the current agents, they don't get this correctly. I actually think Claude has a pretty good personality. It feels like a teammate. Uh, and it's excited with you, etcetera. Uh, I would say, um, for example, Codex is a lot more dry. Um, which is kind of interesting because in ChatGPT, Codex is like a lot more upbeat and highly psychopathic. But I would say Codex, the coding agent is very dry. It doesn't, it doesn't seem to care about what you're creating. It's kind of like, oh, I implemented it. It's like, okay, but do you understand what we're building? It's true. You know, it doesn't, it, and the other thing I would say is, for example, with Claude, I think they dialed the psychopathy fairly well, where when Claude gives me praise, I do feel like I slightly deserve it. Because sometimes I kind of give it like not very well-formed thoughts, and I give it an idea that I don't think it's fully baked, and it doesn't actually react very strongly. It's like, oh, yeah, we can implement that. But when it's a really good idea, by my own account, it does seem to reward it a bit more. And so I kind of feel like I'm trying to like earn its praise, which is really weird. And so I do think the personality matters a lot, and I think a lot of the other tools maybe don't appreciate it as much. And I think in this aspect also, Peter really cares about this, and so that was correct. And then the memory system, and then just, you know, he's just having fun with this. Um, and then the, the single WhatsApp portal to all of the automation.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The woman is speaking into a microphone, gesturing with her hands. The man is visible in the background, smiling.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:09:17",
+      "spoken": "Yeah. Is there something that you have done personally with your claws beyond software engineering that you think is fun or interesting?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The woman is speaking into a microphone, gesturing with her hands. The man is visible in the background, smiling.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:09:25",
+      "spoken": "Yeah, so in January, I had a claw, I went through a period of claw psychosis. So I built, um, I have a claw, basically, that takes care of my home. And I call him Dobby the Elf Claw. Um, and, uh, basically, I used the agents to find all of the smart home subsystems of my home on the local area network, which I was kind of surprised that worked out of the box. Like I just told it that I think I have Sonos at home, like, can you try to find it? And it goes and it like IP scan of all of the, um, basically, um, computers on the local area network. And it found the Sonos thing, uh, the Sonos, uh, system, and it turned out that there's no public",
+      "speaker": "Andrej Karpathy",
+      "on_screen_text": "NO PRIORS",
+      "visual": "The man is speaking into a microphone, gesturing with his hands. The woman is listening intently. The background is a room with blue and purple decor and a fireplace.",
+      "kind": "talking_head"
+    }
+  ],
+  "segment_summary": "This segment features Andrej Karpathy discussing the transformative impact of AI agents on coding and personal productivity. He describes a shift from traditional coding to delegating tasks to AI agents, likening it to a 'psychosis' due to the rapid advancements and the feeling of being resource-bound by human limitations rather than computational power. Karpathy also touches on the concept of 'claws' as persistent, autonomous agents and the importance of an agent's 'personality' in user interaction, sharing his personal experience of using an agent to manage his smart home."
+}

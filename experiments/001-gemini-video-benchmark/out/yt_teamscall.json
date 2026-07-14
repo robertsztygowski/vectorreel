@@ -1,0 +1,119 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": null,
+      "speaker": null,
+      "on_screen_text": "Thomas Woodham - Senior ...",
+      "visual": "The video starts with a view of three participants in a video conference, then expands to show nine participants in a grid layout.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:05",
+      "spoken": "So it is the SEC, meaning secure and govern growth and data science meaning applied ML, ML ops and anti-abuse team meeting.",
+      "speaker": "Wayne Haber",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Wayne Haber is speaking in the video conference, introducing the teams and their areas of focus.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:15",
+      "spoken": "That's a big mouthful, we might get a better name over time. Um, and uh, that's our meeting for September 14th or 15th in APAC and hi Alan, glad you're here. Why are you here when it's midnight? We could talk about. Uh, glad you're here. Don't make it a habit to come to this meeting since it's really late for you. Uh, so, but I'm glad, thanks for coming at least once.",
+      "speaker": "Wayne Haber",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Wayne Haber continues speaking, acknowledging the long name of the meeting and welcoming a participant named Alan, noting the late hour for them.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:40",
+      "spoken": "So, um, news and events. Uh, I've got a lot of things on the agenda today because of some of this. Uh, so apologies for that, but I think it's going to go down over time. Based on feedback, I'll work, I'm going to work to do more summarized communications to improve the signal to noise ratio in my communications to groups of people, including this group of people. Uh, this will result in for this group, adding more items to our staff meeting agenda often as read only, rather than posting to our Slack channel. And I am going to be assuming that people leaders on the team will attend this meeting or read the notes and not rely on the Slack channel. So keep that in in mind. Uh, let's see, B is a read only item unless anybody wants to discuss it. And C Phil has.",
+      "speaker": "Wayne Haber",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Wayne Haber discusses news and events, mentioning a lot on the agenda and his plan to improve communication by summarizing more and using read-only items in the staff meeting agenda.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:28",
+      "spoken": "Hi, um, welcome Alan, uh, to the to the meeting. Um, I've asked Alan to step in as acting Fullstack Manager for security policies, um, while I hire an EM. Um, Alan has graciously accepted, um, this this wonderful opportunity. So welcome Alan. Thank you.",
+      "speaker": "Phil Calder, Alan",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Phil Calder welcomes Alan to the meeting, explaining that Alan will be acting as Fullstack Manager for security policies. Alan thanks him.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:48",
+      "spoken": "Um, I've got the next item as well. Uh, so Anti-Abuse is moving product sections from SEC to Data Science. Um, Data Science is effectively a rename of the ModelOps, uh, section. So Data Science will include two stages, um, the existing ModelOps, which has three groups in it, which Mon can talk more about. And, um, uh, the Anti-Abuse stage, which only currently has one group, which is called Anti-Abuse. Uh, I think at some point there are plans to split Anti-Abuse into two groups, but that's not in the near near term. And, uh, we're working through all the changes around that. There's lots of work day changes, lots of handbook changes.",
+      "speaker": "Phil Calder",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Phil Calder explains that the Anti-Abuse product section is moving to Data Science, which is a rename of ModelOps and will include ModelOps and Anti-Abuse stages.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:02:36",
+      "spoken": "Mon, did you want to say anything more about Data Science or ModelOps? Uh, no, I think for us we just roll up to uh, Data Science, everything else uh, stays the same. Uh, we still have the two main groups, Applied ML, ML Ops and then later Data Ops is part of it. Yeah.",
+      "speaker": "Phil Calder, Mon Ray",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Mon Ray clarifies that their work rolls up to Data Science, maintaining the Applied ML and ML Ops groups, with Data Ops to follow.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:02:59",
+      "spoken": "So, thanks Thomas, uh, for continuing to compile and report on across all of my teams that I'm responsible for in the engineering allocation meeting on error budgets and reliability and security incidents. So I really do appreciate that.",
+      "speaker": "Wayne Haber",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Wayne Haber thanks Thomas for his work on compiling reports for the engineering allocation meeting, covering error budgets, reliability, and security incidents.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:03:16",
+      "spoken": "Got to give Neil a high five too. He does that, he does half of these now. And uh, and I apologize Neil, I totally forgot you took half of these since Thomas has been doing it for so long, but I appreciate it, Neil. I know you volunteered for it and we discussed it, but I just forgot. Kind of a thankless role, honestly. And I, I volunteered because of the exposure I get from it. It's nice to be part of a different collective group of people. I was going to mention, I'll type this in here. Um, but Tiago had set up for container security a bot that weekly, I think it's Mondays or like Sunday, will ping the team and ask for volunteer to go and resource that data. And we just enabled it for Threat Insights. It's actually pretty sweet and it just, it does all the work for you, Thomas, right? So we don't have to ping people ourselves. So I'll put a note in there for that.",
+      "speaker": "Thomas Woodham, Neil McCarrison",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Thomas Woodham thanks Neil for taking over some reporting duties, and Neil explains he volunteered for the exposure. Neil also mentions a bot set up for container security that automates data resourcing.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:04:15",
+      "spoken": "F is read only and Phil you've got G. Yeah, um, talent assessment. Uh, so we had an update from Juliana. Um, the the dates haven't been confirmed yet, but it'll be sometime from mid mid-October through to December. I think E-group sign-off is expected to be mid-December before everyone goes on holiday. Um, they've got a draft timeline in there, but the dates the dates aren't in the handbook yet. Um, at the moment, uh, uh, some people are using the Google Doc, which is listed on the talent assessment page for self-evaluations and for the, um, manager work. I'd suggest continuing to use those docs until we get access to Workday and see what the exact differences are.",
+      "speaker": "Wayne Haber, Phil Calder",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Wayne Haber introduces Phil Calder, who then discusses talent assessment updates, including a timeline for E-group sign-off and the transition to Workday for evaluations.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:05:25",
+      "spoken": "H, I and J are read only unless anybody wants to discuss them. Thomas, you got item K. Apologies for the late like live addition to the agenda on this one. Uh, but one more note on a change we're we're rolling out within Secure, pretty lightweight in that we're establishing a second team within Dynamic Analysis. Um, and so uh, issue is there for folks want to play that would like to follow along or ask any questions about it. Um, uh, for the plan for right now is I'm going to be serving as the team's acting EM. Um, uh, and in addition to normally scheduled uh, some duties for lack of a better way of putting it. And so happy to answer any questions if folks have about that.",
+      "speaker": "Wayne Haber, Thomas Woodham",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Wayne Haber introduces Thomas Woodham, who then announces the establishment of a second team within Dynamic Analysis in Secure, with him serving as acting EM.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:06:13",
+      "spoken": "I had a quick question. Uh, we've we've done the same thing in Threat Insights with with Neil and and Tiago each having teams. What are you going to call your new team or how will you differentiate it? Was not planning to differentiate it. It's just a second team within Dynamic Analysis. We're not creating a new group. Um, which I think is the same pattern that's happening within Threat Insights as well. It's just two teams. No, I know that there's Tangerine and there's Navy. Um, I'm not a Tangerine person myself. Um, so we'll have to figure it out. Yeah, I don't know if there's another T color, Thomas. I struggled with that one. But that's the theme. Tomato. I don't know. We'll figure it out. We'll figure it out. The differentiation, I think the difference between what's happening in Threat Insights and within Dynamic Analysis is that this is a split along a feature category. Um, even though we're keeping that we're not splitting a new group, it is there's the distinction is along like who's working on specific feature categories themselves. So the the uh, the the where the fracture point is happening is a little different, but the but the approach and effect are the same.",
+      "speaker": "Phil Calder, Thomas Woodham",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Phil Calder asks Thomas about differentiating the new team. Thomas explains it's a second team within Dynamic Analysis, not a new group, and the distinction is based on feature categories.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:07:38",
+      "spoken": "So on to Big Rocks and Hot Issues, uh, section. Um, I don't know if it's a big rock, but kind of belongs here perhaps more or less. So, did that survey where we got an awesome response rate from the team on how to improve the MR rate for the team. And then I took a really long time to go through all the results and summarize and make initial recommendations. So I lost a little bit of momentum. I got caught up in other things, cross-functional prioritization and a customer escalation. So since then, this is actually used by John Hope to lead a discussion at the development offsite last week on just improving engineering velocity is one of the things he used to power it. So it had value there. But I've seen no comments I think from anybody in this group, which means either no time, forgot about it, or it doesn't, we looked at it and it doesn't have much value. Any of those things are okay. I'm just curious where the group landed. And if you haven't taken a look yet to see if there's anything you want to take away from it on things you might want to consider, I'm not asking you to do so. Uh, and uh, to consider, not to do, but to consider. Anybody got a chance to read it yet? Um, and think about it or not just yet? It's not, my guess is perhaps everybody's really busy and they haven't looked yet.",
+      "speaker": "Wayne Haber",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Wayne Haber introduces the 'Big Rocks and Hot Issues' section, discussing a survey on improving MR rate and its use in a development offsite. He asks if anyone has reviewed the survey results.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:09:00",
+      "spoken": "I mean at a high level, uh, Jay, Neil, Tiago, we've talked about changes. Uh, I think Jay, you've already looked at some changes around refinement that was near, um, that you were going to look at for Anti-Abuse and report back by the end of the quarter. Um, Tiago and Neil, I can't remember what we ended up with for Threat Insights. Yeah, I'm hoping that MR rate is kind of an artifact or a byproduct of some other actions. The big thing we're doing is more pull type of work, like random, miscellaneous, not scheduled, not PM necessarily, actions or issues. And that actually is creating, um, some more additional work. Like it's just like free time work. I want to change of pace, move to something else momentarily. And these are generally smaller type of issues too, so they're quicker to knock out. Therefore they create more MRs, which has been a cool byproduct. So I think that's helping us succeed there. Yeah, we're also seen some success with uh,",
+      "speaker": "Jay Swain, Neil McCarrison",
+      "on_screen_text": "Thomas Woodham - Senior ...; Jay Swain - EM, Data Scien...; Amar Patel - Engineering M...; Wayne Haber - Director of ...; Neil McCorrrison - Fullstack ...; Seth Berger, Engineering M...; Phil Calder - Senior EM; Mon Ray",
+      "visual": "Jay Swain and Neil McCarrison discuss changes and the MR rate, with Neil explaining that focusing on smaller, unscheduled tasks leads to more Merge Requests.",
+      "kind": "talking_head"
+    }
+  ],
+  "segment_summary": "This segment of the meeting covers several organizational updates and discussions. Wayne Haber introduces the 'SEC' and 'Data Science' teams, noting a long meeting name and plans for more summarized communications. Phil Calder welcomes Alan as the acting Fullstack Manager for Security Policies and details the transition of Anti-Abuse to Data Science, which renames ModelOps. Thomas Woodham announces a second team within Dynamic Analysis, and Wayne Haber discusses a survey on improving the MR rate, which has been used to improve engineering velocity. Jay Swain and Neil McCarrison also share insights on how focusing on smaller, unscheduled tasks is positively impacting Merge Request rates."
+}

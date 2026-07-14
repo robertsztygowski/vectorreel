@@ -1,0 +1,69 @@
+{
+  "demo": {
+    "category": "product demo",
+    "error": "yt_demo: bad output twice (finish=STOP, coverage=0.08833333333333333), giving up"
+  },
+  "stream": {
+    "category": "streamed video",
+    "blocks": 32,
+    "video_tokens": 154800,
+    "audio_tokens": 15000,
+    "out_tokens": 8948,
+    "cost_usd": 0.0942,
+    "latency_s": 157.5
+  },
+  "conf1": {
+    "category": "conference presentation",
+    "blocks": 30,
+    "video_tokens": 154800,
+    "audio_tokens": 15000,
+    "out_tokens": 7228,
+    "cost_usd": 0.0824,
+    "latency_s": 116.2
+  },
+  "conf2": {
+    "category": "conference presentation",
+    "blocks": 14,
+    "video_tokens": 154800,
+    "audio_tokens": 15000,
+    "out_tokens": 4274,
+    "cost_usd": 0.0825,
+    "latency_s": 113.7
+  },
+  "tutorial": {
+    "category": "tutorial",
+    "blocks": 24,
+    "video_tokens": 137514,
+    "audio_tokens": 13350,
+    "out_tokens": 9156,
+    "cost_usd": 0.0879,
+    "latency_s": 174.1
+  },
+  "podcast": {
+    "category": "podcast",
+    "blocks": 29,
+    "video_tokens": 154800,
+    "audio_tokens": 15000,
+    "out_tokens": 6008,
+    "cost_usd": 0.0798,
+    "latency_s": 182.8
+  },
+  "teamscall": {
+    "category": "corporate teams call",
+    "blocks": 14,
+    "video_tokens": 154800,
+    "audio_tokens": 15000,
+    "out_tokens": 4276,
+    "cost_usd": 0.0825,
+    "latency_s": 143.5
+  },
+  "conf1_lowres": {
+    "category": "conference presentation (low res)",
+    "blocks": 31,
+    "video_tokens": 39600,
+    "audio_tokens": 15000,
+    "out_tokens": 6588,
+    "cost_usd": 0.0537,
+    "latency_s": 89.2
+  }
+}

@@ -71,9 +71,27 @@ before the cheapest tier stops earning.
 > (CLAUDE.md rule 6).
 >
 > ⚠️ **Scope:** one content category only (demo screen-recording). Slide-talk and talking-head are
-> closed in PLAN.md Phase 0.2. The **public YouTube path cannot use the static-content lever** (no
-> local bytes → no ffmpeg → no static detection), so it costs the full ~€0.45/video-hour — hence
-> N10 and its hard abuse caps + result caching.
+> closed in PLAN.md Phase 0.2. The **public YouTube path** has its own cost profile — §1.2b.
+
+### 1.2b Public YouTube path — **measured 2026-07-14** (`experiments/001`, Phase 0.1 spike)
+
+Stage B on a YouTube `fileData.fileUri`, 6 videos across 5 content categories. **No Stage A** (no
+local bytes → no ffmpeg → no *per-segment* static detection), so the N4 blend does not apply here.
+
+| # | Component | €/video-hour | Status | Meaning |
+|---|---|---|---|---|
+| **N4a** | Stage B, default media resolution | **0.45** | measured | Range 0.41–0.51 across 6 videos. **Cost is flat across content categories** — video tokenizes at a fixed 258 tok/s regardless of what is on screen, so duration is the only real driver. |
+| **N4b** | **⭐ Stage B, blanket `MEDIA_RESOLUTION_LOW`** | **0.28** | measured | **The lever survives after all.** Stage A's *per-segment* static routing is impossible here, but `mediaResolution` is a **request-level** knob needing no local analysis. 3.9× fewer video tokens; quality held (coverage 98% vs 97%, OCR still verbatim). |
+| **N4c** | **🚩 Public-path LLM subtotal** = N4b + Stage C fusion | **≈ 0.38** | derived | **The number that sizes N10.** Assumes the public path runs at low media resolution by default — it should. |
+
+> **Audio is now the floor.** At low media resolution, audio (priced 3.3× video per token) plus
+> *output* tokens are the bulk of the call. Cutting video resolution further buys almost nothing.
+>
+> 💡 **The video's true duration is free.** `video_tokens ÷ 258` recovers exactly what Google
+> fetched — Vertex clamps the requested window to the video's end and bills only the overlap. **No
+> YouTube Data API call and no metadata scrape is needed to know how long a video is** (CLAUDE.md
+> rule 8 stays intact). This is also the correct denominator for the Stage B coverage guard on this
+> path — using the *requested* window instead double-bills every video shorter than the window.
 
 ### 1.3 Operational thresholds — regression guards
 
@@ -82,8 +100,14 @@ before the cheapest tier stops earning.
 | **N7** | **Runaway-generation rate** — Stage B calls hitting `maxOutputTokens` / `thinkingBudget` | **> 8%** (measured baseline) | Guards regressed (ARCHITECTURE §3). Source of the 1.3× retry overhead in §1.2. |
 | N8 | All-in COGS per video-hour (LLM **+ compute**) | > €1.50 | Guardrail breached — investigate. |
 | N9 | Wall-clock per video-hour | > 15 min | SLO breach. Gated on the N7 guards — one unbounded call alone blows this. |
-| N10 | Free YouTube tool spend | > €5/day | Abuse. Caps + cache are failing. |
+| N10 | Free YouTube tool spend | > €5/day | Abuse. Caps + cache are failing. **Sized off N4c:** at the Phase-3 10-min cap, one uncached request ≈ €0.06, so the daily cap ≈ **80 uncached videos/day**. Comfortable for a demo tool, and cheap to defend. |
 | N11 | Gallery cache-hit rate | < 90% | Gallery pages must cost ≈ €0 on repeat views. |
+
+> ⚠️ **N7's threshold is a rate of *runaway* generations, not of cap-hits.** The Phase-0.1 spike hit
+> the `thinkingBudget` cap on 5 of 8 Stage B calls and every one returned good output
+> (`finishReason: STOP`, 90–98% coverage). **A bounded budget being reached is the guard working, not
+> a failure** — count a call against N7 only when it *degenerates* (truncated/invalid output). See
+> ARCHITECTURE §3, which currently says the opposite and is being reconsidered.
 
 ### 1.4 Funnel — **every rate here is `assumed`. This is the weakest part of the business.**
 

@@ -1,0 +1,198 @@
+{
+  "demo|europe-central2|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "demo|europe-central2|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "demo|europe-west3|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "demo|europe-west3|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "stream|europe-central2|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "stream|europe-central2|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "stream|europe-west3|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "stream|europe-west3|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "conf1|europe-central2|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "conf1|europe-central2|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "conf1|europe-west3|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "conf1|europe-west3|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "conf2|europe-central2|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "conf2|europe-central2|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "conf2|europe-west3|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "conf2|europe-west3|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "tutorial|europe-central2|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "tutorial|europe-central2|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "tutorial|europe-west3|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "tutorial|europe-west3|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "podcast|europe-central2|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "podcast|europe-central2|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "podcast|europe-west3|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "podcast|europe-west3|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "teamscall|europe-central2|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "teamscall|europe-central2|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "teamscall|europe-west3|v1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  },
+  "teamscall|europe-west3|v1beta1": {
+    "ok": true,
+    "total": 421,
+    "video": 0,
+    "audio": 0,
+    "text": 421
+  }
+}

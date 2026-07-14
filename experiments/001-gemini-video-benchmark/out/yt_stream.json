@@ -1,0 +1,263 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "",
+      "visual": "A man with a mustache and headphones is shown smiling against a blue background with a white Arch Linux logo.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:04",
+      "spoken": "You see that face? You know what that face is? That that is the smug face of somebody who was proven correct. And the best part, it's right after. Caught in 8K. You're even told by your friends, you're wrong. So you're probably thinking, okay, what what are we talking about? What are you even trying to say? What were you proven right about? Well, my friends, it turns out. After many hurt feelings and being told I was wrong, images might actually be better for models than text. I knew it!",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The man speaks excitedly to the camera, gesturing with his hands, expressing vindication.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:34",
+      "spoken": "Don't make it do image recognition on that dude. No, no, you just do this. What are you talking about? Haters gonna hate.",
+      "speaker": "Speaker 2",
+      "on_screen_text": "@teej_dv is a hater!HTTP/1.1 200 OKContent-Length: 15Content-Type: application/jsonAccess-Control-Allow-Origin: http://localhost:8787Vary: OriginAccess-Control-Allow-Credentials: true{\"status\":\"ok\"}---HTTP/1.1 200 OKContent-Length: 4Click to expandRead .npmrcBuild gpt-5.3-codex[Image 1]Build GPT-5.3 Codex OpenAIesc interrupt",
+      "visual": "A split screen shows terminal output on the left and two men in an office on the right. One man covers his face in laughter, and a text overlay says '@teej_dv is a hater!'. The terminal shows API responses and build logs.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:42",
+      "spoken": "Now this isn't just me saying this, of course. This is actually deep seek releasing a new paper that suggests that if",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The man is back on screen, speaking directly to the camera with a confident expression.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:45",
+      "spoken": "you provide images,",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Should LLMs just treat text content as an image?Several days ago, DeepSeek released a new OCR paper. OCR, or “optical character recognition”, is the process of converting an image of text — say, a scanned page of a book — into actual text content. Better OCR is obviously relevant to AI because it unlocks more text data to train language models on¹. But there’s a more subtle reason why really good OCR might have deep implications for AI models.",
+      "visual": "A blog post titled 'Should LLMs just treat text content as an image?' is displayed, with the speaker in the bottom right corner. The text discusses DeepSeek's new OCR paper and its relevance to AI models.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:00:50",
+      "spoken": "you could pull out 10 text tokens from a single image token with near 100% accuracy. In other words, a model's internal representation of an image is 10 times as efficient as its internal representation of text.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Optical compressionAccording to the DeepSeek paper, you can pull out 10 text tokens from a single image token with near-100% accuracy. In other words, a model’s internal representation of an image is ten times as efficient as its internal representation of text. Does this mean that models shouldn’t consume text at all? When I paste a few paragraphs into ChatGPT, would it be more efficient to convert that into an image of text before sending it to the model? Can we supply 10x or 20x more data to a model at inference time by supplying it as an image of text instead of text itself?",
+      "visual": "The blog post continues, focusing on 'Optical compression' and highlighting that an image's internal representation is ten times more efficient than text for models. The speaker points to the text on screen.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:05",
+      "spoken": "Meaning, not only do you get the correct information out, that you also get it way more efficient. And I know, I know a lot of you right now keep running up against limits with fable, okay? You get like one prompt into and you're like, I'm already out. Maybe just maybe this is the balm you need to apply to those fable wounds.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The man gestures emphatically while explaining the efficiency of image processing for models, suggesting it could help with 'fable wounds' (likely referring to token limits).",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:24",
+      "spoken": "What what an analogy. There's also been a bit of research into this apparently claiming that yes, you're actually going to get 59 to 70% lower end-to-end bill by using images.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "pxpipeCut Claude Code's input tokens by rendering bulky context as images — the same system prompt, tool docs, and history, in a fraction of the tokens.An image’s token cost is fixed by its pixel dimensions, not by how much text is inside it. Dense content (code, JSON, tool output) packs ~3.1 chars per image-token vs ~1 char per text-token on real Claude Code traffic. The reader is the same vision channel that Anthropic’s computer use already relies on for screenshots. pxpipe is a local proxy that uses that channel for context: it rewrites the bulky parts of each request into compact PNGs before it leaves your machine. At current Fable list prices that lands as a ~59-70% lower end-to-end bill — but prices move and workloads differ, so the durable number is the token cut itself, measured per-request against a free count_tokens counterfactual in~/pxpipe/events.jsonlThis is what the model sees instead of text:",
+      "visual": "A GitHub README for 'pxpipe' is shown, detailing how it reduces token costs by rendering context as images, leading to a 59-70% lower bill. The speaker highlights the cost reduction.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:35",
+      "spoken": "And yes, I myself even did a bit of research, spent two billion tokens for this video. Hey, that's dedication.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Context as stringSuccessful Games: 5010%25%50%75%90%maxHits:464.5504563.5630.75692.1767Criticals:42.94854627682Damage:7,319.37,6227,9108,0618,132.88,319Reached:10.912.251629.7542.274Time (s):193.5255517.5626.25799.51,755Context as ImageSuccessful Games: 23Hits:473.2495.5586670728.2907Criticals:4349.55867.576.684Damage:7,792.27,9418,0668,1748,192.48,264Reached:8.211.51517.52552Time (s):1,0231,0651,1401,5301,8001,890→ phaser git:(master) ×",
+      "visual": "A terminal displays two tables comparing 'Context as string' and 'Context as Image' with various game statistics like hits, damage, and time. The speaker points to the screen.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:42",
+      "spoken": "All right, so before we get into the nitty-gritty details, I would first like to say thank you to my sponsor.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The man addresses the camera, preparing to thank his sponsor.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:47",
+      "spoken": "Tokens!",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The man stands with arms outstretched as gold coins fall around him, against the blue Arch Linux background.",
+      "kind": "other"
+    },
+    {
+      "t": "00:01:48",
+      "spoken": "Dad? Could you teach me how to write code today? Does it look like I have time for that, son? My database is down again. Oh, maybe tomorrow. Not again.",
+      "speaker": "Speaker 3",
+      "on_screen_text": "Intern #7Quick question...where do we keep the database backups?",
+      "visual": "A child asks his father, who is working on a laptop in bed, to teach him coding. The father, frustrated by database issues, dismisses him. Later, the father receives a message about database backups and gets up from bed.",
+      "kind": "other"
+    },
+    {
+      "t": "00:02:06",
+      "spoken": "Go along, son. Teed gotta go fast. Hey, how do you have time to play with your kid? Isn't your database always down?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The child, now dressed as Sonic, runs down a street. The father, wearing headphones, encounters a colleague who questions how he has time for his child given his database issues.",
+      "kind": "other"
+    },
+    {
+      "t": "00:02:15",
+      "spoken": "What do you mean? I chose PlanetScale. The database for the consumer who wants their downtime to be with their kid. Nice catch, son. Thanks for choosing PlanetScale. You're the best dad ever.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The colleague explains he uses PlanetScale, a database that allows him to have downtime. The father throws a toy, which the child (still dressed as Sonic) catches, praising his dad for choosing PlanetScale.",
+      "kind": "other"
+    },
+    {
+      "t": "00:02:30",
+      "spoken": "No studies have confirmed PlanetScale makes you a better father, but it is a really good database.",
+      "speaker": "Speaker 4",
+      "on_screen_text": "PlanetScaleTRY IT TODAY →",
+      "visual": "The PlanetScale logo is displayed with the text 'TRY IT TODAY →'. A disclaimer appears at the bottom.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:35",
+      "spoken": "Sorry, I was just feeling so vindicated. I just had to keep on making that face.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The man with a mustache and headphones is shown smiling and then speaking to the camera.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:02:42",
+      "spoken": "So this blog post by Sean Geodek goes in and goes into quite a bit of detail about why these things can happen and even gives an example by George Mendes here about other fun ways you can compress data and send it off to open AI or any of these model providers. And this one involves just simply running your audio through FFM page and just speeding it up by two to three X, you will save massive amounts of tokens and it gets the same results.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "sean goedeckeOctober 21, 2025 | aiShould LLMs just treat text content as an image?Several days ago, DeepSeek released a new OCR paper. OCR, or “optical character recognition”, is the process of converting an image of text — say, a scanned page of a book — into actual text content. Better OCR is obviously relevant to AI because it unlocks more text data to train language models on¹. But there’s a more subtle reason why really good OCR might have deep implications for AI models.Optical compressionAccording to the DeepSeek paper, you can pull out 10 text tokens from a single image token with near-100% accuracy. In other words, a model’s internal representation of an image is ten times as efficient as its internal representation of text. Does this mean that models shouldn’t consume text at all? When I paste a few paragraphs into ChatGPT, would it be more efficient to convert that into an image of text before sending it to the model? Can we supply 10x or 20x more data to a model at inference time by supplying it as an image of text instead of text itself?George MandisAboutWords (written)ProjectsWords (spoken)HireGet in TouchOpenAI Charges by the Minute, So Make the Minutes ShorterJune 24th, 2025 • ~2,000 words • 9 minute readWant to make OpenAI transcriptions faster and cheaper? Just speed up your audio.I mean that very literally. Run your audio through ffmpeg at 2x or 3x before transcribing it. You’ll spend fewer tokens and less time waiting with almost no drop in transcription quality.That’s it!Here’s a script combining of all my favorite little toys and tricks to get the job. need yt-dlp, ffmpeg and llm installed.",
+      "visual": "The speaker is shown in the bottom right corner, discussing a blog post about compressing data for AI models, specifically mentioning speeding up audio with ffmpeg to save tokens.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:03:08",
+      "spoken": "Okay, so back to the images. Why would images work better than text? So with text you say exactly what you want to say, it can input and process each one of those tokens and moves on, right? That seems rather simple. Whereas with images doesn't have to do a bunch of processing, how is this not using a bunch more tokens?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The man gestures with his hands, explaining the difference between processing text and images for AI models.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:03:25",
+      "spoken": "So here's his basic explanation. Optical compression is pretty unintuitive for many software engineers. Why on earth would an image of text to be expressive and fewer tokens than text itself. In terms of raw information density, an image obviously contains more information. goes on to kind of say like, hey, hype out the word dog, it's way bigger in an image, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Why would this work?Optical compression is pretty unintuitive to many software engineers. Why on earth would an image of text be expressible in fewer tokens than the text itself?In terms of raw information density, an image obviously contains more information than its equivalent text. You can test this for yourself by creating a text file, screenshotting the page, and comparing the size of the image with the size of the text file: the image is about 200x larger. Intuitively, the word “dog” only contains a single word’s worth of information, while an image of the word “dog” contains information about the font, the background and text color, kerning, margins, and so on. How, then, could it be possible that a single image token can contain ten tokens worth of text?",
+      "visual": "The speaker explains why optical compression works, highlighting that an image contains more raw information density than text, using a blog post as a visual aid.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:03:42",
+      "spoken": "The first explanation is that text tokens are discrete while image tokens are continuous. Each model has a finite number of tokens say around 50,000 and each of those tokens correspond to embeddings of say 1000 floating point numbers. The text tokens thus occupy a scattering of single points in a space of all possible embeddings.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "The first explanation is that text tokens are discrete while image tokens are continuous. Each model has a finite number of text tokens — say, around 50,000. Each of those tokens corresponds to an embedding of, say, 1000 floating-point numbers. Text tokens thus only occupy a scattering of single points in the space of all possible embeddings. By contrast, the embedding of an image token can be any sequence of those 1000 numbers. So an image token can be far more expressive than a series of text tokens.",
+      "visual": "The speaker explains that text tokens are discrete while image tokens are continuous, with text tokens occupying scattered points in an embedding space, using a blog post as a visual aid.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:03:59",
+      "spoken": "What he's trying to say is that just imagine a floating point somewhere between zero to one and you have a thousand of them. You could have so many different variations, right? An infinite number of different variations, but with text tokens, they actually have a concrete discrete value, one text token to a single, you know, combination of a thousand floating point numbers. Because there's only 50,000 possible representations you could have in an infinite space. So very, very unoccluded space.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The man uses hand gestures to illustrate the concept of discrete text tokens versus continuous image tokens and their respective representation spaces.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:04:25",
+      "spoken": "By contrast in embeddings of an image tokens is any sequence of those thousand numbers. In other words, it's continuously through that. They can have all sorts of different variations. Much much more data can fit into those thousand numbers. So an image token can be far more expressive than a series of text tokens.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "The first explanation is that text tokens are discrete while image tokens are continuous. Each model has a finite number of text tokens — say, around 50,000. Each of those tokens corresponds to an embedding of, say, 1000 floating-point numbers. Text tokens thus only occupy a scattering of single points in the space of all possible embeddings. By contrast, the embedding of an image token can be any sequence of those 1000 numbers. So an image token can be far more expressive than a series of text tokens.",
+      "visual": "The speaker continues to explain the expressiveness of image tokens compared to text tokens, highlighting the continuous nature of image embeddings.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:04:41",
+      "spoken": "Another way of looking at the same intuition is that text tokens are really inefficient way of expressing information. This is often obscured by the fact that text tokens are reasonably efficient in the way of sharing information. Meaning, me and you can send messages to each other and that makes perfect sense. But for an LLM that's a little bit different. So, long as the sender and receiver both know the list of all possible tokens. When you send an LLM a stream of tokens, it outputs the next one. You're not passing around slices of a thousand numbers for each token. You're passing a single integer that represents a token ID. But inside the model, this is expanded to a much more inefficient representation, inefficient because it encodes some amount of information about the meaning and use of the token. So it's not surprising that you could do better than text tokens.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Another way of looking at the same intuition is that text tokens are a really inefficient way of expressing information. This is often obscured by the fact that text tokens are a reasonably efficient way of sharing information, so long as the sender and receiver both know the list of all possible tokens. When you send a LLM a stream of tokens and it outputs the next one, you’re not passing around slices of a thousand numbers for each token — you’re passing a single integer that represents the token ID. But inside the model this is expanded into a much more inefficient representation (inefficient because it encodes some amount of information about the meaning and use of the token)². So it’s not that surprising that you could do better than text tokens.",
+      "visual": "The speaker explains that text tokens are an inefficient way for LLMs to express information, as they are expanded into a more complex representation internally, using a blog post as a visual aid.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:05:24",
+      "spoken": "He also makes an argument about the brain how, you know, when you look at a word even if the letters are slightly mixed up you you can still just read the word. and so that humans actually operate more on images as the general argument and sets LLMs are supposed to be some sort of representation of our brain, therefore it works. Uh I'm not really into brain comparisons. Uh I'm not quite sure if we even know how exactly the brain works and so not knowing how something works and then comparing it to something we also don't really know exactly how it works is not necessarily the greatest way to uh to make an analogy for me. But anyways, I digress. I digress there for a second.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Zooming out a bit, it’s plausible to me that processing text as images is closer to how the human brain works. To state the obvious, humans don’t consume text as textual content; we consume it as image content (or sometimes as audio). Maybe treating text as a sub-category of image content could unlock ways of processing text that are unavailable when you’re just consuming text content. As a toy example, emoji like :) are easily-understandable as image content but require you to “already know the trick” as text content⁴.",
+      "visual": "The speaker discusses an argument that processing text as images is closer to how the human brain works, but expresses skepticism about comparing AI models to the human brain.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:06:03",
+      "spoken": "To me, this actually just makes sense and I think it makes much more sense looking at this. If you just look at this image for one second. This is an error from the compiler and rust. You immediately know what went wrong and how to fix the error. You don't have to read all of those text tokens to be able to understand what's happening. There's something kind of magical about images because they encode so much more information than you realize. And this is obviously like pointing a gigantic arrow and saying, hey, here's the thing you should look at. And then this right here is also another gigantic arrow being like, this is the solution.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Compiling clear_on_drop v0.2.3error: the legacy LLVM-style asm! syntax is no longer supported--> /root/.cargo/registry/src/mirrors.ustc.edu.cn-61ef0e0cd06fb9b8/clear_on_drop-0.2.3/src/hide.rs:38:17asm!(\"\" : \"={r}\"(ptr as *mut u8) : \"memory\");^help: replace with: `llvm_asm!`note: consider migrating to the new asm! syntax specified in RFC 2873note: alternatively, switch to `llvm_asm!` to keep your code working as it iserror: the legacy LLVM-style asm! syntax is no longer supported--> /root/.cargo/registry/src/mirrors.ustc.edu.cn-61ef0e0cd06fb9b8/clear_on_drop-0.2.3/src/hide.rs:47:17asm!(\"\" : \"={r}\"(ptr) : \"0\"(ptr));^help: replace with: `llvm_asm!`note: consider migrating to the new asm! syntax specified in RFC 2873note: alternatively, switch to `llvm_asm!` to keep your code working as it iserror: aborting due to 2 previous errorserror: could not compile `clear_on_drop`Caused by: failed to execute `cargo build` : exited with exit code: 101",
+      "visual": "The speaker points to a terminal screen displaying a Rust compiler error message, emphasizing how visual cues (like arrows) in an image immediately convey information and solutions, unlike raw text.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:06:38",
+      "spoken": "So one can imagine that the image itself is actually encoding significantly more information, thus giving these models more context to operate on, thus having better results.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The man explains that images encode more information, providing AI models with better context and leading to improved results.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:06:47",
+      "spoken": "So I thought I would give it a little bit of a try. I took my entire context file for my game that I've currently am using. It's not the best context file, honestly, I think I could do a lot better. But it is a context file nonetheless, and I shoved it it all into a singular image.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The man, against a background of dense text, explains how he converted his game's context file into a single image for testing.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:07:02",
+      "spoken": "I'm using something called PX pipe, pixel pipe in which apparently they're using it with fable and this is the one that I was saying does 59 to 70% lower end to end to bill. They have a whole bunch of information about this saying, hey, it's actually much much better that fable 5 is actually operating just the same that they're able to produce it with a lot less money going in and out. I mean this obviously sounds pretty good, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "pxpipePublicREADMEMIT licenseteamchongdocs: park rendering resear...b1f5a01 · 3 days ago313 Commits.github/workflowschore(ci): least-privilege permissio...4 days agoassetsfeat(render): use 5x8 code-font atlas2 mo.benchAdd headless bench: multi-turn cla...demo docs(demo): pin demo URLs to 12..CodeAboutcuttextpxpipe counts an exact token 10/10 across 39 imaged filler files (matches grep line-for-line), gets the multi-step ledger arithmetic right, and ends the session at $6.06 with context to spare (73.5k/1M) vs $42.21 at 96% full. One caveat visible in the clip: the pxpipe arm needed a nudge to match the requested one-line output format.",
+      "visual": "The speaker shows the GitHub page for 'pxpipe', explaining how it reduces costs for AI models like Fable by converting context into images. He highlights the cost savings and efficiency.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:07:25",
+      "spoken": "Well, I wanted to see does it actually make a difference? And what did I test it on? Well, I tested it on my video game that I'm currently making. So as of right now, we're actually having pretty decent uh progress into the game. I can't believe I got lonely tower enhancement off the rip. Let's go. Oh my gosh, my tower is going to do so much uh damage right now. Don't worry about this, okay? The polish will come later. But this is just a simple tower defense game with ammo, with levels, with enhancement, with stat tables, all the fun stuff that you can throw on these and energy and all that. And I have a file that effectively just basically describes what's happening and how you play the game.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "TOWERS OF MORDORIAPlayQuitBrought to you by terminal.shop100150Wave 1 / 8Speed1End TurnDamageAttack SpeedArcher TowerArcher TowerResupply",
+      "visual": "The speaker introduces his video game, 'Towers of Mordoria', a tower defense game with cards, and explains he used it to test the image-based context method. He shows gameplay footage.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:08:00",
+      "spoken": "More than just that, I can also play the game in Jason mode. So right now, it's running. It's letting you know, it's ready. It's actually running the full game experience. The only difference is is that it's running it in Jason mode. It's not running it in Raylib rendering to the screen mode. So if you want to move the mouse, you have to send in a mouse operation that says, okay, this is how I'm going to move. And if you do that, it just works. It actually moves the mouse and flows through the whole program. So the AI can control it through what appears to be something like MCP.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "INFO: FILEIO: [assets/fonts/BigNumbers.ttf] File loaded successfullyINFO: TEXTURE: [ID 79] Texture loaded successfully (256x256 | GRAY_ALPHA | 1 mipmaps)INFO: FONT: Data loaded successfully (32 pixel size | 95 glyphs)INFO: FILEIO: [assets/shaders/raylib_edge_outline.fs] Text file loaded successfullyINFO: SHADER: [ID 4] Fragment shader compiled successfullyINFO: SHADER: [ID 5] Program shader loaded successfullyINFO: FILEIO: [assets/shaders/raylib_boundary_outline.fs] Text file loaded successfullyINFO: SHADER: [ID 6] Program shader loaded successfully^C→ un2 git:(master) ×→ un2 git:(master) ×→ un2 git:(master) ×→ un2 git:(master) × odin run . -- --jsonun2 1:nvim~ 2:scratch 3:zsh*\"omarchy\" 10:01INFO: FILEIO: [ID 78] Texture loaded successfully (512x256 | GRAY_ALPHA | 1 mipmaps)INFO: FONT: Data loaded successfully (32 pixel size | 95 glyphs)INFO: FILEIO: [assets/shaders/raylib_edge_outline.fs] Text file loaded successfullyINFO: SHADER: [ID 4] Fragment shader compiled successfullyINFO: SHADER: [ID 5] Program shader loaded successfullyINFO: SHADER: [ID 6] Program shader loaded successfully{\"type\":\"ready\",\"value\":true}un2 1:nvim~ 2:scratch 3:odin*",
+      "visual": "The speaker shows a terminal running his game in JSON mode, explaining that the AI can control the game by sending mouse operations through JSON, rather than rendering it graphically.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:08:32",
+      "spoken": "So I ran two experiments. I effectively let the game be played by these models, five concurrently on my system, just running non-stop playing the game over and over again for a couple hours. Now these models are very slow at playing the game. So on the context as string, we had 50 successful games of those here's basically the stats breakdown. Now the thing you really want to look at is time. I think time is really, really important here. On average, it took about nine minutes to play the game. Okay, that's pretty good, right? Second, you can see how much overall damage it did starting from the 10% tile all the way up to the 90th percentile and of course max. And you can see that it did a decent amount of damage. It ended up letting out uh so many enemies through before dying. It also had this many shots taken and hit, this much criticals being done. So overall, it did pretty good, right? I am happy that I could see this. This right here means that it played the game really, really smart, meaning that it actually took a tower and placed certain cards in a very specific order, thus maximizing the damage. So, a good percentage of the time it actually made it to the point of maximizing the damage really, really well.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Context as stringSuccessful Games: 5010%25%50%75%90%maxHits:464.5504563.5630.75692.1767Criticals:42.94854627682Damage:7,319.37,6227,9108,0618,132.88,319Reached:10.912.251629.7542.274Time (s):193.5255517.5626.25799.51,755tower.max-damage:141422346068tower.total-damage:184.22551,1043,4306,0017,234tower.shots:2533123258325.4351",
+      "visual": "The speaker presents a table of game statistics for 50 successful games played with text-based context, highlighting the average game time of 9 minutes and the damage dealt, indicating smart gameplay.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:09:40",
+      "spoken": "Now, if we look at the context as an image side of things, I only got 23 successful games. And the reason being is if you look at the time, the time was outrageous. Minally, it was like 20 minutes on a game. The average time was about 20 minutes on a game and some of the upper games were taking 30 minutes to play through. It was just significant",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Context as ImageSuccessful Games: 2310%25%50%75%90%maxHits:473.2495.5586670728.2907Criticals:4349.55867.576.684Damage:7,792.27,9418,0668,1748,192.48,264Reached:8.211.51517.52552Time (s):1,0231,0651,1401,5301,8001,890tower.max-damage:14141831.56068tower.total-damage:189311917.53,0116,321.67,264tower.shots:2736.75121252.25328.6372→ phaser git:(master) ×",
+      "visual": "The speaker presents a second table of game statistics, this time for games played with image-based context. He points out that only 23 games were successful, and the average game time was significantly longer, around 20-30 minutes.",
+      "kind": "screen_share"
+    }
+  ],
+  "segment_summary": "This segment explores the efficiency of using images over text for AI models, citing a DeepSeek paper and a tool called pxpipe that claims significant cost reduction. The speaker demonstrates this concept by running his own video game, 'Towers of Mordoria', in two modes: one where the AI processes game context as a string and another where it processes it as an image. While the image-based context resulted in fewer successful games, the speaker highlights the potential for greater information density and expressiveness in image tokens compared to discrete text tokens."
+}

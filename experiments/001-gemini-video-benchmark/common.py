@@ -96,6 +96,20 @@ def ledger_append(label: str, model: str, region: str, config: str,
     return cumulative
 
 
+_spike = {"name": None, "start": 0.0, "cap": 0.0}
+
+
+def spike_budget(name: str, cap_usd: float) -> None:
+    """Cap the spend of one script on top of whatever the ledger already holds.
+    Phase 0.1 is a <= EUR 1 spike on a ledger that already carries Phase 0's $2.22."""
+    _spike.update(name=name, start=ledger_total(), cap=cap_usd)
+    print(f"[{name}] ledger at ${_spike['start']:.4f}; this run may spend ${cap_usd:.2f}")
+
+
+def spike_spent() -> float:
+    return ledger_total() - _spike["start"] if _spike["name"] else 0.0
+
+
 def gemini_call(body: dict, label: str, config: str = "", model: str = MODEL,
                 region: str = REGION, api_version: str = "v1",
                 max_retries: int = 5) -> dict:
@@ -104,6 +118,10 @@ def gemini_call(body: dict, label: str, config: str = "", model: str = MODEL,
     if total > BUDGET_USD:
         raise RuntimeError(
             f"Ledger at ${total:.2f} > budget ${BUDGET_USD} — stop and ask the founder.")
+    if _spike["name"] and spike_spent() > _spike["cap"]:
+        raise RuntimeError(
+            f"[{_spike['name']}] spent ${spike_spent():.4f} > cap ${_spike['cap']:.2f} "
+            f"— stop and ask the founder.")
     url = (f"https://{region}-aiplatform.googleapis.com/{api_version}/projects/{PROJECT}"
            f"/locations/{region}/publishers/google/models/{model}:generateContent")
     for attempt in range(max_retries):
@@ -127,6 +145,27 @@ def gemini_call(body: dict, label: str, config: str = "", model: str = MODEL,
             time.sleep(wait)
             continue
         raise RuntimeError(f"{label}: HTTP {resp.status_code}: {resp.text[:2000]}")
+
+
+def count_tokens(body: dict, model: str = MODEL, region: str = REGION,
+                 api_version: str = "v1") -> dict:
+    """countTokens — FREE, so no ledger row. Returns {"ok": bool, ...}.
+
+    The workhorse of the Phase 0.1 spike: both "does this region accept a YouTube
+    fileUri" and "are videoMetadata offsets honoured" are answerable from the
+    per-modality token counts alone, without spending anything.
+    """
+    url = (f"https://{region}-aiplatform.googleapis.com/{api_version}/projects/{PROJECT}"
+           f"/locations/{region}/publishers/google/models/{model}:countTokens")
+    payload = {"contents": body["contents"]}
+    resp = requests.post(url, json=payload, timeout=300,
+                         headers={"Authorization": f"Bearer {gcloud_token()}"})
+    if resp.status_code != 200:
+        return {"ok": False, "status": resp.status_code, "error": resp.text[:500]}
+    data = resp.json()
+    m = modality_tokens(data)
+    return {"ok": True, "total": data.get("totalTokens", 0),
+            "video": m["VIDEO"], "audio": m["AUDIO"], "text": m["TEXT"]}
 
 
 def response_text(data: dict) -> str:
@@ -225,11 +264,26 @@ Rules:
 """
 
 
-def build_stage_b_body(gcs_uri: str, segment_start: str, fps: float | None = None,
-                       media_resolution: str | None = None) -> dict:
-    video_part = {"fileData": {"mimeType": "video/mp4", "fileUri": gcs_uri}}
+def build_stage_b_body(file_uri: str, segment_start: str, fps: float | None = None,
+                       media_resolution: str | None = None,
+                       start_offset_s: int | None = None,
+                       end_offset_s: int | None = None) -> dict:
+    """Stage B request. file_uri is a gs:// segment (private path) or a YouTube watch
+    URL (public path — Google fetches it, we never hold the bytes; CLAUDE.md rule 8).
+    On the YouTube path there is no ffmpeg, so segmentation is server-side via
+    videoMetadata offsets instead of a cut file (ARCHITECTURE.md §1)."""
+    # Vertex rejects fileData without a mimeType (400 INVALID_ARGUMENT) — including for
+    # YouTube watch URLs, where it is a formality: Google fetches and decides the format.
+    video_part = {"fileData": {"mimeType": "video/mp4", "fileUri": file_uri}}
+    meta = {}
     if fps is not None:
-        video_part["videoMetadata"] = {"fps": fps}
+        meta["fps"] = fps
+    if start_offset_s is not None:
+        meta["startOffset"] = f"{start_offset_s}s"
+    if end_offset_s is not None:
+        meta["endOffset"] = f"{end_offset_s}s"
+    if meta:
+        video_part["videoMetadata"] = meta
     gen_config = {
         "temperature": 0.2,
         "maxOutputTokens": 65535,

@@ -36,9 +36,9 @@ all **whether anyone can be reached at all.** All five open assumptions live in 
 that pays for the infra (N1a) and the traffic that tells you whether to continue (the A2 sample
 floor) are the same traffic.** It is a good-post-sized number, not a content-engine-sized number.
 
-**Where we are now.** Phase 0 ✅ done. **Next: Phase 0.1** (YouTube `fileUri` spike, ½ session,
-≲ €1) — it is the critical path, because 0.1 gates 0.2, and 0.2 gates the entire demand
-instrument in 0.3.
+**Where we are now.** Phase 0 ✅ done. Phase 0.1 ✅ done — **the YouTube path works in the EU, it
+segments by offsets without ever touching the bytes, and it is cheaper than we assumed.**
+**Next: Phase 0.2** (public CC-licensed corpus), which gates the demand instrument in 0.3.
 
 > ### 🧟 **How this ends — and with no salary to burn, this is the rule that matters most.**
 > At N1a the business is cash-flow-positive and could run **forever** on ~€300/mo. Nothing forces a
@@ -98,9 +98,9 @@ problem in one move.
 ## Phase 0 — Benchmark experiment (`experiments/001-gemini-video-benchmark/`) ✅ DONE 2026-07-14
 
 > **Completed.** All 4 questions answered — see `experiments/001-gemini-video-benchmark/out/RESULTS.md`.
-> Headlines: `gemini-2.5-flash` @ `europe-central2` confirmed; €0.38/video-hour default
-> (€0.21 low-res, blended ~€0.25–0.30) vs €1.50 guardrail; no hallucinated speech on silent
-> video; 67% static-content lever. Spend: €1.91 of €5.
+> Headlines: `gemini-2.5-flash` @ `europe-central2` confirmed; COGS measured and comfortably inside
+> the guardrail (METRICS.md §1.2, N8); no hallucinated speech on silent video; the static-content
+> lever is large on real demo footage. Spend: €1.91 of €5.
 
 **Two findings graduated late (from the Workflow-1 memo, not the original RESULTS.md):**
 
@@ -114,41 +114,41 @@ problem in one move.
 
 ---
 
-## Phase 0.1 — YouTube-ingestion spike (½ session, ≲ €1) 🔜 NEXT
+## Phase 0.1 — YouTube-ingestion spike ✅ DONE 2026-07-14
 
-**Goal: verify the one fact the next three phases depend on.** Same methodology as Phase 0 —
-prove EU availability *before* designing around it.
+> **Completed.** All 3 questions answered — see `experiments/001-gemini-video-benchmark/out/YOUTUBE.md`.
+> Spend: €0.60 of €1.
 
-Vertex Gemini can ingest a YouTube URL directly via `fileData.fileUri` (public videos only,
-one per request) — meaning **we never download the video; Google fetches it.** No `yt-dlp`,
-no YouTube ToS exposure. That matters for a brand selling trust to DPOs.
+1. **EU acceptance: ✅ yes.** Both `europe-central2` and `europe-west3` accept a YouTube
+   `fileData.fileUri` and genuinely fetch the video. No US region needed. (`mimeType` is mandatory
+   even for YouTube URLs.)
+2. **Offset segmentation: ✅ yes, server-side.** Equal-length windows cost identical tokens at any
+   position; tokens scale linearly with length. **Long videos segment without ever holding the
+   bytes** — the public path needs no Stage A, no ffmpeg, no GCS round-trip.
+3. **Cost: ✅ measured, and better than assumed** (METRICS.md §1.2b). The premise that the cost lever
+   was *gone* on this path was **half wrong**: Stage A's per-segment static routing is indeed
+   impossible, but `mediaResolution` is a **request-level** knob needing no local analysis, so the
+   whole public path can just run low-res — **N4b, at ~⅔ the default-resolution cost, with quality
+   intact.** This is what sizes N10.
 
-Questions:
+**Three findings that become Phase 2/3 requirements:**
 
-1. Does **`europe-central2`** accept a YouTube `fileUri`? (Fallback `europe-west3`.) If YouTube
-   URLs only resolve in `us-*`, Phases 0.2–0.3 need rethinking.
-2. Does **`videoMetadata.startOffset/endOffset`** clip a YouTube URL by time range? If yes,
-   long videos can be segmented **without ever holding the bytes** → the YouTube path becomes a
-   simpler parallel pipeline (no Stage A, offsets instead of ffmpeg). If no, we're capped at
-   whatever fits one request.
-3. Confirm cost. **Stage A cannot run on a YouTube URL** (no local bytes → no ffmpeg → no
-   static-content detection), so the ~67% static-content lever is **unavailable** on this path.
-   Expect the **un-blended** figure, materially above the blended one (METRICS.md §1.2). Verify —
-   this is what sizes the abuse caps (METRICS.md N10).
+- 🚨 **The coverage guard must divide by the *fetched* duration, not the requested window.** Vertex
+  clamps the window to the video's end, so on a video shorter than the window the Phase-0 guard sees
+  false under-generation and **retries + double-bills**. Observed on a 59 s video.
+- 💡 **A video's true duration is free** — it falls out of the token count (METRICS.md §1.2b). Ask for
+  more than you expect and read the length off the bill. **No YouTube Data API, no scrape** (rule 8).
+- **Hitting the `thinkingBudget` cap is not a failure** — 5 of 8 calls hit it and all returned good
+  output. ARCHITECTURE §3 said to treat a cap-hit as a segment failure; that rule is now corrected.
 
 ⚠️ **Known constraint, do not design around it:** VPC Service Controls **disables `fileUri`
 media URLs entirely.** If the project is ever locked down for enterprise compliance, the
 YouTube path dies. This is one more reason it belongs in marketing, **never** in the core
 paid product.
 
-**Starter prompt:**
-> Read PLAN.md Phase 0.1. Extend the existing `experiments/001-gemini-video-benchmark/`
-> harness with a YouTube `fileData.fileUri` path. Answer the 3 questions. Plan mode first.
-> Keep spend under €1.
-
 ---
 
-## Phase 0.2 — Public benchmark & demo corpus (1 session, ≲ €3)
+## Phase 0.2 — Public benchmark & demo corpus (1 session, ≲ €3) 🔜 NEXT
 
 **Goal: one set of videos that closes A4, produces publishable demos, and seeds committable
 test fixtures.** The internal videos can do none of these — they are unshareable.
@@ -159,7 +159,14 @@ Pick **4–6 Creative-Commons-licensed** YouTube videos (YouTube has a CC licens
 - 2 × **interview/podcast** (talking-head) — closes the missing "talking-head" category (A4)
 - 1 × long **screen-recorded tutorial** — public analogue of the internal demo video
 
-Run each through the Phase 0.1 YouTube path with the ARCHITECTURE §3 Stage B schema.
+Run each through the Phase 0.1 YouTube path (`07_youtube.py` already does this) with the
+ARCHITECTURE §3 Stage B schema.
+
+⚠️ **Start from a clean, licence-checked selection.** The 7 URLs used in the 0.1 spike were inputs to
+a cost/plumbing test, **not a corpus** — none is confirmed CC-licensed, and nothing derived from them
+is publishable. (One of them, labelled "product demo", is a 59-second advert.) Phase 0.1 published
+nothing, so nothing is owed; but **0.2 must not inherit that list by default.**
+
 Deliverables:
 
 1. **A4 verdict per content category** — is `on_screen_text` verbatim? Are timestamps accurate?

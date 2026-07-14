@@ -32,10 +32,10 @@
 | | **Private path** (upload) | **Public path** (YouTube) |
 |---|---|---|
 | Purpose | **The paid product.** Internal recordings. | **Distribution only** — free tool + gallery (DISTRIBUTION.md). Never a paid tier. |
-| Ingestion | Signed upload → GCS URI | `fileData.fileUri` = YouTube URL. **We never download bytes.** |
-| Stage A | Yes — ffmpeg, segmentation, static detection | **No.** No local bytes → no ffmpeg → **the static-content cost lever is unavailable.** |
-| Segmentation | ffmpeg cuts | `videoMetadata.startOffset/endOffset` (verify: PLAN.md Phase 0.1) |
-| Cost | All-in, blended (METRICS.md N6) | **Materially higher — no static lever** (METRICS.md §1.2), hence hard abuse caps + result caching (METRICS.md N10) |
+| Ingestion | Signed upload → GCS URI | `fileData.fileUri` = YouTube URL (+ mandatory `mimeType`). **We never download bytes.** ✅ Verified in both EU regions, Phase 0.1. |
+| Stage A | Yes — ffmpeg, segmentation, static detection | **No.** No local bytes → no ffmpeg → no *per-segment* static detection. But see Cost: a **request-level** resolution knob survives. |
+| Segmentation | ffmpeg cuts | ✅ **`videoMetadata.startOffset/endOffset`, confirmed server-side** (Phase 0.1): equal-length windows cost identical tokens at any position, tokens scale linearly with length. **Long videos segment without ever holding the bytes.** |
+| Cost | All-in, blended (METRICS.md N6) | **Its own profile — METRICS.md §1.2b.** Cheaper than feared: `mediaResolution: LOW` needs no local analysis, so it applies here (N4b). Still hard abuse caps + result caching (METRICS.md N10). |
 | Constraint | — | Vertex accepts **public videos only, or ones owned by *our* GCP account** → customers' unlisted/private recordings can **never** use this path. |
 
 ⚠️ **VPC Service Controls disables `fileUri` media URLs entirely.** If the project is ever locked
@@ -101,13 +101,29 @@ each. **This is the source of the observed 1.3× retry overhead, and untreated i
 - **`maxOutputTokens`** — hard cap, sized from the measured p99 (~8.6k out-tokens/call), not left to default.
 - **`thinkingBudget`** — bounded. Unbounded thinking is what produced the 63k-thought-token call.
 - **A wall-clock request timeout** — well below the point where a single segment can eat the job's SLO.
-- **Treat a cap-hit as a segment failure and retry once with a tighter budget**, rather than
-  accepting truncated JSON. Record every runaway in the cost ledger — this rate is a monitored metric.
+- **Treat a *degenerate* call as a segment failure** — truncated or invalid JSON — and retry once
+  with a tighter budget. Record every runaway in the cost ledger; this rate is a monitored metric
+  (METRICS.md N7).
+  ⚠️ **Reaching the `thinkingBudget` cap is NOT by itself a failure.** Phase 0.1 hit the 4,096-token
+  cap on 5 of 8 calls and all 8 returned good output (`finishReason: STOP`, 90–98% coverage). A
+  bounded budget being reached is the guard doing its job. **Judge the output, not the budget.**
 
-**Public-path variant (YouTube).** Same schema, same guards. Differences: input is
-`fileData.fileUri` (YouTube URL) + `videoMetadata.startOffset/endOffset` instead of a GCS segment
-URI; no Stage A means **no sampling config and no static-content lever** — the call runs at
-default media resolution and costs accordingly. Public videos only. See §1.
+**Public-path variant (YouTube).** Same schema, same guards. Input is `fileData.fileUri` (YouTube
+URL, `mimeType` mandatory) + `videoMetadata.startOffset/endOffset` instead of a GCS segment URI.
+Public videos only. See §1. Three requirements are specific to this path (all measured in Phase 0.1,
+`experiments/001-*/out/YOUTUBE.md`):
+
+- **Run it at `mediaResolution: MEDIA_RESOLUTION_LOW` by default.** No Stage A means no *per-segment*
+  static routing — but media resolution is a **request-level** knob that needs no local analysis, and
+  it holds quality on this content (METRICS.md N4b). It is the main input to the abuse caps (N10).
+- 🚨 **The coverage guard must divide by the FETCHED duration, not the requested window.** On this
+  path the video's length is unknown up front, and Vertex clamps the window to the video's end.
+  Divide the video token count by the fixed tokenization rate (METRICS.md §1.2b) to recover what was
+  actually fetched. Getting this wrong means **every video shorter than the window is a false
+  under-generation failure, retried and billed twice** — observed on a 59 s video during the spike.
+- **Ask for more than you expect.** Over-requesting a window is free (you are billed only for the
+  overlap with the real video), and the response tells you the true duration. **No YouTube Data API
+  call and no metadata scrape is needed** — rule 8 stays intact.
 
 ### Stage C — Fusion pass (Vertex Gemini, text-only)
 - Input: ordered segment JSONs.
@@ -229,11 +245,13 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
   optimistic by roughly a third until this lands. CLAUDE.md rule 6 is extended from "every LLM
   call" to "every LLM call **and every compute step**". → PLAN.md Phase 2.
 - **Levers, in order of impact:**
-  1. **Static-segment low media resolution** (`mediaResolution: MEDIA_RESOLUTION_LOW`) — measured
-     ~45% cheaper. **fps-reduction was tested and rejected:** it destabilizes timestamps and
-     coverage. ~67% of a real demo recording is static (runs ≥ 10 s), which is what makes this
-     lever large. **Unavailable on the public YouTube path** (no local bytes → no ffmpeg → no
-     static detection) — see §1.
+  1. **Low media resolution** (`mediaResolution: MEDIA_RESOLUTION_LOW`) — measured ~45% cheaper.
+     **fps-reduction was tested and rejected:** it destabilizes timestamps and coverage.
+     - *Private path:* applied **per segment**, to the ~67% of a real demo recording that is static
+       (runs ≥ 10 s) — that share is what makes the lever large.
+     - *Public path:* the **per-segment routing** is unavailable (no local bytes → no ffmpeg → no
+       static detection), but the knob is set **per request** and needs no local analysis, so it is
+       simply applied to the whole path (METRICS.md N4b). **The lever is not lost, only coarsened.**
   2. ≤720p analysis rendition.
   3. Flash-tier model for Stage B; a better model only for Stage C fusion, and only if quality
      demands it.

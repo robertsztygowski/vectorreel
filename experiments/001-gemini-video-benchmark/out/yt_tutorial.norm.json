@@ -1,0 +1,199 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": "Well, here we are again with yet another term called loop engineering. And it wasn't even that long ago we had harness engineering. So, is this just a marketing hype or is there actually something substantial behind loop engineering?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "2022, 2023, 2024, 2025, 2026, 2027, Prompt, Context, Harness, Loop Engineering, marketing hype?, substantial",
+      "visual": "A timeline from 2022 to 2027 is shown, with 'Prompt', 'Context', and 'Harness' labeled under different year ranges. An arrow points to 'Loop Engineering' at 2027, with a question mark, and a red arrow points to 'Harness'. A person icon with 'marketing hype?' and 'substantial' text appears.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:11",
+      "spoken": "Let's walk down from prompt engineering all the way to loop engineering to see why we needed each step of the way.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Why?, Prompt Engineering, Context Engineering, Harness Engineering, Loop Engineering",
+      "visual": "A list of engineering types is displayed: Prompt Engineering, Context Engineering, Harness Engineering, and Loop Engineering, with arrows indicating a progression. The word 'Why?' is at the top.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:18",
+      "spoken": "We all know by now what prompt engineering is. Let's say I start with a prompt, 'You are a helpful customer service rep. Please be nice to my customers.' This is prompt engineering because you are prompting the agent by implicitly telling the agent what to do. And we can then ask AI any question and the agent will impersonate a customer service rep based on the prompt we just generated. That makes sense and super simple. So why do we need context engineering?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Prompt Engineering, Implicit Instruction, Question, Answer, customer service rep, You are a customer service rep. Please be nice",
+      "visual": "A diagram illustrates a person giving a prompt to an AI model. The prompt, 'You are a customer service rep. Please be nice', is highlighted as 'Prompt Engineering' and an 'Implicit Instruction'. The AI then answers questions as a customer service rep.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:40",
+      "spoken": "Turns out this prompt that we just created lives inside of the agent's context window, and we still have a lot of room left in our context to do something more useful. So, what if we gave the agent autonomy to invoke tools to start filling up its own context based on what the prompt actually needs? This was the beginning of context engineering where the agent could now access files to load and make changes, or even use MCP to start interacting with databases and external applications to load its own context. Cool, context engineering makes sense. So then why do we need harness engineering? Well, there's actually no inherent flaw to context engineering, but rather, it has limitations.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Context Window, a lot of room, Autonomy, Files, Internet, App, access, load, MCP, Context Engineering, no inherent flaw, limitations",
+      "visual": "The diagram expands to show the AI model with a 'Context Window'. The prompt is within this window, and arrows indicate the AI's autonomy to access external tools like 'Files', 'Internet', and 'App' to fill its context. The concept of 'Context Engineering' is introduced, along with its limitations.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:01:21",
+      "spoken": "Context engineering is not really good at tasks that take longer than 5 to 10 minutes long, and here's why. Tasks that take long tend to require more context than what the agent can handle. And while it could keep summarizing its own context as it approached the limit, it was extremely leaky where important details started to get lost in each step of the summarization.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Tasks, long duration tasks, not enough, Context Window, Summarize, Details are lost",
+      "visual": "The diagram shows the AI's 'Context Window' and a list of 'Tasks'. It illustrates how long-duration tasks require more context than the AI can handle, leading to summarization and loss of important details.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:01:43",
+      "spoken": "So, essentially, we needed a system outside of context engineering to better manage internally its own context from outside in. And this very external system is what we call harness engineering. Harness engineering manages the context from the outside and helps the agent runtime to work on tasks that help break down the user's requirement into a more stable execution. Let's look at a few examples to make sure that we understand this more concretely. And we'll use ChatGPT and Claude Code, since it's something that we all have hands-on experience in.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Prompt Engineering, Context Engineering, Harness Engineering, Loop Engineering, Prompt, Context, Harness, manage, examples, ChatGPT, Claude Code",
+      "visual": "A new diagram introduces 'Harness' as an external system managing the AI's context and a list of tasks. The speaker explains Harness Engineering's role in breaking down user requirements. Icons for ChatGPT and Claude Code appear as examples.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:16",
+      "spoken": "But before we dive in, today's video is sponsored by Verda. If you write code for a living, you probably hit a point where your own machine just can't handle what you're trying to build.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "verda, not enough, code",
+      "visual": "The Verda logo is displayed, followed by a diagram of a person coding on a small computer with 'not enough' text, and an arrow pointing to code on a screen.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:25",
+      "spoken": "And that's the gap that Verda fills in. Verda is a full stack AI cloud built for the whole model lifecycle. From a single GPU instance, an instant cluster, to serverless inference and managed endpoints. It isn't a general purpose cloud with AI bolted on after the fact. It's built specifically for AI work by people who actually train and serve models. So the workflow is designed around how you'd actually use it.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Full Stack AI Cloud, verda, Single GPU, Instant Cluster, Serverless Inference, Managed Endpoints, Designed for AI Workflow, train, serve",
+      "visual": "A diagram shows 'Verda' as a 'Full Stack AI Cloud' connecting to various computing resources like single GPUs, instant clusters, and serverless inference, with managed endpoints. Text highlights it's 'Designed for AI Workflow' by people who 'train' and 'serve' models.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:45",
+      "spoken": "And the workflow is the part that I like. You sign up, spin up an instance, and pick your GPU, anything from the new GB300 down to an older V100.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Deploy new instance, Instance Type, On-Demand, Spot, Contract, Pay As You Go, 1 month -2%, 3 months -3%, 6 months -4%, 1 year -8%, 2 years -25%, Compute configuration, Filter, Availability, Show all, Available now, Compute type, GPU instance, CPU instance, Security type, Standard, Confidential, Location, All locations, Total VRAM, Min: 16 GB, Max: 2144 GB, GB300, 288GB VRAM, Price per GPU $8.620 /h, B300, 288GB VRAM, Price per GPU $7.500 /h, B200, 188GB VRAM, Price per GPU $6.110 /h, H200, 141GB VRAM, Price per GPU $4.000 /h, H100, 80GB VRAM, Price per GPU $3.250 /h, A100 80GB, 80GB VRAM, Price per GPU $1.790 /h, A100 40GB, 40GB VRAM, Price per GPU $1.290 /h, Tesla V100, 16GB VRAM, Price per GPU $0.170 /h, RTX PRO 6000, 48GB VRAM, Price per GPU $1.890 /h, L40S, 48GB VRAM, Price per GPU $1.370 /h, RTX 6000 Ada, 48GB VRAM, Price per GPU $1.040 /h, RTX A6000, 48GB VRAM, Price per GPU $0.610 /h, Notify me, No availability",
+      "visual": "A screen recording of the Verda dashboard shows options for deploying a new instance, selecting GPU types (e.g., GB300, V100) and contract terms.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:02:53",
+      "spoken": "You then drop in your SSH key and you're straight in from your own terminal. I just SSH in from VS Code, drag my code across, and I've got all the VRAM that the card gives me to run without ever leaving my editor. There's also a CLI if you'd rather stay in the terminal start to finish. Spin instances up, manage them, and connect all from the command line.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "SSH Keys, Add new key, Startup Script (optional), The script will be executed on server startup, Add a new script, Info, Hostname, loud-light-passes-fin-02, Description, ubuntu-24-04-cuda-12-8-open-docker-1h100-80s-3:, Deployment Summary, Instance, 1x H100, 80GB VRAM, 32x CPU, 185GB RAM, FIN-02, Main OS Volume, Ubuntu 50GB, Ubuntu 24.04 | CUDA 12.8 | Docker, OS Block volume, Add new SSH key, Public key, Starts with ssh-rsa or ssh-ed25519 (also ssh-dss, ecdsa-sha2-, sk-ecdsa-)., Key name, enter name, Need help? View Managing SSH Keys, Cancel, Save SSH key, > ssh, Remote Explorer: Focus on Remotes (Tunnels/SSH) View, Remote-SSH: Add New SSH Host..., Remote-SSH: Connect Current Window to Host..., Remote-SSH: Clear previous session metadata (used for enhanced error reporting), Remote-SSH: Get Started with SSH, Remote-SSH: Help, Remote-SSH: Kill Local Connection Server For Host..., Remote-SSH: Open SSH Configuration File..., Remote-SSH: Report Issue..., Remote-SSH: Settings, Remote-SSH: Show Log, ng-video-lecture, .venv, bigram.py, data-0012-259K3.txt, gpt.py, input.txt, more.txt, README.md, EXPLORER, OUTLINE, TIMELINE, DEBUG CONSOLE, PROBLEMS, OUTPUT, TERMINAL, PORTS, bash - ng-video-lecture, (.venv) root@loud-light-passes-fin-02:~/ng-video-lecture# python gpt.py, /root/ng-video-lecture/.venv/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:362: UserWarning: Failed to initialize numpy: No module named 'numpy' (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:84.), cpu = __conversion_method_template(device=torch.device(\"cpu\")), 10.835069 M parameters, step 0: train loss 4.8916, val loss 4.8885, step 100: train loss 2.5398, val loss 2.5169, step 200: train loss 2.4662, val loss 2.4510, (.venv) root@cloud-light-passes-fin-02:~/ng-video-lecture# python gpt.py, 10.788929 M parameters, step 0: train loss 4.2221, val loss 4.2303, step 500: train loss 1.5965, val loss 1.7686, step 1000: train loss 1.3032, val loss 1.5544, step 2000: train loss 1.0782, val loss 1.4873",
+      "visual": "The video demonstrates adding an SSH key to Verda, then connecting via SSH from VS Code. Code is dragged into the remote environment, and a Python script is run in the terminal, showing training loss output.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:03:12",
+      "spoken": "On the hardware side, you get serious NVIDIA GPUs like B300s with NVLink, InfiniBand, and fast NVMe storage for workloads where interconnect and throughput actually matter.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "A person is shown installing a server component into a rack, followed by another person connecting cables to a server within a data center.",
+      "kind": "other"
+    },
+    {
+      "t": "00:03:25",
+      "spoken": "And if you're working with data or model weights you can't afford to expose, Verda supports confidential computing. So your workload stays encrypted while it's actually running on GPU, not just sitting in storage. Link in the description, use code CALEB-50 to get $50 off of compute for just $5. That's 90% off of your first top-up. Thanks again Verda for sponsoring.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "verda, Solutions, Confidential compute for sensitive AI workloads, Hardware-attested inference and fine-tuning on NVIDIA GPUs. Cryptographic proof your data and model stay protected in memory, in transit, and at rest, Request access, Read the docs, Why confidential computing?, Data state, Status on standard infrastructure, At rest (disk, storage), Encrypted, In transit (network, API), Encrypted, In use (memory, during computation), The gap, Modern infrastructure encrypts data at rest and in transit. But the moment a GPU runs a model, data is decrypted in memory to be used. For most workloads, that's fine. For regulated data, proprietary models, or products where privacy is part of the value proposition, “trust the provider” is no longer a defensible control. Auditors, regulators, and customers want cryptographic evidence, not contractual promises., CALEB-50, The full-stack AI Cloud of tomorrow, One platform, the full AI lifecycle, Start building, Talk to sales, Self-service access, In-house AI Lab, Powered by NVIDIA®, Trusted by EC Unbabel Black Forest Labs SGL vLLM",
+      "visual": "The Verda website is shown, highlighting 'Confidential compute for sensitive AI workloads' and a table explaining data encryption states. A server rack with blinking lights is visible. The Verda logo with a discount code 'CALEB-50' is displayed.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:03:41",
+      "spoken": "Asking ChatGPT the question, 'how many cheeseburger fits between the earth and the moon?' This is solely using prompt engineering because it doesn't need anything external to answer a very simple question. It can just reason through what it already knows to answer my question.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "ChatGPT, Where should we begin?, Ask anything, High, Create an image, Write or edit, Look something up, how many cheeseburger fits between the earth and the moon?, Thought for 7s, About 3.8 billion cheeseburgers., Using:, average Earth-Moon distance = 384,400 km, average cheeseburger width = 10 cm, So:, 384,400,000 meters = 0.1 meters = 3,844,000,000, So roughly 3.84 billion cheeseburgers laid side-by-side., If you stack them by height instead, say 5 cm tall each, it would be about 7.7 billion cheeseburgers., Ask anything, High, ChatGPT can make mistakes. Check important info., Prompt, Context, Harness, NOT needed",
+      "visual": "A screen recording of ChatGPT answering a question about cheeseburgers between Earth and the Moon. The diagram from earlier is shown, indicating that only 'Prompt' and the AI's internal 'Context' (reasoning) are needed, with 'Harness' being 'NOT needed'.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:03:57",
+      "spoken": "Now, asking ChatGPT, 'what is the latest discovery that NASA made?' This now has to use context engineering because it has to search the web and gather relevant information from NASA to help answer my question.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "ChatGPT, What's on your mind today?, Ask anything, High, Create an image, Write or edit, Look something up, what is the latest news from NASA?, I'll check NASA's official news feed and a couple of reputable space-news sources so the update isn't just one press release., Searching www.nas.nasa.gov, Thought for 23s, The big NASA stories right now are:, 1. ISS spacewalk completed: NASA astronauts Chris Williams and Jessica Meir finished a 7-hour, 20-minute spacewalk to replace a malfunctioning wrist joint on the station's Canadarm2 robotic arm., 2. Swift telescope rescue delayed by weather: NASA's planned Swift Boost mission, using Katalyst Space's LINX servicing satellite, was postponed again. The next launch attempt is no earlier than Thursday, July 2, at 5:09 a.m. EDT. The mission aims to raise the orbit of the aging Neil Gehrels Swift Observatory before it re-enters Earth's atmosphere., NASA Science, 3. NASA awarded $590M in new Moon lander contracts: Astrobotic, Firefly Aerospace, and Intuitive Machines won contracts for uncrewed lunar lander missions in late 2028. Astrobotic got, Follow up, High, ChatGPT can make mistakes. Check important info., Harness, Prompt, Context, web search → NASA",
+      "visual": "ChatGPT is asked about the latest NASA news. It performs a web search and provides a summary. The diagram shows the 'Harness' system, with the AI's 'Context' now actively performing a 'web search → NASA' to gather information.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:04:10",
+      "spoken": "So, context engineering helps bringing information from the web autonomously.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Harness, Prompt, Context, web search → NASA",
+      "visual": "The diagram highlights the AI's 'Context' autonomously performing a 'web search → NASA' to bring in external information.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:04:14",
+      "spoken": "Now, when I ask Claude Code, 'Can you clone the entire NASA website?' This is all done by harness engineering because the NASA website, as you can imagine, is really complex. And simply relying on context engineering on tasks like this, will start to choke midway through. So, harness engineering provides an external mechanism to help manage the context and the runtime for the agent to work through a long list of tasks.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Claude Code v2.1.197, Welcome back Caleb!, Tips for getting started, Ask Claude to create a new app or clone a repository, What's new, Added 'CLAUDE_CODE_DISABLE_MOUSE_CLICKS' to disable mouse cli..., Fixed hook matchers with hyphenated identifiers (e.g. 'code-t-...), Fixed voice dictation on macOS capturing silence in long-runn..., /release-notes for more, Meet Sonnet 5, smarter and more efficient for everyday work. Switch anytime with /model., Can you clone NASA's website?, Whirlpooling... (2s thinking), esc to interrupt + for agents, I can help you build a NASA-inspired website, but let me set expectations and clarify what you're after., A few important notes up front:, - I can't help you build a NASA-required website, images, or branding. NASA imagery is largely public domain, but their logo ('meatball'), specific copy, and page code aren't something to duplicate verbatim. What I can do is build an original site that's inspired by the NASA site and looks and feels like a static front-end replica of the landing page (hero, featured missions, news cards, nav, footer), optionally wired to NASA's free public APIs (like APOD - Astronomy Picture of the Day) for real data., - The real nasa.gov is enormous. A realistic 'clone' is a static front-end replica of the landing page (hero, featured missions, news cards, nav, footer), optionally wired to NASA's free public APIs (like APOD - Astronomy Picture of the Day) for real data., Let me ask a couple of things so I build the right thing:, 1. Single landing page, 2. Multi-page site, 3. Using a few NASA APIs, 4. Homepage that pulls real data from NASA's free public APIs (e.g. Astronomy Picture of the Day)., 5. Chat about this, Enter to select - Tab/arrow keys to navigate - Esc to cancel., Harness, Prompt, Context, it's going to choke, external mechanism",
+      "visual": "A screen recording of Claude Code is shown, where the user asks to clone the NASA website. Claude Code responds by outlining the complexity and asking clarifying questions. The diagram illustrates 'Harness' as an 'external mechanism' that manages the AI's 'Context' and a list of tasks, preventing it from 'choking' on complex tasks.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:04:39",
+      "spoken": "Now, you might have noticed a pattern that emerges from this. And that pattern is the concept of loops. For context engineering, there's a loop where the agent recursively calls tool after tool autonomously until it thinks that it has enough context to answer your question. And for harness engineering, there's also a loop where the agent has a list of tasks outside of the context window to keep iterating task after task until the entire operation is finished. So, what we find is that we're essentially stacking loop on top of another loop. Now we get to loop engineering, which is yet another loop in itself. I know, is there even an end to this? So, loop engineering stacks another loop outside of harness engineering layer to guide the harness externally. But why? Why do we even need yet another scaffolding again?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Pattern:, Loops, Harness, Prompt, Context, Loop, Loop Engineering?",
+      "visual": "The diagram shows the 'Harness' system with the AI's 'Context' and tasks. The speaker introduces the concept of 'Loops' in both context and harness engineering, where the AI recursively calls tools or iterates through tasks. A new, larger loop labeled 'Loop Engineering?' is shown encompassing the entire 'Harness' system.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:05:28",
+      "spoken": "At the heart of loop engineering, loop engineering targets the human interaction in actually prompting the agent to do something. Everything that we have seen so far involves a human asking the agent questions like, 'how many cheeseburgers can I fit between Earth and the Moon?', 'What is the latest news on NASA?', or even 'clone the NASA's website?' These are prompts that require me to actually prompt the agent. But what if we built a scaffolding outside of this so that the agent can also prompt itself on what it thinks it needs to do? That is the heart and the spirit of what loop engineering tries to target. And if all of this sounds hokey pokey to you, you're probably not alone. There's a lot of people saying loop engineering is just a buzzword and that's trying to encourage people to just burn more tokens and create more AI slop.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Loop Engineer, Loop Engineering, human, do something, cheeseburger, new, clone, Human, What if..., burns tokens, AI slop, buzzword, This is weird..., people",
+      "visual": "The diagram shows the 'Harness' system with a human interacting via 'Prompt'. The speaker explains that 'Loop Engineering' aims to automate this human interaction, allowing the agent to 'prompt itself'. The concept is illustrated with a larger 'Loop Engineering' box around the entire system, and text indicating skepticism about it being a 'buzzword' or 'AI slop'.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:14",
+      "spoken": "And so far, we have really yet to see loop engineering in action that really makes a huge difference. But it could be the next evolution in our engineering philosophy as agents expand its scopes in what it can help us with. And it does raise a really interesting debate and discussion around all of this. So, what exactly is loop engineering? And how does all of it work?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Prompt Engineering, Context Engineering, Harness Engineering, Loop Engineering, Next Evolution?, people, hmm...",
+      "visual": "The list of engineering types is shown again, with 'Loop Engineering' highlighted. The speaker discusses its potential as the 'Next Evolution?' in AI engineering, acknowledging ongoing debate.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:36",
+      "spoken": "Addy Osmani wrote a blog describing loop engineering with six components. But we don't want to read all of this. So, instead of boring you with details, I'm going to give you a potential use case of loop engineering that help you wrap your head around what loop engineering could look like.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "5. Sub-agents so one of them has the idea and a different one checks it. Then the sixth thing, the memory. A markdown file, or a Linear board, anything that lives outside the single conversation and holds what's done and what is next. Sounds too dumb to matter. But it's the same trick every long running agent depends on and I went into it in long-running agents, the model forgets everything between runs so the memory has to be on disk and not in the context. The agent forgets, the repo doesn't. Both products have all five now. Primitive, Job in the loop, Codex app, Claude Code, Automations, discovery + triage on a schedule, Automations tab: pick project, prompt, cadence, environment, results land in a Triage inbox, /goal for run-until-done, Scheduled tasks and cron, /loop, /goal, hooks, GitHub Actions, Worktrees, isolate parallel features, Built-in worktree per thread, git worktree, --worktree isolation: worktree on a subagent, Skills, codify project knowledge, Agent Skills (SKILL.md), invoked with $name or implicitly, Agent Skills (SKILL.md), Plugins / connectors, connect your tools, Connectors (MCP) plus plugins for distribution, MCP servers plus plugins, Sub-agents, ideate and verify, Subagents defined as TOML in .codex/agents/, Task subagents in .claude/agents/, agent teams, State, track what's done, Markdown or Linear via a connector, Markdown (AGENTS.md, progress files) or Linear via MCP, The names are a bit different here and there but the capability is the same thing. Let me go one by one because honestly the details are where a loop either holds together or quietly leaks everywhere., Addy Osmani, Loop Engineering, potential use case!",
+      "visual": "A screenshot of a blog post by Addy Osmani is shown, detailing six components of loop engineering in a table. The speaker mentions he will provide a use case instead of going through the details.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:06:51",
+      "spoken": "Let's say I built a website that keeps track of the World Cup scores. And when I ask Codex to build me a World Cup website, Codex will use prompt, context, and harness engineering to build this beautifully written website.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "TOUCHLINE, Overview, Matches, Groups, UPDATED JUN 28, FIFA WORLD CUP 2026 - KNOCKOUT PHASE, THE WORLD PLAYS HERE., CANADA MEXICO UNITED STATES, JUNE 11 - JULY 19, 2026, 48 teams → 32 remain → 104 matches across 3 nations, LATEST RESULT - JUNE 28, Canada goes through., South Africa 0 - 1 Canada, Stephen Eustáquio struck in stoppage time to send the co-hosts into their first World Cup Round of 16., FULL TIME, TOURNAMENT PATH, 48 → 1, GROUPS, 48, ROUND OF 32, 32, ROUND OF 16, 16, QUARTER-FINALS, 8, SEMI-FINALS, 4, FINAL, 2, CHAMPION, 1, TOUCHLINE independent tournament snapshot, Data current through June 28, 2026. Not affiliated with FIFA., What should we build?, Do anything, Full access, 5.5 Medium, world-cup-tracker, Work locally, main, Can you build me a website that keeps track of the World Cup?, Build World Cup tracker website, Working for 1s, I'll first inspect the existing project, then build the tracker around the 2026 tournament and verify the finished site in the in-app browser. I'm using the browser-control skill for that final hands on UI check., Thinking",
+      "visual": "A website interface for a FIFA World Cup tracker is shown, displaying scores and tournament progression. Then, a screen recording of Codex is shown, where the user prompts it to build a World Cup tracker website. Codex begins processing the request.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:07:04",
+      "spoken": "Now, there's one problem here. And that problem is that the World Cup games are happening every single day. And that means in order to maintain the website that I just created through Codex, I have to keep prompting the agent to frequently update the site and also work on bug fixes that people might find on the website. But what if I just created a scheduled task inside of Codex to check every hour for updates as new information becomes available? And what if I do the same for bug fixes, where the agent just checks autonomously for bugs that are reported by users and fix them?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "new matches, update, update, Scheduled, Tasks, Templates, Create via chat, Create your first scheduled task, Daily brief, Weekly review, Project monitor, What should we build?, Set up a scheduled task that gives me a morning brief each weekday: what's on my calendar, important unread emails, and anything that needs my attention today., Full access, 5.5 Medium, Set up a scheduled task that checks the world cup standing every hour, can you make sure to update the site based on the standing?, Add hourly standings sync, Working for 1s, I'll inspect how the tracker stores standings and updates the site, then wire an hourly automation to the project's existing update path. I'll also verify the schedule and update command before handing it over., Thinking, Running Get-Content index.html; Write-Output ````app.js````; Get-Content app.js; Write-Output ````git status````, The project is a static site with its standings and fixtures embedded in `app.js`; there's no API or build step. I'm checking its deployment setup now so the hourly job updates the live site, not merely a local file that nobody sees., Thinking, Update World Cup standings, Hourly, Open, Worked for 59s, Hourly automation \"Update World Cup standings\" is active. It will:, Verify standings/results from current sources., Update app.js and index.html., Commit/push when deployment is configured., Current blocker: the repository has no initial commit yet, so updates remain local until the site's publishing baseline is committed., Update World Cup standings, Hourly, Open, Check the current FIFA World Cup 2026 standings, completed results, and upcoming fixtures using current web sources. Prefer official FIFA sources and cross-check any changed score or table with a second reputable source. In this workspace, update the static site data and all dependent copy in app.js and index.html so the group tables, qualification markers, and every \"updated/as of\" date remain mutually consistent., Status, Active, Next run, Today at 10:54 PM, Last ran, Details, Runs in, Local, Project, world-cup-tracker, Repeats, Custom, Model, GPT-5, Current, Update World Cup standings world-cup-tracker, Next run in 2 hours - Hourly",
+      "visual": "The World Cup tracker website is shown again. The speaker explains the need for continuous updates and bug fixes. A screen recording of Codex shows the user setting up a 'Scheduled' task to hourly check for World Cup standings updates and autonomously fix bugs.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:07:37",
+      "spoken": "What you're seeing here is that we are beginning to create this loop outside of harness engineering where it's self-guided rather than human-guided to maintain my website. And because I have skills and plugins already installed on my Codex environment, the agent can access an existing knowledge base to keep building and improving its knowledge along the way. And the agent can also use sub-agents to verify its own work and also the ability to work on multiple fixes at the same time by using what's called worktree to prevent runtime contamination along the way. All of these that I just mentioned are essential ingredients to what makes loop engineering what it is.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Harness, Prompt, Context, Loop Engineering, Loop, self guided, Human guided, skills, Plugins, sub agents, Worktrees, multiple edits",
+      "visual": "The diagram shows the 'Harness' system with the AI's 'Context' and tasks. A larger 'Loop Engineering' box encompasses the entire system, indicating a 'self-guided' loop that replaces 'human-guided' interaction. Icons for 'skills', 'plugins', 'sub agents', and 'worktrees' are shown as components that enable this self-guided loop.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:08:13",
+      "spoken": "And that is the six components that Addy Osmani wrote in his blog: Automation, worktree, skills, plugins and connectors, sub-agents, and state are components of loop engineering. And while this World Cup website that I just created is just an example of what loop engineering could look like, the true potential of what loop engineering could really be is still somewhat theoretical. And one thing to keep in mind is that loop engineering doesn't necessarily mean that all the engineering philosophy underneath is less important or even less needed that before. It's just agents growing in scope and building on top of each other, loop stacked on another loop to help us get more complex work done.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "5. Sub-agents so one of them has the idea and a different one checks it. Then the sixth thing, the memory. A markdown file, or a Linear board, anything that lives outside the single conversation and holds what's done and what is next. Sounds too dumb to matter. But it's the same trick every long running agent depends on and I went into it in long-running agents, the model forgets everything between runs so the memory has to be on disk and not in the context. The agent forgets, the repo doesn't. Both products have all five now. Primitive, Job in the loop, Codex app, Claude Code, Automations, discovery + triage on a schedule, Automations tab: pick project, prompt, cadence, environment, results land in a Triage inbox, /goal for run-until-done, Scheduled tasks and cron, /loop, /goal, hooks, GitHub Actions, Worktrees, isolate parallel features, Built-in worktree per thread, git worktree, --worktree isolation: worktree on a subagent, Skills, codify project knowledge, Agent Skills (SKILL.md), invoked with $name or implicitly, Agent Skills (SKILL.md), Plugins / connectors, connect your tools, Connectors (MCP) plus plugins for distribution, MCP servers plus plugins, Sub-agents, ideate and verify, Subagents defined as TOML in .codex/agents/, Task subagents in .claude/agents/, agent teams, State, track what's done, Markdown or Linear via a connector, Markdown (AGENTS.md, progress files) or Linear via MCP, The names are a bit different here and there but the capability is the same thing. Let me go one by one because honestly the details are where a loop either holds together or quietly leaks everywhere., Prompt Engineering, Context Engineering, Harness Engineering, Loop Engineering, World Cup (example), potential?, theoretical, scope",
+      "visual": "The blog post table listing the six components of loop engineering is shown. The speaker then returns to the list of engineering types, highlighting 'Loop Engineering' and emphasizing that it represents agents growing in 'scope' and building on previous layers to handle more complex tasks.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "This segment introduces 'Loop Engineering' as the next evolution after Prompt, Context, and Harness Engineering, questioning if it's just marketing hype. It explains Prompt Engineering as implicit instruction, Context Engineering as giving agents autonomy to use tools and fill their context, and Harness Engineering as an external system to manage context for long-duration tasks. The video then showcases Verda, a full-stack AI cloud, as a sponsor. Finally, it illustrates Loop Engineering through an example of an AI autonomously maintaining a World Cup tracker website, highlighting its self-guided nature, use of skills, plugins, sub-agents, and worktrees, and acknowledging its current theoretical potential."
+}

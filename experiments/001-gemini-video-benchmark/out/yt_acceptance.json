@@ -1,0 +1,16 @@
+{
+  "europe-central2": {
+    "ok": true,
+    "video_tokens": 3894,
+    "audio_tokens": 1475,
+    "cost_usd": 0.0028,
+    "text": "This video is an advertisement for Groundswell, an app that allows users to donate to charities. The first thing you hear is \"Meet Groundswell,\" and the last thing you hear is \"today.\""
+  },
+  "europe-west3": {
+    "ok": true,
+    "video_tokens": 3894,
+    "audio_tokens": 1475,
+    "cost_usd": 0.0027,
+    "text": "This clip is an advertisement for Groundswell, an app that helps people donate to charities. The first thing you hear is \"Meet Groundswell,\" and the last thing you hear is \"today.\""
+  }
+}

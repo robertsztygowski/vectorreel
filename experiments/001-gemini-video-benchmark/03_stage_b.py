@@ -25,10 +25,16 @@ def _clip_times(parsed: dict, segment_start_s: int, clip_dur_s: int | None) -> l
 
 def run_stage_b(gcs_uri: str, segment_start_s: int, label: str, config: str,
                 fps: float | None = None, media_resolution: str | None = None,
-                clip_dur_s: int | None = None, _attempt: int = 1) -> dict:
+                clip_dur_s: int | None = None,
+                youtube_window: tuple[int, int] | None = None,
+                _attempt: int = 1) -> dict:
+    """gcs_uri is a gs:// segment, or a YouTube watch URL when youtube_window is set —
+    on the public path there is no ffmpeg, so the clip is cut server-side by offsets."""
     seg_start = hhmmss(segment_start_s)
+    start_off, end_off = youtube_window or (None, None)
     body = build_stage_b_body(gcs_uri, seg_start, fps=fps,
-                              media_resolution=media_resolution)
+                              media_resolution=media_resolution,
+                              start_offset_s=start_off, end_offset_s=end_off)
     print(f"{label}: {gcs_uri} (start {seg_start}, fps={fps or 'default'}, "
           f"res={media_resolution or 'default'}, attempt {_attempt})")
     data = gemini_call(body, label=label, config=config)
@@ -55,7 +61,7 @@ def run_stage_b(gcs_uri: str, segment_start_s: int, label: str, config: str,
               f"{len(parsed['blocks']) if parsed else '-'}, coverage={covered}), retrying")
         return run_stage_b(gcs_uri, segment_start_s, label, config, fps=fps,
                            media_resolution=media_resolution, clip_dur_s=clip_dur_s,
-                           _attempt=_attempt + 1)
+                           youtube_window=youtube_window, _attempt=_attempt + 1)
     (OUT / f"{label}.json").write_text(
         json.dumps(parsed, indent=2, ensure_ascii=False), encoding="utf-8")
 

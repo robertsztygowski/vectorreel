@@ -1,0 +1,119 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": null,
+      "speaker": null,
+      "on_screen_text": "AI Engineer World's Fair, PRESENTING SPONSOR Microsoft, LAB & PLATINUM SPONSORS Amazon AGI Lab ANTHROPIC Google DeepMind MINIMAX OpenAI Z Akamai arize aws Braintrust bright data Browserbase docker neo4j ORACLE PayPal qodo reducto Sonar Makers of SonarQube togetherai Unblocked WorkOS",
+      "visual": "The video shows the 'AI Engineer World's Fair' logo, then the Microsoft logo as a presenting sponsor, followed by a list of 'LAB & PLATINUM SPONSORS' logos.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:12",
+      "spoken": "Hello, hello. Fantastic to see you guys here. I still can't believe they're letting me take a stage at something like this, a YouTuber apparently, but can't wait to share a bit about how I've been thinking because if I'm being real, kind of going through some AI psychosis. Who here would classify how they feel right now as some form of AI psychosis? I want to see some hands. The those who don't have their hands up yet, don't worry, we'll get you there by the end of this talk if I do everything right. In order to talk about this, I want to start with a bit of a personal journey of my own. And I'm going to go through this the way anybody does in modern timelines, with the models.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "THEO BROWNE FOUNDER t3.gg, AI Engineer World's Fair, PRESENTED BY Microsoft",
+      "visual": "A man, Theo Browne, walks onto a stage with a large screen behind him displaying his name and title, then various sponsor logos. He greets the audience and talks about AI psychosis, asking for a show of hands.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:56",
+      "spoken": "Who here used Sonnet 3.5 when it was the creme de la creme, the cream of the crop model available to us? It was unbelievably better than what we had used before, right? Like having used all of these different models and trying them in tools, Sonnet 3.5 was a big moment for me because it felt like these models could suddenly complete much more end-to-end tasks, like actually get real work done that takes multiple steps.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "Sonnet 3.5, Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The speaker is on the left side of the screen, gesturing. On the right, a white slide with 'Sonnet 3.5' written in a handwritten style appears.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:01:18",
+      "spoken": "And then we got Opus 4.5. Who felt or I'll go different way, differently here. Who didn't feel a big jump when they switched over to Opus 4.5? That's a relief, there were not too many hands because Opus 4.5 is probably when my psychosis started in November and December of last year. Having a model that couldn't just write the code and call tools, but could go way further. A model that could test the work and actually get it into a good state and complete tasks that take hours instead of minutes. It was unbelievable.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "Opus 4.5, Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The speaker continues to gesture on the left. The slide on the right now shows 'Opus 4.5' in the same handwritten style.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:01:48",
+      "spoken": "And then we got Mythos. Who here has had a chance to play with Mythos and Fable so far? We agree it's a pretty damn good model, right? But why? It's not just better at coding. If you hand it a prompt that you would have handed to these other models before, it's not going to feel that different.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "Mythos 5, Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The speaker is on the left. The slide on the right now shows 'Mythos 5' in the same handwritten style.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:04",
+      "spoken": "I think of these almost as eras now, where Sonnet 3.5 is the tool call era. Not that it was the first model that could do tool calls, rather it was the first one that did them consistently and reliably enough in context of a codebase where you could use this for day-to-day coding work. Then we got Opus 4.5, which was able to do much longer running tasks without losing track of what it's working on. It's no longer, okay, build step one and then it does it, then you say, okay, can you build this next part and then the next part? You can just tell it what you want and it could figure it out a lot of the time. Mythos is another jump to orchestration. It feels to me like it's the first model that doesn't just understand your codebase, but it understands itself and it knows how to spawn additional models and break up work in a way where it could be completed more reliably and then verified afterwards. And if you tell the model to do that, it will just do it. You don't need some custom tooling, some custom system, some fancy software factory. You just need to prompt it to go a little further. I think you'll be surprised how far it can go.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "Sonnet 3.5 Tool calls, Opus 4.5 Long running work, Mythos 5 Orchestration, Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The slide on the right now lists 'Sonnet 3.5' next to 'Tool calls', 'Opus 4.5' next to 'Long running work', and 'Mythos 5' next to 'Orchestration'. The speaker continues to explain these concepts.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:03:03",
+      "spoken": "What I'm trying to say here is, we need to go bigger. You're not going to see the benefits going forward if you're not pushing the model further, you're not pushing yourself further with what you're building. Most of the Jira tickets I closed at my previous job could be trivially solved with a model like Opus 4.5. My previous work would not benefit from a model like Mythos. If the models are going to keep getting better, and at this point I'm confident saying they are, I was wrong when I claimed that we were hitting a wall before. The models are getting better faster than we are. So we can't necessarily get better, so instead we have to go bigger.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "We need to go bigger., Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The slide on the right now shows 'We need to go bigger.' in handwritten text. The speaker emphasizes this point.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:03:35",
+      "spoken": "But in order to do that, we have to get over ourselves. This was really hard for me as someone who spent a long time writing software. Who here has written code for more than 10 years? I want to see hands. That's the majority of the people here. I don't even want to think about how long I've been writing code for. But I have been building up all of these strong opinions since I started. I was using GNU screen and eventually tmux back in the day. I learned how to use those tools and SSH and Git before I even wrote code. And those have all been really ingrained in my workflow.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "We need to get over ourselves., Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The slide on the right now shows 'We need to get over ourselves.' in handwritten text. The speaker asks the audience to raise hands.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:04:09",
+      "spoken": "I think back to the old days in a weird way, hear me out. I'm going to talk about iOS for a second. Who owned an iPhone back when they looked like this? iOS 6 or earlier? How are you guys written code for 10 years when a fourth of you are that old? I'm confused. Hopefully you're all Android people or something. This is how iPhone apps used to look. You might notice it's different from how they look now. It looks less like an app and more like somebody took a picture of a compass and put it in the phone. This is how apps used to look. But now they look like this. And most people look at that and they're like, oh, that's an obvious downgrade. That's so much worse. Why would Apple ever do that? This is the downfall of Apple and the beauty of their design. I'm going to fight you guys on that. iOS 7 was Apple moving away from trying to convince you that these devices can replace the old tools we used to rely on. The compass had to look like a compass because the compass had to replace the physical compass that you relied on. The books app had to look like a bookshelf with real pages that turned because it had to convince you it was a reasonable alternative to buying a book and reading the paper version. Apps had to be designed to convince you to use them, not to be useful. And iOS 7 represents the shift to not focusing on convincing you anymore. Apple won. By that point, everyone knew their iPhone could do all of these different things. The point of iOS 7 was to stop convincing and start embracing. Start making a better interface. And this interface, as much as we might not like how it looks, it's so much more useful. You have clear indications of the difference between what direction you're locked on and where you're currently pointing. That red block is a super nice way to know that you're not in the direction you intend. The current direction you're facing is way clearer too with the giant 228 at the bottom. You just get way more info here than you did before. It's so much clearer. Even if we don't like it because it's not the thing we're used to, we got over it.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The slide shows an old iPhone with a skeuomorphic compass app (looks like a physical compass). Then it changes to a newer, flatter design of the compass app. The speaker explains the design philosophy shift.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:08",
+      "spoken": "We're currently in our skeuomorphic phase as software developers. Skeuomorphism is this design aesthetic trying to represent the way things used to look, the physical goods that we relied on and try to make them digital. We're doing this right now with software. We're pretending our terminals are the ultimate interface when they're not even good interfaces. And I'm saying this as someone who loves their terminal deeply. Natural language has no place in a terminal, but we pretend it does because the terminal is familiar. It's what we use, it's what we love. It's where we like to think of ourselves when we're thinking about coding.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "We're in our skeuomorphic phase, Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The slide shows 'We're in our skeuomorphic phase' in handwritten text. The speaker explains how this applies to software development.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:06",
+      "spoken": "Who here is an aspiring Vim user that like wishes you could use Vim or even does? I know we've all had that Vim phase where we all tried. This is just how we are as devs. We care so deeply about these things. We care so deeply about our tools, the systems we pick, the frameworks, the languages. We like to think it all matters. And we've blinded ourselves in this. We think things that just don't make sense when you take one step back, like, why can't we commit our environment files? It sounds stupid when I put it on a slide like this, but I want you to really think about this for a second. When I have a team of engineers that are working on a project, why do I have to build another system to share this specific file, but all the other files can go and get just fine? It's dumb. It's just how Git was built because it was built for a very specific thing, and then it took over our industry and it took over our brains, and we aren't letting go of that. There's a lot of these things in our heads that we have to start fighting. We have to take the step back and think, is this how we do things because it's right, or is this how we do things because it's just how we've always done it?",
+      "speaker": "Theo Browne",
+      "on_screen_text": "Why can't we commit .env files?, Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The slide shows 'Why can't we commit .env files?' in handwritten text. The speaker discusses developers' attachment to tools and practices.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:51",
+      "spoken": "And as you start to think more about this, you'll realize there are so many things that we do this with. Like, why do we qualify ourselves by the languages we know? I used to think this was a junior thing, like I can't tell you how many times I had a junior engineer I was talking to, like, oh, you're a coder, what languages do you write? I write JavaScript. I thought this was a junior problem. But then you talk to senior engineers, they're like, oh, he writes JavaScript, he's not a real developer. We care too much. We pride ourselves in these things. They're our identity, these weird facts, these weird choices, these things that feel essential.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "Why do we qualify ourselves by the languages we know?, Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The slide shows 'Why do we qualify ourselves by the languages we know?' in handwritten text. The speaker questions the emphasis on programming languages as identity.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:08:34",
+      "spoken": "Just don't matter that much anymore. And they didn't then, and they matter less now. We got away with it because it was so hard to find engineers that we could just tell the company what we were doing and they couldn't really say no, because the alternative is spend six months trying to hire someone else. They're not going to do that. Why do we do this to ourselves? One of the nice things about AIs, you don't have to feel bad when you shut down their work. But we, we just care too much, is the point I'm trying to make. And the things we care about are not necessarily the things that matter anymore. And I hope we can finally start to challenge some of these. I'm going to get a little more personal here by showing some of the ideas I've built because the goal here is that when you guys go out of this talk, you have a better mindset for coming up with ideas that make sense now by rejecting the things that made sense before.",
+      "speaker": "Theo Browne",
+      "on_screen_text": "Why are we so scared of deleting code?, Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The slide shows 'Why are we so scared of deleting code?' in handwritten text. The speaker discusses the fear of deleting code and the need to challenge old practices.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:09:44",
+      "spoken": "These are three of the things that I have built or are currently working on. I'm going to go from the bottom up. I built a Reddit scraper because making good memes is hard and I'd rather just steal them from Reddit. And it went pretty well. It was a side project for me two to three days with just scrape Reddit, top posts on program",
+      "speaker": "Theo Browne",
+      "on_screen_text": "Full-stack cloud, Zoom for streamers, Reddit scraper, Keynote Theo Browne / Founder t3.gg, AI Engineer World's Fair PRESENTED BY Microsoft",
+      "visual": "The slide lists three items: 'Full-stack cloud', 'Zoom for streamers', and 'Reddit scraper'. The speaker begins to talk about the Reddit scraper.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "Theo Browne discusses the rapid evolution of AI models, categorizing them into eras based on their capabilities: Sonnet 3.5 for tool calls, Opus 4.5 for long-running tasks, and Mythos 5 for orchestration. He argues that developers need to "
+}

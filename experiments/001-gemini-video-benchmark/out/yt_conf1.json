@@ -1,0 +1,247 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": null,
+      "speaker": null,
+      "on_screen_text": "AI Engineer World's Fair",
+      "visual": "The video opens with a black screen, slowly revealing the glowing text 'AI Engineer World's Fair' in a white rectangular box. A bright light flares from behind the text.",
+      "kind": "other"
+    },
+    {
+      "t": "00:00:05",
+      "spoken": null,
+      "speaker": null,
+      "on_screen_text": "PRESENTING SPONSOR Microsoft",
+      "visual": "The screen transitions to a black background with the text 'PRESENTING SPONSOR' above the Microsoft logo, which features four colored squares and the word 'Microsoft' in white.",
+      "kind": "other"
+    },
+    {
+      "t": "00:00:07",
+      "spoken": null,
+      "speaker": null,
+      "on_screen_text": "LAB & PLATINUM SPONSORS Amazon AGI Lab ANTHROPIC Google DeepMind MINIMAX OpenAI Akamai arize aws Braintrust bright data Browserbase docker neo4j ORACLE PayPal qodo reducto Sonar togetherai Unblocked WorkOS",
+      "visual": "The screen displays a list of company logos under the heading 'LAB & PLATINUM SPONSORS' against a dark background with subtle star-like patterns.",
+      "kind": "other"
+    },
+    {
+      "t": "00:00:12",
+      "spoken": "What's up? Yeah, thank you for coming to the design engineering track at AI. Is everyone having fun?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair",
+      "visual": "A man with dark hair and a brown leather jacket stands behind a podium with the 'AI Engineer World's Fair' logo, addressing a seated audience. A blue curtain forms the backdrop.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:18",
+      "spoken": "Yeah. I think this is going to be a great track, so get excited.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair",
+      "visual": "The man smiles and gestures with his hands while standing at the podium. The audience is partially visible in the foreground.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:22",
+      "spoken": "All right, let's get going. Um, my name's Jeffrey Litt. I'm a design engineer at Notion currently. And I'm here to drop a hot take for this room, maybe.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair Understanding is the new bottleneck Geoffrey Litt → Design Engineer at Notion | @geoffreylitt Engineering the future of AI",
+      "visual": "The screen splits, showing the speaker on the left and a slide on the right. The slide has the title 'Understanding is the new bottleneck' and the speaker's name and affiliation.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:33",
+      "spoken": "I think it is still important for people to understand how code works.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft It's important for humans to understand how the code works. TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide on the right now displays the text 'It's important for humans to understand how the code works.' The speaker gestures to the audience.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:45",
+      "spoken": "Now, some of you might agree, some of you might disagree. Let's actually, let's do, let's try a poll. I'm curious for this room. Raise your hand if you agree with that opinion. Okay, maybe some selection bias. Any brave, okay, raise your hand if you disagree with this opinion. Wow. Okay. We have, maybe we'll do a debate later, yeah. I was hoping we'd be at the AI Engineer conference, so we'd have more, okay. I might be preaching to the choir here.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft It's important for humans to understand how the code works. TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The speaker interacts with the audience, asking them to raise their hands to agree or disagree with the statement on the slide. He smiles and laughs.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:12",
+      "spoken": "You know, I think we, the reality is though, we are entering an era where this is a legitimate question that people are debating, right? Agents are writing tons of code for us. They're landing 50,000 line PRs. And it is getting harder to keep up. We all feel this.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Conversation 67 Commits 69 Checks 25 Files changed 372 +55,219 -3,027 TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows a GitHub pull request interface with statistics like 'Conversation 67', 'Commits 69', 'Files changed 372', and a large number of additions and deletions.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:01:31",
+      "spoken": "Now, I think the good news is, there are lots of ways to understand. Be, you know, the days of just reading code line by line, that's not the only way anymore. And what the point of this talk is about is, I want to share with you a bunch of the practices that I use to understand the code that my agents are writing for me. This includes things like explainer docs, teaching me about how my code works. My agents write quizzes for me to, to test my understanding. Am I still really in the loop? Am I keeping up? I have agents build me micro-worlds that I can inhabit to get this intuitive sense of how my code works, that's deeper and richer than just a written document. And I think all of these are really exciting new possibilities that are open, opening up for AI to help us understand better, not worse. And so that's what the point of this talk is going to be about, and I hope I can leave you with some techniques that you can take home and use yourself.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft How I understand agent code: Code explainers Quizzes Micro-worlds TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide lists three methods for understanding agent code: 'Code explainers', 'Quizzes', and 'Micro-worlds', with examples of each. The speaker gestures towards the slide.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:28",
+      "spoken": "By the way, my timer isn't running, if you could get that running that'd be great so I know if I'm blabbering. Okay, but let's start, let's back up for a sec. Before we talk about how, let's talk about why. Why bother understanding? This is again, it's a question now, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Why understand? TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The speaker looks around, then turns to the slide which now asks 'Why understand?'. He gestures with his hands.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:41",
+      "spoken": "And I think a lot of people get this subtly wrong.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Understand to verify TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide changes to 'Understand to verify'. The speaker looks at the audience.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:55",
+      "spoken": "So what a lot of people think of, why do humans still have to understand? They think, we understand to verify. The agents do dumb stuff, we've all seen it. And your job as the human is to keep them in line, right? Make sure they don't screw up. When people say things like code review is the new bottleneck, I think that's the first thing that pops into people's heads is, correctness, checking. There's this mental model that's like, hey, the agent's going to give you something, and what's your job? It's to ask, is this correct? Now, correctness can have a lot of definitions. Does it match the spec doc you gave it? Does it take down production? Is it well architected?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft “Code review is the bottleneck” Beyang @beyang The bottleneck in coding is now the time it takes a human to review agent-generated code. Sam Saccone @samccone Everyone is waking up to the fact that code-review is the bottleneck of 2026 Logan Kilpatrick @OfficialLoganK The bottleneck has so quickly moved from code generation to code review that it is actually a bit jarring. None of the current systems / norms are setup for this world yet. 9:53 PM • Mar 16, 2026 • 523K Views Aiden Bai @aidenybai the bottleneck for coding agents is now testing / code quality TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows three tweets discussing 'code review is the bottleneck' in the context of agent-generated code. The speaker gestures and explains the concept.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:03:05",
+      "spoken": "But fundamentally, those are all kind of thumbs up, thumbs down decisions, right? And the thing is, over time, we've all seen it, the agents are also able to ask these questions and they're getting better at it. You give it the right verification loop. And over time, this is the reality. The, the role of humans in correctness checking is decreasing. And you know what? I actually don't hate that. If I have a clear idea of what I want to do, and the agent does it correctly, instead of coming back to me with an incorrect thing, that's great. I'm, I'm into it.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Correct? Correct? TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "An animated diagram shows a person at a laptop thinking 'Correct?' and an AI agent in a hard hat. Arrows indicate a loop between them. The person's thought bubble fades, and the AI agent's thought bubble 'Correct?' becomes more prominent, with a self-referential arrow.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:04:07",
+      "spoken": "So then I think people extend this and say, you know what? That means, as the agents get smarter and smarter and smarter, we, we don't have to understand at all, right? Get out of the loop, man. Run the loop. And that's where I think people miss something really important. There is a deeper reason to understand what's going on, and that's understanding to participate. Because here's the thing. It's not just one loop. When you review what's happening and get in the loop, you come away changed. You understand something. And that understanding is what you take to the next loop, and the next, and the next.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Understand to participate TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide changes to 'Understand to participate'. The speaker gestures with his hands.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:04:31",
+      "spoken": "Your understanding of what's going on is the foundation for you having that next idea, and being an active creative participant in a project. I think probably you've all, you've all felt even before AI, you know, the difference of the kinds of ideas that someone can have when they really understand what's going on, versus when they're a few layers removed, are different. Because when you have rich conceptual structures in your head that you can fluently recombine really fast without going out to like ask some, some agent or some human how it works, that gives you the ability to fluidly take creative leaps. And that's the human part of the work. Coming up with the next idea and the next idea. So this is actually the real reason I think understanding matters. And this is not something that we can just wash away with better agents. Because if we want to be active participants, you still got to do this.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Understanding lets you have the next idea TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The animated diagram now shows three iterations of the human-AI loop, with a lightbulb icon appearing above the human after each loop, representing a 'next idea'. The speaker gestures to emphasize his points.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:05:23",
+      "spoken": "There's a great term, maybe some of you have heard, called cognitive debt, that I think really captures the spirit well. It's an analogy to technical debt, popularized by the scholar Margaret Storey, Simon Willison also blogged about it. And I love this idea because, similarly to tech debt, you might get away with it for a little bit, but at some point you get burned if your understanding degrades. And maybe you've felt this, I've know I've felt it. You're vibe coding, things are going well, and then at some point you realize, wait, I have no idea what's going on. I basically can't participate anymore, right? You've built up too much cognitive debt.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Cognitive debt “Even if AI agents produce code that could be easy to understand, the humans involved may have simply lost the plot and may not understand what the program is supposed to do, how their intentions were implemented, or how to possibly change it.” Margaret Storey https://margaretstorey.com/blog/2026/02/09/cognitive-debt/ TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide displays the term 'Cognitive debt' and a quote from Margaret Storey about humans losing the plot when AI agents produce code. The speaker gestures and explains the concept.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:02",
+      "spoken": "Okay, so maybe, sounds like all of you were already convinced. We agree, we need to understand. But how? Right? We don't want to live in 2023. We are using agents to move fast, and it is harder and harder to keep up. How do we do it?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft How do we build human understanding when working with AI? TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide now asks 'How do we build human understanding when working with AI?'. The speaker looks at the audience and gestures.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:14",
+      "spoken": "I think to answer this question, we should actually take a step back and ask a more fundamental question, which is, how do we understand stuff in general?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft How do we build human understanding? TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide simplifies the question to 'How do we build human understanding?'. The speaker gestures with his hands.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:28",
+      "spoken": "Plot twist, this is not the first time that any human has asked this question. There is a field. It's called education. Now, when you think education, you might think of bad memories from sitting in lectures or whatever, but I think we can do better. We can take inspiration from the best ideas that have ever been invented in education and use them to stay in the loop and understand. So that's what this talk is about.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows a black and white photo of four young children sitting on the floor, engaged in learning activities. The speaker smiles and gestures.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:44",
+      "spoken": "We're going to talk about three techniques.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Techniques for understanding 1 Explanations 2 Micro-worlds 3 Shared spaces TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide lists 'Techniques for understanding' with three points: '1 Explanations', '2 Micro-worlds', and '3 Shared spaces'. The speaker gestures towards the list.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:53",
+      "spoken": "First, explanations. So when an agent writes some code, it's an opportunity for it to explain the work to you, right? And the most naive explanation is, hey, here's the code diff. That's the raw change, the material of what happened. But we can do, I think, much, much better.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows a cartoon of a person at a laptop and an AI agent in a hard hat, with an arrow between them. Below, a code editor displays a code diff. The speaker gestures.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:05",
+      "spoken": "What would the best possible explanation be? Like if you sent a team away for a year to come up with a personalized curriculum just to explain this one code change to you, what would that look like? I think this is a very generative question to ask.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft What would the best explanation be? TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide now asks 'What would the best explanation be?' with the same cartoon figures above. The speaker gestures emphatically.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:20",
+      "spoken": "So, I've done a bunch of attempts at this. One is this skill I wrote called explain-diff, which I use every day, and a lot of my co-workers do as well. And I want to walk you through it.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft /explain-diff From Top-Down to Isometric: How the Zen Garden Gained Depth Background The Engine: Phaser 3 and the Flat Canvas TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows the cartoon figures and the text '/explain-diff'. Below, a Notion page titled 'From Top-Down to Isometric: How the Zen Garden Gained Depth' is displayed, showing a 'Background' section.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:29",
+      "spoken": "So, we're going to go through a little example here. I'm working on a video game where you draw Zen Gardens, kind of de-stress, you know, we can all use that these days. And we made a code change to change the perspective of the game from top-down to isometric. And I, when I run my skill, it produces a code explainer doc. This can be an HTML file, it can be markdown. I like to put them in Notion because I work there, but also because it's then collaborative, so my team can comment on it and talk about it. And here's how it looks.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft RAKE ROCK SHRUB TEAHOUSE CLEAR SOUND TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows a pixel art video game screen depicting a Zen garden with rocks, shrubs, and a teahouse. The speaker points to the screen and explains the game.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:07:58",
+      "spoken": "We start with background. We do not start with what happened in this change. It starts by teaching me, hey, here's how this system works. Here's the game engine we're using, here's the coordinate system, right? Here's the subsystems. It makes sure that I'm sort of being led up to the point where I can even begin to understand what's going on here. Obviously, you can skip this if you already know. You can personalize it to what you already know.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Start with background Background The Engine: Phaser 3 and the Flat Canvas The Phaser coordinate system. The scene's rendering is organized into three independent subsystems: Garden mask Sand canvas Placed items TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows the Notion page with a 'Background' section, detailing the game engine, coordinate system, and rendering subsystems. The speaker gestures to the text.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:08:21",
+      "spoken": "Second important principle is intuition before details. So before we start, you know, looking at code and stuff, it says, hey, the goal of this commit is to make the garden feel three-dimensional using only 2D drawing tricks. Give me examples, give me a feel for the essence before, you know, you throw a bunch of code at me, right? This, by the way, is good teaching. This is what like good math teachers do.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Intuition before details Intuition The goal of this commit: make the garden feel three-dimensional using only 2D drawing tricks. Trick 1: The Squashed Ellipse The most fundamental change. Before, the garden radius was nearly equal in both axes: rx = w * 0.42, ry = SAND_H * 0.42 → ratio = 1:1 (nearly circular) After: TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows the Notion page with an 'Intuition' section, explaining the goal of the code change and the first trick, 'The Squashed Ellipse', with a formula. The speaker gestures.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:08:50",
+      "spoken": "Third, interactive figures. So, where it makes sense, give me things to fiddle with and try. So, with this change, it was like changing how we draw rocks. So, I can drag around rocks in this little simulation, and it shows me the coordinates that are happening, how the Z-layers of the painting are changing. This, by the way, is actually using a new feature that Notion literally launched this morning of HTML blocks in Notion pages. So, your agents can put interactive simulations into your Notion pages. Pretty cool. I think you have to be careful with interactivity. It can just be a crutch and it can be kind of slop, to be honest. But used tastefully, it can provide understanding that's hard to achieve with just static pictures.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Interactive figures Trick 1: The Squashed Ellipse Why does a 2.4:1 ellipse imply a tilted surface? Imagine holding a circular plate parallel to the floor and looking straight down — it appears as a circle. Now raise your viewpoint to about 30° above horizontal. The plate foreshortens in the depth dimension, becoming a wide, flat ellipse at roughly that ratio. Our visual system inverts this reasoning: seeing the 2.4:1 ellipse, it concludes “this must be a horizontal circle viewed from ~30° above.” ellipse-tilt.html 33° above horizontal ratio 1.8 : 1 ISO TILT TOP-DOWN Lowering the camera squashes the vertical radies. The garden center also shifts slightly upward — from 50% to 44% of canvas height — pushing the garden toward the top of the viewport and leaving space below for the implied “near ground.” This reinforces the sense of viewing from above and in front. TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows the Notion page with an interactive figure. A slider allows adjusting the '33° above horizontal' ratio, changing the appearance of an ellipse. Below, a small simulation shows two rocks, A and B, that can be dragged, demonstrating how their Z-layers change. The speaker explains the interactive elements.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:09:30",
+      "spoken": "Okay, then we finally get to the code, right? Show me the code. But we don't just throw a list of files in order. We do what we, what I call literate code diffs. Give me prose, explain it to me in the right order. Tell me before each file what's going on. And when you accumulate all this stuff, it's much, much easier to follow than just a raw diff.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft Literate code diffs Code All changes live in src/scenes/GardenScene.js (225 insertions, 90 deletions). Let's walk through the key parts in conceptual order. 1. Garden Shape Constants Five constants now define the isometric ellipse at module scope, replacing the local variables that were re-computed inside each function: const GARDEN_CX = W / 2; // horizontal center (unchanged) const GARDEN_CY = SAND_H * 0.44; // vertical center, shifted down by 0.5 const GARDEN_RX = W * 0.42; // horizontal radius (slightly wider) const GARDEN_RY = SAND_H * 0.27; // vertical radius (much shorter — the key) const BORDER_REM_H = 8; // pixel height of the 3D front rim Moving to module-level constants also means buildGardenMask() and drawBorder() now reference the same ellipse geometry, guaranteeing the mask and the border always agree on where the garden edge is. 2. Sand Perspective Gradient The fillRect() function adds a warm-to-cool gradient based on each pixel's vertical distance. TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows the Notion page with a 'Code' section, presenting code changes with accompanying prose explanations, titled 'Literate code diffs'. The speaker points to the screen.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:09:50",
+      "spoken": "Oops. In fact, I print these out and take them to the copy shop sometimes and just read them. I find it really beautifully ironic that AI is actually taking this process where I was used to doing",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AI Engineer World's Fair PRESENTED BY Microsoft The problem: reading is hard work TRACK 6 • JULY 1, 2026 AI Designers/Design Engineers",
+      "visual": "The slide shows a black and white photo of a printed document with text blurred out, held by a binder clip. The speaker looks at the audience and smiles.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "In this segment, the speaker, Geoffrey Litt, a Design Engineer at Notion, discusses the importance of human understanding in the age of AI-generated code. He argues that while AI can handle correctness checks, humans need to understand the code to actively participate and generate new ideas, coining the term 'cognitive debt' for the cost of not understanding. He then introduces three techniques for building human understanding when working with AI: code explainers, quizzes, and micro-worlds, drawing inspiration from educational principles. He demonstrates his 'explain-diff' tool, which generates Notion documents providing background, intuition before details, interactive figures, and literate code diffs for complex code changes."
+}

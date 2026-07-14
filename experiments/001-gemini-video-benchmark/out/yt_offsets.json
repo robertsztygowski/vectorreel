@@ -1,0 +1,26 @@
+{
+  "early": {
+    "ok": true,
+    "window_s": 120,
+    "video_tokens": 30960,
+    "audio_tokens": 3000,
+    "cost_usd": 0.0128,
+    "text": "This video features a woman and a man discussing AI and coding. The woman says, \"Code's not even the right verb anymore, right? But I have to express my will to my agents for 16 hours a day. Manifest.\" The man then says, \"How can I have not just a single session of Claude Code or Codex or some of these agent harnesses? How can I have more of them? How can I do that appropriately? The agent part is now taken for granted. Now the claw-like entities are taken for granted. And now you can have multi"
+  },
+  "mid": {
+    "ok": true,
+    "window_s": 120,
+    "video_tokens": 30960,
+    "audio_tokens": 3000,
+    "cost_usd": 0.0125,
+    "text": "A man and a woman are sitting in chairs facing each other, having a conversation. The man is wearing a black t-shirt and the woman is wearing a black turtleneck. They are discussing the concept of speciation in models and the impact of compute infrastructure constraints.\n\nFirst thing heard: \"and I think we we should be able to see more speciation.\"\nLast thing heard: \"but uh I think right\""
+  },
+  "long": {
+    "ok": true,
+    "window_s": 600,
+    "video_tokens": 154800,
+    "audio_tokens": 15000,
+    "cost_usd": 0.0617,
+    "text": "A man and a woman are sitting in chairs facing each other, engaged in a conversation. The man is wearing a black t-shirt and dark green pants, while the woman is wearing a black sleeveless turtleneck and black pants. They are both holding microphones and appear to be recording a podcast or interview.\n\nThe first thing that can be heard is the man saying, \"And I think we we should be able to see more speciation.\"\nThe last thing that can be heard is the man saying, \"It would be the extrapolation.\""
+  }
+}
