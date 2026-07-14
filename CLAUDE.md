@@ -2,7 +2,8 @@
 
 EU SaaS: video → structured, timestamped Markdown for AI knowledge bases.
 **Read the living docs before non-trivial work:** ARCHITECTURE.md (what/how),
-BUSINESS_MODEL.md (why), INFRA.md (GCP state), **DEVELOPMENT.md (full guidelines — this file is the summary).**
+BUSINESS_MODEL.md (why), INFRA.md (GCP state), PLAN.md (phase-by-phase execution plan),
+**DEVELOPMENT.md (full guidelines — this file is the summary).**
 
 ## Hard rules
 
