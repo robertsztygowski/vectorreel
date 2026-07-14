@@ -1,0 +1,24 @@
+<!-- Pure logic only (DEVELOPMENT.md §4). No ffmpeg, no docker, no network: every test here
+     runs against synthesized frames, so the algorithms are pinned independently of any video. -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>VectorReel.Tests.Unit</RootNamespace>
+    <AssemblyName>VectorReel.Tests.Unit</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <ProjectReference Include="../../src/Core/Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,25 @@
+<!-- Runs real ffmpeg/ffprobe against the committed CC clips in tests/fixtures/videos/.
+     These are the golden tests for Stage A: they are what "correct" means for the IP.
+     No cloud, no spend — Stage A is local compute only. -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>VectorReel.Tests.Integration</RootNamespace>
+    <AssemblyName>VectorReel.Tests.Integration</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <ProjectReference Include="../../src/Core/Core.csproj" />
+  </ItemGroup>
+
+</Project>

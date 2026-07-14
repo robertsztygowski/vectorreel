@@ -1,0 +1,39 @@
+# Local dependencies only (DEVELOPMENT.md §5). One command to a running system:
+#   docker compose up -d && dotnet run --project src/Api    (plus src/Worker)
+#
+# Cloud Tasks has no emulator — local runs and tests use InProcessQueue behind ITaskQueue,
+# so there is deliberately no queue container here.
+#
+# Nothing reads these yet: Phase 1 is Stage A, which is pure local ffmpeg and needs no
+# database and no object store. They land now because Phase 2 (Stages B–D) does, and
+# because the promise above is only true if the file exists.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: vectorreel
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d vectorreel"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # GCS emulation. The real buckets are raw-videos-eu / outputs-eu (ARCHITECTURE.md §2);
+  # -scheme http keeps the emulator plain-HTTP so no local certificate is needed.
+  fake-gcs-server:
+    image: fsouza/fake-gcs-server:1.52
+    command: ["-scheme", "http", "-port", "4443", "-external-url", "http://localhost:4443"]
+    ports:
+      - "4443:4443"
+    volumes:
+      - gcs-data:/storage
+
+volumes:
+  postgres-data:
+  gcs-data:
