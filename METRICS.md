@@ -354,7 +354,105 @@ not worse.**
 
 ---
 
-## 6. Anti-metrics — do not track, do not celebrate
+## 6. Operations — the stack that actually renders these numbers
+
+### 6.1 🚨 The tooling rule: **no US-based analytics or tracking. Ever. On any property.**
+
+**Decided 2026-07-14. This is CLAUDE.md rule 10 and it is not a preference.**
+
+**Google Analytics is prohibited.** GA4 has been ruled unlawful by multiple EU DPAs (Austria,
+France, Italy) over US transfers. **We sell EU data residency. Our landing page concedes the CLOUD
+Act. Our buyer *is* a DPO — and our own copy tells them where to look.** Shipping GA on this site is
+a self-own a competent DPO spots in ten seconds, and it drags a consent banner onto the exact funnel
+we are trying to measure.
+
+**The same test applies to every tool we ever add** — heatmaps, session replay, chat widgets, A/B
+platforms, marketing pixels. **If it phones home to the US, it does not go on a vectorreel
+property.** This rule is written down precisely because tools like these get added *casually*, by a
+future self in a hurry, six months from now.
+
+> **Inverted, this is a sales asset:** *"our own analytics don't leave the EU either, and we don't
+> set a cookie."* Put it on `/gdpr`. **Honesty is the differentiator; behave like it in our own
+> stack or the differentiator is a lie.**
+
+### 6.2 The stack — four pieces, one source of truth
+
+| Layer | Tool | Scope |
+|---|---|---|
+| **Pre-signup analytics** | **Plausible (EU-hosted)** | Visitors, referrer, page. **Cookieless ⇒ no consent banner ⇒ no funnel tax.** This is the *only* instrument that exists during PLAN.md Phase 0.3, and it is sufficient. |
+| **Post-signup events** | **Our own Postgres** (§3 schema) | 🔑 **The source of truth. Not a third-party tool.** Every event already carries `referrer` and `ab_arm`. |
+| **Revenue** | **Stripe** | From Phase 4. Do not rebuild it. |
+| **Ad cost** | **Google Ads** (delivery only) | ✅ Google **Ads** is fine — that is ad *delivery*. ❌ The Google **tracking pixel** is not. Conversions are measured in our own DB (§6.3), which is more accurate anyway. |
+
+### 6.3 First-party attribution — the contract that makes ads measurable
+
+> **Ad platforms report their own conversions, generously. They are marking their own homework.**
+> **The only trustworthy CAC is: spend from Google Ads ÷ payments in Stripe, joined on *our* data.**
+
+**The requirement, and it is load-bearing:** capture UTM parameters on **first touch**, persist them
+**first-party** (not via a pixel), and **carry them through `signup` all the way to
+`payment_succeeded`.**
+
+⚠️ **If the UTM does not survive to the payment row, real CAC cannot be computed — and we will end
+up trusting Google's number instead.** Attribution has to be designed in at Phase 3, not bolted on
+at Phase 4.
+
+### 6.4 🚨 Ad spend belongs in the cost ledger
+
+| # | | |
+|---|---|---|
+| **N29** | **Ad spend, per keyword per week, recorded in the same ledger as LLM + compute cost.** | **Currently metered nowhere.** |
+
+**This is the exact same bug as the ffmpeg omission** (N5): a real, material cost that is invisible
+to the system whose job is to see all costs. **Contribution per account (N0) is a fiction if
+acquisition cost is not in it.** CLAUDE.md rule 6 covers "every LLM call and every compute step" —
+**it now also covers every euro of ad spend.**
+
+### 6.5 ⚠️ "Qualified visitor" is not directly measurable — say so
+
+We cannot see a stranger's company size or whether they run a RAG project. **N15 counts something we
+cannot observe.** So in practice:
+
+- measure **raw visitors** and **trial-starts**, per `referrer`;
+- **the ratio between them is the qualification signal.**
+
+> **Worked example — and this is the DISTRIBUTION.md open question resolving itself in public:**
+> if LinkedIn sends 500 visitors and 2 sign up, while r/RAG sends 100 and 8 sign up, then **Reddit's
+> traffic is qualified and LinkedIn's is a friendly crowd that claps.** Raw volume would have told
+> you the exact opposite. **Never rank a channel by visitors.**
+
+### 6.6 The weekly scoreboard — and the one rule that makes it safe
+
+> ### 🚨 **Display the sample floor next to every number.**
+> The §2.1 failure mode — calling a verdict at n=40 — is best prevented **mechanically**, by making
+> the dashboard refuse to permit it:
+>
+> ```
+> A1 headline test:   Arm A  12 signups   |   Arm B  9 signups
+>                     ⛔ FLOOR NOT MET — need ~300/arm. THIS IS NOT A RESULT.
+> ```
+>
+> **A number without its floor next to it is an invitation to fool yourself.**
+
+**What to watch, by phase — and only this:**
+
+| Phase | The numbers that matter | Reads |
+|---|---|---|
+| **0.3** | Visitors by referrer · email captures by referrer · **capture-rate by referrer** (the §6.5 proxy). Once **T-A** runs: CPC + cost-per-capture **by keyword**. | A5, A1, real CPCs |
+| **3** | 🚨 **visitor → signup (N12).** | **The decisive number** — it sets N25 and therefore whether paid acquisition exists at all. Plus `upload_repeat` → A4. |
+| **4** | trial → paid (N13) · **real CAC by keyword vs. N23** · cohort hour-decay · Stripe revenue vs. **N1a** | A2, A3, the goal |
+
+### 6.7 Cadence
+
+**Look weekly. Decide monthly. Call verdicts only at the §2.2 checkpoint (T0 + 4 months) and at T.**
+
+Weekly exists to catch a **broken funnel** or a **runaway ad keyword** — not to read tea leaves.
+**The per-keyword kill rule is mechanical and needs no deliberation:** cost-per-signup implying a
+CAC above **N23** ⇒ pause it that week.
+
+---
+
+## 7. Anti-metrics — do not track, do not celebrate
 
 Impressions, likes, "engagement", trial *signups* absent second-uploads, and — most dangerously —
 **enthusiasm.**

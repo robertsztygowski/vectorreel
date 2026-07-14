@@ -196,6 +196,16 @@ Work:
    - **This is the A1 test.** If Arm A does not clearly beat Arm B, **EU is a checkbox, not a
      wedge**, and all positioning moves to the capability story. Directional, not significant.
 2. **Email capture.** Nothing more.
+2b. **Measurement, before the first visitor** (METRICS.md §6):
+   - **Plausible (EU-hosted, cookieless)** — no consent banner, no funnel tax. 🚨 **Never Google
+     Analytics** (CLAUDE.md rule 10).
+   - **UTM capture on first touch, persisted first-party.** It must survive to `payment_succeeded`
+     or real CAC can never be computed. **Design it in now; it cannot be bolted on at Phase 4.**
+   - The scoreboard shows **capture-rate by referrer** — the qualification proxy (METRICS.md §6.5) —
+     and **displays the sample floor next to every number** (§6.6).
+2c. **Ad tranche T-A** (METRICS.md N26): €300–400, one-time, Google Search, long-tail exact/phrase.
+   **Buys evidence, not customers** — real CPCs, cost per capture, and a clean A1 verdict on *cold*
+   traffic. Hard stop at budget. **Not before the page and gallery are live.**
 3. **The artifact post** — the single best inbound asset, and it's already written: side-by-side
    *plain transcript vs. vectorreel Markdown*, plus a RAG answering a question that is **only**
    answerable from on-screen content. Now built on a **public** video from Phase 0.2, so it can

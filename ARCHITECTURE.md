@@ -56,6 +56,7 @@ down for enterprise compliance, the public path dies. Keep it isolated from the 
 | Payments | Stripe (EU entity, EUR) | Subscriptions + metered overage. |
 | IaC | Terraform | Region pinning and org policy as code from day one. |
 | Observability | Cloud Logging + OpenTelemetry traces; per-job cost ledger in DB | Founder's standard; per-job token/cost tracking is a product feature (usage page), not just ops. |
+| **Analytics** | **Plausible (EU-hosted), cookieless** — pre-signup only. Post-signup truth is our own `events` table. | **CLAUDE.md rule 10 — no US analytics, ever.** Cookieless ⇒ **no consent banner ⇒ no funnel tax**, and it becomes a line on `/gdpr` rather than a liability. METRICS.md §6. |
 
 Org policy: `constraints/gcp.resourceLocations` restricted to EU. All service accounts least-privilege. CMEK: not in MVP, keep design compatible.
 
@@ -168,16 +169,32 @@ Errors: RFC 7807 problem+json. Rate limits per key. OpenAPI spec published; docs
 ## 6. Data model (initial)
 
 ```
-tenants(id, name, plan, created_at, retention_days_default, …)
+tenants(id, name, plan, created_at, retention_days_default,
+        -- 🔑 first-touch attribution: MUST survive to payment or real CAC is uncomputable
+        first_utm_source, first_utm_medium, first_utm_campaign, first_utm_term,
+        first_referrer, ab_arm, archive_hours, monthly_hours, …)
 users(id, tenant_id, email, role)
 api_keys(id, tenant_id, hash, label, created_at, last_used_at, revoked_at)
 jobs(id, tenant_id, status, stage, source_object, output_object, duration_sec,
      language, options_json, error_json, created_at, started_at, finished_at)
 job_segments(job_id, index, status, sampling_fps, tokens_in, tokens_out, cost_cents, attempt)
 usage_ledger(id, tenant_id, job_id, hours, cost_cents, billed_period)
+events(id, tenant_id, user_id, session_id, name, occurred_at, referrer, ab_arm, payload_json)
+ad_spend(id, day, channel, campaign, keyword, cost_cents, clicks, impressions)  -- METRICS.md N29
 webhooks(id, tenant_id, url, secret, events)
 audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion events
 ```
+
+**Two things here exist for reasons that are not obvious from the schema:**
+
+- 🔑 **`tenants.first_utm_*` / `first_referrer` / `ab_arm`.** Attribution must be **first-party** and
+  must **survive from first touch all the way to `payment_succeeded`.** Ad platforms report their
+  own conversions and are marking their own homework; **the only trustworthy CAC is our spend ÷ our
+  payments, joined on our data** (METRICS.md §6.3). **Design this in at Phase 3 — it cannot be
+  bolted on at Phase 4.**
+- 🚨 **`ad_spend`.** Ad euros are a real cost that is currently metered nowhere — **the same bug as
+  the ffmpeg omission.** Contribution per account is a fiction if acquisition cost is missing from
+  it. CLAUDE.md rule 6 now covers ad spend as well as LLM calls and compute.
 
 ## 7. GDPR / security architecture (product features, not paperwork)
 
@@ -185,7 +202,13 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
 - **Retention by design:** source video deleted post-processing by default; configurable; documented data-flow diagram on /gdpr page.
 - **Erasure:** `DELETE /jobs/{id}` cascades storage + DB; audit-logged.
 - **No training on customer data:** Vertex AI standard terms + contractual clause in our DPA; stated publicly.
-- **Subprocessor list (short, published):** Google Cloud (EU regions), Stripe, email provider. That's it for MVP.
+- **Subprocessor list (short, published):** Google Cloud (EU regions), Stripe, email provider,
+  **Plausible (EU-hosted analytics)**. That's it for MVP — and the shortness is itself the product.
+- 🚨 **No US-based analytics or tracking, on any property, ever** (CLAUDE.md rule 10). **Google
+  Analytics is prohibited** — ruled unlawful by several EU DPAs over US transfers. Analytics is
+  **cookieless, so there is no consent banner.** Applies equally to heatmaps, session replay, chat
+  widgets and marketing pixels. **We sell EU residency to DPOs; the same standard must hold in our
+  own stack, or the differentiator is a lie a competent DPO will catch.**
 - **Tenant isolation:** row-level tenancy in DB; per-tenant GCS prefixes; signed URLs scoped and short-lived.
 - **Encryption:** GCP default at-rest + TLS in transit; CMEK on roadmap.
 - **Provider abstraction:** `IVideoAnalyzer` / `ITextFuser` interfaces; Vertex implementation now, Mistral (EU) implementation planned — this is also the seam for the future self-hosted edition.

@@ -50,9 +50,10 @@ status banner before quoting it.
    → no secrets in diff → impacted living doc updated in the same commit →
    **`scripts/check-docs.sh` passes** (no number restated outside METRICS.md).
 5. **Deploy is deliberate**, from local, after `tests/Live/` passes. Never auto-deploy.
-6. Every LLM call **and every compute step** records cost in the per-job ledger — product feature,
-   not optional. (ffmpeg/Cloud Run transcode is ~30% of true COGS; metering only LLM calls
-   undercounts by a third.)
+6. Every LLM call, **every compute step, and every euro of ad spend** is recorded in the ledger —
+   product feature, not optional. (ffmpeg/Cloud Run transcode is ~30% of true COGS; metering only
+   LLM calls undercounts by a third. **Ad spend is the same bug: contribution per account is a
+   fiction if acquisition cost isn't in it** — METRICS.md N29.)
 7. Git: direct to main, small complete commits, `feat:`/`fix:`/`chore:`/`docs:`/`infra:` prefixes.
 8. **YouTube: never download bytes.** Ingestion is Vertex `fileData.fileUri` only — Google fetches,
    we don't. **No `yt-dlp`, no scraping, ever**, however awkward `fileUri` gets. A YouTube-ToS
@@ -62,6 +63,13 @@ status banner before quoting it.
 9. **Stage B calls always set `maxOutputTokens`, a bounded `thinkingBudget`, and a wall-clock
    timeout.** ~8% of benchmark calls degenerated (61k output / 63k thinking tokens). Unguarded
    calls break the SLO and the margin.
+10. **No US-based analytics or tracking on any vectorreel property. Ever.** **Google Analytics is
+    prohibited** (ruled unlawful by several EU DPAs over US transfers). Analytics is **Plausible,
+    EU-hosted, cookieless — no consent banner.** The same test applies to *every* tool: heatmaps,
+    session replay, chat widgets, A/B platforms, marketing pixels. **If it phones home to the US, it
+    does not ship.** We sell EU residency to DPOs and our own copy tells them where to look — GA on
+    this site is spotted in ten seconds. (Google **Ads** is fine — that is delivery. The Google
+    **pixel** is not; conversions are measured first-party. METRICS.md §6.)
 
 ## Layout
 
