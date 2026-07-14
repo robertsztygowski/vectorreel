@@ -10,16 +10,26 @@ node_modules/
 dist/
 *.log
 
-# .NET (future API/worker)
+# .NET
 bin/
 obj/
 *.user
+.vs/
+TestResults/
 
 # Secrets / local config
 .env
 .env.*
+!.env.example
 *.local
 appsettings.*.local.json
+
+# Key material — must never exist in the repo (DEVELOPMENT.md §6: ADC only, no key files)
+*-key.json
+*service-account*.json
+*.pfx
+*.pem
+*.p12
 
 # Terraform (future infra)
 .terraform/
