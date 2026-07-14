@@ -1,0 +1,29 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node (future Next.js frontend)
+node_modules/
+.next/
+dist/
+*.log
+
+# .NET (future API/worker)
+bin/
+obj/
+*.user
+
+# Secrets / local config
+.env
+.env.*
+*.local
+appsettings.*.local.json
+
+# Terraform (future infra)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
