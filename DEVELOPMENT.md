@@ -23,7 +23,7 @@
 
 ```
 vectorreel/
-  VectorReel.sln
+  VectorReel.slnx              # .NET 10 XML solution format
   Directory.Build.props        # strictness settings, applies to all projects
   .editorconfig
   src/
