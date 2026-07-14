@@ -1,0 +1,103 @@
+{
+  "segment_start": "00:24:20",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:24:20",
+      "spoken": "not mean. Just trust everything is infinitely secure and all our authentication and authorization mechanisms just work. They don't. We would layer ourselves in any other situation. Tin foil hats are cool.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Here cometh the Lesson",
+      "visual": "The speaker is visible in the bottom right corner. The main screen shows a slide with bullet points, including 'Don't run a Kubernetes API server endpoint on the public internet!!!one', and an image of a tin foil hat.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:24:31",
+      "spoken": "and Moss knows best. If you need another reason why not to run a public API server,",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Kubernetes API Servers on the Public Internet",
+      "visual": "The slide now displays a scene from 'The IT Crowd' featuring Moss with a burning computer. The speaker is still visible in the bottom right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:24:38",
+      "spoken": "you may have heard of this attack.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Billion Laughs",
+      "visual": "The slide changes to a white background with the title 'Billion Laughs' in large black text. The speaker remains visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:24:41",
+      "spoken": "Thanks to Ro and Bradman and Ian Coldwater for bringing the honk on this one.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "giggle",
+      "visual": "A video clip of numerous white geese walking in a line is shown on the main screen, with the word 'giggle' appearing. The speaker is still visible.",
+      "kind": "other"
+    },
+    {
+      "t": "00:24:48",
+      "spoken": "This is a essentially it's a fork bomb for YAML. Um it's like a zip bomb. It's eternal recursion. It will exhaust our API. It should be noted that any string will do in data key A, but honk has been emphatically recommended by the authors.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Self Destructive SelfSubjectAccessReview",
+      "visual": "The slide displays a block of YAML code titled 'Self Destructive SelfSubjectAccessReview', demonstrating a recursive YAML structure. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:25:04",
+      "spoken": "Another open API moral. Zero trust, trust but verify, mutual cryptographic authentication does not preclude the existence of other bugs.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "# CVE-2019-11253",
+      "visual": "The slide presents details about CVE-2019-11253, explaining a YAML parsing vulnerability in Kubernetes that can lead to a denial of service. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:25:14",
+      "spoken": "And of course, we update and we keep ourselves the hell offline.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "# CVE-2019-11253",
+      "visual": "The slide updates to show recommendations for CVE-2019-11253, emphasizing updating Kubernetes and limiting public access to API servers. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:25:18",
+      "spoken": "Okay, let's see if this one will done in minutes I have left.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "HONK!",
+      "visual": "The slide displays the word 'HONK!' in large black letters, accompanied by a grid of six colorful goose images. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:25:22",
+      "spoken": "",
+      "speaker": "Speaker 1",
+      "on_screen_text": "master 1@kube-andy-1",
+      "visual": "The screen transitions to a terminal window showing commands being executed and API requests to a Kubernetes API server, including fetching metrics and pod information. The speaker is visible.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:25:27",
+      "spoken": "Uh, where am I? Oh, that's another API server test. So, try that again. I don't know why that failed.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "master 1@kube-andy-1",
+      "visual": "The terminal window shows a series of failed attempts to run a script, indicated by 'snap failed' messages. The speaker is visible.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:25:35",
+      "spoken": "Uh yeah, of course, we can't write tests for everything and anything that we can programmatically, whoops, do and this is just uh a test for the presence of that. And we don't care so much because we're now on the billion laughs. Okay, so",
+      "speaker": "Speaker 1",
+      "on_screen_text": "master 1@kube-andy-1",
+      "visual": "The terminal window shows a successful execution of a script that retrieves Kubernetes API server version information, displaying details like 'gitVersion' and 'platform'. The speaker is visible.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:25:48",
+      "spoken": "",
+      "speaker": "Speaker 1",
+      "on_screen_text": "master 1@kube-andy-1",
+      "visual": "The screen splits into multiple terminal panes, showing various Kubernetes-related logs and processes, including API server activity and resource usage. The speaker is visible.",
+      "kind": "demo"
+    }
+  ],
+  "segment_summary": "This segment discusses the importance of securing Kubernetes API servers, highlighting that 'defense in depth isn't going anywhere' and public exposure is risky. The speaker introduces the 'Billion Laughs' attack, a YAML fork bomb that can overwhelm API servers, referencing CVE-2019-11253. The segment concludes with a demonstration of API server interactions and a brief look at a 'Billion Laughs' attack in action."
+}

@@ -1,0 +1,103 @@
+{
+  "segment_start": "00:26:50",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:26:50",
+      "spoken": "Let's now source it. Okay.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "source /.exploit.sh",
+      "visual": "The speaker is at a podium, and the screen shows terminal output with various Kubernetes commands and logs, indicating an ongoing process.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:26:54",
+      "spoken": "So we'll come back to this in a minute, but what we will start to see is the API server exhausting its threads, failing its health checks and restarting because we keep so many sockets open doing this, that is the end of the API servers. Even if they're low balanced, there is an asymmetrical data flow in this attack. They cannot handle the amount of recission necessarily to infinitely recurs, I'm surprisingly. So, uh, we will keep on going. If indeed we have the time",
+      "speaker": "Speaker 1",
+      "on_screen_text": "k8s-master-andy-1",
+      "visual": "The speaker explains the impact of the attack on the API server, which is exhausting its threads and restarting. The screen continues to display terminal output with logs from multiple Kubernetes components.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:27:12",
+      "spoken": "That unfortunately I just started again, that's not what you want to see.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Slide 63 of 154",
+      "visual": "The screen briefly shows a timer and then a slide with a list of commands and a large 'HONK!' text, indicating a restart or error in the demo setup.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:27:16",
+      "spoken": "testing testing. Range act to surf network infrastructure.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Testing testing 123",
+      "visual": "A slide titled 'Testing testing 123' appears with bullet points 'Arrange', 'Act', 'Assert', and a question 'For network infrastructure?'.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:27:19",
+      "spoken": "Well, we've built a tool at control play, is highly paralleled and map. These slides are available later.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "K8S Network Policy Testing",
+      "visual": "The slide changes to 'K8S Network Policy Testing' discussing `nmap` for Kubernetes pods and `netassert.io` for highly parallelized network security testing.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:27:24",
+      "spoken": "We love back core. I am the only maintainer left on this project. Please join me. It's useful assertions for bash.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "bats-core",
+      "visual": "The slide now focuses on 'bats-core', a test library for Bash, showing code examples of assertions and its GitHub link.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:27:33",
+      "spoken": "Uh we've built some extensive and expansive test suite with that. It's brilliant.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "teardown()",
+      "visual": "The slide continues with more code examples related to `bats-core`, demonstrating setup, teardown, and assertion failures for testing.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:27:35",
+      "spoken": "Who runs in the room? A few people, this is for you.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "break out of service meshes",
+      "visual": "A new slide appears with the title 'break out of service meshes'. The speaker asks the audience about their use of Istio.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:27:40",
+      "spoken": "especially you sir. Okay. Uh, we did a lot of trouble around this. There's lots of stuff that go wrong with. We don't use the security policy because it doesn't let us configure it. So we have to use OPA.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Istio Threats",
+      "visual": "The slide lists 'Istio Threats', including insecure control plane configuration, user misconfiguration, compromised workload attacks, and issues with PodSecurityPolicy.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:27:52",
+      "spoken": "Let's attack the mesh in the last two minutes.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Attacking the Mesh",
+      "visual": "A slide with the title 'Attacking the Mesh' shows a blue, interconnected mesh diagram, representing a service mesh.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:27:56",
+      "spoken": "Okay. So what have we got here? number we on. server.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "k8s-master-andy-1",
+      "visual": "The screen returns to terminal output, showing various Kubernetes commands and logs, as the speaker prepares for another demonstration.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:28:05",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "api server",
+      "visual": "The terminal output continues, displaying information related to the API server and `k8s-billion-laughs`.",
+      "kind": "demo"
+    }
+  ],
+  "segment_summary": "The speaker demonstrates an attack on the Kubernetes API server, causing it to exhaust threads and restart. He then transitions to discussing network policy testing using `netassert.io` and `bats-core` for Bash assertions. Finally, he introduces various Istio threats, including misconfigurations and security policy limitations, before preparing to demonstrate an attack on the service mesh."
+}

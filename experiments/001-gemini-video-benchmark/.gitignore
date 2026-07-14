@@ -2,4 +2,8 @@
 work/
 __pycache__/
 *.pyc
+# Raw model responses — kept locally as evidence, never committed.
+# Phase 0.2 made them per-attempt (.raw.a1.txt, .raw.a2.txt) so a retry stops overwriting the
+# failed response that caused it — the failed one is the one worth reading.
 out/*.raw.txt
+out/*.raw.a*.txt

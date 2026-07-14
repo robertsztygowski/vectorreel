@@ -1,0 +1,111 @@
+{
+  "segment_start": "00:28:05",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:28:05",
+      "spoken": "minutes. Ah, okay. So, what have we got here?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Attacking the Mesh",
+      "visual": "The video shows a slide titled 'Attacking the Mesh' with a blue network diagram. The speaker then switches to a terminal screen displaying various Kubernetes commands and outputs.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:28:22",
+      "spoken": "I think I may actually be out of time, but uh, suffice to say, there is no endpoint security. You can hit localhost 1500 triple quits, uh, you can post to it, and this issue will explain how you knock yourself off the mesh.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "envoyproxy / envoy, Admin endpoint security #2763, Open 8 Mar 2018, hhtuch, The admin endpoint today is unsecured (no authentication or TLS), with the assumption that it is only available to localhost or accessible on a trusted network. Ideally: We want to be able to restrict access to only trusted IPs, client certificates and ensure we have transport security. We want to have some ability to distinguish roles and access to the admin console, i.e. distinct identities might be allowed to operate /quitquitquit/ vs. stats monitoring. Beyond just security, there's also the question of what the admin console is. Is it just a gRPC usable, interactive web console or is it a first-class API intended for programmatic use? Should it offer new endpoints that are moving towards a proto definition of its contents in places such as #2172. Answers to this affect the framing of security considerations. Opening this issue to start the design discussion here.",
+      "visual": "The screen displays a GitHub issue page titled 'Admin endpoint security #2763' from the envoyproxy/envoy repository, detailing the lack of security on the admin endpoint.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:28:32",
+      "spoken": "It is going to be fixed. Let's just start by making the admin listener a real listener.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "justincely, IMO letting true filters be on a true admin listener would solve this well, but that defaulting to no endpoints enabled and selectively tuning them on would be preferable from a security standpoint. There's just less room for user error if only what's needed is enabled. For certain setups I don't want anyone, even on the box, to hit anything like /quitquitquit, or /certs, so seems safer to just have them enable. Is anyone already planning to work this? I'd be interested in supplying some work from my team to get some of these proposals in if it's not already claimed. hhtuch, @justincely I think if we had the admin port as a listener, it would be reasonable to add a simple HTTP filter to block this; it's probably doable with something like the RBAC filter (although it's more complicated than anyone is working on right now, so a good objective). I don't think anyone is working on this right now. Go ahead. I recommend moving to admin listener as the first step here. mattklein123, +1 Let's just start by just making the admin listener a real listener.",
+      "visual": "The screen shows a GitHub issue page with comments from various users discussing the proposed fixes for the admin endpoint security vulnerability.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:28:37",
+      "spoken": "and recursively correct ourselves. Um, we are almost there. How do we evade detection?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Lesson, secure by default is difficult, IDS, See Falco; $$$ offerings, Want more? See: Security Rationale for Istio by Rowan Baker",
+      "visual": "A slide titled 'Lesson' is displayed, listing bullet points about security challenges like 'secure by default is difficult' and 'IDS'.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:28:39",
+      "spoken": "We stop the API server emitting its audit logs. We blackhole traffic, we get in the way of the endpoint, we deny of service the endpoint, we root the cluster and we turn them off.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "evade detection",
+      "visual": "A slide with the text 'evade detection' is shown. The speaker explains methods to evade detection in a system.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:28:51",
+      "spoken": "Nice and easy. De-auditing Kubernetes. Hacking in a safe space. How do we teach everybody the extreme amount of content I've packed into 30 minutes?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "De-auditing API server, Reconfigure API server, Blackhole traffic to remote logging endpoint, DOS remote logging endpoint, hacking in a safe space",
+      "visual": "The slide changes to 'De-auditing K8S' with bullet points, then to 'hacking in a safe space'. The speaker talks about teaching security concepts.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:28:58",
+      "spoken": "With this tool, my time is up, it teaches you all of this stuff, and it's really great.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Simulator!, https://github.com/kubernetes-simulator/simulator, See “How to Train your Red Team (for Cloud Native)” by ControlPlane, kubesim.io - K8S Hacking and Hardening Simulator, infrastructure deployment, cluster provisioning and workload configuration, scenario runner with challenges, hints, and scoring, raw command line experience, open source core at https://github.com/kubernetes-simulator/simulator",
+      "visual": "A slide introduces 'kubesim.io - K8S Hacking and Hardening Simulator', detailing its features like infrastructure deployment and scenario runner.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:00",
+      "spoken": "This is all wonderful. Test everything.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "K8S Breach Lessons, Application workloads, container images (app, OS, deps), filesystem conf, user, baked-in secrets), malicious images, Workload configuration, pod spec (privileged/PSP config, env vars, service accounts, file mounts, RunAsUser, seccomp/selinux), runtime (docker, cri), priv workloads, identity, datastores, traffic sniffing/nmap, Cluster configuration - developer, authn/RBAC, Network Policy, network, Cluster configuration - operations, admission control, etcd encryption/control plane TLS, local/remote registry, dashboard/API, federated identity, Cluster deployment, control plane config, user access, topology, transport & TLS, infrastructure/OS, Cloud",
+      "visual": "A slide titled 'K8S Breach Lessons' is shown, listing various areas of potential vulnerabilities in Kubernetes, accompanied by an image of a whale underwater.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:02",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "How to Train your Red Team (for Cloud Native)",
+      "visual": "A slide with the title 'How to Train your Red Team (for Cloud Native)' is displayed, featuring an illustration of a sailing ship being attacked by a kraken.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:03",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Layers of Security Testing, Infrastructure: server hardening/conformance, Supply chain: image validation, Kubernetes deployment YAML validation, Runtime: application behaviour, telemetry, session handling, and networking",
+      "visual": "A slide titled 'Layers of Security Testing' lists different layers including Infrastructure, Supply chain, and Runtime, with bullet points for each.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:05",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Getting the House in Order, Ensure that applications have a local testing story for developers, Build server verifies tests that developers are able to run locally, This proves out mocking and stubbing harnesses, Continuous Local Security is in place, testing can be as simple as standing up docker-compose with mocks and mock data, https://github.com/kubernetes/kompose can help migration, A lot of tooling isn't container-native, But continuous scanning leaves deeper exploration for humans",
+      "visual": "A slide titled 'Getting the House in Order' provides recommendations for improving security, such as local testing for developers and continuous local security.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:06",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "FIN",
+      "visual": "A black slide with the word 'FIN' in white text is displayed, signaling the end of the presentation.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:07",
+      "spoken": "Prepare for the unexpected. Thank you very much.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Prepare for the Unexpected",
+      "visual": "The final slide is titled 'Prepare for the Unexpected' and shows a humorous image of a person sitting precariously on a lamppost with security cameras. The speaker thanks the audience as applause begins.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "This segment delves into attacking the mesh, specifically highlighting a security vulnerability in Envoy's admin endpoint where there's no authentication. The speaker explains how this vulnerability could be exploited to disrupt the mesh and discusses the ongoing efforts to fix it. The presentation then shifts to strategies for evading detection by manipulating API server audit logs and blackholing traffic. Finally, the speaker introduces kubesim.io as a tool for K8S hacking and hardening simulation, emphasizing the importance of security testing layers and continuous local security."
+}

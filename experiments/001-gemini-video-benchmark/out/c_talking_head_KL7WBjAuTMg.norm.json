@@ -1,0 +1,199 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": "Hello everyone and welcome back to conversations with Tyler. Today I am here chatting with David Boku who is co-founder and CEO of Roblox which is one of the world's largest and fastest growing games platforms. David, welcome.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "The host, Tyler, is shown in a split screen on the left, wearing headphones and speaking into a microphone. The guest, David, is on the right, also wearing headphones and listening.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:14",
+      "spoken": "Tyler, thanks for having me on. It's great to be here.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David, on the right side of the split screen, smiles and speaks into his microphone.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:18",
+      "spoken": "So Roblox, what is it you all do to help create teenage millionaires?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "Tyler is speaking again, looking at David, who is listening intently.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:00:24",
+      "spoken": "Well, the focus isn't creating teenage millionaires and at the same time there are some teenage millionaires. Roblox was founded really with the vision of creating a platform where people could play and connect where all of the content, all of the games, all of the experiences, whether it's hide and go seek or a fashion game or growing a garden is 100% created by the user community. Uh you could call it self-service, you could call it UGC. And what's really uh interesting about UGC content when creators uh and the community are making content is they can come up with all kinds of interesting and novel ways for people to play together. Now we started with two people um a while ago but year by year Roblox has emerged to have millions of people every day playing together and as you correctly noted some of those creators now who build the content on Roblox have become millionaires. They've evolved from hobbyist to small studios to larger studios and we have now a lot of people all around the world really making a living building the content for the millions of players on the platform.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David explains Roblox's vision and how user-generated content (UGC) has led to some creators becoming millionaires, evolving from hobbyists to large studios.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:50",
+      "spoken": "So they get a share of your revenue for a game they build.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "Tyler asks a clarifying question about revenue sharing for game creators on Roblox.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:54",
+      "spoken": "That's exactly right.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David confirms Tyler's understanding of the revenue sharing model.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:01:55",
+      "spoken": "And your revenue comes from people paying to put their games on your platform. Right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "Tyler asks about the source of Roblox's revenue.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:02:00",
+      "spoken": "The the revenue has evolved in stages and it's really it's a fun economic story really the progression of how the Roblox economy has evolved. The first fun thing to think about is the vast majority of the players on our platform are not spending any money. They're they're coming, they're playing for free, they're having uh great experiences with their friend, but Roblox runs not just on UCG content or content created by all of these millions of creators, but literally a virtual economy, economy with a currency called Robux, a wide range of games and experiences where for those users who choose to, they can spend Robux in the experience and when they spend Robux in the experience that creator can then cash those Robux out for real money. And so it's a bit of a virtuous economy cycle. The the creators are extremely creative in how they build their economies. They want all of their creations to be fun for everyone who's playing for free, which is the vast majority of everyone. And at the same time they they do want to make a living and fun jobs and fun their studios so they come up with amazingly creative ways to do it. Very early on in the uh place called work out of pizza place, you could buy a motor scooter. So if you wanted to get around the world more quickly, you could use some Robux, buy a a motor scooter and kind of like get around more quickly. And so now we just see a a vast array of incredibly innovative ways for creators to sell things within their experience.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David explains the Roblox economy, where most players play for free, but a virtual currency called Robux allows users to purchase items within experiences, which creators can then cash out for real money.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:03:52",
+      "spoken": "So is the future of your revenue basically going to be ads?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "Tyler asks if advertising will be the future revenue source for Roblox.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:03:56",
+      "spoken": "No, um because um",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David begins to answer, indicating that ads are not the primary future revenue.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:04:01",
+      "spoken": "But you have ads as a source of revenue, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "Tyler interjects, asking if ads are currently a revenue source.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:04:02",
+      "spoken": "The it's a very um it's a relatively small source of our revenue right now. It's so small that on our earnings call, we don't call it out. The vast majority of our revenue, which is growing very rapidly is players purchasing Robux. Um they can buy them with a gift card, they can buy them on their iPhone, they can buy them in a store, they can go to a website to buy these Robux and then using them in experiences created by our creators if they so choose. And once again, this is a subset of our users who've decided to go buy that. So so by and large the majority of Roblox is running on a virtual economy.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David clarifies that ads are a very small revenue source, and the vast majority of Roblox's revenue comes from players purchasing Robux to use in creator-made experiences.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:05:09",
+      "spoken": "But given the incredible number of eyeballs you have, why can't you make really a lot of money selling ads?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "CONVERSATIONS with TYLER",
+      "visual": "Tyler sips from a mug with the podcast's name, then asks why Roblox doesn't leverage its large user base for more ad revenue.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:05:11",
+      "spoken": "I I feel um we we have to be thoughtful about what the future of advertising is in a platform like Roblox. We we have chosen unlike maybe other platforms, for example, short form video or other video platforms to not put advertising in front of every user. Um, we actually did an experiment very early in our founding where we experimented with something called pre-roll advertising where everyone who played a Roblox game, got a little short video. We actually decided to pull it out. and we decided to pull it out because we really wanted to focus on the the fun and the user experience. and by and large our virtual economy has grown so well that we haven't been compelled to really ever consider it. The one uh really the two areas where we're looking at advertising, the first is a lot of our creators who make a new creation would like to boost um and get more people to visit that place. And so there's a very common mechanic in the gaming space where people go and buy traffic. You know, I want more visitors to test my game. We do allow creators to purchase what we would call a sponsored tile to get some new visitors and experiment on their game. And actually there's a fun story because that's arguably how Roblox got started. And second, there is a a subset of who in addition to virtual currency, we are letting experiment when they so place it for certain types of ads. But by and large once again, we have such a strong virtual economy that that's the really been the primary revenue stream for the company.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David explains that Roblox intentionally avoids widespread advertising to prioritize user experience and fun. He mentions a past experiment with pre-roll ads that was discontinued and highlights two specific areas where advertising is considered: creators boosting their content and a subset of creators experimenting with ads.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:06:47",
+      "spoken": "So say the 15-year-old millionaires that are created with the help of Roblox, how often do you meet them?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "Tyler asks David about his interactions with the young millionaire creators on Roblox.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:06:53",
+      "spoken": "A lot.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David responds briefly, indicating frequent meetings.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:06:54",
+      "spoken": "What are they like?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "Tyler asks about the characteristics of these young creators.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:06:56",
+      "spoken": "Some of the most brilliant creative people you'd ever see really. And we um, it's a pleasure and a great responsibility um, to meet a lot of them. not just at our developer conference. We have a developer conference once a year, over a thousand of them come and we we hang out with all of them. But we're constantly having groups of them come and visit and um, what's been really fascinating to me, some of them are 15, some of them are 19, some are 23, some are 30, some are 40, but the collective creativity of many of our creators rivals what you might experience when you're interviewing some public company CEOs. The uh the creative types of things they think up, how they think about the games they're building is really inspirational.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David describes the Roblox creators as brilliant and creative, noting their diverse ages and the inspirational quality of their work, which he compares to public company CEOs.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:07:50",
+      "spoken": "And where do they tend to come from geographically? What's the over represented area?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "Tyler asks about the geographical distribution of Roblox creators.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:07:55",
+      "spoken": "The fun thing about Roblox is there's no over represented area. Um",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David states there isn't one overrepresented area for creators.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:08:02",
+      "spoken": "But it's not evenly distributed, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "Tyler follows up, questioning if the distribution is truly even.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:08:03",
+      "spoken": "Uh we we have creators in Argentina, in Brazil, in South Korea, in Japan, in the US, in the Europe. and what we typically find is those creators come from being prior Roblox players. and so in a way if we had to say is there over or under representation? I would I would venture to say it's somewhat proportional to where we find Roblox players. And and right now, you know, as Roblox goes over 100 million daily active users, we're in pretty much most of the countries and that is spawning creators in many of those countries. If anything in those countries where the cost of living might be lower, so not the United States, a creator is earning in the global economy on Roblox whether they're in the US or some other country, it can actually um be easier to fund your lifestyle as a full-time creator in some other countries.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David explains that Roblox creators are found globally, including Argentina, Brazil, South Korea, Japan, the US, and Europe. He suggests that creator distribution is proportional to player distribution, and that in countries with lower living costs, it can be easier for creators to make a living on Roblox.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:09:04",
+      "spoken": "Reed Hastings of Netflix, he once said famously something like the main competitor to Netflix is sleep. What's the main competitor to Roblox?",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "Tyler references a quote from Reed Hastings about Netflix's competitor and asks David about Roblox's main competitor.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:09:14",
+      "spoken": "I would say what we sometimes think about is the main competitor to Roblox is our own ability to execute and build on our vision. And what the reason I say that is the global gaming market for content for people building games and playing games is about a 200 billion dollar market. Right now, you know, coming off last year and going into next year, we have you know, we're in the 7 billions of projected revenue bookings this year. If you run 7 billion divided by 200, that's in the three and a half to going on 4% of the global gaming market.",
+      "speaker": "Speaker 2",
+      "on_screen_text": null,
+      "visual": "David states that Roblox's main competitor is its own ability to execute its vision. He highlights the vastness of the global gaming market ($200 billion) and notes that Roblox's projected revenue bookings of $7 billion represent only a small percentage of that market.",
+      "kind": "talking_head"
+    }
+  ],
+  "segment_summary": "This segment features an interview with David Baszucki, CEO of Roblox, discussing the platform's unique creator economy. He explains how Roblox empowers users to create games and experiences, leading to some creators becoming millionaires through a virtual currency called Robux. David clarifies that Roblox's revenue primarily stems from Robux purchases rather than advertising, and he emphasizes the global and diverse nature of their creative community. Finally, he identifies Roblox's main competitor as its own capacity to execute its vision within the expansive global gaming market."
+}

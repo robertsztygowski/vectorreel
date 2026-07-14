@@ -34,7 +34,24 @@ LEDGER_COLS = [
 
 # USD per 1M tokens, Vertex Gemini 2.5 Flash (verified 2026-07-14, standard tier)
 PRICE = {"text_in": 0.30, "video_in": 0.30, "audio_in": 1.00, "out": 2.50}
-BUDGET_USD = 5.5  # ~ EUR 5
+# Cumulative cap over every phase this ledger has carried: Phase 0 (EUR 5) + Phase 0.1
+# (EUR 1) + Phase 0.2 (EUR 3) = EUR 9. Per-phase caps are set with spike_budget().
+BUDGET_USD = 10.5
+
+# Vertex tokenizes video at a fixed rate, independent of content (Phase 0.1, out/YOUTUBE.md).
+# This is what makes a video's TRUE duration free: it falls out of the bill.
+VIDEO_TOKENS_PER_S = {None: 258, "MEDIA_RESOLUTION_LOW": 66, "MEDIA_RESOLUTION_MEDIUM": 258}
+
+
+def fetched_duration_s(usage: dict, media_resolution: str | None = None) -> float:
+    """How much video Vertex ACTUALLY fetched, in seconds.
+
+    🚨 The coverage guard must divide by this, never by the requested window. Vertex clamps
+    an endOffset to the end of the video, so on any video shorter than the window the guard
+    sees false under-generation, retries, and double-bills — observed on a 59 s video in
+    Phase 0.1 (out/YOUTUBE.md, pathology 1). On the YouTube path the true length is not
+    known up front, so it must be read back off the bill."""
+    return modality_tokens(usage)["VIDEO"] / VIDEO_TOKENS_PER_S[media_resolution]
 
 _token_cache = {"token": None, "ts": 0.0}
 
@@ -100,10 +117,21 @@ _spike = {"name": None, "start": 0.0, "cap": 0.0}
 
 
 def spike_budget(name: str, cap_usd: float) -> None:
-    """Cap the spend of one script on top of whatever the ledger already holds.
-    Phase 0.1 is a <= EUR 1 spike on a ledger that already carries Phase 0's $2.22."""
-    _spike.update(name=name, start=ledger_total(), cap=cap_usd)
-    print(f"[{name}] ledger at ${_spike['start']:.4f}; this run may spend ${cap_usd:.2f}")
+    """Cap the spend of one PHASE on top of whatever the ledger already holds.
+
+    The anchor is persisted, so the cap is cumulative across every process in the phase.
+    Phase 0.1 got away with an in-memory anchor because it ran in one shot; Phase 0.2 runs
+    in three passes, and a per-process anchor would silently hand each pass a fresh full
+    budget — a cap that resets is not a cap."""
+    anchor = OUT / f"spike_{name}.json"
+    if anchor.exists():
+        start = json.loads(anchor.read_text(encoding="utf-8"))["start"]
+    else:
+        start = ledger_total()
+        anchor.write_text(json.dumps({"start": start, "cap": cap_usd}), encoding="utf-8")
+    _spike.update(name=name, start=start, cap=cap_usd)
+    print(f"[{name}] anchored at ${start:.4f}; phase has spent ${spike_spent():.4f} "
+          f"of ${cap_usd:.2f}")
 
 
 def spike_spent() -> float:
@@ -126,8 +154,20 @@ def gemini_call(body: dict, label: str, config: str = "", model: str = MODEL,
            f"/locations/{region}/publishers/google/models/{model}:generateContent")
     for attempt in range(max_retries):
         t0 = time.time()
-        resp = requests.post(url, json=body, timeout=1800,
-                             headers={"Authorization": f"Bearer {gcloud_token()}"})
+        try:
+            resp = requests.post(url, json=body, timeout=1800,
+                                 headers={"Authorization": f"Bearer {gcloud_token()}"})
+        except requests.exceptions.RequestException as e:
+            # A dropped connection is the most transient failure there is, and it used to be
+            # the ONLY one not retried: the backoff below only ever looked at status codes,
+            # so a mid-run TCP reset killed a whole multi-segment render. Long video calls
+            # hold a connection open for minutes — this will happen again.
+            if attempt >= max_retries - 1:
+                raise
+            wait = 15 * 2 ** attempt
+            print(f"  {label}: connection error, retry in {wait}s — {str(e)[:120]}")
+            time.sleep(wait)
+            continue
         latency = time.time() - t0
         if resp.status_code == 200:
             data = resp.json()
@@ -186,26 +226,39 @@ def parse_hhmmss(t: str) -> int:
 
 
 def normalize_times(ts: list[str], clip_dur_s: int | None) -> list[int]:
-    """Model timestamps drift in format (observed at fps=0.25: mm:ss:centiseconds).
-    Decide the format once per response: strict hh:mm:ss if the whole sequence is
-    monotonic, fits the clip, and no minute/second field exceeds 59; otherwise try
-    reading the first two fields as mm:ss."""
+    """Model timestamps drift in format (mm:ss:centiseconds instead of hh:mm:ss).
+
+    This used to decide the format ONCE for the whole response, which fails on the way the
+    drift actually happens: the model MIXES the two formats within a single answer. Phase
+    0.2 saw "00:14:87" (87 seconds — impossible) sitting beside genuine hh:mm:ss values, so
+    neither whole-sequence reading was monotonic, the all-or-nothing detector fell back to
+    the strict one, and a 15-minute clip came back with blocks at 04:48:10.
+
+    So decide per timestamp, and let monotonicity choose: take the first reading that is
+    (a) internally valid, (b) not before the previous block, and (c) inside the clip.
+    A timestamp whose minute/second field exceeds 59 cannot be hh:mm:ss, whatever it fits."""
     def fields(t):
         return [int(p) for p in t.strip().split(":")]
 
-    def ok(seq):
-        monotonic = all(a <= b for a, b in zip(seq, seq[1:]))
-        fits = not clip_dur_s or not seq or seq[-1] <= clip_dur_s * 1.05
-        return monotonic and fits
-
-    strict = [parse_hhmmss(t) for t in ts]
-    if ok(strict) and all(all(x <= 59 for x in fields(t)[1:]) for t in ts):
-        return strict
-    alt = [fields(t)[0] * 60 + fields(t)[1] if len(fields(t)) == 3 else parse_hhmmss(t)
-           for t in ts]
-    if ok(alt):
-        return alt
-    return strict  # unfixable — caller's coverage check flags it
+    out: list[int] = []
+    prev = -1
+    limit = clip_dur_s * 1.05 if clip_dur_s else None
+    for t in ts:
+        f = fields(t)
+        cands = []
+        if all(x <= 59 for x in f[1:]):          # only then can it be hh:mm:ss
+            cands.append(parse_hhmmss(t))
+        if len(f) == 3:
+            cands.append(f[0] * 60 + f[1])       # mm:ss:centiseconds -> drop the cs
+        if not cands:
+            cands = [parse_hhmmss(t)]
+        pick = next((c for c in cands
+                     if c >= prev and (limit is None or c <= limit)), None)
+        if pick is None:  # unfixable — the caller's coverage guard flags it
+            pick = min(cands, key=lambda c: abs(c - prev))
+        out.append(pick)
+        prev = pick
+    return out
 
 
 # --- Stage B (ARCHITECTURE.md §3) ---

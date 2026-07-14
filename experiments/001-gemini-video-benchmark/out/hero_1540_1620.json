@@ -1,0 +1,47 @@
+{
+  "segment_start": "00:25:40",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": "do and this is just a test for the presence of that. And we didn't care so much because we're now on the billion of loss.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "run.sh --host https://kube-andy-1 --port 443",
+      "visual": "The speaker is at a desk, looking at a laptop. A terminal window is visible on the screen, showing commands being typed and output. The command `run.sh` is executed, showing Kubernetes API version information.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:00:08",
+      "spoken": "Okay, so what do we have here? Uh, so this is my nice server and I'm looking for something that I've now lost. Here we go.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "kube-master-andy-1",
+      "visual": "The screen now shows multiple terminal windows, arranged in a grid. The speaker is still at the desk, looking at the screen. Various logs and outputs are visible in the terminals, including `kube-master-andy-1`, `kube-andy-2`, and `kube-scheduler-andy-1`.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:00:22",
+      "spoken": "So we'll run the time to do this. We'll run that data so we can actually see something going on. Uh, we'll check the API server logs, we'll watch events, and we will, uh, basically just fire loads of, uh, what's question? I can't actually see what that says. Uh, so we've got an exploit here which is just going to run this, um, actually, I can't get that as well.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "run.sh",
+      "visual": "The speaker continues to interact with the terminals. A command `run.sh` is executed again. The screen shows logs from the API server, events, and other Kubernetes components. The speaker points to the screen and explains the exploit.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:00:48",
+      "spoken": "Uh, so all we're doing is sending this self-subject access review, which says, as an authenticated user, if I was this user, what would I be able to do? That is not an authenticated API call, we send our payload, billions of honks, and we are just doing it again and again and again, which is what the try medium prefix is on this. Let's now source it. Okay.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "CVE-2019-11253",
+      "visual": "The screen now shows the content of the `CVE-2019-11253` exploit script, which is a shell script. It details a Kubernetes vulnerability related to excessive memory usage by the API server due to self-subject access review. The script then shows a YAML payload for a self-subject access review with many 'HONK' entries. The speaker explains the exploit.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:01:14",
+      "spoken": "So we'll come back to this in a minute, but what we will start to see is the API server exhausting its threads, failing to",
+      "speaker": "Speaker 1",
+      "on_screen_text": "",
+      "visual": "The speaker is talking while the terminal windows are still visible in the background, showing various logs and outputs. The speaker gestures towards the screen.",
+      "kind": "talking_head"
+    }
+  ],
+  "segment_summary": "This segment demonstrates a Kubernetes vulnerability (CVE-2019-11253) that can lead to a denial of service. The speaker executes a script that sends a large number of self-subject access review requests to the Kubernetes API server. This action is intended to exhaust the API server's threads and cause it to become unresponsive, effectively demonstrating a denial-of-service attack."
+}

@@ -80,9 +80,10 @@ local bytes → no ffmpeg → no *per-segment* static detection), so the N4 blen
 
 | # | Component | €/video-hour | Status | Meaning |
 |---|---|---|---|---|
-| **N4a** | Stage B, default media resolution | **0.45** | measured | Range 0.41–0.51 across 6 videos. **Cost is flat across content categories** — video tokenizes at a fixed 258 tok/s regardless of what is on screen, so duration is the only real driver. |
-| **N4b** | **⭐ Stage B, blanket `MEDIA_RESOLUTION_LOW`** | **0.28** | measured | **The lever survives after all.** Stage A's *per-segment* static routing is impossible here, but `mediaResolution` is a **request-level** knob needing no local analysis. 3.9× fewer video tokens; quality held (coverage 98% vs 97%, OCR still verbatim). |
-| **N4c** | **🚩 Public-path LLM subtotal** = N4b + Stage C fusion | **≈ 0.38** | derived | **The number that sizes N10.** Assumes the public path runs at low media resolution by default — it should. |
+| **N4a** | Stage B, default media resolution | **0.45** | measured | Range 0.41–0.51 across 6 videos. ⚠️ **"Flat across categories" is true only of the INPUT** — video tokenizes at a fixed 258 tok/s regardless of what is on screen. It is **not** true of the total: output is the other half of the bill, and output scales with on-screen text density. See **N4d**. |
+| **N4b** | **⭐ Stage B, blanket `MEDIA_RESOLUTION_LOW`** | **0.28** | measured | **The lever survives after all.** Stage A's *per-segment* static routing is impossible here, but `mediaResolution` is a **request-level** knob needing no local analysis. 3.9× fewer video tokens; quality held (coverage 98% vs 97%, OCR still verbatim). **Reconfirmed in Phase 0.2** on a licensed 5-video corpus: 0.22–0.29 €/video-hour, first clean 10-minute segment. |
+| **N4c** | **🚩 Public-path LLM subtotal** = N4b + Stage C fusion | **≈ 0.38** | derived | **The number that sizes N10.** Assumes the public path runs at low media resolution by default — it should. **Holds only where Stage B does not overflow — i.e. the Phase-3 free tool, which is capped at the first 10 minutes. It is NOT the cost of a whole dense video: that is N4d.** |
+| **N4d** | 🚨 **Dense slide-heavy talk, processed IN FULL** (Stage B + C, incl. overflow retries) | **≈ 3.80** | measured, **n = 1** | **~13× N4c, and the most uncomfortable number in this file.** A 29-minute FOSDEM talk needed **22 Stage B calls**: dense slides blow the 65,535-token output cap even at a 10-minute segment, and the overflow response (halve and re-run) **pays for the failed parent call and both halves**. Measured once, and it is **strategy-dependent, not physics** — a pipeline that segments dense content shorter *up front* avoids the wasted parent calls. **Treat as an upper bound on a naive implementation, and as the reason Phase 2 must not ship one.** |
 
 > **Audio is now the floor.** At low media resolution, audio (priced 3.3× video per token) plus
 > *output* tokens are the bulk of the call. Cutting video resolution further buys almost nothing.
@@ -97,7 +98,8 @@ local bytes → no ffmpeg → no *per-segment* static detection), so the N4 blen
 
 | # | Metric | Threshold | Action when breached |
 |---|---|---|---|
-| **N7** | **Runaway-generation rate** — Stage B calls hitting `maxOutputTokens` / `thinkingBudget` | **> 8%** (measured baseline) | Guards regressed (ARCHITECTURE §3). Source of the 1.3× retry overhead in §1.2. |
+| **N7** | **Runaway-generation rate** — Stage B calls hitting `maxOutputTokens` | **> 8%** (measured baseline) | Guards regressed (ARCHITECTURE §3). Source of the 1.3× retry overhead in §1.2. ⚠️ **The 8% baseline is a whole-corpus average and it hides the case that matters: on dense slide-heavy footage the overflow rate is far higher — Phase 0.2 saw 2 of 2 slide talks overflow at a 15-min window, and the dense middle of one overflow even at 10 min.** Track this **per content category**, not as one number; the average is reassuring precisely where the product is weakest. |
+| **N7b** | ⚠️ **Under-segmentation on continuous screen recordings** — Stage B blocks per 10-min segment | **< 10** | The model emits ~86 s blocks on continuous screen-recorded footage (7 blocks/10 min) versus ~25 s on slide talks. Seen in **all three phases** (0, 0.1, 0.2) — it is reproducible, not noise. **This is the ICP's own content type** (internal demos, screen recordings), so it is the weakest category in the most important place. Coarse blocks = coarse citations. |
 | N8 | All-in COGS per video-hour (LLM **+ compute**) | > €1.50 | Guardrail breached — investigate. |
 | N9 | Wall-clock per video-hour | > 15 min | SLO breach. Gated on the N7 guards — one unbounded call alone blows this. |
 | N10 | Free YouTube tool spend | > €5/day | Abuse. Caps + cache are failing. **Sized off N4c:** at the Phase-3 10-min cap, one uncached request ≈ €0.06, so the daily cap ≈ **80 uncached videos/day**. Comfortable for a demo tool, and cheap to defend. |
@@ -237,7 +239,7 @@ traffic. **For settling A1, €400 of search beats nine months of posting to peo
 | **A1** | EU residency is a **purchase driver**, not a checkbox | Value | **Weak** | `signup` rate, headline A/B | **Arm A (EU) doesn't clearly beat Arm B (capability) ⇒ move ALL positioning to the capability story.** Do not rationalize a loss. |
 | **A2** | Buyers **buy** rather than **DIY** | Value | **Weak** | `checkout_clicked` → **`payment_succeeded`** | **< 5% of trials reach checkout, or 0 payments after ~100 trials ⇒ it's a vitamin. Stop.** |
 | **A3** | Usage is recurring **flow**, not one-time **backfill** | Business | **None** | **Cohort hour-decay** | **Month-2 hours < 20% of month-1 ⇒ not a subscription business. Switch to prepaid credit packs.** |
-| **A4** | Output is **citable** (accurate) in a knowledge base | Value | Medium | **`upload_repeat`** | **< 30% of trial users upload a second video ⇒ the output didn't earn trust.** |
+| **A4** | Output is **citable** (accurate) in a knowledge base | Value | **Medium–Strong** on *accuracy* (§4 A4); still **None** on *trust* | **`upload_repeat`** | **< 30% of trial users upload a second video ⇒ the output didn't earn trust.** ⚠️ Phase 0.2 closed the **category gap**, not the assumption: accuracy is now measured, but **only a user returning proves it was citable.** |
 | ~~A8~~ | ~~EU model availability + COGS < €1.50/h~~ | Feasibility | ✅ **STRONG** | §1.2 | **Validated 2026-07-14. Monitor (N8), don't test.** |
 
 **Why they rank this way.** Every High-importance / Weak-evidence assumption is **Value** or
@@ -358,6 +360,24 @@ Group tenants by signup week; plot **hours processed in week 1 vs. week 4.**
 upload measures trust. A user who uploads once and never returns did not find the output citable,
 whatever they'd have said in an interview. **Removing the conversation made this instrument better,
 not worse.**
+
+#### A4 accuracy — measured 2026-07-14 (Phase 0.2, licensed 5-video corpus)
+
+The **category gap is closed**. Accuracy was graded by **independent re-probe**: for a sample of
+blocks, a second, cheaply-windowed, differently-prompted call was seeked to the block's own claimed
+timestamp and asked only what it could see and hear — so the output is graded against a fresh look
+at the video, never against itself.
+
+| # | Category | Timestamp anchor | OCR verbatim | Invented on-screen text | Verdict |
+|---|---|---|---|---|---|
+| **N30** | **Slide talk** (EuroPython, FOSDEM) | **99%** | **99%** | **0 / 7 probes** | ✅ **Strong.** The flagship case works. |
+| **N31** | **Talking head** (interview, podcast) | **97%** | 77% where text exists | **0 / 8 probes** | ✅ **Strong, incl. the inverse edge case:** on bare studio footage the model claimed on-screen text in **4% of blocks** and the independent probe agreed there was none. **It abstains rather than invents** — the mirror of Phase 0's silent-video result. |
+| **N32** | 🚨 **Screen recording** (live-coding) | 77% | 68% | 0 / 4 probes | ⚠️ **Weakest — and it is the ICP's own content type.** Under-segments badly (**N7b**), so citations land on ~86-second blocks. |
+
+> **The headline is not the pass; it is where the pass is thinnest.** The two categories added to
+> close the gap (slide talk, talking head) came out **strong**. The category the *paying* product
+> actually ingests — screen recordings of internal demos — is the one that degrades. **Fix the
+> screen-recording path (N7b) before treating A4-accuracy as settled.**
 
 ---
 

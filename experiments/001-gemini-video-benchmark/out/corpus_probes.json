@@ -1,0 +1,241 @@
+{
+  "c_slide_talk_5si4zkAngpA": {
+    "category": "slide_talk",
+    "title": "Exploring the CPython JIT — Diego Russo",
+    "probes": [
+      {
+        "t": "00:00:11",
+        "block_on_screen_text": "2025 EUROPYTHON PRAGUE :: 14 - 20 July & REMOTE",
+        "probe_on_screen_text": "arm Exploring the CPython JIT EuroPython 2025 2025 EUROPYTHON PRAGUE 14 - 20 July & REMOTE",
+        "block_spoken": "Now, before we start, a quick uh, raise hand exercise. Raise your hand if you know what a JIT is. That's good. Right. Raise your hand if you knew that CPython has an integrated JIT in the runtime. That's good. Now we see the really the pro users here. Raise your hand if you ever used the CPython JIT. Oh, very few. Yes. That's expected by the way. Okay, so independently of your level of understanding and experience, uh, I think this presentation is going to be uh, useful in any case. So this is the official Python runtime, um, finally growing a JIT. And uh, it's happening inside the interpreter we use every day. I'll walk you through how it works, what it looks like, and how we can use it. We're going to look at Python internals, including bytecodes, JIT mechanics, and even a bit of assembly and uh, machine code. So if you're not used to that, don't worry, I'll keep things kind of on the the big picture and but just you know, we're going under under the hood.",
+        "probe_spoken": "recently I did to C Python. Now, before we start, a quick uh raise hand exercise. Raise your hand if you know what a JIT is. That's good. Right. Raise your hand if you knew that C Python has an integrated JIT in the runtime. That's good. Now, we see the really the the pro users here. Raise your hand if you ever used the C Python JIT. Oh, very few. Yes.",
+        "probe_scene": "A man with glasses and a striped shirt is speaking at a podium with two water bottles and a laptop on it, in front of a blue background with a logo.",
+        "speech_overlap": 0.34375,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:02:09",
+        "block_on_screen_text": "What's a JIT compiler? Just-In-Time compiler Public 2025 Arm 2025 EUROPYTHON PRAGUE :: 14 - 20 July & REMOTE",
+        "probe_on_screen_text": "What's a JIT compiler?\nJust-In-Time compiler\narm\nPublic © 2023 Arm\n3\n2023\nEUROPYTHON PRAGUE\n14 - 20 July & REMOTE\nA JIT compiler is a component of a runtime system that\ndynamically translates code into machine code while the\nprogram is running, rather than before execution.",
+        "block_spoken": "So, what is a JIT compiler in the context of Python?",
+        "probe_spoken": "Thank you. So, what is a G compiler in the context of Python? A just-in-time compiler is a a component of the runtime that identifies frequently executed portions of the code, what we call hot code paths, and compiles them into native machine instructions while the program is is running. This gives us the the best both of",
+        "probe_scene": "A man with glasses and a beard is speaking into a microphone while standing in front of a large screen displaying text and logos.",
+        "speech_overlap": 1.0,
+        "ost_overlap": 0.9,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:07:13",
+        "block_on_screen_text": "The CPython JIT in 3.14 Public 2025 Arm 2025 EUROPYTHON PRAGUE :: 14 - 20 July & REMOTE",
+        "probe_on_screen_text": "The CPython JIT in 3.14\narm\nEUROPYTHON PRAGUE\n2025\n14 - 20 July\n& REMOTE\nThe CPython JIT in 3.14\nThe journey: from source code to machine code.\nPublic © 2025 Arm\nPython application source code\nCompiler",
+        "block_spoken": "So let's go more in details on how the JIT works in 3.14.",
+        "probe_spoken": "So let's go more in details on how the works in 314. So we're going to see the high level execution pipeline in 314 from the Python source code all the way down to uh machine code. It starts as always with your Python source code. The C Python internal compiler passes it into an abstract syntax tree. It builds a control flow graph and it applies some basic optimization.",
+        "probe_scene": "A man with a beard and glasses is speaking at a podium, with a presentation slide on a large screen behind him.",
+        "speech_overlap": 1.0,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:09:01",
+        "block_on_screen_text": "The CPython JIT in 3.14 Python application source code def sum_squares(n): total = 0 for i in range(n): total += i * i return total Public 2025 Arm 2025 EUROPYTHON PRAGUE :: 14 - 20 July & REMOTE",
+        "probe_on_screen_text": "The CPython JIT in 3.14\nPython application source code\ndef sum_squares(n):\n    total = 0\n    for i in range(n):\n        total += i * i\n    return total\nPublic © 2023 Arm\n8\n2025\nEUROPYTHON\n& REMOTE\n14 - 20 July\nPRAGUE",
+        "block_spoken": "Now we see we now that we've seen the big picture, let's follow a concrete example through the entire execution pipeline. We have a function here that we're going to follow in details, uh, it's called sum_squares, it takes n as an input, is a very simple loop, uh, there is a total is initialized, it iterates over a range of n and it adds i times i to the total and then finally it returns the result. So despite being simple, this function contains all the right ingredients to demonstrate the CPython JIT pipeline. A loop which can become hot, the integer operations that can be specialized, and the structure that can be easily lowered into micro-ops and optimized.",
+        "probe_spoken": "Now we see, now that we've seen the big picture, let's follow a concrete example through the entire execution pipeline. We have a function here that we're going to follow in details. Uh, it's called sum squares. It takes N as an input. It's a very simple loop. Uh, there is a total is initialized, it iterates over a range of N and it adds I times I to the total and then finally it returns the result. So despite being simple, this",
+        "probe_scene": "A man with glasses and a beard is speaking at a podium, with a presentation slide displayed behind him showing Python code.",
+        "speech_overlap": 0.6981132075471698,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      }
+    ]
+  },
+  "c_slide_talk_JvbBFwlqxeI": {
+    "category": "slide_talk",
+    "title": "How (Not) To Containerise Securely Lessons Learned the Hard Way",
+    "probes": [
+      {
+        "t": "00:00:05",
+        "block_on_screen_text": "How (Not) to Containerise Securely, FOSDEM, January 2020, @sublimino and @controlplaneio",
+        "probe_on_screen_text": "gke_contr...netassert-test ~ $ istio simulator cp-config bash Sat 01 15:11 Marks-MacBook How (Not) to Containerise Securely FOSDEM, January 2020 @sublimino and @controlplaneio controlplane Press F11 to exit full screen",
+        "block_spoken": "Right, hello everybody. Uh, this is a bit of a monster of a talk because it has a lot of live demos in. So I will ask you to uh to bear with me as I flip around all the time between. Whoops. There we go. Okie dokie.",
+        "probe_spoken": "Right, hello everybody. Uh this is a bit of a monster of a talk because it has a lot of live demos in. So I will ask you to uh to bear with me as I flip around all time between whoops. windows. There we go. Okie dokie. So,",
+        "probe_scene": "The video shows a split screen with a terminal on the left and a presentation slide on the right, while a speaker is visible in a small window at the bottom right.",
+        "speech_overlap": 1.0,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:01:30",
+        "block_on_screen_text": "SPOILER ALERT",
+        "probe_on_screen_text": "SPOILER ALERT",
+        "block_spoken": "Spoiler alert. We do it by training the next generation of cloud native security engineers and architects with production-like systems. That they can hack, they can play CTFs until they can pop shells and they really understand what they're doing. They test, remediate and harden, so we can hack back in.",
+        "probe_spoken": "Spoiler alert. We do it by training the next generation of cloud native security engineers and architects with production-like systems that they can hack, they can play CTFs until they can pop shells and they really understand what they're doing. They test, remediate and harden so we can hack back in. We do this with models that we've built for the system. These are threat modeled attack trees. This is all open source under the financial services user group in the CNCF.",
+        "probe_scene": "A car with multiple spoilers is shown on a road, with the text \"SPOILER ALERT\" overlaid on the image.",
+        "speech_overlap": 1.0,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:06:29",
+        "block_on_screen_text": "Linting Dockerfiles - Static Analysis, https://github.com/projectatomic/dockerfile_lint - rule based 'linter' for Dockerfiles, https://github.com/hadolint/hadolint - Dockerfile linter, validates inline bash with Shellcheck",
+        "probe_on_screen_text": "06:29 \"Linting\" Dockerfiles - Static Analysis\n\nhttps://github.com/projectatomic/dockerfile_lint - rule based 'linter' for Dockerfiles\nhttps://github.com/hadolint/hadolint - Dockerfile linter, validates inline bash with Shellcheck\n\nFOSDEM\n20\n20\n\nStatic Analysis\nfor Kubernetes\nResources\n\nhttps://kubesec.io\nhttps://github.com/controlplaneio/kubesec\n\nKUBESEC.IO - V2\n\nkubesec.io is deprecated, please read the notes\n\nSecurity risk analysis for Kubernetes\nresources\n\nLive Demo\n\nAPI version: v1\nkind: Pod\nmetadata:\nname: kubesec-demo\nspec:\nserviceAccountName:\ncontainers:\n[ \"object\": \"Pod/kubesec-demo.default\",\n\"valid\": true,\n\"reason\": \"Passed with a score of 1 points\",\n\"scoring\": [\n{\n\"selector\": \".securityContext.capabilities.drop\",\n\"reason\": \"[Containers] .kernel.capabilities.to a container limits its attack\nsurface\",\n\"selector\": \".spec.serviceAccountName\",\n\"reason\": \"[Service account] restricts Kubernetes API access and should be configured\nwith least privilege\",\n\"cluster\": [\n{\n\"selector\": \".containers[].resources.requests.cpu\",\n\"reason\": \"[Enforcing] CPU requests aids a fair balancing of resources across the\nkubesec.io - example insecure pod",
+        "block_spoken": "So, what can we do for static analysis for Dockerfiles? We can lint them. And we can determine whether or not we have done certain things wrong. Something that we can't do, or that is in fact very difficult to do, is identify which user was running, because that is a runtime construct and we can switch users in the entry point, for example.",
+        "probe_spoken": "So, what can we do with static analysis for Docker files? We can lint them and we can determine whether or not we have done certain things wrong. Something that we can't do or that it is in fact very difficult to do is identify which user was running because that is a runtime construct and we can switch users in the entry point for example. So we probably oh, also you can do with Kubernetes with uh, cube sec rather, which is static analysis for Kubernetes resources. This will tell you do not mount X Y Z and it will give you a risk score to try and quantify the",
+        "probe_scene": "The video shows a presentation slide with text about \"Linting\" Dockerfiles and Static Analysis for Kubernetes Resources, while a man in a blue shirt is speaking and gesturing on the right side of the screen.",
+        "speech_overlap": 0.9666666666666667,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      }
+    ]
+  },
+  "c_talking_head_KL7WBjAuTMg": {
+    "category": "talking_head",
+    "title": "Dave Baszucki on Roblox, Teen Entrepreneurs, and the Future of Play | Conversation with Tyler",
+    "probes": [
+      {
+        "t": "00:00:14",
+        "block_on_screen_text": "",
+        "probe_on_screen_text": "",
+        "block_spoken": "Tyler, thanks for having me on. It's great to be here.",
+        "probe_spoken": "welcome. Tyler, thanks for having me on. It's great to be here. So Roblox, what is it you all do to help create teenage millionaires? Well, the focus isn't creating teenage millionaires and at the same time there are some teenage millionaires. Roblox was founded really with the vision of creating a platform where people could play and connect where all of the content, all of the games, all of the experiences",
+        "probe_scene": "A split screen shows two men, one on the left wearing headphones and glasses, and the other on the right also wearing glasses and speaking into a microphone.",
+        "speech_overlap": 1.0,
+        "ost_overlap": 0.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:00:24",
+        "block_on_screen_text": "",
+        "probe_on_screen_text": "",
+        "block_spoken": "Well, the focus isn't creating teenage millionaires and at the same time there are some teenage millionaires. Roblox was founded really with the vision of creating a platform where people could play and connect where all of the content, all of the games, all of the experiences, whether it's hide and go seek or a fashion game or growing a garden is 100% created by the user community. Uh you could call it self-service, you could call it UGC. And what's really uh interesting about UGC content when creators uh and the community are making content is they can come up with all kinds of interesting and novel ways for people to play together. Now we started with two people um a while ago but year by year Roblox has emerged to have millions of people every day playing together and as you correctly noted some of those creators now who build the content on Roblox have become millionaires. They've evolved from hobbyist to small studios to larger studios and we have now a lot of people all around the world really making a living building the content for the millions of players on the platform.",
+        "probe_spoken": "Well, the focus isn't creating teenage millionaires and at the same time there are some teenage millionaires. Roblox was founded really with the vision of creating a platform where people could play and connect where all of the content, all of the games, all of the experiences, whether it's hide and go seek or a fashion game or growing a garden is 100% created by the user community.",
+        "probe_scene": "Two men are shown in a split screen, both wearing headphones and speaking into microphones.",
+        "speech_overlap": 0.4583333333333333,
+        "ost_overlap": 0.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:01:50",
+        "block_on_screen_text": "",
+        "probe_on_screen_text": "",
+        "block_spoken": "So they get a share of your revenue for a game they build.",
+        "probe_spoken": "So they get a share of your revenue for a game they build. That's exactly right. And your revenue comes from people paying to put their games on your platform, right? The the revenue has evolved in stages and it's really it's a fun economic story really, the progression of how the Roblox economy has evolved. The first fun thing to think about is the vast majority of the players on our platform are not",
+        "probe_scene": "Two men are shown in a split screen, both wearing headphones and speaking into microphones.",
+        "speech_overlap": 1.0,
+        "ost_overlap": 0.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:07:55",
+        "block_on_screen_text": "",
+        "probe_on_screen_text": "",
+        "block_spoken": "The fun thing about Roblox is there's no over represented area. Um",
+        "probe_spoken": "The fun thing about Roblox is there's no overrepresented area. Um, but it's not evenly distributed, right? Uh, we, we have creators in Argentina, in Brazil, in South Korea, in Japan, in the US, in the Europe. And what we typically find is those creators come from being prior Roblox players. And so in a way, if we had to say, is there over",
+        "probe_scene": "Two men are shown in a split screen, both wearing glasses and headphones, with one speaking and the other listening intently.",
+        "speech_overlap": 0.8571428571428571,
+        "ost_overlap": 0.0,
+        "ost_hallucination_suspect": false
+      }
+    ]
+  },
+  "c_talking_head_gRFaow12xo0": {
+    "category": "talking_head",
+    "title": "In Conversation with Timnit Gebru and Melissa Chan",
+    "probes": [
+      {
+        "t": "00:01:54",
+        "block_on_screen_text": "In Conversation",
+        "probe_on_screen_text": "In Conversation",
+        "block_spoken": "Timnet co-founded Black in AI, a nonprofit that works to increase the presence, inclusion, visibility, and health of black people in the field of AI, and is on the board of Addis Coder, a nonprofit dedicated to teaching algorithms and computer programming to Ethiopian high school students for free. A lot of amazing things that you have done and are doing.",
+        "probe_spoken": "of artificial intelligence. Tim co-founded Black and AI, a nonprofit that works to increase the presence, inclusion, visibility and health of black people in the field of AI and is on the board of A coder, a nonprofit dedicated to teaching algorithms and computer programming to Ethiopian high school students for free. A lot of amazing things that you have done and are doing. I guess I want to start by asking if you could just introduce your organize",
+        "probe_scene": "A woman in a blue top and pink pants is sitting on a chair, holding a clipboard and a pen, and looking at a laptop on a small table next to her. A screen on the left shows a man in a suit and sunglasses.",
+        "speech_overlap": 0.9354838709677419,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:04:38",
+        "block_on_screen_text": "In Conversation",
+        "probe_on_screen_text": "In Conversation",
+        "block_spoken": "Are you finding your message being received well by governments and other uh, people in the tech sector?",
+        "probe_spoken": "Are you finding your message being received well by governments and other people in the tech sector? Well, I currently am battling the existential risk people, which is ridiculous because um our message, uh, you know, I want to focus on actually mitigating harms of current AI systems and you know, kind of imagining a different technological future, but what's happening currently is that the",
+        "probe_scene": "A woman with glasses and a dark jacket is speaking to the camera, then the scene changes to a wide shot of a stage with a large screen showing the woman, and another woman sitting on a chair on the stage.",
+        "speech_overlap": 1.0,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:06:14",
+        "block_on_screen_text": "In Conversation",
+        "probe_on_screen_text": "In Conversation",
+        "block_spoken": "So what I think I'm hearing from you is that, um, there are these catastrophic warnings, um, that is overwhelming the message of things that need to be done perhaps incrementally, things that are happening as you say, present as opposed to future. And it's very convenient if you talk about things in the future because then you can just talk about things in the abstract. And there's actually harm being done right now. Is that, is that, is that a good takeaway?",
+        "probe_spoken": "So what I think I'm hearing from you is that um there are these catastrophic warnings um that is overwhelming the message of things that need to be done perhaps incrementally, things that are happening as you say present as opposed to future and it's very convenient if you talk about things in the future because then you can just talk about things in the abstract. And there's actually harm being done right now. Is that is that a good takeaway? Yes, it's extremely convenient not only",
+        "probe_scene": "A woman in glasses and a black jacket is speaking to the camera, holding a glass of water. The scene then cuts to a split screen, with the woman on the left and another woman in a blue jacket and glasses on the right, sitting in a chair with a laptop and papers. The scene then cuts to the woman in the blue jacket, who is speaking and gesturing with a pen. The scene then cuts to a wide shot of the woman in the blue jacket, with the woman in the black jacket visible on a large screen to her left. The scene then cuts back to the woman in the blue jacket, who is speaking and gesturing with a pen. The scene then cuts back to the split screen, with the woman in the black jacket on the left and the woman in the blue jacket on the right.",
+        "speech_overlap": 1.0,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:07:54",
+        "block_on_screen_text": "Timnit Gebru Founder and Executive Director, Distributed Artificial Intelligence Research Institute (DAIR) In Conversation",
+        "probe_on_screen_text": "In Conversation",
+        "block_spoken": "So, um, in terms of, um, positives, well, I just want to say it's a nuanced conversation, right? Because when we talk about regulation, regulation can also be weaponized, right? We've seen regulation on, um, hate speech, uh, in social media weaponized against dissidents and activists. So, um, I kind of want to make sure we're being nuanced when we talk about regulation. Um, but, um, honestly, the most, um, inspiring things I've seen are from smaller organizations, smaller cities. So, for instance, in the US, I mean, the federal government is a mess with respect to regulation. But, you know, certain cities, so, for instance, California, even the states, um, can set the tone because many of the tech companies with worldwide, um, influence are there. And many of the tech companies are also based in Washington State. So, if you pass something in, in one state like California, that could have really far-reaching consequences, not just in the US, but all over the world, right? Because they have to abide by these rules, and it's easier to pass something statewide than, you know, uh, nationally and even think about internationally, the UN, that's even more of a, um, kind of, I don't know, I feel like, uh, it's, it's a hard to do that. So, I, I look for, I look at those kinds of, um, instances. I think that there are some wins in the EU AI Act right now, but, um, but then again, with one hand, EU is regulating certain things, with another hand, they are funding Frontex and the Libyan government and, and killing so many of our people, right? The, um, refugees and immigrants. So, um, I'm sorry, I, I need to stay on the positives, but, you know, some positives are, it's okay. Yeah, some efforts.",
+        "probe_spoken": "So, um, in terms of, um, positives, well, I just want to say it's a nuanced conversation, right? Because when we talk about regulation, regulation can also be weaponized, right? We've seen regulation on, um, hate speech, uh, in social media, weaponized against dissidents and activists. So, um, I kind of want to make sure we're being nuanced when we talk about regulation. Um, but, um, honestly, the most",
+        "probe_scene": "A woman with glasses and a dark jacket is speaking on a video call, displayed on a large screen, while another woman with glasses and a blue jacket sits in a chair, listening.",
+        "speech_overlap": 0.2761904761904762,
+        "ost_overlap": 0.08333333333333333,
+        "ost_hallucination_suspect": false
+      }
+    ]
+  },
+  "c_screencast_rAl-9HwD858": {
+    "category": "screencast",
+    "title": "Crust of Rust: Lifetime Annotations",
+    "probes": [
+      {
+        "t": "00:00:00",
+        "block_on_screen_text": "Rust Blog, Rust Survey 2019 Results, People are in general asking for more learning material about Rust. In terms of expertise it's mainly beginner and intermediate level material being requested. A lot of these requests are also asked for video content specifically., Jon Gjengset, YouTube, Twitter, Live-coding a linked hash map in Rust, What, looks like, more beginner-friendly @rustlang stream is something that a lot of you'll want to see. So, let's do one! Wednesday @ 8PM UTC. I'll do a shorter, code-driven stream that covers multiple lifetimes, strings, and some generics. If it goes well, there may be more. **1/3, Jon Gjengset @jonhoo, Rust Survey 2019 Results",
+        "probe_on_screen_text": "Rust Blog Apr 17, 2020 - The Rust Survey Team Rust Survey 2019 Results Greetings Rustaceans! We are happy to present the results of our fourth annual survey of our Rust community. Before we dig into the analysis, we want to give a big \"thank you!\" to all of the people who took the time to respond. You are vital to Rust, continuing to improve year after year! Let's start by looking at the survey audience. Survey Audience The survey was available in 14 different languages and we received 3997 responses. Here is the language distribution of the responses we received. English: 69.6% Chinese: 10.8% German: 4.3% French: 3.3% Japanese: 3.0% Rust Blog Install Learn Tools Rust Survey 2019 Results Rust Survey 2019 Results - rust-lang.org/2020/04/17/rust-survey-2019.html Jan Gjengset on Twitter: \"The o Jan Gjengset on Twitter: \"The o Live coding a linked hash map Jan Gjengset on Twitter: \"New Jan Gjengset on Twitter: \"New Jan Gjengset on Twitter: \"New 00:00 / 27:27",
+        "block_spoken": "Hello everyone. Uh, I saw the Rust Survey 2019 results. Um, and while reading through, I came across this little bit. People are asking for more learning material about Rust, specifically intermediate level material, and a lot of it is asking for video content specifically. Uh, and uh, if you're watching this, maybe you already know, I have a YouTube channel where I do live intermediate and uploaded intermediate Rust content. So I was like, yeah, this sounds like my wheelhouse. Um, and so I tweeted out like, what would you like to see? If I were to do some of this that's like a little less advanced of the stuff I normally do and a little shorter and a little more self-contained than what I usually do, like what do you want to see? Um, and I got a ton of responses to this. And that was pretty cool to see all the ideas that people had. Um, the suggestions were sort of all over the place. Uh, and what I basically what I got from it is people are confused about lifetimes and they don't want to see another explanation of lifetimes. They want to they want to see code that actually uses them uh in order to try to understand what's going on. Uh and so I figured maybe that's something I could do. Um, I have I only have one video that's like more beginner friendly than the normal ones I do, which are usually much longer sessions where we build something real in Rust. Um, and that is where we did a live coding of a linked hash map. Um, and that one actually turned out pretty well. I think that's something that's easy to follow if you're relatively newer to the language. Um, but I figured I would do something that's sort of dedicated to this and and if it turns out to work well, I might do more in the future. Um, and so that's where we are now. Um, specifically in the stream, what I want to do is basically have us write a bunch of code and Rust. Uh not very much, but sort of uh you'll see, uh where we cover like multiple lifetimes, uh a little bit about strings because that seems to be something that's confusing people, and a little bit of generics depending on how we uh how we turn out on time. Um, my guess is this stream will be about 90 minutes. That's sort of the target range I'm I'm going for for this. Uh, which is much shorter than my usual streams. I'll try to be less verbose than I usually am. Um, and if you if this is the first time you watch any of my videos, first of all, welcome. Uh, and second of all, uh, if you go to my Twitter account, I have um, this is basically where I post any new two videos that I'm about to release. Uh, both to announce the live streams in the first place, to ask for input and what you want to see, uh, and also whenever I upload a recording of a live stream, then I will put them up here.",
+        "probe_spoken": "Hello everyone. Uh, I saw the Rust Survey 2019 results. Um, and while reading through, I came across this little bit. People are asking for more learning material about Rust, specifically intermediate level material, and a lot of it is asking for video content specifically. Uh, and uh, if you're watching this, maybe you already know, I have a YouTube channel where I do live intermediate and uploaded intermediate and",
+        "probe_scene": "A man with dark hair and a beard is sitting in front of a computer, looking at a webpage titled \"Rust Survey 2019 Results\" on a monitor.",
+        "speech_overlap": 0.2328767123287671,
+        "ost_overlap": 0.22807017543859648,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:02:42",
+        "block_on_screen_text": "defenestration streams, fish, fish, fish",
+        "probe_on_screen_text": "defenestration streams\n0:fish* 1:fish 2:fish 3:fish-",
+        "block_spoken": "Uh, and so without further ado, let's get started. Um, because this stream is sort of geared more towards people who are still getting to grips with sort of some of the complexities in Rust, uh, I'll also be taking a bunch of questions from chat. So if at any point you get sort of uh, you feel like you're not quite following or you feel like uh, something doesn't make sense and you would like me to explain it again, then please mention it in chat and I'll try to make sure to look over there and now and again to like uh, make sure that you're all following along. And in particular, this is important because the people who are watching this after the fact, um, they won't have the opportunity to ask questions. If you have a question live, chances are someone else will also have it later and if you ask it, the answer will be recorded in the stream. Uh Great. Okay. So, uh, I also got some questions actually from people who relatively need to rustle. They're like, how do I even start a Rust project?",
+        "probe_spoken": "Uh, and so without further ado, let's get started. Um, because this stream is sort of geared more towards people who are still getting to grips with sort of some of the complexities in Rust, uh, I'll also be taking a bunch of questions from chat. So if at any point you get sort of, uh, you feel like you're not quite following or you feel like, uh, something doesn't make sense and you would like me to explain it again, then please mention it in chat and I'll try to make sure to look over there now and again to like",
+        "probe_scene": "The video shows a man speaking in front of a black screen with white text on it.",
+        "speech_overlap": 0.6056338028169014,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:03:48",
+        "block_on_screen_text": "cargo new --lib strsplit, Created library `strsplit` package, cd strsplit, defenestration strsplit (master +%), Cargo.toml",
+        "probe_on_screen_text": "defenestration streams | cargo new --lib strsplit\nCreated library `strsplit` package\ndefenestration strsplit | cd strsplit\ndefenestration strsplit (master +%) | exa\ndefenestration strsplit (master +%) | vim Cargo.toml\ndefenestration strsplit (master +%) | vim src/lib.rs\nNORMAL src/lib.rs 1:1 1% 1:1\n[cfg(test)]\nmod tests {\n    #[test]\n    fn it_works() {\n        assert_eq!(2 + 2, 4);\n    }\n}\n0: fish* 1:fish 2:fish 3:fish~",
+        "block_spoken": "Uh, that's not normally something I covered, but I figured given that we're starting something new, um, I'll start from the very beginning with cargo new. We're going to make a library. And the library we're going to make, um, is one that lets you take a string and split it by the string and walk the splits of that string. And so we're going to call it string split or stir split. Uh, it's not a very original name, but it doesn't have to be. Uh, and inside here you'll see that we have the cargo Toma we're going to define sort of meta data about our new crate.",
+        "probe_spoken": "with cargo new. We're going to make a library. And the library we're going to make, um, is one that lets you take a string and split it by the string and walk the splits of that string. And so we're going to call it string split or stir split. Uh, it's not a very original name, but it doesn't have to be. Um, and inside here, you'll see that we have the cargo to where we get to define sort of metadata about our new crate. Um, and also source lib, which",
+        "probe_scene": "A person is visible in the top right corner of the screen, while the rest of the screen displays a terminal with text commands and code.",
+        "speech_overlap": 0.6756756756756757,
+        "ost_overlap": 1.0,
+        "ost_hallucination_suspect": false
+      },
+      {
+        "t": "00:07:43",
+        "block_on_screen_text": "#[test], fn it_works() {}, let haystack = \"a b c d e\";, let letters = StrSplit::new(haystack, \" \");, assert_eq!(letters, vec![\"a\", \"b\", \"c\", \"d\", \"e\"].into_iter());",
+        "probe_on_screen_text": "#![warn(missing_debug_implementations, rust_2018_idioms, missing_docs)]\n\npub struct StrSplit\n\nimpl StrSplit {\n    pub fn new(haystack: &str, delimiter: &str) -> Self {\n\n    }\n}\n\nimpl Iterator for StrSplit {\n    type Item = &str;\n    fn next(&mut self) -> Option<Self::Item> {\n\n    }\n}\n\n#[test]\nfn it_works() {\n    let haystack = \"a b c d e\";\n    for letter in haystack.\n}\n\nsrc/lib.rs\n\"src/lib.rs\" 13L, 280C written\n\n0: vim* 1: fish 2: fish~ 3: fish~\n\n[LS]\ntest_case\ntrace_macros!\nf #[macro_export] macro_rules! trace_macros! {\nf #[macro_export] macro_rules! trace_macros! {\nunreachable!\nf #[macro_export] macro_rules! unreachable! {\nf #[macro_export] macro_rules! unreachable! {\ncompile_error!\nf #[macro_export] macro_rules! compile_error! {\nf #[macro_export] macro_rules! compile_error! {\noption_env!\nf #[macro_export] macro_rules! option_env! {\noption_env!\nf #[macro_export] macro_rules! option_env! {\n\n[LS]\n[rust-analyzer] [E] Syntax Error: expected SEMICOLON\n\n[LS]\n[rust-analyzer] [E] Syntax Error: expected a block\n[rust-analyzer] [E] Syntax Error: expected expression\n\n[LS]\nlt fn lt(self, other: &Rhs) -> bool [LS]\nle fn le(self, other: &Rhs) -> bool [LS]\nne fn ne(self, other: &Rhs) -> bool [LS]\nfn len(&self) -> usize [LS]\neq fn eq(self, other: &Rhs) -> bool [LS]\nfn is_empty(&self) -> bool [LS]\nfn min(self, other: Self) -> Ordering [LS]\nfn max(self, other: Self) -> Ordering [LS]\ncmp fn cmp(self, other: &Rhs) -> Ordering [LS]\n\n[LS]\nStrSplit S [LS]",
+        "block_spoken": "And so the idea here is uh we we could argue right this as a test. Um, although this test won't really do much at the moment. Uh, the idea is that you have some string like let's say a b c d e. Um, and you want to do for letter in hack. Well, I guess in this case it's going to be stir split new uh hack and then let's say here uh space. Right? That's going to be the idea and this is going to produce A then B then C then D then E. Ideally. Um, we'll probably not talk about higher kind lifetimes, that probably won't come up. Um, won't that just add noise when debuining early prototypes? Yes, uh, this whole thing at the this prelude um, is in the initial phases of development, you probably don't want it on uh, because it's just going to cause you get more warnings, so it's harder to see which ones are, which ones matter and which ones are more stylistic if you will.",
+        "probe_spoken": "And so the idea here is, uh, and we we could arguably write this as a test. Um, although this test won't really do much at the moment. Uh, the idea is that you have some string, like let's say A B C D E. Um, and you want to do for letter in haystack dot, well, I guess in this case this is going to be stir split.",
+        "probe_scene": "A man with a beard and glasses is visible in the top right corner of the screen, while the rest of the screen displays code in a dark-themed editor.",
+        "speech_overlap": 0.3793103448275862,
+        "ost_overlap": 0.5,
+        "ost_hallucination_suspect": false
+      }
+    ]
+  }
+}

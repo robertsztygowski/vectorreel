@@ -1,0 +1,175 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "How (Not) To Containerise Securely, Lessons Learned the Hard Way, Andrew Martin, UD2.208 (Decroly), 2020-02-01, FOSDEM 20",
+      "visual": "The video shows a title slide with the presentation title, speaker's name, and event details.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:05",
+      "spoken": "Right, hello everybody. Uh, this is a bit of a monster of a talk because it has a lot of live demos in. So I will ask you to uh to bear with me as I flip around all the time between. Whoops. There we go. Okie dokie.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "How (Not) to Containerise Securely, FOSDEM, January 2020, @sublimino and @controlplaneio",
+      "visual": "The speaker is visible on the right side of the screen, while a terminal window is initially shown on the left. The terminal is then replaced by a slide with the presentation title and speaker's social media handles.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:29",
+      "spoken": "So,",
+      "speaker": "Speaker 1",
+      "on_screen_text": "How (Not) to Containerise Securely, FOSDEM, January 2020, @sublimino and @controlplaneio",
+      "visual": "The speaker is on the right, and the title slide is on the left.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:35",
+      "spoken": "Hello, I am Andy. I like to break stuff and put it back together once I know how it's been working. I work at Control Plane, and uh I'm very proud to say that I am a trainer for various organizations. I'm this here eventually. Um, watch out for SANS SEC 584, which is uh Cloud Native Security course, five days coming out next year that I'm uh pleased to be working with on. I'm out of battery. Marvelous.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "I'm: - Andy - Dev-like - Sec-ish - Ops-y, Course author: - SANS - SEC584: Defending Cloud Native - ControlPlane, Trainer: - Hashicorp - Docker",
+      "visual": "A slide with text introducing the speaker and his roles, overlaid on a black and white image of a server room. The speaker is visible on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:01:05",
+      "spoken": "I'm a founder of Control Plane, which is continuous security engineering practices with a focus on cloud native and regulated industries. And I want to talk about container breakouts, Kubernetes break-ins, cluster drive-bys, API exploits, pwn-ing everything that we can find, fingers crossed. And how we fix the security skills gap in the cloud native ecosystem.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "controlplane",
+      "visual": "A slide showing the 'controlplane' logo. The speaker is visible on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:01:30",
+      "spoken": "Spoiler alert. We do it by training the next generation of cloud native security engineers and architects with production-like systems. That they can hack, they can play CTFs until they can pop shells and they really understand what they're doing. They test, remediate and harden, so we can hack back in.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "SPOILER ALERT",
+      "visual": "A slide showing a car with multiple spoilers, with 'SPOILER ALERT' text. The speaker is visible on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:01:50",
+      "spoken": "We do this with models that we've built for the system. These are threat models, attack trees. This is all open source under the Financial Services User Group in the CNCF. And attack simulators, which are production-like infrastructure in safe testing environments, more on this later.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Kubernetes Attack Trees - Compromised Container Scenario",
+      "visual": "A complex diagram of a Kubernetes attack tree is displayed on the slide. The speaker is visible on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:05",
+      "spoken": "So, what are we going to do? I've got some local VMs, I've got GKE, got some droplets, got some Docker versions and some kernel versions, and I will demo a hacking simulator right at the end if 30 minutes is enough.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "kubesim.io - K8s Hacking and Hardening Simulator, cluster provisioning and infrastructure deployment, scenario runner with challenges, hints, and scoring, raw command line experience, open source core at https://github.com/kubernetes-simulator/simulator, What are we doing today?, Burning some things, And trying to extinguish the flames, For each attack, Intro, Demo, Remediate, DevSecOps-ify",
+      "visual": "A slide with a list of topics for the talk, next to an image of Charmander watering its own burning tail. The speaker is visible on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:20",
+      "spoken": "Uh, also, I am drinking through this. I'm sure, perhaps, ladies and gentlemen. Okay. So, what are we doing? Docker and Kubernetes. Do we love Kubernetes? Well, broadly, does it love us? Absolutely not. Why is it so difficult? It is a distributed system. We're all trained on monoliths, and all of a sudden, we have to deal with all sorts of different network-based problems. What is the problem with Kubernetes? Well, it's a layered security onion, but if I can get onto a single node, if I can root one of your workers, I can probably root your whole cluster.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Docker and Kube, Kube doesn't love us, Y so difficult?, What's the problem?",
+      "visual": "A slide with bullet points about Docker and Kubernetes, next to an image of an octopus with a Kubernetes logo. The speaker is visible on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:59",
+      "spoken": "So, containers. Containers are awesome. We have to thank the uh hosts of this dev room for all the work that they put in, not only on LXD, but also upstream into the Linux kernel. But they emerged from the primordial kernel soup. A child of evolution rather than intelligent design. That has morphed, refined and been coerced into something usable. But don't forget, containers do not exist. They are merely the resultant bundling and isolation left once we've set up on namespaces and C groups and Linux security modules and started a precious little process inside.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Container Evolution, Containers are awesome, But they emerged from the primordial kernel soup, We love Kube",
+      "visual": "A slide with bullet points about container evolution, next to a black and white video showing single-celled organisms evolving into larger creatures like dinosaurs and mammoths. The speaker is visible on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:03:38",
+      "spoken": "Finally, that being said, we love, oh, that is a shame because that is an amazing gift. Kubernetes. So, this talk will go fast. There's lots of demos. I'll do my best. A prayer to the demo gods and an offering.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "We Love Kubernetes",
+      "visual": "A slide with the text 'We Love Kubernetes' next to a GIF of multiple kittens popping out of cardboard boxes. The speaker is visible on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:03:52",
+      "spoken": "Let's go. We all know this, right? We shouldn't run privileged, we should not run UID zero, and the Docker socket should not be mounted inside a container. Why is that, I hear you ask?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "LET'S GO, (What Not To Do), --privileged, /var/run/docker.socket, UID 0",
+      "visual": "A slide with 'LET'S GO' then transitions to a slide listing 'What Not To Do' with container flags and settings. The speaker is visible on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:04:05",
+      "spoken": "Uh, let's see. Okay, where are we? Uh, we are here, hopefully. Nope. We are here. Okay. So, we are spinning up a container with a double high privilege flag. What happens when we run privileged? Do you see anything in that list of mounted devices that we shouldn't do? Yes, that is the host device, dev/vda0 mounted with /etc/hosts on top of it. Why is that a bad thing? Because you can do as root inside the container, and importantly, there is no boundary between root inside and outside the container unless we have user namespaces enabled. What can we do? We can mount dev/vda1. And we can put that inside our container at any old mount point. And then what do we have there? Well, that not that alias. We have the host's root file system. That is not a good look. Can it get any worse? Well, yes, indeed it can. Let's just leave evidence that Andy indeed was at one stage here. All right, and then we're back on the host. What are we going to do now? Have a look at the roots, and Andy was there. Who was that owned by and when did that turn up? 14:16 looks relatively recent. And that's not how you spell stat. Yeah, so that's a bad day. Do not run privileged. Um, having UID zero inside container is not a vulnerability in and of itself, but it leads to a much easier privilege escalation if I can get inside your container. Okay.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "gke_contr...netassert-test ~ $, istio simulator cp-config bash Sat 01 15:09:55 Marks-MacB, ubuntu@master ~, root@41b3d4db7600:/#, df -h, Filesystem Size Used Avail Use% Mounted on, overlay 388G 32G 362G 9% /, tmpfs 64M 0 64M 0% /dev, tmpfs 388G 0 388G 0% /sys/fs/cgroup, /dev/vda1 388G 32G 362G 9% /etc/hosts, shm 64M 0 64M 0% /dev/shm, root@41b3d4db7600:/#, mount /dev/vda1 /mnt, root@41b3d4db7600:/#, ll /mnt, total 72, drwxr-xr-x 24 root root 4096 Jan 29 06:33 ., drwxr-xr-x 24 root root 4096 Jan 29 06:33 .., lrwxrwxrwx 1 root root 7 Jan 29 06:33 bin -> usr/bin, drwxr-xr-x 3 root root 4096 Jan 29 06:33 boot, drwxr-xr-x 2 root root 4096 Apr 20 2018 dev, drwxr-xr-x 14 root root 4096 Feb 11 2019 etc, drwxr-xr-x 2 root root 4096 Apr 20 2018 home, lrwxrwxrwx 1 root root 7 Jan 29 06:33 lib -> usr/lib, drwxr-xr-x 2 root root 4096 Jan 29 06:33 lib64, drwxr-xr-x 2 root root 4096 Jan 29 06:33 media, drwxr-xr-x 2 root root 4096 Jan 29 06:33 mnt, drwxr-xr-x 2 root root 4096 Jan 29 06:33 opt, drwxr-xr-x 2 root root 4096 Jan 29 06:33 root, drwxr-xr-x 10 root root 4096 Feb 12 2019 run, lrwxrwxrwx 1 root root 8 Jan 29 06:33 sbin -> usr/sbin, drwxr-xr-x 2 root root 4096 Jan 29 06:33 srv, drwxr-xr-x 2 root root 4096 Jan 29 06:33 sys, drwxr-xr-x 2 root root 4096 Jan 29 06:33 tmp, drwxr-xr-x 10 root root 4096 Feb 12 2019 usr, drwxr-xr-x 12 root root 4096 Feb 12 2019 var, root@41b3d4db7600:/#, touch /mnt/andy-was-here, root@41b3d4db7600:/#, exit, ubuntu@master ~ $, ll /, total 80, drwxr-xr-x 24 root root 4096 Jan 29 06:33 ., drwxr-xr-x 24 root root 4096 Jan 29 06:33 .., lrwxrwxrwx 1 root root 7 Jan 29 06:33 bin -> usr/bin, drwxr-xr-x 3 root root 4096 Jan 29 06:33 boot, drwxr-xr-x 2 root root 4096 Apr 20 2018 dev, drwxr-xr-x 14 root root 4096 Feb 11 2019 etc, drwxr-xr-x 2 root root 4096 Apr 20 2018 home, lrwxrwxrwx 1 root root 7 Jan 29 06:33 lib -> usr/lib, drwxr-xr-x 2 root root 4096 Jan 29 06:33 lib64, drwxr-xr-x 2 root root 4096 Jan 29 06:33 media, drwxr-xr-x 2 root root 4096 Jan 29 06:33 mnt, drwxr-xr-x 2 root root 4096 Jan 29 06:33 opt, drwxr-xr-x 2 root root 4096 Jan 29 06:33 root, drwxr-xr-x 10 root root 4096 Feb 12 2019 run, lrwxrwxrwx 1 root root 8 Jan 29 06:33 sbin -> usr/sbin, drwxr-xr-x 2 root root 4096 Jan 29 06:33 srv, drwxr-xr-x 2 root root 4096 Jan 29 06:33 sys, drwxr-xr-x 2 root root 4096 Jan 29 06:33 tmp, drwxr-xr-x 10 root root 4096 Feb 12 2019 usr, drwxr-xr-x 12 root root 4096 Feb 12 2019 var, ubuntu@master ~ $, sta /andy-was-here, stat: command not found, 'stat' found from package 'stgit' (upstream), 'stat' from package 'systemtap' (systemtap), 'stat' from package 'acc' (main), 'stat' from package 'alliance' (universe), 'stat' from package 'coreutils' (main), ubuntu@master ~ $, sta /andy-was-here, File: /andy-was-here, Size: 0, Blocks: 0, IO Block: 4096, regular empty file, Device: fd01h/64769d, Inode: 1315, Links: 1, Access: (0644/-rw-r--r--), Uid: ( 0/ root), Gid: ( 0/ root), Access: 2020-02-01 14:16:13.472479312 +0000, Modify: 2020-02-01 14:16:13.472479312 +0000, Change: 2020-02-01 14:16:13.472479312 +0000, Birth: -, ubuntu@master ~ $,",
+      "visual": "The speaker demonstrates a container privilege escalation. He runs a privileged Docker container, mounts the host's root filesystem inside it, creates a file, and then shows that the file is visible on the host, proving root access.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:05:40",
+      "spoken": "And those were misconfigurations, right? That's that's something that we can actually defend in the pipeline. So, it's all very well talking about the problem. Let's talk about the fix as well. In the container's life cycle, unit tests are kind of run in isolation. And I'm taking the test pyramid and I'm superimposing my own view over the top. In this case, unit tests are static or dynamic analysis on the container itself. Integration tests are probably more dynamic analysis inside the container, maybe akin to actually testing the public APIs of the application inside the container. Why is that important? Because the configuration changes with each environment that we promote it through. The container stays the same, but its behavior is is dependent upon environment variables or config that we mount in, so we have to test. And end-to-end test, well, that's the full system essentially.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "(What Not To Do), --privileged, /var/run/docker.socket, UID 0, Container Test Pyramid, E2E, Integration, Unit",
+      "visual": "A slide showing the 'What Not To Do' list, then transitions to a 'Container Test Pyramid' diagram with 'Unit', 'Integration', and 'E2E' layers.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:29",
+      "spoken": "So, what can we do for static analysis for Dockerfiles? We can lint them. And we can determine whether or not we have done certain things wrong. Something that we can't do, or that is in fact very difficult to do, is identify which user was running, because that is a runtime construct and we can switch users in the entry point, for example.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Linting Dockerfiles - Static Analysis, https://github.com/projectatomic/dockerfile_lint - rule based 'linter' for Dockerfiles, https://github.com/hadolint/hadolint - Dockerfile linter, validates inline bash with Shellcheck",
+      "visual": "A slide listing tools for static analysis of Dockerfiles, including `dockerfile_lint` and `hadolint`.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:45",
+      "spoken": "So we probably, oh, also you can do Kubernetes with uh, Sim, a sec rather, which is static analysis for Kubernetes resources. This will tell you, do not mount XYZ, and it will give you a risk score to try and quantify the danger of running a particular configuration.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Static Analysis for Kubernetes Resources, https://kubesec.io, github.com/controlplaneio/kubesec, kubesec.io - example insecure pod, \"object\": \"Pod/kubesec-demo.default\", \"valid\": true, \"message\": \"Passed with a score of 1 points\", \"scoring\": [{\"selector\": \".containers[]\", \"securityContext.capabilities.add\", \"reason\": \"Adding kernel capabilities available to a container limits its attack surface\"}, {\"selector\": \".spec.serviceAccountName\", \"reason\": \"Service accounts restrict Kubernetes API access and should be configured with least privilege\"}, {\"selector\": \".containers[].resources.requests.cpu\", \"reason\": \"Enforcing CPU requests aids a fair balancing of resources across the cluster\"}]",
+      "visual": "A slide showing `kubesec.io` for static analysis of Kubernetes resources, with an example JSON output of a security risk analysis.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:00",
+      "spoken": "There are lots of things that you can do in a pod YAML to break it. Right, so, what about dynamic testing? Well, we can use inspect, it's heavyweight, it's Ruby. Do you want to install Ruby inside your container? Hell no. What about serverspec? Well, they're still quite nice, but again, the same problem, it's Ruby. So, what do we use? Goss. Go serverspec. It is simple, declarative, highly parallelized, and written in Golang. What does that say? Cloud native. Hooray! So,",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Pod YAML - Isolation-Breaking Configs, SecurityContexts: use for pods and containers, Dangerous pod configurations;, Running as root (no user namespace support in Kubernetes), Privileged (can perform root operations on the host), No seccomp/AppArmor profile (unlike Docker, no default profile in Kubernetes), Full RBAC (administrative access to cluster), Mounting host volumes (remote rooten, side-channel communication), Sharing host PID, network, or IPC namespaces (can lead to escalation), AllowPrivilegeEscalation (permits escalating to root inside the container), Excess capabilities (violates least privilege), No cgroups (unbounded resource consumption), Unit Testing Containers - Dynamic Testing, inspec, serverspec, goss",
+      "visual": "A slide listing dangerous pod configurations in YAML, then transitions to a slide listing tools for dynamic testing of containers: `inspec`, `serverspec`, and `goss`.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:29",
+      "spoken": "This is what Goss looks like. You have a simple YAML-based format. It runs everything by with default 50 threads or go channels. And uh in this case, command is the type of test and key here is the version. So we're just making sure that our base container, we have a contract with it that it's shipping something to us.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "goss, command:, java -version:, title: Checking Java JRE version and architecture, exit-status: 0, stdout: [], stderr: [], ^openjdk version \"1.8.*\", ^/openjdk-64 Bit Server VM .*/, timeout: 1000",
+      "visual": "A slide showing an example `goss` configuration in YAML format, testing the Java version.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:07:46",
+      "spoken": "Right, obviously you can use Goss for anything and everything, and I recommend it to the house. What next? Let's break out of some containers. Who remembers Dirty COW? A copy-on-write vulnerability in the kernel, which had been there since potentially 2007, version 2.6.22. And it's a copy-on-write race condition, whereby an unprivileged user is able to write into root-owned memory, execute it, and pop a shell. Exploitation of this bug does not need leave any trace of what happened. It was detected by some dude running a rolling packet catcher on his honeypot, who then pulled out the binary and recompiled it. What a guy.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "breaking out of containers, What is this?, DirtyCOW: A copy-on-write vulnerability in the kernel from 2016, Allows a malicious user to gain root on the host from inside a container, Was being exploited in the wild, DIRTY COW",
+      "visual": "A slide with the text 'breaking out of containers', then transitions to a slide explaining 'Dirty COW' with an image of a cow.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:08:26",
+      "spoken": "Okay, why is it bad? It hoses your system. Um, it containers in a default configuration at the time did not contain this bug. Containers rely on the kernel for protection. System calls from inside a container do not hit a local kernel. They are proxied onto the host. This is why the kernel isolation model is more difficult and nuanced than a VM, which has an entire full BIOS-simulated version of the kernel running inside it. Instead, with containers, we get this speed increase, we start our processes very quickly, but we pay this penalty of proxying system calls. If the container is reliant upon the kernel, and the kernel lets the containers guard down, we're having a bad day. There are ways around this.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Why is it bad?, It pretty much hoses your system and flushes the corpse, Linux kernel since 2.6.22 (July 2007), Fixed in 4.8.3, 4.7.9, 4.4.26 or newer (Oct 2016), All Docker versions, It's a kernel bug: container syscalls hit host",
+      "visual": "A slide explaining why Dirty COW is a bad vulnerability, listing its impact and how it affects Docker containers.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:09:05",
+      "spoken": "Let's have a look. Nondeterministic live demo. Woohoo! Okay, so, on to. Dirty COW. So this may suffer slightly on this screen. One side, very good already. Yes. Sorry. As usual. Okay, so what are we going to do here? Start tmux. Sweet. Uh, also, I managed to remove the U key from my keyboard, so you'll notice that I have trouble typing U. There was chocolate beneath it in a late night hacking session is my excuse. Okay, and what is actually happening there? It's just running up because of this. Okay, so what are we doing? We've got Docker at the top. We have Sysdig twice. We have at the bottom, temp.x, which",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Dirty COW (2016), Nondeterministic Live Demo, (backup available: YouTube), DIRTY COW, ubuntu@master ~, sta /andy-was-here, stat: command not found, 'stat' found from package 'stgit' (upstream), 'stat' from package 'systemtap' (systemtap), 'stat' from package 'acc' (main), 'stat' from package 'alliance' (universe), 'stat' from package 'coreutils' (main), ubuntu@master ~, sta /andy-was-here, File: /andy-was-here, Size: 0, Blocks: 0, IO Block: 4096, regular empty file, Device: fd01h/64769d, Inode: 1315, Links: 1, Access: (0644/-rw-r--r--), Uid: ( 0/ root), Gid: ( 0/ root), Access: 2020-02-01 14:16:13.472479312 +0000, Modify: 2020-02-01 14:16:13.472479312 +0000, Change: 2020-02-01 14:16:13.472479312 +0000, Birth: -, ubuntu@master ~, vagrant@vagrant-ubuntu-trusty-64 ~ $, ./demo, -bash: ./demo: No such file or directory, vagrant@vagrant-ubuntu-trusty-64 ~ $, 127, vagrant@vagrant-ubuntu-trusty-64 ~ $, ./democd .config/, vagrant@vagrant-ubuntu-trusty-64 ~ $, cd /code, vagrant@vagrant-ubuntu-trusty-64 code $, ./demo.sh, +++ cd /code, +++ pwd, +++ declare -r DIR=/code, +++ dirname ./.demo.sh, +++ [[ -f /tmp/.X ]] && cd /tmp/.X || :, +++ install_deps, +++ hash sysdig, +++ hash y, +++ hash tmux, +++ [[ +x tmux ]], +++ echo 'Please run in tmux', Please run in tmux, +++ exit 1, vagrant@vagrant-ubuntu-trusty-64 code $, tmux, tmux break-pane, tmux new-window -P 'dirtycow demo', tmux split-window -p 65 'bash -ic ",
+      "visual": "The speaker attempts a live demo of the Dirty COW vulnerability. He navigates through a terminal, sets up a tmux session, and starts a script. The terminal shows commands related to Docker, Sysdig, and a 'dirtycow demo'.",
+      "kind": "demo"
+    }
+  ],
+  "segment_summary": "This segment introduces a talk on container security, focusing on lessons learned from insecure containerization practices. The speaker, Andrew Martin from Control Plane, outlines the talk's structure, which includes live demos of hacking and hardening techniques for cloud-native systems. He explains common misconfigurations like running privileged containers or UID 0, demonstrating how these can lead to host root access. The segment also covers static and dynamic testing tools for containers and Kubernetes, before introducing the Dirty COW kernel vulnerability and its implications for container security."
+}

@@ -1,0 +1,70 @@
+{
+  "accepted": [
+    {
+      "video_id": "5si4zkAngpA",
+      "category": "slide_talk",
+      "url": "https://www.youtube.com/watch?v=5si4zkAngpA",
+      "title": "Exploring the CPython JIT — Diego Russo",
+      "channel": "EuroPython Conference",
+      "published_at": "2025-10-20T08:16:36Z",
+      "duration_s": 1782,
+      "licence": "creativeCommon",
+      "privacy": "public",
+      "embeddable": true,
+      "attribution": "\"Exploring the CPython JIT — Diego Russo\" by EuroPython Conference (https://www.youtube.com/watch?v=5si4zkAngpA), CC BY 3.0"
+    },
+    {
+      "video_id": "JvbBFwlqxeI",
+      "category": "slide_talk",
+      "url": "https://www.youtube.com/watch?v=JvbBFwlqxeI",
+      "title": "How (Not) To Containerise Securely Lessons Learned the Hard Way",
+      "channel": "FOSDEM",
+      "published_at": "2020-09-25T07:04:57Z",
+      "duration_s": 1766,
+      "licence": "creativeCommon",
+      "privacy": "public",
+      "embeddable": true,
+      "attribution": "\"How (Not) To Containerise Securely Lessons Learned the Hard Way\" by FOSDEM (https://www.youtube.com/watch?v=JvbBFwlqxeI), CC BY 3.0"
+    },
+    {
+      "video_id": "KL7WBjAuTMg",
+      "category": "talking_head",
+      "url": "https://www.youtube.com/watch?v=KL7WBjAuTMg",
+      "title": "Dave Baszucki on Roblox, Teen Entrepreneurs, and the Future of Play | Conversation with Tyler",
+      "channel": "Conversations with Tyler",
+      "published_at": "2026-06-17T12:06:18Z",
+      "duration_s": 3476,
+      "licence": "creativeCommon",
+      "privacy": "public",
+      "embeddable": true,
+      "attribution": "\"Dave Baszucki on Roblox, Teen Entrepreneurs, and the Future of Play | Conversation with Tyler\" by Conversations with Tyler (https://www.youtube.com/watch?v=KL7WBjAuTMg), CC BY 3.0"
+    },
+    {
+      "video_id": "gRFaow12xo0",
+      "category": "talking_head",
+      "url": "https://www.youtube.com/watch?v=gRFaow12xo0",
+      "title": "In Conversation with Timnit Gebru and Melissa Chan",
+      "channel": "Access Now",
+      "published_at": "2023-06-07T15:10:55Z",
+      "duration_s": 1804,
+      "licence": "creativeCommon",
+      "privacy": "public",
+      "embeddable": true,
+      "attribution": "\"In Conversation with Timnit Gebru and Melissa Chan\" by Access Now (https://www.youtube.com/watch?v=gRFaow12xo0), CC BY 3.0"
+    },
+    {
+      "video_id": "rAl-9HwD858",
+      "category": "screencast",
+      "url": "https://www.youtube.com/watch?v=rAl-9HwD858",
+      "title": "Crust of Rust: Lifetime Annotations",
+      "channel": "Jon Gjengset",
+      "published_at": "2020-04-22T23:36:48Z",
+      "duration_s": 5603,
+      "licence": "creativeCommon",
+      "privacy": "public",
+      "embeddable": true,
+      "attribution": "\"Crust of Rust: Lifetime Annotations\" by Jon Gjengset (https://www.youtube.com/watch?v=rAl-9HwD858), CC BY 3.0"
+    }
+  ],
+  "rejected": []
+}

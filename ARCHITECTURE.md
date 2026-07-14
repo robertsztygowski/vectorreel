@@ -108,6 +108,32 @@ each. **This is the source of the observed 1.3× retry overhead, and untreated i
   cap on 5 of 8 calls and all 8 returned good output (`finishReason: STOP`, 90–98% coverage). A
   bounded budget being reached is the guard doing its job. **Judge the output, not the budget.**
 
+🚨 **On `MAX_TOKENS`, HALVE THE SEGMENT — never retry it unchanged.** An output-cap overflow is
+**deterministic**: the same clip at the same config overflows again, so a naive retry buys nothing
+and bills twice. Phase 0.2 paid for exactly that.
+
+> **The lesson that cost the most to learn: segment length does not bound Stage B's output.**
+> On-screen *text density* does — and that is not knowable before the call. A 15-minute window blew
+> the cap on both slide talks; the dense middle of one blew it **even at 10 minutes**, and had to be
+> split to ~75 s. So the pipeline cannot merely *choose* a good segment size up front; it must
+> **react** to an overflow by splitting and re-running. Halving is the cheap correct response: no
+> content analysis, guaranteed to terminate, and the pieces are exactly what Stage C already fuses.
+>
+> ⚠️ **But naive halving is a cost amplifier — you pay for the failed parent AND both halves**
+> (METRICS.md **N4d**: ~13× on a dense talk). Phase 2 must **segment dense content shorter up
+> front**, using halving only as the backstop. Shipping the naive loop is shipping N4d.
+
+⚠️ **Guard coverage on BOTH sides.** An under-coverage guard alone is half a guard: Phase 0.2
+accepted a 15-minute segment whose blocks ran to `04:48:10` (**1921% coverage**) because nothing
+ever looked *up*. **A citation to a timestamp that does not exist is worse than no citation** — it
+is precisely the failure A4 exists to catch.
+
+⚠️ **Normalize timestamps PER TIMESTAMP, not per response.** The model does not merely drift
+between `hh:mm:ss` and `mm:ss:centiseconds` — **it mixes both inside one response** (`00:14:87`
+beside genuine `hh:mm:ss`). A whole-response format detector cannot represent that, silently picks
+the wrong reading, and produces the impossible timestamps above. Decide each timestamp on its own
+(a minute/second field > 59 cannot be `hh:mm:ss`) and let monotonicity + clip length choose.
+
 **Public-path variant (YouTube).** Same schema, same guards. Input is `fileData.fileUri` (YouTube
 URL, `mimeType` mandatory) + `videoMetadata.startOffset/endOffset` instead of a GCS segment URI.
 Public videos only. See §1. Three requirements are specific to this path (all measured in Phase 0.1,
@@ -258,10 +284,16 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
   4. Batch/queue smoothing to stay inside provider rate limits.
   5. **Bounded `thinkingBudget`** — unbounded thinking blew one benchmark call to 63k thought
      tokens at ~3× cost. See the mandatory guards in §3.
-- **Two correctness requirements that fall out of the benchmark** (`experiments/001-*/RESULTS.md`):
-  Stage B must **deterministically normalize model timestamps** (formats drift between
-  mm:ss:centiseconds and absolute-vs-relative anchoring) and **retry on under-coverage** (blocks
-  cluster at clip start on continuous demo footage).
+- **Correctness requirements that fall out of the benchmarks** (`experiments/001-*/`): Stage B must
+  **normalize model timestamps per timestamp** (formats drift *and mix within one response*),
+  **guard coverage on both sides** (under- *and* over-coverage), and **split on `MAX_TOKENS` rather
+  than retry**. All three are specified in §3 — each was learned by paying for it.
+- 🚨 **Continuous screen recordings are the weak category — and they are what the paying product
+  ingests.** Blocks cluster and coarsen against slide talks (METRICS.md **N7b**, **N32**), so
+  citations get vague exactly where the ICP lives. Seen in all three benchmark phases; it is
+  reproducible, not noise. The private path *can* fix what the public path cannot: it holds
+  the bytes, so **Stage A's static-content detection should force block boundaries** on footage the
+  model would otherwise run together.
 
 ## 9. Build order
 

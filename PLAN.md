@@ -36,9 +36,17 @@ all **whether anyone can be reached at all.** All five open assumptions live in 
 that pays for the infra (N1a) and the traffic that tells you whether to continue (the A2 sample
 floor) are the same traffic.** It is a good-post-sized number, not a content-engine-sized number.
 
-**Where we are now.** Phase 0 ✅ done. Phase 0.1 ✅ done — **the YouTube path works in the EU, it
-segments by offsets without ever touching the bytes, and it is cheaper than we assumed.**
-**Next: Phase 0.2** (public CC-licensed corpus), which gates the demand instrument in 0.3.
+**Where we are now.** Phase 0 ✅, Phase 0.1 ✅, **Phase 0.2 ✅ done** — the licensed corpus exists, the
+A4 category gap is closed, and we have the **first artifacts we are allowed to show anyone.**
+**Next: Phase 0.3 — the demand instrument. It is the long pole and everything else waits on it.**
+
+> ⚠️ **Two things 0.2 changed that you must not carry forward unread.**
+> **(1) The output side of the pipeline is not bounded by segment length** — dense slides overflow
+> the token cap even at 10 minutes, and the naive fix costs ~13× (METRICS.md **N4d**). A Phase 2
+> requirement, not a detail.
+> **(2) The weakest content category is the one the paying product ingests** — continuous screen
+> recordings under-segment (METRICS.md **N7b**, **N32**). The *free* path is strong; the *paid* path
+> is the one that needs work. That is the opposite of the order we'd have guessed.
 
 > ### 🧟 **How this ends — and with no salary to burn, this is the rule that matters most.**
 > At N1a the business is cash-flow-positive and could run **forever** on ~€300/mo. Nothing forces a
@@ -74,7 +82,7 @@ they are not restated here.** This table is only the map from assumption → pha
 | **A1** | EU residency is a purchase driver | Phase 0.3 landing-page headline A/B |
 | **A2** | Buyers buy rather than DIY | Phase 4 Stripe checkout |
 | **A3** | Recurring flow, not one-time backfill | Phase 4 cohort hour-decay — **plus the N20 signup field, which reads it two months earlier** |
-| **A4** | Output is citable in a KB | Phase 0.2 public benchmark corpus; extended by `upload_repeat` in Phase 3 |
+| **A4** | Output is citable in a KB | **Accuracy ✅ measured in Phase 0.2** (METRICS.md N30–N32) — but *trust* is only proven by `upload_repeat` in Phase 3. Accuracy is necessary, not sufficient. |
 
 ⚠️ **Do not invoke a decision rule below its sample floor (METRICS.md §2.1).** The most likely way
 this plan fails is not a bad number — it is a *verdict called on 40 visitors*.
@@ -87,11 +95,17 @@ this plan fails is not a bad number — it is a *verdict called on 40 visitors*.
 |---|---|---|
 | `~/Downloads/Isolation Component V2 demo.mp4` | 50:40, 1080p @ 16 fps, spoken audio, 293 MB | **Company-internal — NOT publishable.** Long-form demo screen-recording; cost benchmark; private golden-test source |
 | `~/Downloads/HabiCen Ticket System.mp4` | 1:52, silent AAC track, 99 MB | **Company-internal — NOT publishable.** Edge case: audio stream present, nothing spoken — must output no transcript, not hallucinate one |
-| **Public CC-licensed YouTube corpus** (Phase 0.2) | 4–6 videos | **Publishable.** Closes the A4 category gap, seeds `tests/fixtures/videos/`, *and* becomes the public demo. See Phase 0.2. |
+| **Public CC BY corpus** — `experiments/001-*/out/corpus.json` | 5 videos, licence-verified via the YouTube Data API | ✅ **Publishable.** Closed the A4 category gap; rendered demos in `out/corpus_md/`. Reached **only** through Vertex `fileUri` — we never hold the bytes. |
+| **`tests/fixtures/videos/`** | 3 × 90 s clips, 5.4 MB, CC BY / public domain | ✅ **Committed.** Golden tests are now reproducible by anyone who clones the repo. |
 
-Both internal videos are unshareable and too large to commit. This is why the public corpus
-exists: it solves the demo problem, the benchmark-category gap, and the committable-fixture
-problem in one move.
+Both internal videos are unshareable and too large to commit — that is why the public corpus exists.
+
+⚠️ **The corpus and the fixtures come from different sources on purpose.** The corpus is CC BY
+*YouTube* video, and it is only ever reached through `fileData.fileUri`. **Fixtures must live in the
+repo, so they cannot come from YouTube at all** — that would mean downloading bytes (CLAUDE.md
+rule 8), and a CC licence on the content does not override the platform's ToS on the delivery. The
+fixtures are therefore sourced from FOSDEM / NASA / Wikimedia, which publish the media files
+themselves. See `tests/fixtures/videos/README.md`.
 
 ---
 
@@ -148,37 +162,42 @@ paid product.
 
 ---
 
-## Phase 0.2 — Public benchmark & demo corpus (1 session, ≲ €3) 🔜 NEXT
+## Phase 0.2 — Public benchmark & demo corpus ✅ DONE 2026-07-14
 
-**Goal: one set of videos that closes A4, produces publishable demos, and seeds committable
-test fixtures.** The internal videos can do none of these — they are unshareable.
+> **Completed.** See `experiments/001-gemini-video-benchmark/out/CORPUS.md`.
+> Spend: **€3.07** (€3 envelope + an approved €0.20 top-up — the cap halted the run mid-render,
+> which is the cap working).
 
-Pick **4–6 Creative-Commons-licensed** YouTube videos (YouTube has a CC license filter — use it):
+**5 CC BY videos, every one verified through the YouTube Data API** (`status.license ==
+"creativeCommon"`), not the CC search filter. `out/corpus.json` is the audit trail. 🚧 The gate
+immediately confirmed 0.1's warning as fact: **all 7 spike URLs were standard-licence — none was
+ever publishable.**
 
-- 2 × **conference talk** (slide-heavy) — closes the missing "slide-talk" category (A4)
-- 2 × **interview/podcast** (talking-head) — closes the missing "talking-head" category (A4)
-- 1 × long **screen-recorded tutorial** — public analogue of the internal demo video
+1. **A4 category verdicts: ✅ gap closed** (METRICS.md **N30–N32**). Graded by *independent
+   re-probe* — a second, differently-prompted call seeked to each block's own claimed timestamp, so
+   the output is graded against a fresh look at the video rather than against itself. Slide talks
+   and talking heads are **strong** (99%/97% timestamp anchoring, 0 hallucinated on-screen text in
+   15 probes). On bare studio footage the model **abstains rather than invents** — the mirror of
+   Phase 0's silent-video result.
+2. **Publishable artifacts: ✅** `out/corpus_md/` — the FOSDEM talk rendered **end-to-end**, plus
+   four 10-minute excerpts. Attribution ships *inside* each file. **This is the raw material for
+   0.3 and it is ready.**
+3. **Committable fixtures: ✅ but re-scoped** — `tests/fixtures/videos/`, three 90 s clips, 5.4 MB.
+   ⚠️ **Not from YouTube: that would mean downloading bytes (CLAUDE.md rule 8).** A CC licence on
+   the content does not override YouTube's ToS on the delivery. Sourced from FOSDEM / NASA /
+   Wikimedia, which publish the files themselves.
 
-Run each through the Phase 0.1 YouTube path (`07_youtube.py` already does this) with the
-ARCHITECTURE §3 Stage B schema.
+**The two findings that reshape the phases below:**
 
-⚠️ **Start from a clean, licence-checked selection.** The 7 URLs used in the 0.1 spike were inputs to
-a cost/plumbing test, **not a corpus** — none is confirmed CC-licensed, and nothing derived from them
-is publishable. (One of them, labelled "product demo", is a 59-second advert.) Phase 0.1 published
-nothing, so nothing is owed; but **0.2 must not inherit that list by default.**
-
-Deliverables:
-
-1. **A4 verdict per content category** — is `on_screen_text` verbatim? Are timestamps accurate?
-   Any hallucination on the talking-head footage (which has almost no on-screen text — the
-   inverse of the silent-video edge case)?
-2. **Publishable `output.md` per video** → raw material for Phase 0.3.
-3. **CC-licensed clips committed to `tests/fixtures/videos/`** — fixes the "test assets are
-   293 MB and unshareable" problem; makes golden tests reproducible by anyone.
-
-**Starter prompt:**
-> Read PLAN.md Phase 0.2 and experiments/001-*/RESULTS.md. Select the CC-licensed corpus,
-> run the Stage B benchmark on each, produce the A4 category verdicts. Plan mode first.
+- 🚨 **Segment length does not bound Stage B's output — text density does.** A 15-min window blew
+  the output cap on *both* slide talks; the dense middle of one blew it **even at 10 min**. The
+  pipeline must **react** (halve and re-run), and the naive version of that costs **~13×**
+  (METRICS.md **N4d**). → Phase 2.
+- 🚨 **The weakest category is the paid product's own content type.** Continuous screen recordings
+  under-segment into ~86 s blocks — vague citations, exactly where the ICP lives (METRICS.md
+  **N7b**). The public YouTube path is *strong*; the private path is the one that needs the work.
+  → Phase 1 (Stage A static detection can force block boundaries — the private path holds the bytes,
+  so it can fix what the public path cannot).
 
 ---
 
@@ -226,8 +245,15 @@ Work:
 ## Phase 1 — Core + Stage A
 
 `src/Core` (domain, provider interfaces, pipeline skeleton) + Stage A (ffprobe/ffmpeg wrapper,
-segmentation, static detection — port learnings from Phase 0). Golden tests on the **public CC
-clips** from Phase 0.2. docker-compose.yml (postgres + fake-gcs-server) lands here.
+segmentation, static detection — port learnings from Phase 0). Golden tests on the **committed CC
+clips** in `tests/fixtures/videos/` (Phase 0.2). docker-compose.yml (postgres + fake-gcs-server)
+lands here.
+
+🚨 **Stage A now has a second job, and it is the important one.** Continuous screen recordings —
+**the ICP's own content type** — under-segment into vague ~86 s blocks (METRICS.md **N7b**, **N32**).
+The private path holds the bytes, so **static-content detection should force block boundaries** on
+footage the model would otherwise run together. This is the one thing the private path can do that
+the public path structurally cannot, and it is aimed squarely at our weakest measured category.
 
 **Starter prompt:**
 > Read PLAN.md Phase 1, ARCHITECTURE.md §3 Stage A, experiments/001-*/RESULTS.md.
@@ -238,13 +264,20 @@ clips** from Phase 0.2. docker-compose.yml (postgres + fake-gcs-server) lands he
 Stage B against Vertex with structured output; record/replay fixtures + `tests/Live/`;
 Stage C fusion; Stage D persist + output renderer; source deletion.
 
-**Two new hard requirements from the Phase 0 late findings:**
+**Hard requirements carried in from the benchmark phases:**
 
 - **Hard output-token caps + request timeouts on Stage B.** ~8% of benchmark calls ran away
   (61k output tokens / 63k thinking tokens). Untreated, this breaks the <15 min SLO and is the
   1.3× retry overhead.
 - **Per-job cost ledger meters compute, not just LLM calls.** ffmpeg/Cloud Run transcode is
   ~30% of true COGS and is currently invisible. CLAUDE.md rule 6 now covers it.
+- 🚨 **Split on overflow — and size segments by density *up front*** (Phase 0.2). `MAX_TOKENS` is
+  deterministic: retrying it unchanged just bills twice. Halving works, but the naive loop pays for
+  the failed parent **and** both halves (METRICS.md **N4d**, ~13×). **Shipping the naive loop is
+  shipping N4d.** → ARCHITECTURE §3.
+- 🚨 **Two-sided coverage guard + per-timestamp normalization** (Phase 0.2). The model mixes
+  `mm:ss:cs` and `hh:mm:ss` *within one response*; a one-sided guard accepted blocks at `04:48:10`
+  in a 15-minute clip. **A citation to a timestamp that does not exist is worse than no citation.**
 
 **Second ingestion path:** the YouTube path (Stage B directly on `fileData.fileUri`, no Stage A,
 offset-based segmentation) lands here as a parallel, simpler pipeline. Free/public only.

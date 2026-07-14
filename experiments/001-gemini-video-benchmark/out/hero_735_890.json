@@ -1,0 +1,103 @@
+{
+  "segment_start": "00:12:15",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": "deployed. But the actual solution is to patch your kernels, as always, run latest versions of things.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "WTF just happened?",
+      "visual": "A slide with a cartoon image of two people connected by a cloud, with the text 'WTF just happened?'. The speaker is visible in the bottom right corner.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:06",
+      "spoken": "What can we do around this? There's various things here, but ultimately this is sandboxing.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Security Contexts, DAC (discretionary access control), Capabilities, Sandboxing, Mandatory Access Control",
+      "visual": "A slide titled 'Security Contexts' listing bullet points about DAC, Capabilities, Sandboxing, and Mandatory Access Control. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:00:13",
+      "spoken": "There we go. Hooray. Okay, so theoretically this has worked. You can see it's got patch two of two. Because of the number of system calls we made, the second window will keep on spooling. But here we should be root. Sweet. You can see here that we've actually, uh, that is one of the host at the bottom. Now, because we were inside a container at this point, we shouldn't be able to see anything on the host.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "id, uid=0(root) gid=0(root) groups=0(root)",
+      "visual": "A terminal screen showing command output, including `ptrace` calls and the `id` command output confirming root access. The speaker is visible.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:10",
+      "spoken": "So what should we look for? Yes. Let's see if runc is there. If we are going to grep, we should probably use the word grep. And no, because it's older than that. Let's grep for the Docker daemon. There we go. So we should not be, what is it called? Yeah. Okay. Uh, obviously this kernel version is a few years old and I've had to keep this VM around. But what we see there is we're inside a container and we're doing stuff on the host. It's a bad day. Container isolation is broken. Let's continue.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "ps faux | grep runc, ps faux | grep docker-daemon",
+      "visual": "The terminal screen continues to show command output as the speaker types `ps faux | grep runc` and `ps faux | grep docker-daemon`. The speaker is visible.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:01:36",
+      "spoken": "So, what do we do? We modify AppArmor and seccomp profiles. We should be fine-tuning these things. Tools like Jesse Frazelle's Bane, there's loads of new eBPF-based seccomp tracing stuff that will extract seccomp profiles from running applications. This is all that the big container security tooling does for you anyway. Some bells and whistles, uh, or as I heard it described, Belgian whistles, around that.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Docker's Default seccomp Profile, Docker uses a JSON DSL for seccomp profiles that compile down to eBPF (i.e. seccomp-bpf), and are run in the kernel, Only whitelisted system calls are permitted, Docker's seccomp whitelist blocks some dangerous system calls:, o add_key, keyctl, request_key: Prevent containers from using the kernel keyring, which is not namespaced, o clone, unshare: Deny cloning new namespaces. Also gained by CAP_SYS_ADMIN for CLONE_*, new user CLONE_USERNS., “I specifically wanted to block cloning new user namespaces inside containers because they are notorious points of entry for kernel bugs”, Seccomp security profiles for Docker",
+      "visual": "A slide titled 'Docker's Default seccomp Profile' with detailed bullet points about how Docker uses seccomp profiles and specific system calls. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:01:53",
+      "spoken": "Um, and of course we want to write effectively. These slides are available for posterity afterwards.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Writing Effective Seccomp Profiles, Dynamic, Static",
+      "visual": "A slide titled 'Writing Effective Seccomp Profiles' with bullet points on 'Dynamic' and 'Static' methods. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:01:58",
+      "spoken": "13 minutes. Okay, bypassing controls. What else are we going to do?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "bypass container security controls",
+      "visual": "A slide with the text 'bypass container security controls'. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:02",
+      "spoken": "Uh, well, oh yes. Thanks Jim. Some of these are just not loading in time, are they?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AppArmor bypass",
+      "visual": "A slide with the text 'AppArmor bypass' and a meme image of Jim Carrey from Ace Ventura. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:06",
+      "spoken": "Uh, bypass container security controls. Oh well, that does move eventually.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "bypass container security controls",
+      "visual": "The slide from the previous block is shown again, with the text 'bypass container security controls' and the Jim Carrey meme. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:12",
+      "spoken": "Um, so there was an AppArmor bypass recently. This was quite interesting because",
+      "speaker": "Speaker 1",
+      "on_screen_text": "AppArmor bypass",
+      "visual": "A slide with the text 'AppArmor bypass'. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:17",
+      "spoken": "Ah, these are just not loading. Okay, we'll get that. Cool. So what we've seen here is we've just created a volume and put it over part of the proc file system. We shouldn't be able to do that. It was a bug, but this means that when the application looks for information as to what AppArmor configuration is configured, we've overwritten it and there is none. Slight little bypass. I don't know how long this was around for, probably a good long time.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Minimal PoC, AppArmor can be bypassed by a malicious image that specifies a volume at /proc, mkdir -p /proc/roots/self/{attr,fd}, touch /proc/roots/self/{attr,fd}/exec, touch /proc/roots/self/fd/{4,5}, cat <<EOF > Dockerfile, FROM busybox, ADD roots /, VOLUME /proc, EOF, docker build -t apparmor-bypass, docker run -it --security-opt='apparmor=docker-default' apparmor-bypass, # Container runs unconfined, Not a critical bug on its own, but should get a CVE assigned., Discovered by Adam Iwanuik and disclosed during DragonSector CTF, Twitter.com/adam_iwanuik/status/117418301362913281, The CTF challenge mounted a file to /flag. <random> and denied access to it using an AppArmor policy. The bug could then be used to disable the policy and read the file: gist.github.com/fleoDuk/8b53b8b4f09723d7d0f8a71",
+      "visual": "A slide titled 'Minimal PoC' showing a code snippet that demonstrates an AppArmor bypass by mounting a volume over `/proc`. The speaker is visible.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:02:41",
+      "spoken": "Um, yeah. Proc self exe. This one is fun. This is taking a symlink or a pointer perhaps back to your",
+      "speaker": "Speaker 1",
+      "on_screen_text": "/proc/self/exe",
+      "visual": "A slide with the text '/proc/self/exe'. The speaker is visible.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "This segment begins with the speaker emphasizing the importance of patching kernels and running the latest software versions for security. He then demonstrates a container escape vulnerability, showing how an old kernel version allows gaining root access on the host from within a container. The speaker proceeds to discuss Docker's default seccomp profiles and illustrates an AppArmor bypass by overwriting `/proc` information with a malicious volume mount."
+}

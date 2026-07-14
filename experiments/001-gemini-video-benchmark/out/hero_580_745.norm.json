@@ -1,0 +1,55 @@
+{
+  "segment_start": "00:09:40",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:09:40",
+      "spoken": "There was chocolate beneath it in a late night hack session is my excuse.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "/home/vagrant/.tmux.conf:73: usage: bind-key [-cnr] [-t key-table] key command [arguments]",
+      "visual": "A terminal window with multiple panes is displayed, showing command line output related to tmux configuration errors. The speaker is visible in the bottom right corner.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:09:45",
+      "spoken": "Okay, and what's actually happened there? It's just rolling up to the top of this.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "NOT VERIFYING JOURNAL",
+      "visual": "The terminal output scrolls rapidly, displaying `vagrant` provisioning steps and then an error message indicating that 'lolcat' is not installed. The speaker gestures towards the screen.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:09:52",
+      "spoken": "Okay, so what are we doing? We've got Docker at the top. We have sysdig twice. We have at the bottom temp.x, which is a lock file that the exploit uses to determine whether it's been run, because it's just spraying system calls, highly parallelized. It's a copy-on-write race condition vulnerability, so we do as much as possible in order to break it.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "tmux break-pane",
+      "visual": "The terminal shows `tmux` commands being executed to set up different panes. The 'dirtycow demo' then starts, displaying output related to the exploit, which the speaker explains.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:10:12",
+      "spoken": "Sorry, this is going to have to go a little bit lower. Lolcat's not installed. I apologize. Okay. Let's get into. Okay, do we want to proceed? Yes, please. There's a number of exploits suggesting that actually the kernel version we're using is vulnerable, but this is. Do we want to run with AppArmor? In this case, no, because we have a specific configuration that will fix it.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "The program 'lolcat' is currently not installed. To run 'lolcat' please ask your administrator to install the package 'lolcat'",
+      "visual": "The demo continues in the terminal, showing prompts for proceeding with the exploit and whether to run with AppArmor. The speaker explains the choices and the vulnerability.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:10:32",
+      "spoken": "And off we go. So we're just firing. Deadbeef is the exploit name, wonderful choice of hex value. And we are trying to patch the VSO, the virtual dynamic shared objects, which is kind of a proxy in user space to stop us having to hit the kernel all the time. And then we're trying to ptrace it, and at the point that we gain control of the process, then we inject our own code in. That will then, you see we've got a listener running here on the logs to 1234 on the host, all the host adapters. And then once this thing kicks in, it will, so that host adapter is where the, the endpoint is in, in the VSO. And once we pop that, we will connect from inside the container to that, and then we have root control of the host. As I said, this is non-deterministic. If it doesn't finish by the time I've finished this sentence, I will come back to it because it will just happily run in the background. Okay. You will have to take my word for that, and we'll come and have a look in a moment. Okay.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "exploit: payload.h",
+      "visual": "The terminal displays a rapid stream of `ptrace` requests and `bind`/`listen` responses as the exploit runs. The speaker explains the exploit's mechanism, targeting the VSO and injecting code to gain root control, noting its non-deterministic nature.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:11:33",
+      "spoken": "So, what is going on there? We're reliant upon the Ptrace system called patch to the VSO. Let's skip ahead like this. What just happened? Well, theoretically, we bypass container security, but let's just see if anything's actually occurred yet. Yeah, there we go. Hurray. So, this claims, oh no, it says one still. Okay. It is non-deterministic. Let's keep on going. All right, so, theoretically, we bypassed container container security mechanisms. If we rerun that same exploit with a slightly modified AppArmor profile, different to the default one that Docker ships, to block Ptrace calls from within the namespace, we effectively block this exploit, but the actual solution is to patch our kernels, as always, run latest versions of things. What can we do around this? There's various things here.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Dirty COW (2016)",
+      "visual": "The screen transitions to a slide titled 'Dirty COW (2016)' with a cow graphic. The speaker then returns to the terminal briefly to check the exploit status before switching to another slide asking 'WTF just happened?' with a cartoon of a person's mind leaving their body to enter a computer. The speaker explains how the exploit works and how AppArmor can mitigate it, emphasizing the importance of patching kernels.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "This segment demonstrates the Dirty COW (CVE-2016-5195) exploit in a live demo. The speaker explains how the exploit uses `ptrace` system calls to patch the VSO (virtual dynamic shared object) and inject code, ultimately gaining root control of the host from within a container. He highlights the non-deterministic nature of the exploit and discusses how a modified AppArmor profile can block it, but stresses that the ultimate solution is to patch the kernel and run the latest software versions."
+}

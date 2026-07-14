@@ -1,0 +1,199 @@
+{
+  "segment_start": "00:00:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:00:00",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "RightsCon Costa Rica, Coming up next IN CONVERSATION",
+      "visual": "A blue and green gradient background with the text 'RightsCon Costa Rica' at the top and 'Coming up next IN CONVERSATION' in large white and green letters in the center.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:06:00",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "In Conversation",
+      "visual": "A wide shot of a dimly lit stage with a circular green carpet. A woman walks onto the stage from the left, towards a podium and a chair.",
+      "kind": "other"
+    },
+    {
+      "t": "00:16:00",
+      "spoken": "again. I'm Melissa Chan. Thanks for joining us both in person and online. This afternoon, we are in conversation with Timnet Gebru, founder and executive director of the Distributed Artificial Intelligence Research Institute, D A I R.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "Melissa Chan RightsCon Studio Host",
+      "visual": "A woman with glasses and a blue top stands on a green circular stage, holding a clipboard. She is introduced as Melissa Chan, RightsCon Studio Host. A chair and a podium with a screen are also on stage.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:33:00",
+      "spoken": "Timnet, welcome to RightsCon.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "Melissa Chan RightsCon Studio Host",
+      "visual": "Melissa Chan gestures towards the screen on the podium. She then walks towards a chair on the stage.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:40:00",
+      "spoken": "Timnet, I can't hear you in my ear, so let's make sure the technical team has got that or it's not on your end.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is seated in a chair on the stage, looking at a screen on a podium. On the screen, Timnit Gebru is visible in a video call.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:46:00",
+      "spoken": "Oh, that's me. It's my problem. I was muted. Hi, how are you?",
+      "speaker": "Timnit Gebru",
+      "on_screen_text": "In Conversation",
+      "visual": "Timnit Gebru, on the screen, smiles and gestures. Melissa Chan smiles and nods.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "00:51:00",
+      "spoken": "Hi, how are you? Um, before we get going, let's do some housekeeping. Um, I want to remind everyone to post your questions online. Uh, even if you're in the audience, you do uh, want to post it online, um, through the app. It's on the back of your uh, name card. There's a, there's a little QR code and you use this uh, program called Slido.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is seated, holding a clipboard and a pen. She gestures with her hands and then holds up a name card with a lanyard.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "01:14:00",
+      "spoken": "There was a technical issue in the last in conversation where I encouraged everyone to post questions and we couldn't see it. So we've resolved that and I promise I will get to your questions. I know a lot of people want to talk to Timnet uh, today.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "RightsCon Costa Rica The world's leading summit on human rights in the digital age Join the Conversation Scan badge QR code --> Stage Resources --> Arenal Q&A Please note: Questions may be condensed or edited for brevity or clarity In Conversation",
+      "visual": "A slide with the text 'Join the Conversation Scan badge QR code --> Stage Resources --> Arenal Q&A' is displayed. Melissa Chan's voice continues in the background.",
+      "kind": "slide"
+    },
+    {
+      "t": "01:27:00",
+      "spoken": "A little bit more about Timnet before we get going. Um, before her current position, she was at Google.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is seated on stage, looking at her clipboard. Timnit Gebru is visible on the screen on the podium.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "01:38:00",
+      "spoken": "before being fired in December 2020 for raising issues of discrimination in the workplace. She had been co-lead of the Ethical AI Research team, and she received her PhD from Stanford. She studied algorithmic bias and the ethical implications of artificial intelligence.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is shown in a close-up, reading from her clipboard. Timnit Gebru is still visible on the screen in the background.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "01:54:00",
+      "spoken": "Timnet co-founded Black in AI, a nonprofit that works to increase the presence, inclusion, visibility, and health of black people in the field of AI, and is on the board of Addis Coder, a nonprofit dedicated to teaching algorithms and computer programming to Ethiopian high school students for free. A lot of amazing things that you have done and are doing.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is shown in a close-up, reading from her clipboard and gesturing. Timnit Gebru is visible on the screen in the background.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "02:20:00",
+      "spoken": "I guess I want to start by asking if you could just introduce your organization to us, um, for those who are not familiar.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is seated on stage, looking at the screen where Timnit Gebru is visible. She gestures towards the screen.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "02:31:00",
+      "spoken": "Um, my organization is called DAIR, um, the Distributed AI Research Institute. Um, and it's a, you know, distributed currently across three continents, uh, the EU, North America, and Africa. Um, and our goal is to do two things: to uh, both kind of mitigate the harms of current AI systems and, um, kind of bring the alarm where we see issues, but also not just get stuck doing that and kind of put forward our affirmative vision for the future of how this technology should be built in cases where we decide that it should be built. Um, and our organization has, um, not just researchers, but also labor organizers and activists as well, um, working on the on this vision.",
+      "speaker": "Timnit Gebru",
+      "on_screen_text": "In Conversation",
+      "visual": "Timnit Gebru is shown in a close-up on the screen, speaking from what appears to be a home setting with a staircase in the background. She gestures with her hands.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "02:44:00",
+      "spoken": "Um, and our goal is to do two things: to uh, both kind of mitigate the harms of current AI systems and, um, kind of bring the alarm where we see issues, but also not just get stuck doing that and kind of put forward our affirmative vision for the future of how this technology should be built in cases where we decide that it should be built. Um, and our organization has, um, not just researchers, but also labor organizers and activists as well, um, working on the on this vision.",
+      "speaker": "Timnit Gebru",
+      "on_screen_text": "Timnit Gebru Founder and Executive Director, Distributed Artificial Intelligence Research Institute (DAIR) In Conversation",
+      "visual": "Timnit Gebru is shown in a close-up on the screen, speaking from what appears to be a home setting with a staircase in the background. Her name and title are displayed on screen.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "03:21:00",
+      "spoken": "Now your institute states that quote, AI is not inevitable, its harms are preventable and when its production and deployment include diverse perspectives and deliberate processes, it can be beneficial. Talk a little bit about that.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is seated on stage, looking at her clipboard. Timnit Gebru is visible on the screen on the podium.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "03:35:00",
+      "spoken": "Um, well, I just, um, I don't believe in techno-solutionism. I just, I don't believe that, um, you know, it's just like this hammer that will solve everything like many of the tech companies are talking about right now.",
+      "speaker": "Timnit Gebru",
+      "on_screen_text": "In Conversation",
+      "visual": "Timnit Gebru is shown on the screen, speaking from a home setting. Melissa Chan is seated on the stage, listening.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "03:40:00",
+      "spoken": "Um, but I do believe that, um, if we, if we start from the needs of people, um, we can assess whether there are technological tools, um, that we can build that, you know, help specific people under specific conditions. And so that's what we mean by this, right? We don't believe that we're marching to a predetermined, inevitable march, uh, of a technological future, which is often how AI is talked about. Um, we want to remind people that we have agency as human beings and we decide what to build and what not to build. And if we want to build something useful, we have to start with the needs of people, um, and create, you know, tools that help specific people.",
+      "speaker": "Timnit Gebru",
+      "on_screen_text": "Timnit Gebru Founder and Executive Director, Distributed Artificial Intelligence Research Institute (DAIR) In Conversation",
+      "visual": "Timnit Gebru is shown in a close-up on the screen, speaking from a home setting. She uses hand gestures to emphasize her points.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "04:38:00",
+      "spoken": "Are you finding your message being received well by governments and other uh, people in the tech sector?",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is seated on stage, looking at the screen where Timnit Gebru is visible. She asks a question.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "04:51:00",
+      "spoken": "Well, I currently, I'm battling the existential risk people, which is ridiculous because, um, our message, uh, you know, I want to focus on actually mitigating harms of current AI systems and, you know, kind of imagining a different technological future. But what's happening currently is that the tech billionaires, um, the same people who are building and profiting from AI systems also have a wing that is talking about the fact that that, according to them, that AI poses a threat to human extinction like every single human. And, um, which, which is like this sci-fi Terminator scenario that they've come up with to basically distract us from what actually is happening right now, what people are doing, what corporations are doing, what governments are doing. You know, we just heard the visa issues in Costa Rica, right? People are using AI systems to discriminate against many groups of people in the world. Corporations are using it to uh, centralize power and profit from stolen data. And, and instead of speaking about those issues, we're now having this imagined scenario about, you know, human extinction from Terminator. And all of these multilateral organizations and all of these governments are falling for it and, um, listening to this tech CEOs that should be regulated rather than setting the tone for what we should be regulating.",
+      "speaker": "Timnit Gebru",
+      "on_screen_text": "Timnit Gebru Founder and Executive Director, Distributed Artificial Intelligence Research Institute (DAIR) In Conversation",
+      "visual": "Timnit Gebru is shown in a close-up on the screen, speaking passionately and using expressive hand gestures. She is wearing glasses and a jacket.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "06:14:00",
+      "spoken": "So what I think I'm hearing from you is that, um, there are these catastrophic warnings, um, that is overwhelming the message of things that need to be done perhaps incrementally, things that are happening as you say, present as opposed to future. And it's very convenient if you talk about things in the future because then you can just talk about things in the abstract. And there's actually harm being done right now. Is that, is that, is that a good takeaway?",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is seated on stage, looking at the screen and gesturing with her pen. Timnit Gebru is visible on the screen.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "06:40:00",
+      "spoken": "Yes, it's extremely convenient not only because we're talking about things far into the future, but we're talking about what some machine god would do, rather than what humans and entities are doing. So it helps them abdicate responsibility. Instead of thinking about OpenAI or DeepMind or Google or Microsoft or governments or militaries, you're now thinking about some hypothetical Terminator thing and what that thing would do. And you're thinking, let's regulate that, rather than the humans and entities who should be regulated or held accountable in some way.",
+      "speaker": "Timnit Gebru",
+      "on_screen_text": "Timnit Gebru Founder and Executive Director, Distributed Artificial Intelligence Research Institute (DAIR) In Conversation",
+      "visual": "Timnit Gebru is shown in a close-up on the screen, speaking and using hand gestures. She takes a sip from a glass.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "07:19:00",
+      "spoken": "So, looking at the present-day issues as opposed to the future concerns and worries, if we're looking at the present-day, it also looks like generally speaking, governments around the world are failing, failing at at the proper guardrails. What's your take? Where do you see, let's just, I want to focus a little bit on positives, not just negatives as well, and it sounds like that's what you want to do too. Where do you, where are you encouraged? Where are some good examples in countries, um, and, and, uh, and others where you're concerned? Just a little bit of both.",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is seated on stage, looking at the screen and gesturing with her pen. Timnit Gebru is visible on the screen.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "07:54:00",
+      "spoken": "So, um, in terms of, um, positives, well, I just want to say it's a nuanced conversation, right? Because when we talk about regulation, regulation can also be weaponized, right? We've seen regulation on, um, hate speech, uh, in social media weaponized against dissidents and activists. So, um, I kind of want to make sure we're being nuanced when we talk about regulation. Um, but, um, honestly, the most, um, inspiring things I've seen are from smaller organizations, smaller cities. So, for instance, in the US, I mean, the federal government is a mess with respect to regulation. But, you know, certain cities, so, for instance, California, even the states, um, can set the tone because many of the tech companies with worldwide, um, influence are there. And many of the tech companies are also based in Washington State. So, if you pass something in, in one state like California, that could have really far-reaching consequences, not just in the US, but all over the world, right? Because they have to abide by these rules, and it's easier to pass something statewide than, you know, uh, nationally and even think about internationally, the UN, that's even more of a, um, kind of, I don't know, I feel like, uh, it's, it's a hard to do that. So, I, I look for, I look at those kinds of, um, instances. I think that there are some wins in the EU AI Act right now, but, um, but then again, with one hand, EU is regulating certain things, with another hand, they are funding Frontex and the Libyan government and, and killing so many of our people, right? The, um, refugees and immigrants. So, um, I'm sorry, I, I need to stay on the positives, but, you know, some positives are, it's okay. Yeah, some efforts.",
+      "speaker": "Timnit Gebru",
+      "on_screen_text": "Timnit Gebru Founder and Executive Director, Distributed Artificial Intelligence Research Institute (DAIR) In Conversation",
+      "visual": "Timnit Gebru is shown in a close-up on the screen, speaking and using hand gestures. She discusses regulation and gives examples of positive and negative aspects.",
+      "kind": "talking_head"
+    },
+    {
+      "t": "09:45:00",
+      "spoken": "I feel like so far the conversation is not entirely doomsday. Um, I am already getting some questions posted online, so I'm going to ask one of them. And by the way, those in the audience, if you're having trouble listening to",
+      "speaker": "Melissa Chan",
+      "on_screen_text": "In Conversation",
+      "visual": "Melissa Chan is seated on stage, looking at the screen and then at her laptop. She smiles and gestures with her pen.",
+      "kind": "talking_head"
+    }
+  ],
+  "segment_summary": "Melissa Chan, host of RightsCon, introduces Timnit Gebru, founder and executive director of the Distributed Artificial Intelligence Research Institute (DAIR). Gebru explains that DAIR aims to mitigate the harms of current AI systems and promote an affirmative vision for technology built around human needs. She criticizes the tech industry's focus on hypothetical 'Terminator' scenarios, arguing it distracts from real-world harms caused by corporations and governments using AI for discrimination and power centralization. Gebru highlights the potential for positive change through local regulations, citing California as an example, but also notes the complexities and potential for weaponization of regulation, even within initiatives like the EU AI Act."
+}

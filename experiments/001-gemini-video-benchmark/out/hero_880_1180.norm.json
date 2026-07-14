@@ -1,0 +1,135 @@
+{
+  "segment_start": "00:14:40",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:14:40",
+      "spoken": "probably a good long time. Um, yeah.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Opened AppArmor can be bypassed by a malicious image that specifies a volume at /proc | #2128",
+      "visual": "A speaker is visible on the bottom right, while the main screen shows a webpage with text about an AppArmor bypass vulnerability, including code snippets and a description of the exploit.",
+      "kind": "screen_share"
+    },
+    {
+      "t": "00:14:41",
+      "spoken": "Proc self exe. This one is fun. This is uh taking a sim link or a pointer perhaps back to the uh Docker run C binary from inside the container, overwriting it and popping a shell. And I will attempt to demo this one.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "/proc/self/exe",
+      "visual": "A white slide with the text \"/proc/self/exe\" in the center. The speaker is visible in the bottom right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:14:57",
+      "spoken": "And this as I said will carry on. Yeah, yeah. And this is saving the bit off. Okay, where are we now? So let's go here.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "vagrant@ubuntu-trusty-64:~$ ps aux | grep runc",
+      "visual": "The screen shows a terminal window with various commands and their outputs, demonstrating a process. The speaker is visible in the bottom right.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:15:14",
+      "spoken": "Um, so what have we got? We have a Dockerfile. And in that Dockerfile, you can see we have compiled some exploits. We're actually patching set comp inside the container and then um, we're sim linking proc self exe to the entry point of the container. Um, I should point out that none of these exploits are mine. I'm standing on the shoulders of giants, of course, and all of these are publicly available. So, what happens? We build this Dockerfile.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "cat Dockerfile",
+      "visual": "The terminal displays the content of a Dockerfile, showing steps to compile exploits and link `/proc/self/exe` to the container's entry point. The speaker is visible in the bottom right.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:15:40",
+      "spoken": "Um, and actually what we've done in the exploit stage here is actually it's in the other stage. Is um, I didn't. Is right, here we go. So we write the string CVE 2019 onto the end of the run C binary. What would we actually do? Well, we just replace it with a malicious payload, like a file or a bash script that did something that we wanted.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "cat stage2.c",
+      "visual": "The terminal shows C code for `stage2.c` and `stage1.c`, which involves opening `/proc/self/exe` and writing to it. The speaker is visible in the bottom right.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:16:19",
+      "spoken": "So, how do we prove this hasn't yet worked? Let's have a look at where run C is. And we see at the end there is nothing there. And then if we just run this container that I built earlier, you'll have to trust me. Uh then what are we going to see? There we go. So these are the return codes from system calls. And we have appended our string. So again, what's happened? We're inside a container, a theoretical isolation boundary, and we've been able to influence or impact things that sit on the host. This is a bad day. This is how we break out of containers. What is the fix here? Don't run old versions of software. Really, really easy. But as we know, everything is a people problem and our organizations probably mean that it's very difficult to keep things patched in a timely manner. This is immutable infrastructure. This is aggressive builds and pipelines for all of our work, for all of our service. Onwards. Right, what have we next?",
+      "speaker": "Speaker 1",
+      "on_screen_text": "strings $(which docker-runc) | tail",
+      "visual": "The terminal shows commands to inspect the `docker-runc` binary and then runs a container, demonstrating that the exploit successfully appended a string to the host's `docker-runc` binary. The speaker is visible in the bottom right.",
+      "kind": "demo"
+    },
+    {
+      "t": "00:17:15",
+      "spoken": "Uh, yeah, we've done that one.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "/proc/self/exe",
+      "visual": "A white slide with the text \"/proc/self/exe\" in the center. The speaker is visible in the bottom right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:17:20",
+      "spoken": "Yeah, here is the lesson. Patch your hosts. We can use. Yeah, so we can use Goss to uh test the kernel parameters, to test for the output of bash scripts, to test for everything, and we can use it in a sly way. Um, let's and one of my favorite quotes from our esteemed track hosts, containers are a user space fiction. I I love that and it's you will notice, containers don't really exist. Let's not forget we are still in the host kernel. We are still poking around on the same machine. We don't have this uh nested, we don't have a virtualization as we would do with other containers.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "patch your hosts",
+      "visual": "A slide titled \"patch your hosts\" with bullet points and an image of a chained and padlocked gate. The speaker is visible in the bottom right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:17:57",
+      "spoken": "Um, other. Yeah, okay. Collection of stimuli and restrictions born from unintelligent design and years of evolution, a lot like consciousness.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "containers are a userspace fiction",
+      "visual": "A white slide with the title \"containers are a userspace fiction\" and two bullet points explaining the concept. The speaker is visible in the bottom right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:18:09",
+      "spoken": "Is there a lesson here? No. But everything on the internet and in our organizations is held together with string and sticky tape. We should test everything because when it gets changed, we need to maintain the same behavior as we had before. We're doing this for ourselves, we're doing this for future us, we're doing this for the maintainers of the system that don't even know who we were. We're doing this because we are good open source citizens and colleagues.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "<mind blown>",
+      "visual": "An animated GIF showing a character from Portal creating portals and moving a cube through them, with the text \"<mind blown>\" on the left. The speaker is visible in the bottom right.",
+      "kind": "other"
+    },
+    {
+      "t": "00:18:32",
+      "spoken": "And we're putting a security test suite in place to help it. So, testing is a dark art. It is a software engineering discipline. We need rigor, we need objectivity. Anything can be a security test. What do we do? Arrange, act, assert. Prepare the environment, uh, perform some sort of execution and capture the result, and then assert that it's actually worked. Prove it fails as expected. This is very, very important when writing tests, otherwise you've just got a green test suite that doesn't actually catch anything. And beware acceptance testing.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Security Test Suite!",
+      "visual": "A slide titled \"Security Test Suite!\" with bullet points outlining principles of security testing, including \"Arrange, Act, Assert\" and \"Prove test fails as expected\". The speaker is visible in the bottom right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:19:06",
+      "spoken": "Okay.",
+      "speaker": "Speaker 1",
+      "on_screen_text": null,
+      "visual": "An animated GIF showing two stylized figures fighting with swords, one black and one white. The speaker is visible in the bottom right.",
+      "kind": "other"
+    },
+    {
+      "t": "00:19:09",
+      "spoken": "DevSecOps. Hooray. Yeah, this just carry on because we're a bit pressed for time. Testing out of date versions.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "testing: out of date versions",
+      "visual": "A slide titled \"testing: out of date versions\" with bullet points discussing simple tests for kernel and Docker versions. The speaker is visible in the bottom right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:19:13",
+      "spoken": "All right, Goss again.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "goss",
+      "visual": "A slide titled \"goss\" with bullet points defining Goss as \"go serverspec\" and a \"pretty good\" test tool. The speaker is visible in the bottom right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:19:16",
+      "spoken": "This is an example of how to paste an animated GIF as a GIF. All right. Well, uh, never mind. There is a link there to Goss. Basically, it's very easy to build that Goss test suites. I love them.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Security Testing with Goss",
+      "visual": "A slide titled \"Security Testing with Goss\" with a GitHub link. The right side shows a terminal, but it's mostly black with a small cursor. The speaker is visible in the bottom right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:19:28",
+      "spoken": "Testing is cool. It's the only way we can prove that we're secure, but we're not proving the absence of bugs. We're not proving that the system is actually secure. We're just saying for our particular model of it and our",
+      "speaker": "Speaker 1",
+      "on_screen_text": "TESTING IS COOL",
+      "visual": "A slide titled \"TESTING IS COOL\" with bullet points explaining that testing proves security against known quantities and builds confidence. The speaker is visible in the bottom right.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "This segment demonstrates a container escape vulnerability using `/proc/self/exe` to overwrite the host's `runc` binary, emphasizing that containers are a userspace fiction and host patching is crucial. The speaker then introduces the concept of a security test suite, advocating for rigorous testing, including proving that tests fail as expected. The segment concludes by highlighting the importance of testing, especially with tools like Goss, to ensure system security and maintain expected behavior."
+}

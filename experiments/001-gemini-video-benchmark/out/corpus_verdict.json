@@ -1,0 +1,119 @@
+{
+  "per_video": [
+    {
+      "label": "c_slide_talk_5si4zkAngpA",
+      "category": "slide_talk",
+      "title": "Exploring the CPython JIT \u2014 Diego Russo",
+      "channel": "EuroPython Conference",
+      "blocks": 18,
+      "coverage": 0.985,
+      "ost_blocks_pct": 1.0,
+      "speech_anchor": 1.0,
+      "ost_overlap": 0.975,
+      "ost_gradeable": 4,
+      "hallucinated": 0,
+      "missed_ost": 0,
+      "probes": 4,
+      "cost_per_hour_eur": 0.25335599999999997
+    },
+    {
+      "label": "c_slide_talk_JvbBFwlqxeI",
+      "category": "slide_talk",
+      "title": "How (Not) To Containerise Securely Lessons Learned the Hard Way",
+      "channel": "FOSDEM",
+      "blocks": 21,
+      "coverage": 0.9083333333333333,
+      "ost_blocks_pct": 1.0,
+      "speech_anchor": 0.9722222222222222,
+      "ost_overlap": 1.0,
+      "ost_gradeable": 3,
+      "hallucinated": 0,
+      "missed_ost": 0,
+      "probes": 3,
+      "cost_per_hour_eur": 0.287412
+    },
+    {
+      "label": "c_talking_head_KL7WBjAuTMg",
+      "category": "talking_head",
+      "title": "Dave Baszucki on Roblox, Teen Entrepreneurs, and the Future of Play | Conversation with Tyler",
+      "channel": "Conversations with Tyler",
+      "blocks": 24,
+      "coverage": 0.9233333333333333,
+      "ost_blocks_pct": 0.041666666666666664,
+      "speech_anchor": 0.9642857142857143,
+      "ost_overlap": null,
+      "ost_gradeable": 0,
+      "hallucinated": 0,
+      "missed_ost": 0,
+      "probes": 4,
+      "cost_per_hour_eur": 0.244068
+    },
+    {
+      "label": "c_talking_head_gRFaow12xo0",
+      "category": "talking_head",
+      "title": "In Conversation with Timnit Gebru and Melissa Chan",
+      "channel": "Access Now",
+      "blocks": 24,
+      "coverage": 0.975,
+      "ost_blocks_pct": 1.0,
+      "speech_anchor": 0.9791666666666666,
+      "ost_overlap": 0.7708333333333334,
+      "ost_gradeable": 4,
+      "hallucinated": 0,
+      "missed_ost": 0,
+      "probes": 4,
+      "cost_per_hour_eur": 0.21723599999999998
+    },
+    {
+      "label": "c_screencast_rAl-9HwD858",
+      "category": "screencast",
+      "title": "Crust of Rust: Lifetime Annotations",
+      "channel": "Jon Gjengset",
+      "blocks": 7,
+      "coverage": 0.9533333333333334,
+      "ost_blocks_pct": 0.8571428571428571,
+      "speech_anchor": 0.7708333333333334,
+      "ost_overlap": 0.6820175438596491,
+      "ost_gradeable": 4,
+      "hallucinated": 0,
+      "missed_ost": 0,
+      "probes": 4,
+      "cost_per_hour_eur": 0.23632799999999998
+    }
+  ],
+  "by_category": {
+    "slide_talk": {
+      "videos": 2,
+      "coverage": 0.9466666666666667,
+      "speech_anchor": 0.9861111111111112,
+      "ost_overlap": 0.9875,
+      "ost_blocks_pct": 1.0,
+      "hallucinated": 0,
+      "missed_ost": 0,
+      "probes": 7,
+      "cost_per_hour_eur": 0.27038399999999996
+    },
+    "talking_head": {
+      "videos": 2,
+      "coverage": 0.9491666666666667,
+      "speech_anchor": 0.9717261904761905,
+      "ost_overlap": 0.7708333333333334,
+      "ost_blocks_pct": 0.5208333333333334,
+      "hallucinated": 0,
+      "missed_ost": 0,
+      "probes": 8,
+      "cost_per_hour_eur": 0.230652
+    },
+    "screencast": {
+      "videos": 1,
+      "coverage": 0.9533333333333334,
+      "speech_anchor": 0.7708333333333334,
+      "ost_overlap": 0.6820175438596491,
+      "ost_blocks_pct": 0.8571428571428571,
+      "hallucinated": 0,
+      "missed_ost": 0,
+      "probes": 4,
+      "cost_per_hour_eur": 0.23632799999999998
+    }
+  }
+}

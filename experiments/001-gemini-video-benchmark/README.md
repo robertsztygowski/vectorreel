@@ -34,14 +34,35 @@ proven with a *paid* call — and if offsets turned out to be ignored, one call 
 process the entire thing. `acceptance` therefore probes with a 60 s low-res window and a 256-token
 output cap, which bounds the blast radius to cents.
 
+Phase 0.2 (public benchmark & demo corpus, PLAN.md) — results in `out/CORPUS.md`:
+
+```powershell
+.venv\Scripts\python 08_corpus.py            # licence gate: YouTube Data API -> out/corpus.json
+.venv\Scripts\python 09_benchmark.py run     # Stage B over the corpus (600 s segments, LOW res)
+.venv\Scripts\python 09_benchmark.py probe   # the independent re-probe that grades A4
+.venv\Scripts\python 09_benchmark.py report  # verdicts -> out/corpus_verdict.json (free)
+.venv\Scripts\python 10_render.py all        # publishable Markdown -> out/corpus_md/
+```
+
+**`08_corpus.py` is a gate, not a helper.** Nothing may be published unless the YouTube Data API
+says `status.license == "creativeCommon"`. It needs `YOUTUBE_API_KEY` (see `.env.example`) — a
+**metadata-only** key: it never fetches bytes and is not an ingestion path (CLAUDE.md rule 8).
+The CC *search filter* is a discovery hint; this is the evidence.
+
 `03_stage_b.py` is the shared Stage B runner (also a CLI for one-off calls); pass
-`youtube_window=(start, end)` for the public path.
+`youtube_window=(start, end)` for the public path and `derive_clip_dur=True` to measure coverage
+against what Vertex actually **fetched** rather than what you asked for.
+
+⚠️ **The budget cap is real and it will stop you** — `spike_budget()` anchors to disk, so the phase
+cap is cumulative across passes rather than being handed out fresh to each script. It halted the
+0.2 render mid-flight. That is the feature.
 
 ## Outputs (committed)
 
 `out/` — ledger.csv, per-call segment JSONs (raw + `.norm.json` with global timestamps),
-static_timeline.json, matrix_summary.json, output.md, RESULTS.md, plus the Phase 0.1 artifacts
-(`YOUTUBE.md`, `yt_*.json`).
+static_timeline.json, matrix_summary.json, output.md, RESULTS.md, the Phase 0.1 artifacts
+(`YOUTUBE.md`, `yt_*.json`), and the Phase 0.2 artifacts (`CORPUS.md`, `corpus*.json`,
+`corpus_md/`).
 
 Local `work/` (renditions, frames) and `.venv/` are gitignored. Source videos live in
 `~/Downloads` and the dev GCS bucket during the experiment; bucket is emptied afterwards.

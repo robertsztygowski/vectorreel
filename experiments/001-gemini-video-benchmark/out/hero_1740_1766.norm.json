@@ -1,0 +1,71 @@
+{
+  "segment_start": "00:29:00",
+  "language": "en",
+  "blocks": [
+    {
+      "t": "00:29:00",
+      "spoken": "is up. It teaches you all of this stuff and it's really great.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "K8S Breach Lessons, Application workloads, container images (app, OS, deps, filesystem conf, user, baked-in secrets), malicious images, Workload configuration, pod spec (privileged/PSP config, env vars, service accounts, file mounts, RunAsUser, seccomp/selinux), runtime (docker, crio), priv workloads, identity, datastores, traffic sniffing/nmap, Cluster configuration - developer, authn/RBAC, NetPol/networking, Cluster configuration - operations, admission control, etcd encryption, control plane TLS, local/remote registry, dashboard/API, federated identity, Cluster deployment, control plane config, user access, topology, transport & TLS, infrastructure/cloud, OS",
+      "visual": "The speaker is presenting a slide titled 'K8S Breach Lessons' with bullet points detailing various aspects of Kubernetes security. A whale is visible on the left side of the screen.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:01",
+      "spoken": "This is all wonderful.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "How to Train your Red Team for Cloud Native, Hosted: kubesim.io, Open source: https://github.com/cncf/financial-user-group/tree/master/projects/k8s-threat-model, Training: https://control-plane.io/",
+      "visual": "The slide changes to 'How to Train your Red Team for Cloud Native' featuring a drawing of a ship battling a kraken. The speaker continues to stand on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:02",
+      "spoken": "Test everything.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Layers of Security Testing, Infrastructure: server hardening/conformance, Supply chain: image validation, Kubernetes deployment YAML validation, Runtime: application behaviour, telemetry, session handling, & networking",
+      "visual": "A new slide appears, titled 'Layers of Security Testing', listing infrastructure, supply chain, and runtime as categories. The speaker is still visible on the right.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:04",
+      "spoken": "Prepare for the unexpected. Thank you very much.",
+      "speaker": "Speaker 1",
+      "on_screen_text": "Getting the House in Order, Ensure that applications have a local testing story for developers, Build server verifies tests that developers are able to run locally, This proves out mocking and stubbing harnesses, Once development local testing is in place, testing can be as simple as standing up docker-compose with mocks and mock data, https://github.com/kompose/kompose can help migration, Continuous Security (ish), A lot of tooling isn't container-native, But continuous scanning leaves deeper exploration for humans",
+      "visual": "The slide changes to 'Getting the House in Order' and 'Continuous Security (ish)', detailing steps for developer testing and continuous security. The speaker gestures as he concludes his talk.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:06",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "FIN",
+      "visual": "A black screen with the word 'FIN' in white text appears, indicating the end of the presentation. The speaker begins to clap.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:07",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "Prepare for the Unexpected",
+      "visual": "The slide changes to 'Prepare for the Unexpected' with an image of a person sitting on a street light surrounded by security cameras. The speaker is clapping, and audience applause can be heard.",
+      "kind": "slide"
+    },
+    {
+      "t": "00:29:18",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "NO SIGNAL",
+      "visual": "The screen goes black with a 'NO SIGNAL' message in blue text. The speaker is still visible on the right.",
+      "kind": "other"
+    },
+    {
+      "t": "00:29:20",
+      "spoken": "",
+      "speaker": null,
+      "on_screen_text": "FOSDEM 20, aws, CLOUD NATIVE COMPUTING FOUNDATION, Google, arm, Facebook Open Source, opentap, coll, BackMarket, Red Hat, draw.io, Codethink, ULB, infomaniak, GitHub",
+      "visual": "The final slide displays the FOSDEM 20 logo on the left and various sponsor logos on balloons on the right. The speaker remains visible on the right side of the screen.",
+      "kind": "slide"
+    }
+  ],
+  "segment_summary": "This segment concludes the presentation. The speaker rapidly covers slides on K8S breach lessons, red team training for cloud native, layers of security testing, and getting the house in order for continuous security. The presentation ends with a 'FIN' slide, a slide titled 'Prepare for the Unexpected' accompanied by applause, and finally, a 'NO SIGNAL' screen followed by a sponsor slide."
+}
