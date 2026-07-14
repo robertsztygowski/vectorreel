@@ -234,11 +234,52 @@ Work:
    traffic. Hard stop at budget. **Not before the page and gallery are live.**
 3. **The artifact post** — the single best inbound asset, and it's already written: side-by-side
    *plain transcript vs. vectorreel Markdown*, plus a RAG answering a question that is **only**
-   answerable from on-screen content. Now built on a **public** video from Phase 0.2, so it can
-   actually be shared. Channels: LinkedIn (existing .NET/architecture audience — the cheapest
-   traffic source available, by an order of magnitude), HN, r/RAG, r/LocalLLaMA.
+   answerable from on-screen content. ✅ **The material now exists and is legally shareable:**
+   `experiments/001-*/out/corpus_md/JvbBFwlqxeI_full.md` — the FOSDEM talk, CC BY, processed
+   end-to-end, attribution inside the file. Channels: LinkedIn (existing .NET/architecture audience
+   — the cheapest traffic source available, by an order of magnitude), HN, r/RAG, r/LocalLLaMA.
 
 > **Broadcasting is not outreach.** This requires zero 1:1 contact with anyone.
+
+### 🔑 Founder pre-flight — the agent cannot start these, and one of them gates everything
+
+**The site is still on a `run.app` URL.** Plausible tracks a *domain*, ads cannot sensibly point at
+a `run.app` URL, and nobody clicks one from LinkedIn. **The domain is the gate on 2b, 2c and 3.**
+
+| Founder-only | Why the agent can't |
+|---|---|
+| **Buy + verify the domain, delegate DNS** | Your card, your registrar, Search Console verification |
+| **Create the Plausible account** (EU-hosted, paid) | Account + payment. *Agent then installs the script, defines events, builds the scoreboard.* |
+| **Google Ads account + payment method** (2c) | Your card. *Agent can write the campaign, keywords, negatives — nothing spends without you.* |
+| **Post to LinkedIn / HN / Reddit** | Your identity and your voice. *Agent drafts; you publish.* |
+
+Everything else in this phase — the A/B, email capture, first-party UTM plumbing, storage, deploy —
+is ordinary build work.
+
+### ⚠️ Two open questions to settle *before* building — do not let a fresh session guess
+
+1. **2c contradicts Phase 3.** The ad tranche is gated on "the page **and gallery** being live", but
+   the gallery is a **Phase 3** deliverable. Either the gate is wrong or T-A is later than this phase
+   implies. **Decide what T-A actually needs in order to buy honest evidence.**
+2. 🚨 **The consent question, which our own copy invites scrutiny of.** Plausible is genuinely
+   cookieless — but **first-party UTM attribution persisted all the way to `payment_succeeded` is not
+   obviously "strictly necessary"** under GDPR, and a DPO reading our EU-residency claims is exactly
+   the reader who will check. A clean route exists (hold attribution in `sessionStorage` and attach it
+   to the form submission, tying it to a purpose the user actively initiates rather than to ambient
+   tracking) — **but this is a decision about the product's legal posture, and it is the founder's.**
+
+**Starter prompt:**
+> Phase 0.3 — the demand instrument. Read PLAN.md (STATUS block, then Phase 0.3), METRICS.md §2.2 +
+> §6 + N15/N20/N26, DISTRIBUTION.md, and CLAUDE.md rule 10. **Plan mode first.**
+> This phase ships **no product code**: landing page + email capture + measurement + the post.
+> Build **measurement before the page** (§6): Plausible, EU-hosted, cookieless; first-touch UTM
+> persisted first-party so it can survive to `payment_succeeded` — **it cannot be bolted on at
+> Phase 4, and without it real CAC is uncomputable forever** (METRICS.md N29). Every number on the
+> scoreboard shows its sample floor beside it.
+> The artifact post is built on `experiments/001-*/out/corpus_md/JvbBFwlqxeI_full.md` (CC BY —
+> keep the attribution). **Stop and ask me** about the two open questions above; do not guess them.
+> 🚨 No Google Analytics, no US-hosted anything, no consent banner (rule 10). If it phones home to
+> the US, it does not ship.
 
 ---
 
