@@ -27,6 +27,8 @@ PATTERNS=(
   '0\.38'          # N4c public-path LLM subtotal — sizes N10
   '3\.80'          # N4d dense-content full-video cost — the ~13x blow-up
   '86 s'           # N7b under-segmentation on continuous screen recordings
+  '17\.1'          # N7c Stage A forced-cue floor, boundaries per 10-min segment
+  '94% static'     # N7c the finding that inverts the intuition — the failure window barely moves
   '258'            # §1.2b video tokenization rate; the coverage-guard denominator
   '63 retained'    # N1b job-replacement accounts
   '€131'           # N0  contribution per account

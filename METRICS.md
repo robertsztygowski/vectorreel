@@ -100,6 +100,7 @@ local bytes → no ffmpeg → no *per-segment* static detection), so the N4 blen
 |---|---|---|---|
 | **N7** | **Runaway-generation rate** — Stage B calls hitting `maxOutputTokens` | **> 8%** (measured baseline) | Guards regressed (ARCHITECTURE §3). Source of the 1.3× retry overhead in §1.2. ⚠️ **The 8% baseline is a whole-corpus average and it hides the case that matters: on dense slide-heavy footage the overflow rate is far higher — Phase 0.2 saw 2 of 2 slide talks overflow at a 15-min window, and the dense middle of one overflow even at 10 min.** Track this **per content category**, not as one number; the average is reassuring precisely where the product is weakest. |
 | **N7b** | ⚠️ **Under-segmentation on continuous screen recordings** — Stage B blocks per 10-min segment | **< 10** | The model emits ~86 s blocks on continuous screen-recorded footage (7 blocks/10 min) versus ~25 s on slide talks. Seen in **all three phases** (0, 0.1, 0.2) — it is reproducible, not noise. **This is the ICP's own content type** (internal demos, screen recordings), so it is the weakest category in the most important place. Coarse blocks = coarse citations. |
+| **N7c** | ⭐ **Stage A forced-cue floor** — block boundaries Stage A *hands* Stage B, per 10-min segment (private path only) | **< 13** | The answer to **N7b**, and the reason Stage A exists beyond cost. Stage A computes boundaries from the bytes and gives them to Stage B, so granularity stops depending on the model noticing anything. Measured locally on the **exact window that produced the N7b failure**: **7 → 17.1 boundaries per 10 min, worst block 162 s → 49 s.** ⚠️ **This measures what Stage A *emits*, not what Stage B *obeys*** — that verdict needs a Vertex call and is the first thing Phase 2 must check. Thresholds are **assumed (n = 1 recording)**, not measured. |
 | N8 | All-in COGS per video-hour (LLM **+ compute**) | > €1.50 | Guardrail breached — investigate. |
 | N9 | Wall-clock per video-hour | > 15 min | SLO breach. Gated on the N7 guards — one unbounded call alone blows this. |
 | N10 | Free YouTube tool spend | > €5/day | Abuse. Caps + cache are failing. **Sized off N4c:** at the Phase-3 10-min cap, one uncached request ≈ €0.06, so the daily cap ≈ **80 uncached videos/day**. Comfortable for a demo tool, and cheap to defend. |
@@ -110,6 +111,23 @@ local bytes → no ffmpeg → no *per-segment* static detection), so the N4 blen
 > (`finishReason: STOP`, 90–98% coverage). **A bounded budget being reached is the guard working, not
 > a failure** — count a call against N7 only when it *degenerates* (truncated/invalid output). See
 > ARCHITECTURE §3, which currently says the opposite and is being reconsidered.
+
+> ### 🔑 Why N7b happens — measured in Phase 1, and it is the opposite of the intuition
+>
+> The obvious story is that screen recordings change *too continuously* for the model to find a
+> boundary. **The footage says otherwise: the window that produced the failure is 94% static.** It is
+> a man talking over a frozen IDE — one stretch holds still for 179 seconds. The model under-segments
+> there because there is *nothing on screen to segment on*, and **every pixel-based rule fails for the
+> same reason it does.**
+>
+> ⇒ **A block boundary is a boundary in the narration, not a pixel event.** Stage A therefore forces
+> boundaries on *elapsed speech* and suppresses them on *silence* — **never on stillness**. Suppressing
+> on stillness (which reads as sensible, and is correct for slide talks) switches the fix off precisely
+> where the paying customer lives, and leaves 160-second blocks behind — **worse than the status quo it
+> was meant to repair.** That rule was tried, measured, and rejected.
+>
+> **Stillness routes cost (N4). Silence bounds blocks (N7c). They are different signals and neither
+> substitutes for the other.**
 
 ### 1.4 Funnel — **every rate here is `assumed`. This is the weakest part of the business.**
 
