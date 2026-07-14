@@ -23,9 +23,12 @@ PATTERNS=(
   '0\.011'         # N6  all-in COGS / video-minute
   '0\.45'          # N4  LLM subtotal
   '0\.0075'        # N4  LLM subtotal / video-minute
-  '47 retained'    # N1  break-even accounts
-  '2,000'          # N14 visitors per ~5 customers
-  '20,000'         # N15 cumulative visitors to break-even
+  '47 retained'    # N1b job-replacement accounts
+  '2–3 retained'   # N1a survival accounts
+  '400–1,000'      # N14 visitors per paying customer
+  '9 months'       # T   the time-box deadline
+  '2,000'          # N15 visitors to a verdict / N1a
+  '20,000'         # N15b cumulative visitors to N1b
   '27,000'         # N16 TAM accounts
   '€65M'           # N16 TAM
   '2–5%'           # N12 visitor -> trial

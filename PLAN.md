@@ -9,8 +9,9 @@
 
 # 🎯 STATUS — read this first
 
-**The goal.** **≈47 retained paying accounts** (METRICS.md N1). That covers the founder's salary
-and infra, and it is the only finish line. Not ARR, not signups, not COGS.
+**The goal we steer by: ≈2–3 retained paying accounts** (METRICS.md **N1a**). That covers infra.
+**The founder does not need a salary from this in the near term**, so N1a — not the 47-account
+job-replacement figure (N1b) — is the near-term target. **Do not plan against N1b.**
 
 **The bet.** EU teams building internal AI assistants have recordings their assistant cannot see.
 We turn those into timestamped Markdown it can cite, without the footage leaving the EU.
@@ -31,14 +32,23 @@ all **whether anyone can be reached at all.** All five open assumptions live in 
 > **⇒ The governing rule: start the slowest thing (distribution) first, and run it in parallel
 > with all engineering.** That single rule is why the phases below are ordered as they are.
 
+**The one number to hold in your head: METRICS.md N15.** It is doing double duty — **the traffic
+that pays for the infra (N1a) and the traffic that tells you whether to continue (the A2 sample
+floor) are the same traffic.** It is a good-post-sized number, not a content-engine-sized number.
+
 **Where we are now.** Phase 0 ✅ done. **Next: Phase 0.1** (YouTube `fileUri` spike, ½ session,
 ≲ €1) — it is the critical path, because 0.1 gates 0.2, and 0.2 gates the entire demand
 instrument in 0.3.
 
-**How this ends.** The kill criteria are real and pre-committed — METRICS.md §2. If a genuine
-content effort cannot move traffic, **the business dies at A5, before product quality or pricing
-ever get a vote.** Say so early and out loud rather than building more product to avoid the
-finding.
+> ### 🧟 **How this ends — and with no salary to burn, this is the rule that matters most.**
+> At N1a the business is cash-flow-positive and could run **forever** on ~€300/mo. Nothing forces a
+> stop. **The scarce resource is no longer money — it is founder-hours, and they appear on no
+> dashboard.** So the kill criterion is a **calendar deadline (METRICS.md §2.2 — T0 + 9 months)**,
+> not a cash threshold.
+>
+> **If N15 is not reached by T after a sustained publishing effort — stop.** Not "reduce scope",
+> not "try one more channel". Stop. **The failure mode this guards against is not going broke; it
+> is a zombie that quietly eats three years of evenings.**
 
 ---
 

@@ -23,9 +23,20 @@ whole plan is sensitive to them.
 
 What the math *means*, which is this document's job:
 
-**The cumulative visitor count needed to reach break-even is a content-engine-sized number, not a
-launch-post-sized number.** Internalize that before optimizing anything else. One good launch post
-does not move it perceptibly; a compounding asset published every week for a year does.
+**🎯 One target, two payoffs (METRICS.md N15).** The traffic needed to cover infra (N1a) and the
+traffic needed to reach the A2 sample floor land in the *same range*. **The visitors that pay for
+the servers are the same visitors that tell you whether to continue.** That coincidence is the best
+structural fact this business has, and it exists only because the founder deferred the salary — the
+old target (N1b) implied an order of magnitude more traffic and made A5 look nearly unwinnable.
+**That was an artifact of the salary line, not of the market.**
+
+**So the goal is a good-post-sized number, not a content-engine-sized number.** One HN front page,
+one LinkedIn post that lands, or a gallery that quietly ranks over two quarters.
+
+⚠️ **This does not make A5 easy — it changes its shape.** Content compounds only with *sustained*
+effort, and sustained effort is exactly what a founder with a day job does not reliably have.
+**The question stopped being *"can I afford to wait?"* and became *"will I still be publishing in
+month nine?"*** That is what the time-box (METRICS.md §2.2) tests, and the answer is allowed to be no.
 
 **The corollary that reorders the roadmap:** content compounds over *months*. Building for three
 months and *then* starting to publish serializes the two slowest processes in the company.
@@ -128,13 +139,19 @@ Directional, not statistically significant; we need a signal, not a paper.
 > ⚠️ **And do not celebrate a false win either.** The A/B is subject to the minimum-sample rule
 > (METRICS.md §2.1): it needs **hundreds of visitors per arm.** At n=4 it is coin-flipping.
 
-## Kill criteria
+## Kill criteria — **a deadline, not a cash threshold**
 
-**→ METRICS.md A5.** If, after a *genuine* content effort, qualified traffic cannot be moved toward
-the threshold — **the business dies here, before product quality or pricing ever get a vote.**
+**→ METRICS.md A5 + §2.2 (the time-box).** If N15 has not been reached by **T** after a *sustained*
+publishing effort — **the business dies here, before product quality or pricing ever get a vote.**
 
-**Say so early and out loud, rather than building more product to avoid the finding.** That
-sentence is the entire reason this document exists.
+🧟 **Why a deadline.** With the salary deferred, the business is cash-flow-positive at N1a and could
+run **forever** on ~€300/mo. **Nothing forces a stop.** The old kill criteria fired by themselves —
+you ran out of money. These don't. **The scarce resource is founder-hours, and they are on no
+dashboard.** Without a date, the failure mode is not bankruptcy; it is a **zombie that quietly eats
+three years of evenings.**
+
+**Say so early and out loud, rather than building more product to avoid the finding.** That sentence
+is the entire reason this document exists.
 
 ## Open questions
 

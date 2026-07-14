@@ -21,13 +21,29 @@
 in for evidence — replace it the moment there is data, and **never make an irreversible decision on
 one.** **`derived`** = computed from the rows above it.
 
-### 1.1 The goal
+### 1.1 The goal — **two milestones, and they are 20× apart**
+
+The founder **does not need a salary from this in the near term** (decided 2026-07-14). That single
+fact changes the shape of the business more than any engineering decision in this repo, so it is
+recorded as an explicit input (N3) rather than left implicit.
 
 | # | Number | Value | Status | Meaning |
 |---|---|---|---|---|
-| **N1** | **🎯 Break-even accounts** | **≈ 47 retained paying accounts** | derived | ≈ €176/mo contribution each ⇒ covers N2 + N3. **This is the finish line. Not COGS, not ARR, not signups.** |
+| **N1a** | **🎯 SURVIVAL — the goal the plan steers by** | **≈ 2–3 retained paying accounts** | derived | N2 ÷ contribution. Covers infra. **At N1a the business is cash-flow-positive and can compound indefinitely — there is no burn clock.** |
+| **N1b** | **🏁 JOB REPLACEMENT — the destination** | **≈ 47 retained paying accounts** | derived | (N2 + N3) ÷ contribution. The point at which this replaces employment. **Not the near-term target. Do not plan against it.** |
+| | *contribution per retained account* | ≈ €176/mo | derived | The multiplier behind both. |
 | N2 | Fixed infra cost | ≈ €300/mo | assumed | The base burn to beat. Why Cloud SQL (~€25–50/mo idling at zero users) is deferred. |
-| N3 | Founder salary target | €8,000/mo | given | The other half of N1. |
+| N3 | Founder salary target | €8,000/mo | given · **deferred** | **Not required in the near term.** It is ~96% of N1b — i.e. **this one input generates the entire difference between N1a and N1b, and between a business that needs a content engine and one that needs a good month.** |
+
+> 🚩 **The trap this replaces.** Planning against N1b implied needing **tens of thousands** of
+> cumulative visitors (N15b) — a content-engine-sized number that made A5 look nearly unwinnable.
+> **That was an artifact of the salary line, not of the market.** Steering by N1a, the traffic
+> required to *survive* is roughly the same as the traffic required to *learn* (§1.4) — which is a
+> far better place to stand.
+>
+> ⚠️ **But nothing about the evidence gets cheaper.** The sample floors in §2.1 are set by
+> statistics, not by the cost base. **Removing the salary lowers the bar for getting paid; it does
+> not lower the bar for knowing whether this works.**
 
 ### 1.2 Unit economics — **measured 2026-07-14**
 
@@ -75,12 +91,24 @@ before the cheapest tier stops earning.
 |---|---|---|---|
 | N12 | Qualified visitor → trial start | 2–5% | **assumed** — industry-typical |
 | N13 | Trial → paid | 5–15% | **assumed** — industry-typical |
-| **N14** | **⇒ Qualified visitors per ~5 paying customers** | **≈ 2,000–5,000** | derived (N12 × N13) |
-| **N15** | **⇒ Cumulative visitors to reach N1** | **≈ 20,000–50,000** | derived |
+| **N14** | **⇒ Qualified visitors per paying customer** | **≈ 400–1,000** | derived (N12 × N13) |
+| **N15** | **🎯 ⇒ Cumulative visitors to reach a VERDICT — and, separately, to reach N1a** | **≈ 2,000–5,000** | derived |
+| N15b | ⇒ Cumulative visitors to reach N1b (job replacement) | ≈ 20,000–50,000 | derived |
 
-> **N15 is a content-engine-sized number, not a launch-post-sized number.** Internalize it before
-> optimizing anything else. **The whole plan is sensitive to N12/N13 and both are guesses** — which
-> is exactly why A5 is the top risk. → DISTRIBUTION.md.
+> **🎯 N15 is the number the plan steers by, and it is doing double duty — which is the single most
+> useful coincidence in this business.** The traffic needed to reach **N1a (survival)** and the
+> traffic needed to reach the **A2 sample floor (~100 trials, §2.1)** land in the *same range*.
+> **So the visitors that pay for the infra are the same visitors that tell you whether to
+> continue.** One target, two payoffs.
+>
+> **That is a good-post-sized number, not a content-engine-sized number** — one HN front page, one
+> LinkedIn post that lands, or a gallery that quietly ranks over two quarters. Compare N15b, which
+> only becomes relevant once N1a is passed and the salary question reopens. **Do not plan against
+> N15b.**
+>
+> ⚠️ **The whole plan is sensitive to N12/N13 and both are guesses.** That is exactly why A5 is the
+> top risk — and why the *first* real traffic is worth more as a measurement than as revenue.
+> → DISTRIBUTION.md.
 
 ### 1.5 Market — bottom-up; **every input an assumption**
 
@@ -108,7 +136,7 @@ deliberately **below** list price, because of **A3**.
 
 | | Assumption | Risk | Evidence | Metric | 🚨 Decision rule |
 |---|---|---|---|---|---|
-| **A5** | **Distribution works** — traffic can be acquired inbound | Business | **Weak** · **TOP RISK** | Qualified visitors (N14/N15) | **Below N14 after a genuine content effort ⇒ the business dies here.** Nothing downstream gets a vote. |
+| **A5** | **Distribution works** — traffic can be acquired inbound | Business | **Weak** · **TOP RISK** | Qualified visitors (N15) | **N15 not reached by the T-box deadline (§2.2) ⇒ the business dies here.** Nothing downstream gets a vote. |
 | **A1** | EU residency is a **purchase driver**, not a checkbox | Value | **Weak** | `signup` rate, headline A/B | **Arm A (EU) doesn't clearly beat Arm B (capability) ⇒ move ALL positioning to the capability story.** Do not rationalize a loss. |
 | **A2** | Buyers **buy** rather than **DIY** | Value | **Weak** | `checkout_clicked` → **`payment_succeeded`** | **< 5% of trials reach checkout, or 0 payments after ~100 trials ⇒ it's a vitamin. Stop.** |
 | **A3** | Usage is recurring **flow**, not one-time **backfill** | Business | **None** | **Cohort hour-decay** | **Month-2 hours < 20% of month-1 ⇒ not a subscription business. Switch to prepaid credit packs.** |
@@ -136,6 +164,37 @@ quadrant already closed. And because the GTM is inbound with no outreach, **A1�
 the likelier failure — is celebrating a false *win*.** A founder looking at 40 visitors, 2 signups
 and 0 payments will be powerfully tempted to read a verdict into it, and **every available verdict
 is wrong.** Set the honest-read date in advance; call nothing before it.
+
+### 2.2 🚨 The time-box — **T** — because there is no burn clock
+
+| # | | Value |
+|---|---|---|
+| **T0** | **Start.** First publication of the demand instrument (PLAN.md Phase 0.3). | *set on the day — record it here* |
+| **T1** | **Checkpoint.** Honest read. No verdict may be called before this. | **T0 + 4 months** |
+| **T** | **🚨 DEADLINE.** A5 is settled here, one way or the other. | **T0 + 9 months** |
+
+**Why this exists, and why it is a hard rule rather than a preference.**
+
+Deferring the salary (N3) removes the burn clock. At **N1a** the business is cash-flow-positive and
+can run **forever** on ~€300/mo. That is a genuine strategic advantage — nothing forces a panicked
+decision — and it introduces a failure mode that did not previously exist:
+
+> ### 🧟 **The zombie.**
+> A business that covers its infra indefinitely, never grows, and quietly consumes the founder's
+> evenings for three years. **With a salary target, the kill criteria fire by themselves — you run
+> out of money and stop. With no salary, nothing forces the stop.**
+>
+> **The scarce resource is no longer euros. It is founder-hours, and they are not on any dashboard.**
+
+Therefore: **A5's kill criterion is a calendar deadline, not a cash threshold.** If N15 has not been
+reached by **T** after a *sustained* publishing effort — **stop.** Not "reduce scope", not "try one
+more channel". Stop.
+
+**And note what T is really testing.** Content compounds only with sustained effort, and sustained
+effort is exactly what a founder with a day job does not reliably have. **A5 did not get easier when
+the salary came off — it changed shape**, from *"can I afford to wait?"* to *"will I still be
+publishing in month nine?"* **T is the honest test of that question, and the answer is allowed to
+be no.**
 
 ---
 

@@ -158,12 +158,20 @@ Risks *not* on the assumption list, and how we answer them:
 
 ## 9. Success criteria
 
-**→ METRICS.md.** The goal is **N1: ~47 retained paying accounts.** The pass/fail rules for A1–A5
-are METRICS.md §2, and none of them may be invoked below its sample floor (§2.1).
+**→ METRICS.md.** Two milestones, 20× apart, and **only the first one is the plan:**
 
-Nothing else is a success criterion. In particular: **traffic, signups and enthusiasm are not
-success** — they are inputs to A5 and A2, and METRICS.md §6 lists them as anti-metrics for a
-reason.
+- **🎯 N1a — survival:** a handful of retained paying accounts, covering infra. **The founder needs
+  no salary from this near-term**, so this is the near-term target and the whole plan steers by it.
+- **🏁 N1b — job replacement:** ~47 accounts. The *destination*. **Do not plan against it** — doing
+  so implies an order of magnitude more traffic and makes the top risk look unwinnable for reasons
+  that come from the salary line, not from the market.
+
+Pass/fail rules for A1–A5 are METRICS.md §2; none may be invoked below its sample floor (§2.1); and
+**A5's kill criterion is a calendar deadline (§2.2), because with no salary to burn, nothing else
+forces a stop.**
+
+Nothing else is a success criterion. **Traffic, signups and enthusiasm are not success** — they are
+inputs to A5 and A2, and METRICS.md §6 lists them as anti-metrics for a reason.
 
 ## 10. Explicit non-goals for MVP
 
