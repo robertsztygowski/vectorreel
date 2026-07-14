@@ -6,7 +6,6 @@
     <RootNamespace>VectorReel.Tests.Unit</RootNamespace>
     <AssemblyName>VectorReel.Tests.Unit</AssemblyName>
     <IsPackable>false</IsPackable>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

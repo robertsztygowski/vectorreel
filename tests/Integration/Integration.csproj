@@ -7,7 +7,6 @@
     <RootNamespace>VectorReel.Tests.Integration</RootNamespace>
     <AssemblyName>VectorReel.Tests.Integration</AssemblyName>
     <IsPackable>false</IsPackable>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

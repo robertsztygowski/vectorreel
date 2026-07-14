@@ -46,6 +46,10 @@ dotnet_style_prefer_conditional_expression_over_return = false
 # --- Nullability / correctness ---
 dotnet_diagnostic.CA2007.severity = none            # ConfigureAwait(false): irrelevant in ASP.NET Core (no SyncContext)
 dotnet_diagnostic.CA1848.severity = none            # LoggerMessage delegates: premature for MVP; revisit if logging is hot
+# CA1711 forbids a "Queue" suffix on a type name. ITaskQueue is one of the four provider seams named
+# in CLAUDE.md and DEVELOPMENT.md §2 — the docs own that name, and renaming the code to satisfy an
+# analyzer would just put the two out of sync.
+dotnet_diagnostic.CA1711.severity = none
 
 # --- Naming: standard .NET conventions ---
 dotnet_naming_rule.interfaces_begin_with_i.symbols = interface_symbols
@@ -62,3 +66,10 @@ dotnet_naming_symbols.private_fields.applicable_kinds = field
 dotnet_naming_symbols.private_fields.applicable_accessibilities = private
 dotnet_naming_style.underscore_camel.capitalization = camel_case
 dotnet_naming_style.underscore_camel.required_prefix = _
+
+# --- Tests ---
+# Test names are sentences (Records_entries_in_order), which is the xunit convention and the reason
+# a failing test reads like a statement of what broke. CA1707 forbids the underscores. The naming
+# rule earns its keep in src/; in tests/ it would only make the failures harder to read.
+[tests/**/*.cs]
+dotnet_diagnostic.CA1707.severity = none
