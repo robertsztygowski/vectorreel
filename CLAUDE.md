@@ -15,8 +15,18 @@ BUSINESS_MODEL.md (why), INFRA.md (GCP state), PLAN.md (phase-by-phase execution
    (docker compose) → affected flow exercised e2e locally (real Vertex if pipeline/prompts touched)
    → no secrets in diff → impacted living doc updated in the same commit.
 5. **Deploy is deliberate**, from local, after `tests/Live/` passes. Never auto-deploy.
-6. Every LLM call records tokens + cost in the per-job ledger — product feature, not optional.
+6. Every LLM call **and every compute step** records cost in the per-job ledger — product feature,
+   not optional. (ffmpeg/Cloud Run transcode is ~30% of true COGS; metering only LLM calls
+   undercounts by a third.)
 7. Git: direct to main, small complete commits, `feat:`/`fix:`/`chore:`/`docs:`/`infra:` prefixes.
+8. **YouTube: never download bytes.** Ingestion is Vertex `fileData.fileUri` only — Google fetches,
+   we don't. **No `yt-dlp`, no scraping, ever**, however awkward `fileUri` gets. A YouTube-ToS
+   violation inside a company that sells compliance to DPOs is existential, not a nit. The public
+   gallery is **curated, CC-licensed, attributed** — never a scaled transcript farm.
+   **YouTube is free distribution only, never a paid feature** (BUSINESS_MODEL §10).
+9. **Stage B calls always set `maxOutputTokens`, a bounded `thinkingBudget`, and a wall-clock
+   timeout.** ~8% of benchmark calls degenerated (61k output / 63k thinking tokens). Unguarded
+   calls break the SLO and the margin.
 
 ## Layout
 

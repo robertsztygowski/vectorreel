@@ -9,20 +9,37 @@
 ```
                 ┌──────────────────────────── GCP (europe-central2 / europe-west3) ───────────────────────────┐
                 │                                                                                             │
- User / API ────┼─► API service (Cloud Run) ──► Postgres (Cloud SQL)  [jobs, tenants, usage]                  │
+ User / API ────┼─► API service (Cloud Run) ──► Postgres  [jobs, tenants, usage]                              │
    │            │        │                                                                                    │
-   │  signed    │        ├─► creates Job ──► Cloud Tasks queue ──► Worker service (Cloud Run, CPU)            │
+   │  signed    │        ├─► creates Job ──► queue ──► Worker service (Cloud Run, CPU)                        │
    └─ upload ───┼─► GCS bucket (raw-videos, EU, lifecycle: delete after processing)                           │
                 │                                   │                                                         │
                 │                                   ▼                                                         │
-                │                     ┌─ Stage A: probe & prepare (ffmpeg)                                    │
+                │                     ┌─ Stage A: probe & prepare (ffmpeg)      ◄── PRIVATE PATH (paid)       │
                 │                     ├─ Stage B: segment analysis (Vertex AI Gemini, native video input)     │
                 │                     ├─ Stage C: fusion pass (Vertex AI Gemini, text)                        │
                 │                     └─ Stage D: persist output ──► GCS bucket (outputs, EU) + DB metadata   │
                 │                                   │                                                         │
                 │                                   └─► webhook to customer / UI download / GET via API       │
+                │                                                                                             │
+ YouTube URL ───┼─► ✂ NO Stage A ─► Stage B (fileData.fileUri + videoMetadata offsets) ─► C ─► D              │
+   (public)     │      no bytes ever downloaded — Google fetches   ◄── PUBLIC PATH (free tool + gallery)      │
                 └─────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+**Two ingestion paths, deliberately asymmetric** (see BUSINESS_MODEL §10 — this is a hard boundary):
+
+| | **Private path** (upload) | **Public path** (YouTube) |
+|---|---|---|
+| Purpose | **The paid product.** Internal recordings. | **Distribution only** — free tool + gallery (DISTRIBUTION.md). Never a paid tier. |
+| Ingestion | Signed upload → GCS URI | `fileData.fileUri` = YouTube URL. **We never download bytes.** |
+| Stage A | Yes — ffmpeg, segmentation, static detection | **No.** No local bytes → no ffmpeg → **the static-content cost lever is unavailable.** |
+| Segmentation | ffmpeg cuts | `videoMetadata.startOffset/endOffset` (verify: PLAN.md Phase 0.1) |
+| Cost | ≈ €0.65/video-h all-in (blended) | ≈ €0.45/video-h — **no static lever**, hence hard abuse caps + result caching |
+| Constraint | — | Vertex accepts **public videos only, or ones owned by *our* GCP account** → customers' unlisted/private recordings can **never** use this path. |
+
+⚠️ **VPC Service Controls disables `fileUri` media URLs entirely.** If the project is ever locked
+down for enterprise compliance, the public path dies. Keep it isolated from the paid product.
 
 ## 2. Stack decisions (MVP)
 
@@ -73,6 +90,23 @@ For each segment (parallel, bounded concurrency per tenant):
 }
 ```
 - Retries with exponential backoff; a failed segment fails only itself (job resumes, never restarts from zero — idempotency key = jobId+segmentIndex).
+
+**🚨 Runaway-generation guards (mandatory — not optional hardening).** The Phase-0 benchmark
+showed **~8% of calls degenerate**: `seg4_configA` produced 61k output tokens in 474 s;
+`seg2_configB` burned 63k *thinking* tokens in 323 s. Two of ~25 calls, at ~2.5× normal cost
+each. **This is the source of the observed 1.3× retry overhead, and untreated it breaks the
+<15 min/video-hour SLO.** Every Stage B call must therefore set:
+
+- **`maxOutputTokens`** — hard cap, sized from the measured p99 (~8.6k out-tokens/call), not left to default.
+- **`thinkingBudget`** — bounded. Unbounded thinking is what produced the 63k-thought-token call.
+- **A wall-clock request timeout** — well below the point where a single segment can eat the job's SLO.
+- **Treat a cap-hit as a segment failure and retry once with a tighter budget**, rather than
+  accepting truncated JSON. Record every runaway in the cost ledger — this rate is a monitored metric.
+
+**Public-path variant (YouTube).** Same schema, same guards. Differences: input is
+`fileData.fileUri` (YouTube URL) + `videoMetadata.startOffset/endOffset` instead of a GCS segment
+URI; no Stage A means **no sampling config and no static-content lever** — the call runs at
+default media resolution and costs accordingly. Public videos only. See §1.
 
 ### Stage C — Fusion pass (Vertex Gemini, text-only)
 - Input: ordered segment JSONs.
@@ -159,21 +193,53 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
 ## 8. Cost engineering (must-have, drives pricing)
 
 - Per-job ledger of tokens and cents (surfaced to the customer as transparency, used internally to watch margin).
+- 🚨 **The ledger must meter compute, not just LLM calls.** ffmpeg transcode/segmentation on Cloud
+  Run is ≈ €0.15/video-hour — **~30% of true COGS — and is currently metered nowhere.**
+  CLAUDE.md rule 6 is extended from "every LLM call" to "every LLM call **and every compute step**".
+  All-in COGS is ≈ **€0.65/video-hour = €0.011/video-minute** (BUSINESS_MODEL §6), not the €0.45
+  LLM-only figure.
+- **Break-even ≈ €0.011/video-minute.** The lowest realizable price (Business tier, fully utilized,
+  €0.077/video-min) sits **7× above it**; Gemini pricing would need to rise ~6× before the cheapest
+  tier stops earning. **COGS is a solved problem and is not a business risk** — further cost
+  engineering optimizes the one variable already safe. The binding constraint is ~47 retained
+  paying accounts (BUSINESS_MODEL §9). Guard the margin; stop *chasing* it.
 - Levers, in order of impact: (1) static-segment **low media resolution** sampling (`mediaResolution: MEDIA_RESOLUTION_LOW` — measured ~45% cheaper; fps-reduction tested and rejected: destabilizes timestamps and coverage), (2) ≤720p analysis rendition, (3) Flash-tier model for Stage B, better model only for Stage C fusion if quality demands, (4) batch/queue smoothing to stay within provider rate limits, (5) bounded `thinkingBudget` (unbounded thinking blew one call to 63k thought tokens / 3× cost).
 - **Benchmark (2026-07-14, experiments/001-gemini-video-benchmark/RESULTS.md):** default config (720p, 1 fps, default media res) ≈ **€0.38/video-hour** all-in; low media res ≈ €0.21/h; ~67% of a real demo recording is static (runs ≥ 10 s) so a Stage A-driven mixed config lands ≈ €0.25–0.30/h — 4–7× inside the €1.50/h COGS guardrail. Missing categories (slide talk, talking-head meeting) still to be benchmarked. Stage B must deterministically normalize model timestamps (formats drift: mm:ss:centiseconds, absolute-vs-relative anchoring) and retry on under-coverage (blocks clustering at clip start on continuous demo footage).
 
 ## 9. MVP scope checklist (build order)
 
-1. Terraform: project, region policy, buckets + lifecycle, Cloud SQL, Cloud Run services, Cloud Tasks queues, service accounts.
-2. Worker: Stage A (ffprobe/ffmpeg + segmentation + static detection) with golden tests on sample videos.
-3. Worker: Stage B against Vertex (structured output), single segment end-to-end.
-4. Worker: Stage C fusion + output contract renderer (deterministic, snapshot-tested).
-5. API: uploads, jobs, outputs, usage; API keys; webhook.
-6. Minimal UI: login, upload, job list with status, markdown preview + download, usage page.
-7. Stripe: plans + metered overage; free-trial gating (2 h).
-8. /gdpr + /security pages, DPA template, subprocessor list.
-9. Benchmark + pricing lock; onboard first design partner.
+> **Reordered 2026-07-14** after `experiments/workflow1-decision-memo.md`. PLAN.md is the
+> authority on sequencing; this list mirrors it. The old order front-loaded Terraform and
+> deferred all demand evidence to the final step — with a self-serve/inbound GTM and no founder
+> outreach, **traffic is the long pole and must start first.**
+
+0. ✅ **Benchmark** (`experiments/001`) — done.
+1. **YouTube-ingestion spike** — does `europe-central2` accept a YouTube `fileUri`? Does
+   `videoMetadata` offset-clipping work? (≲ €1.)
+2. **Public CC-licensed benchmark & demo corpus** — closes the slide-talk / talking-head category
+   gap, produces publishable demos, seeds committable `tests/fixtures/videos/`.
+3. 🚨 **Demand instrument: publish** (no product code) — landing-page headline A/B + the artifact
+   post. **Starts now and runs in parallel with everything below.** See DISTRIBUTION.md.
+4. **Core + Stage A** (ffprobe/ffmpeg + segmentation + static detection), golden tests on the
+   public CC clips.
+5. **Stages B/C/D** + record/replay fixtures + `tests/Live/`. **Includes the mandatory runaway
+   guards (§3) and the compute-metering ledger (§8).** Plus the public YouTube path.
+6. **Thin trial slice** — free YouTube tool (with abuse caps + result caching) + curated gallery;
+   magic-link → upload → Markdown by email. **Cloud Run + GCS + in-process queue only.**
+7. **One Stripe payment link + funnel instrumentation** (METRICS.md). Not tiers, not metered
+   overage. Cohort hour-decay must be instrumented *before the first user* — it cannot be
+   reconstructed retroactively.
+8. **Read the data → choose the pricing model** (subscription vs. prepaid credit packs).
 
 ## 10. Deliberately deferred
 
-Connectors (Teams/Zoom/Drive), MCP server (thin layer over the API — good v1.1), speaker diarization improvements, multi-language UI, SSO/SAML, CMEK, SOC 2, self-hosted edition (the provider-abstraction seam and stateless workers keep it feasible), Mistral backend, EU-owned infra migration.
+**Until there is a paying customer:** Terraform / Cloud SQL / Cloud Tasks (Cloud SQL idles at
+~€25–50/mo against a ~€300/mo fixed base — real burn at zero users), plan tiers + metered overage,
+dashboard / job list / usage UI, markdown preview, DPA self-service flow.
+
+**Roadmap proper:** connectors (Teams/Zoom/Drive), MCP server (thin layer over the API — good
+v1.1), speaker diarization improvements, multi-language UI, SSO/SAML, CMEK, SOC 2, self-hosted
+edition (the provider-abstraction seam and stateless workers keep it feasible), Mistral backend,
+EU-owned infra migration.
+
+**Never (hard boundary, BUSINESS_MODEL §10):** YouTube processing as a *paid* feature.

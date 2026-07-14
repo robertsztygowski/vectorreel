@@ -1,0 +1,130 @@
+# DISTRIBUTION — how vectorreel gets in front of people
+
+> Living doc. Owns **A5 — the top risk in the business.** Companion to BUSINESS_MODEL.md (§7 is
+> the strategic sketch; this file is the operating plan) and PLAN.md Phase 0.3.
+> Created 2026-07-14 from `experiments/workflow1-decision-memo.md`.
+
+## Why this document exists
+
+The founder has ruled out customer outreach (no time). That is a legitimate bootstrapper's
+choice — a funnel compounds, cold emails don't — but it has a hard consequence:
+
+> **Traffic is now the long pole, and inbound traffic is the thing that kills this company
+> first.** Every other risk (does the output work, will they pay, is EU a wedge) is only
+> *reachable* through traffic. Feasibility and margin are already measured and safe.
+
+Distribution used to be four bullets in BUSINESS_MODEL §7. It is now the whole game, so it gets
+its own document.
+
+## The traffic math — the number that governs everything
+
+| Step | Rate (industry-typical, **assumption — instrument and replace**) |
+|---|---|
+| Qualified visitor → trial start | 2–5% |
+| Trial → paid | 5–15% |
+
+> **⇒ ~2,000–5,000 qualified visitors to produce ~5 paying customers.**
+> **⇒ ~47 retained paying accounts = founder salary + infra** (BUSINESS_MODEL §9).
+> **⇒ therefore roughly 20,000–50,000 qualified visitors, cumulative, to reach break-even.**
+
+That is a content-engine-sized number, not a launch-post-sized number. Internalize it before
+optimizing anything else. Replace these rates with measured ones as soon as METRICS.md has data —
+the whole plan is sensitive to them.
+
+**The corollary that reorders the roadmap:** content compounds over *months*. Building for three
+months and *then* starting to publish serializes the two slowest processes in the company.
+**Distribution starts at Phase 0.3, in parallel with all engineering.** (PLAN.md is built around
+exactly this.)
+
+## The core insight: the product is the marketing
+
+The free public YouTube tool is not a demo — **it is the distribution engine**, and it exists for
+this reason alone.
+
+**The funnel:**
+
+```
+  paste a YouTube URL  ──►  see real Markdown in 60s  ──►  "now try it on your own recording"
+   (free, no signup,          (the wow, on content         (magic-link, 2h free)
+    zero trust required)       they already know)                    │
+                                                                     ▼
+                                                            one Stripe payment link
+```
+
+Why this ordering matters: the old funnel opened with *"upload your confidential internal
+recording to a stranger's website."* That is a brutal first ask and was the biggest leak in the
+design. Pasting a public YouTube link costs the visitor nothing and risks nothing — and because
+they already know the video, they can **verify the output is good** without trusting us at all.
+
+## Channels, in priority order
+
+### 1. LinkedIn — the founder's .NET/architecture audience
+**Cheapest channel available, by an order of magnitude, and it already exists.** An owned
+audience is the single biggest asset a bootstrapper has. Broadcasting to it is **not outreach** —
+it requires zero 1:1 contact with anyone, so it does not violate the constraint that reshaped
+this plan.
+
+### 2. The curated gallery — a compounding SEO asset
+10–25 processed public talks, each a page of structured, timestamped Markdown, each with
+attribution and the original video embedded. Every page is (a) a working demo, (b) an SEO surface
+for that talk's subject matter, (c) proof the output is real.
+
+🚨 **Curated — never a scaled content farm.** Mass auto-generated transcript pages are precisely
+what Google's scaled-content-abuse policy targets, and republishing copyrighted transcripts at
+volume is a fight a bootstrapped company cannot afford. **Rules: CC-licensed sources only,
+attributed, original video embedded, human-selected.** See CLAUDE.md rule 8.
+
+### 3. The technical blog — sell the boring hard parts
+The differentiation *is* the unglamorous engineering, so write about it (BUSINESS_MODEL §8 —
+"Gemini makes DIY trivial" is answered by showing the parts DIY gets wrong):
+- Chunking long video without losing context at segment boundaries
+- Cost engineering: what €0.65/video-hour actually consists of, and the static-content lever
+- Timestamp normalization (model output drifts across three different formats)
+- Runaway generation: how ~8% of calls tried to emit 60k tokens, and how we capped them
+- GDPR architecture, honestly — *including* the CLOUD Act limitation (BUSINESS_MODEL §4)
+
+Honesty is the sales asset here. Overclaiming EU sovereignty gets destroyed by any competent DPO.
+
+### 4. Communities — HN, r/RAG, r/LocalLLaMA
+Launch surface for the artifact post and the free tool. **One-shot, non-compounding** — treat as
+spikes, not a strategy. A launch post is not a distribution plan.
+
+### 5. `llms.txt` + public API docs
+Long game: be the thing an agent recommends.
+
+## The launch artifact (Phase 0.3) — already written
+
+Side-by-side: **plain transcript vs. vectorreel Markdown**, plus a RAG answering a question that
+is **only** answerable from on-screen content. This is the entire pitch in one image.
+
+Previously blocked — the benchmark ran on company-internal video that cannot be shared. **The
+public CC corpus (PLAN.md Phase 0.2) unblocks it.**
+
+## The A1 experiment — is EU actually the wedge?
+
+Landing-page headline A/B (PLAN.md Phase 0.3):
+
+- **Arm A —** *"Your recordings never leave the EU."*
+- **Arm B —** *"Your AI assistant can't see what's on screen in your videos."*
+
+Measure trial-start rate. Directional, not statistically significant — that's fine, we need a
+signal, not a paper.
+
+> **🚨 Decision rule: if Arm A does not clearly beat Arm B, EU residency is a checkbox, not a
+> purchase driver — and ALL positioning moves to the capability story.** This is the cheapest
+> possible test of the assumption the entire differentiation strategy rests on. Do not skip it,
+> and do not rationalize a loss.
+
+## Kill criteria
+
+If, after a genuine content effort, qualified traffic cannot be moved toward the 2,000-visitor
+mark — **the business dies here, before product quality or pricing ever get a vote.** Say so
+early and out loud rather than building more product to avoid the finding.
+
+## Open questions
+
+- Real conversion rates (replace the assumed 2–5% / 5–15% as soon as METRICS.md has data).
+- Does the gallery actually rank, or does Google treat processed talks as derivative content?
+- Is the .NET/architecture audience the *buyer* (dev teams building AI assistants), or just a
+  friendly crowd that claps and doesn't convert? **This is the uncomfortable one — an owned
+  audience that isn't the ICP is a vanity asset.** Watch trial-start rate by referrer.

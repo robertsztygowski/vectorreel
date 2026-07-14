@@ -64,7 +64,53 @@ Metric: **hours of video processed**. Simple, scales with value, easy to predict
 | API pay-as-you-go | €0.15/min (€9/h) | No subscription | For developers embedding the product in pipelines; stickiest revenue. |
 | Enterprise (later) | Annual contract | Custom volume, SSO, audit log, self-hosted option | Not in MVP scope. |
 
-Unit economics guardrail: COGS target < 20% of price per hour. **Measured 2026-07-14** (experiments/001, `gemini-2.5-flash` @ `europe-central2`, real 50-min demo recording): **≈ €0.38/video-hour** at default quality (720p, 1 fps), ≈ €0.21/h at low media resolution, ≈ €0.25–0.30/h expected blended (Stage A routes ~67% static content to the cheap config), plus ~1.3× retry overhead observed. Stage C fusion adds ≈ €0.09 per 50-min video. Even at Pro overage (€8/h) COGS is ~5%; at API pay-as-you-go (€9/h) ~4% — the €1.50/h guardrail holds with 4–7× margin. Numbers cover one content category (demo screen-recording); re-verify on slide-talk and talking-head footage at Phase 7 before locking prices. Cost controls (static-segment detection, low-media-resolution sampling) remain a core engineering task.
+> ⚠️ **Prices above are hypotheses and are now explicitly gated on the A3 finding** (see §8).
+> If usage turns out to be one-time **backfill** rather than recurring **flow**, subscription
+> tiers are the wrong instrument entirely and this table becomes a **prepaid credit pack**
+> (*"€200 for 20 hours"*). Do not lock these prices until PLAN.md Phase 5.
+
+### Unit economics — measured, and no longer the risk
+
+Guardrail was: COGS < 20% of price/hour. **Measured 2026-07-14** (experiments/001,
+`gemini-2.5-flash` @ `europe-central2`, real 50-min demo recording):
+
+| Component | €/video-hour | €/video-min | |
+|---|---|---|---|
+| Stage B, blended (Stage A routes ~67% static content to the cheap config) | 0.261 | 0.0044 | measured |
+| × 1.3 retry overhead (see the ~8% degenerate-generation finding, PLAN.md Phase 0) | 0.340 | 0.0057 | measured |
+| Stage C fusion | 0.110 | 0.0018 | measured |
+| **LLM subtotal** | **0.45** | **0.0075** | **measured** |
+| ffmpeg transcode/segmentation on Cloud Run | 0.15 | 0.0025 | ⚠️ **estimate — not yet metered** |
+| GCS transient + orchestration | 0.05 | 0.0008 | ⚠️ **estimate** |
+| **All-in COGS** | **≈ 0.65** | **≈ 0.011** | |
+
+> ⚠️ **The ledger currently omits ~30% of true COGS.** ffmpeg/Cloud Run compute is real money
+> and is metered nowhere. CLAUDE.md rule 6 is hereby extended from "every LLM call" to
+> "every LLM call **and every compute step**". Implemented in PLAN.md Phase 2.
+
+**🚩 Break-even price: €0.011/video-minute (€0.65/video-hour) all-in** — €0.0075/min LLM-only.
+
+| Price point | €/video-min | Gross margin |
+|---|---|---|
+| API PAYG €0.15/min | 0.150 | 92.7% |
+| Pro overage (€8/h) | 0.133 | 91.8% |
+| Pro €149 @ full 25 h | 0.099 | 89.0% |
+| Business overage (€6/h) | 0.100 | 89.0% |
+| **Business €690 @ full 150 h** (worst case) | **0.077** | **85.7%** |
+
+**The lowest realizable price sits 7× above break-even. Gemini pricing would have to rise ~6×
+before the cheapest tier stops earning.** The €1.50/h guardrail holds with enormous headroom.
+
+**Conclusion: COGS is a solved problem and is not a risk.** Further cost engineering optimizes
+the one variable that is already safe. The binding constraint is **~47 retained paying accounts**
+(≈ €176/mo contribution each) to cover ~€300/mo fixed infra + an €8,000/mo founder salary —
+that, not COGS, is the finish line.
+
+Caveats: numbers cover one content category (demo screen-recording); slide-talk and
+talking-head are closed in PLAN.md Phase 0.2. Note also that the **YouTube ingestion path
+cannot use the static-content lever** (no local bytes → no ffmpeg → no static detection), so it
+costs the full ~€0.45/video-hour — which is why the free public YouTube tool needs hard abuse
+caps and result caching (PLAN.md Phase 3).
 
 ## 7. Go-to-market
 
@@ -75,9 +121,16 @@ Unit economics guardrail: COGS target < 20% of price per hour. **Measured 2026-0
 
 ## 8. Key risks & mitigations
 
+> Re-ranked 2026-07-14 after `experiments/workflow1-decision-memo.md`. **Every high-importance /
+> weak-evidence risk is Value or Business viability. Feasibility — the axis a technical founder
+> de-risks first — is the one quadrant already closed.**
+
 | Risk | Mitigation |
 |---|---|
-| Gemini/OpenAI make DIY trivial ("just send the video to the model") | Value shifts to pipeline: chunking of long videos, cost control, consistent schema, batch reliability, compliance packaging. Sell the boring hard parts. |
+| 🚨 **A5 — Distribution doesn't work (TOP RISK).** GTM is self-serve/inbound with no founder outreach, so traffic is the long pole. The funnel needs ~2,000–5,000 qualified visitors to yield ~5 paying customers; content compounds over months. At Pro's ~€131/mo contribution, **any CAC above ~€800 breaks payback, and outbound sales is arithmetically impossible at this ACV.** | Start distribution *first* and run it parallel to all engineering (PLAN.md Phase 0.3 — the plan was reordered around exactly this). Free public YouTube tool + curated gallery = the product markets itself. LinkedIn (.NET/architecture audience) is the cheapest channel by an order of magnitude. |
+| 🚨 **A3 — Backfill, not flow.** If the job is "process our 200 h archive", revenue spikes for one month and collapses. **Steady-state ARPA is plausibly 3–5× below acquisition-month ARPA**, which makes subscription pricing a category error no engineering can fix. | Instrument cohort hour-decay (week 1 vs. week 4) **before the first user** — PLAN.md Phase 4. It cannot be answered retroactively. If month-2 < 20% of month-1: switch to **prepaid credit packs**, not monthly tiers. |
+| 🚨 **A1 — EU residency is a checkbox, not a purchase driver.** The entire differentiator, squeezed from both sides: a serious DPO notes GCP is US-controlled (CLOUD Act — see §4) and may reject "EU region" outright; a buyer who doesn't care won't pay a premium over Cloudglue. The wedge lives in a narrow band nobody has confirmed exists. | Landing-page headline A/B (PLAN.md Phase 0.3): EU-lead vs. capability-lead. **If the EU arm doesn't clearly win, move all positioning to the capability story.** |
+| Gemini/OpenAI make DIY trivial ("just send the video to the model") | Value shifts to pipeline: chunking of long videos, cost control, consistent schema, batch reliability, compliance packaging. Sell the boring hard parts. **Note the sharp edge: ICP #1 and #3 are dev teams building AI assistants — the audience best equipped to build this themselves. Tested by the Stripe checkout in PLAN.md Phase 4.** |
 | Cloudglue moves into EU | Speed + EU-owned-infra roadmap + no-lock-in file model they won't copy (it undermines their platform play). |
 | Output quality disappoints on messy real-world video | Design-partner phase exists exactly to tune prompts/schema on real corporate footage before public launch. |
 | Vertex model pricing/availability changes | Provider abstraction layer from day one (see ARCHITECTURE.md); Mistral (EU) as planned second backend. |
@@ -85,15 +138,38 @@ Unit economics guardrail: COGS target < 20% of price per hour. **Measured 2026-0
 
 ## 9. Success criteria for MVP (first 90 days after launch)
 
-- 3 design partners processed ≥ 10 h each and confirmed output is usable in their RAG/agent stack.
-- ≥ 1 partner converts to paid at or above hypothesized Pro price.
-- COGS per processed hour measured and < €1.50 at default quality settings.
-- Time from upload to Markdown for a 1 h video: < 15 min.
+> Rewritten 2026-07-14. The old criteria assumed **design-partner outreach**, which the founder
+> has ruled out — the motion is self-serve/inbound. Every criterion below is therefore
+> measurable **without a single conversation**.
+
+- ~~COGS < €1.50/h~~ ✅ **Already met — €0.65/h all-in, measured 2026-07-14.** Retired as a goal.
+- **Traffic (A5, top risk):** ≥ 2,000 qualified visitors reached inbound. *If this fails, nothing
+  else matters — the business dies here first.*
+- **A1:** the EU-lead headline arm clearly beats the capability-lead arm. (If not: reposition.)
+- **A2:** ≥ 5% of trials click through to Stripe checkout, and **≥ 1 person actually pays.**
+- **A3:** cohort hour-decay measured. Month-2 hours ≥ 20% of month-1 ⇒ subscription is valid;
+  below ⇒ switch to prepaid credit packs.
+- **A4:** output confirmed citable across all three content categories (screen-recording,
+  slide-talk, talking-head).
+- Time from upload to Markdown for a 1 h video: < 15 min. *(Gated on the Phase 2 output-token
+  caps — ~8% of benchmark calls ran away and would blow this SLO.)*
+
+**The number that actually matters:** ~47 retained paying accounts = founder salary + infra.
 
 ## 10. Explicit non-goals for MVP
 
+- **YouTube processing is never a paid feature.** The free public YouTube tool + curated gallery
+  exist for *distribution only* (A5) — paste a URL, see real output, zero friction, zero trust
+  required. **The paid product is private recordings.** Two hard reasons this is not negotiable:
+  (1) Vertex only ingests videos that are public or owned by **our** GCP account, so a customer's
+  unlisted/internal recordings can *never* work this way; (2) the moment it becomes a paid tier
+  we have changed businesses and walked into the §8 buyer-confusion risk — *"is this a YouTube
+  tool?"* is a worse question than *"is this a transcription tool?"*
 - No self-hosted edition (documented as roadmap; architecture must not preclude it).
 - No connectors (upload + API only).
+- **No plan tiers, no metered overage, no dashboard, no Terraform/Cloud SQL** until there is a
+  paying customer (PLAN.md "Deferred"). Cloud SQL alone idles at ~€25–50/mo against a ~€300/mo
+  fixed base.
 - No built-in chat/RAG/search over processed videos — we produce files, we do not compete with the customer's retrieval stack.
 - No fine-tuning, no training on customer data — ever, contractually.
 - No SOC 2 / ISO 27001 certification yet — design for auditability, certify when a customer demands it.

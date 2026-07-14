@@ -142,8 +142,14 @@ Real GCP from the local machine (via gcloud ADC):
   mid-refactor broken states.
 - Commit messages: imperative summary line, body explains *why* when non-obvious.
   Conventional-commit prefixes (`feat:`, `fix:`, `chore:`, `docs:`, `infra:`) — lightweight, aids scanning.
-- A decision that changes ARCHITECTURE.md / BUSINESS_MODEL.md / INFRA.md / DEVELOPMENT.md is
-  committed **together with the doc update**. The living docs are the source of truth; no ADRs.
+- A decision that changes ARCHITECTURE.md / BUSINESS_MODEL.md / DISTRIBUTION.md / METRICS.md /
+  INFRA.md / PLAN.md / DEVELOPMENT.md is committed **together with the doc update**. The living
+  docs are the source of truth; no ADRs.
+- **Living docs live at root; point-in-time memos live in `experiments/`.** A living doc states
+  what is true *now* and gets rewritten in place. A memo (e.g.
+  `experiments/workflow1-decision-memo.md`) captures what was decided *on a date, with the
+  evidence available then*, and is never edited afterwards — supersede it with a new one.
+  Don't let a memo rot at root pretending to be current.
 
 ## 8. Definition of done & deploy
 
