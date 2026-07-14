@@ -23,7 +23,10 @@ PATTERNS=(
   '0\.011'         # N6  all-in COGS / video-minute
   '0\.45'          # N4  LLM subtotal
   '0\.0075'        # N4  LLM subtotal / video-minute
-  '47 retained'    # N1b job-replacement accounts
+  '63 retained'    # N1b job-replacement accounts
+  '€131'           # N0  contribution per account
+  '€390'           # N23 CAC ceiling
+  '€4.73'          # N25 max viable CPC (upper)
   '2–3 retained'   # N1a survival accounts
   '400–1,000'      # N14 visitors per paying customer
   '9 months'       # T   the time-box deadline

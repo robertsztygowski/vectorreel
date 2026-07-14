@@ -8,10 +8,11 @@ EU SaaS: video → structured, timestamped Markdown for AI knowledge bases.
 rewritten in place.**
 
 **🎯 The goal: survival — a handful of retained paying accounts covering infra** (METRICS.md **N1a**).
-The founder needs **no salary** from this near-term, so the 47-account job-replacement figure (N1b)
-is the *destination*, **not the plan**. **The top risk is A5 — distribution**, and because there is
-no burn clock, its kill criterion is a **calendar deadline** (METRICS.md §2.2), not a cash
-threshold. Read PLAN.md's STATUS block first.
+The founder needs **no salary** from this near-term, so the job-replacement figure (N1b) is the
+*destination*, **not the plan**. **The top risk is A5 — distribution**, and because there is no burn
+clock, its kill criterion is a **calendar deadline** (METRICS.md §2.2), not a cash threshold.
+**Paid ads are gated experiments that buy evidence, not customers** (METRICS.md §1.6–1.7).
+Read PLAN.md's STATUS block first.
 
 | Doc | Sole authority for |
 |---|---|

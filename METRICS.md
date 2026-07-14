@@ -29,9 +29,9 @@ recorded as an explicit input (N3) rather than left implicit.
 
 | # | Number | Value | Status | Meaning |
 |---|---|---|---|---|
-| **N1a** | **🎯 SURVIVAL — the goal the plan steers by** | **≈ 2–3 retained paying accounts** | derived | N2 ÷ contribution. Covers infra. **At N1a the business is cash-flow-positive and can compound indefinitely — there is no burn clock.** |
-| **N1b** | **🏁 JOB REPLACEMENT — the destination** | **≈ 47 retained paying accounts** | derived | (N2 + N3) ÷ contribution. The point at which this replaces employment. **Not the near-term target. Do not plan against it.** |
-| | *contribution per retained account* | ≈ €176/mo | derived | The multiplier behind both. |
+| **N1a** | **🎯 SURVIVAL — the goal the plan steers by** | **≈ 2–3 retained paying accounts** | derived | N2 ÷ N0. Covers infra. **At N1a the business is cash-flow-positive and can compound indefinitely — there is no burn clock.** |
+| **N1b** | **🏁 JOB REPLACEMENT — the destination** | **≈ 63 retained paying accounts** | derived | (N2 + N3) ÷ N0. **Not the near-term target. Do not plan against it.** |
+| **N0** | **Contribution per retained account** | **≈ €131/mo** | **assumed — conservative** | **Pinned 2026-07-14.** Pro (€149/mo) at full utilization, minus COGS. **The multiplier behind N1a, N1b and every CAC figure in §1.6 — so it is the highest-leverage assumption in this file.** Deliberately the *conservative* end: if the business works at N0 it works at any realistic blend. ⚠️ *A €176 blended figure previously circulated; it had been reverse-engineered to make N1b land on 47, which is backwards. Retired.* |
 | N2 | Fixed infra cost | ≈ €300/mo | assumed | The base burn to beat. Why Cloud SQL (~€25–50/mo idling at zero users) is deferred. |
 | N3 | Founder salary target | €8,000/mo | given · **deferred** | **Not required in the near term.** It is ~96% of N1b — i.e. **this one input generates the entire difference between N1a and N1b, and between a business that needs a content engine and one that needs a good month.** |
 
@@ -93,7 +93,7 @@ before the cheapest tier stops earning.
 | N13 | Trial → paid | 5–15% | **assumed** — industry-typical |
 | **N14** | **⇒ Qualified visitors per paying customer** | **≈ 400–1,000** | derived (N12 × N13) |
 | **N15** | **🎯 ⇒ Cumulative visitors to reach a VERDICT — and, separately, to reach N1a** | **≈ 2,000–5,000** | derived |
-| N15b | ⇒ Cumulative visitors to reach N1b (job replacement) | ≈ 20,000–50,000 | derived |
+| N15b | ⇒ Cumulative visitors to reach N1b (job replacement) | ≈ 25,000–63,000 | derived |
 
 > **🎯 N15 is the number the plan steers by, and it is doing double duty — which is the single most
 > useful coincidence in this business.** The traffic needed to reach **N1a (survival)** and the
@@ -129,6 +129,79 @@ deliberately **below** list price, because of **A3**.
 > **N18 exists only if A1 holds.** If EU is not a purchase driver there is no premium, and we
 > compete on features inside N17 against Cloudglue — a materially worse business. That is why the
 > A1 experiment is the cheapest high-value test available.
+
+### 1.6 Paid acquisition — the CAC ceiling and what it permits
+
+> **→ DISTRIBUTION.md §Paid for the strategy. This section owns the arithmetic.**
+
+**The ceiling.** A bootstrapper has **no capital to front-load acquisition**, so **payback period
+governs, not LTV:CAC** — you cannot spend €400 today against €2,000 arriving over two years if you
+do not have the €400. **Pinned rule: CAC payback ≤ 3 months.**
+
+| # | Number | Value | Status |
+|---|---|---|---|
+| **N23** | **🚩 CAC ceiling** | **≈ €390** per paying customer | derived (3 × N0) |
+| N24 | Clicks needed per paying customer | 1 ÷ (N12 × N13) — **83 to 1,000**, see below | derived |
+| **N25** | **🚩 Max viable CPC** | **€0.39 – €4.73**, *entirely determined by conversion* | derived (N23 ÷ N24) |
+
+**N24/N25 by scenario — this table is the whole paid-ads strategy:**
+
+| Scenario | visitor→trial | trial→paid | Clicks/customer | **Max viable CPC** |
+|---|---|---|---|---|
+| Pessimistic | 2% | 5% | 1,000 | **€0.39** — buys nothing |
+| **Central (today's assumption)** | 3.5% | 7.5% | 381 | **€1.03** — buys nothing with volume |
+| Optimistic | 5% | 15% | 133 | **€2.95** — marginal |
+| **If the free YouTube tool works as designed** | **~12%** | 10% | **83** | **€4.73** — *buys real keywords* |
+
+> ### 🚩 The finding: **Phase 3 decides whether paid acquisition is possible at all.**
+>
+> Affordable CPC swings **12×** across that table, and **conversion is not a market fact — it is a
+> product fact.** A landing page with an email box converts cold search traffic at 2–5%. A
+> zero-friction tool that hands a stranger real Markdown in 60 seconds, on a video they already
+> know, can plausibly convert far higher. **That difference is what moves the affordable CPC from
+> €1.03 (buys nothing) to €4.73 (buys real keywords).**
+>
+> **The free YouTube tool is therefore not merely a top-of-funnel hook. It is the precondition for
+> paid acquisition existing as an option.**
+
+> ### ⚠️ The scissors — why paid search cannot be the growth engine *today*
+>
+> At a **€1.03** max CPC you can only afford long-tail terms (*"video to markdown"*, *"transcript
+> for RAG"*). **They are cheap precisely because almost nobody searches them.** A term with ~50
+> searches/month yields a fraction of a customer per month — profitable and irrelevant.
+>
+> **The keywords we can afford have no volume. The keywords with volume we cannot afford.**
+> ⇒ **Until N12 is measured and high, paid buys evidence, not customers.**
+
+### 1.7 The ad tranches — episodic, gated, never a standing line item
+
+> 🔁 **The loop that makes this a hard rule: a standing ad budget raises N1a itself.** Every ~€131/mo
+> of ongoing ad spend adds **one more account** to the survival threshold. A permanent €300/mo ad
+> line **doubles** the number of customers needed merely to survive. **Ads are experiments with a
+> stop date — not a subscription.**
+
+| # | Tranche | When | Budget | Buys an answer to | 🚨 Gate to proceed |
+|---|---|---|---|---|---|
+| **N26** | **T-A — price discovery** | After PLAN.md Phase 0.3 (page + gallery live) | **€300–400, one-time** | Real CPCs on our long-tail terms · cost per email capture · **a clean A1 verdict on *cold* traffic** | — |
+| **N27** | **T-B — the decisive read** | After Phase 3 (YouTube tool + signup live) | **€500–800, one-time** | 🚨 **Measured N12.** Does the tool lift conversion into the range where N25 permits real keywords? | T-A found **any** keyword under the N25 line |
+| **N28** | **T-C — scale or kill** | After Phase 4 **and** A3 has returned | CAC-driven | Real CAC. Scale or stop. | **A3 = flow, AND measured CAC < N23.** **If A3 = backfill, paid acquisition is dead** — the product becomes a prepaid credit pack sold organically. |
+
+**Hard constraints.**
+
+- **Spend nothing before the landing page *and* gallery exist** — otherwise you are paying for
+  traffic with nothing to convert on.
+- **Until the Stripe link ships (Phase 4), `trial→paid` (N13) cannot be measured at all.** T-A and
+  T-B therefore buy **conversion and A1 — never CAC.** ⚠️ **Do not mistake a good cost-per-signup in
+  T-B for a viable CAC.** That error is how a paid budget survives its own disproof.
+- **Per-keyword kill rule, mechanical, no deliberation:** if a keyword's cost-per-signup implies a
+  CAC above **N23**, pause it that week.
+
+**Why paid is worth funding *now*, despite all of the above:** **N12 and N13 are guesses, and every
+traffic number in this file derives from them.** Paid search replaces them with measured values in
+~3 weeks; organic takes months. **And paid is a strictly *better instrument* than organic for A1:**
+LinkedIn sends warm, biased visitors who already know the founder — a terrible sample for testing
+whether "EU residency" converts a *stranger*. Search sends **cold, intent-matched, randomizable**
+traffic. **For settling A1, €400 of search beats nine months of posting to people who like you.**
 
 ---
 

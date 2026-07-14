@@ -109,8 +109,8 @@ What matters at the business level, and only this:
 - ✅ **COGS is a solved problem and is not a risk.** The old *"COGS < 20% of price"* guardrail is
   retired as a goal and demoted to a regression alarm. **Further cost engineering optimizes the one
   variable that is already safe.**
-- 🎯 **The binding constraint is ~47 retained paying accounts (METRICS.md N1)** — that, not COGS,
-  is the finish line. Everything in this document should be read against it.
+- 🎯 **The binding constraint is retained paying accounts (METRICS.md N1a), not COGS.** Everything
+  in this document should be read against it.
 - ⚠️ **Two caveats that could still move the numbers:** the ledger currently omits ~30% of true
   COGS (ffmpeg/Cloud Run compute is metered nowhere — CLAUDE.md rule 6, closed in PLAN.md Phase 2),
   and the figures cover **one** content category so far (PLAN.md Phase 0.2 closes the other two).
@@ -162,9 +162,9 @@ Risks *not* on the assumption list, and how we answer them:
 
 - **🎯 N1a — survival:** a handful of retained paying accounts, covering infra. **The founder needs
   no salary from this near-term**, so this is the near-term target and the whole plan steers by it.
-- **🏁 N1b — job replacement:** ~47 accounts. The *destination*. **Do not plan against it** — doing
-  so implies an order of magnitude more traffic and makes the top risk look unwinnable for reasons
-  that come from the salary line, not from the market.
+- **🏁 N1b — job replacement:** the *destination*. **Do not plan against it** — doing so implies an
+  order of magnitude more traffic and makes the top risk look unwinnable for reasons that come from
+  the salary line, not from the market.
 
 Pass/fail rules for A1–A5 are METRICS.md §2; none may be invoked below its sample floor (§2.1); and
 **A5's kill criterion is a calendar deadline (§2.2), because with no salary to burn, nothing else

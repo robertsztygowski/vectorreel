@@ -139,6 +139,53 @@ Directional, not statistically significant; we need a signal, not a paper.
 > ⚠️ **And do not celebrate a false win either.** The A/B is subject to the minimum-sample rule
 > (METRICS.md §2.1): it needs **hundreds of visitors per arm.** At n=4 it is coin-flipping.
 
+## Paid acquisition — **buy evidence, not customers**
+
+**→ METRICS.md §1.6–§1.7 owns the arithmetic, the CAC ceiling (N23), the max viable CPC (N25) and
+the tranche gates (N26–N28). This section owns the strategy.**
+
+### The correction this section exists to make
+
+A5 has long carried the line *"CAC above the ceiling breaks payback, and outbound sales is
+arithmetically impossible at this ACV."* **That was true, and it was about outbound *sales* — a
+founder's hours at €X/hour. It was never applied to paid ads, which have a completely different
+cost structure. Nobody ran the numbers.** They are now run (METRICS.md §1.6), and the answer is
+neither "yes" nor "no":
+
+> **Paid search cannot be the growth engine at today's conversion rates — the keywords we can
+> afford have no volume, and the ones with volume we cannot afford (the scissors, METRICS.md §1.6).
+> But paid search is the single best *instrument* available for settling A1 and measuring N12, and
+> it should be funded immediately for that purpose.**
+
+### Three jobs money can do. Only one is justified today.
+
+| Job | Verdict | Why |
+|---|---|---|
+| **1 — Buy evidence** | ✅ **Fund now (T-A / N26)** | N12 and N13 are guesses and *every* traffic number derives from them. Paid replaces them with measured values in ~3 weeks; organic takes months. **And it is a better instrument than organic for A1:** LinkedIn sends warm, biased visitors who already know the founder — a terrible sample for testing whether "EU residency" converts a *stranger*. Search sends **cold, intent-matched, randomizable** traffic. |
+| **2 — Buy customers** | 🛑 **Blocked on A3** | The CAC ceiling swings ~10× on whether usage is recurring flow or one-time backfill, and **A3 has zero evidence.** Scaling paid before A3 is how a bootstrapped company scales into a wall — it feels like growth right up until the cohort data lands. |
+| **3 — Buy reach on LinkedIn** | ❌ **Don't** | €6–12/click to reach the .NET/architecture audience **already reached organically, for free.** The worst euro available. Revisit only if organic proves that audience converts *and* its reach is exhausted. |
+
+**Meta / X / Instagram:** wrong buyer, wrong intent. No.
+**Reddit (r/RAG, r/LocalLLaMA):** a cheap, interesting probe — and note it doubles as an **A2 stress
+test**: the audience most able to build this themselves is the harshest possible test of whether
+anyone will buy it.
+
+### The portfolio — what each channel is actually *for*
+
+| Channel | Role | Honest expectation inside the time-box (T) |
+|---|---|---|
+| **LinkedIn (organic)** | 🐴 **The workhorse.** Owned audience, predictable, free. | Carries most of the volume toward N15. |
+| **Paid search** | 🔬 **The instrument.** Cold, clean, randomizable. | Settles A1 and measures N12. **Not a volume source.** |
+| **HN / Reddit** | 🎟️ **The lottery ticket.** | Could clear N15 in a day; ~5–10% chance per submission. **Buy the ticket; do not budget for it.** |
+| **Gallery + blog (SEO)** | 💰 **The annuity — which mostly matures *after* T.** | ⚠️ **Near-zero for the first 3–6 months; meaningful at 12–18.** The time-box is 9. |
+
+> ### ⚠️ The consequence, stated plainly: **inside the time-box, broadcast carries the load and the
+> compounding assets do not have time to compound.**
+>
+> **So during T, the gallery is not a traffic source — it is *proof*.** Its job is to make paid and
+> LinkedIn traffic **convert**, by letting a skeptic verify the output on a talk they already know.
+> Build it for that. Any SEO that arrives is a bonus that pays out only if the box is extended.
+
 ## Kill criteria — **a deadline, not a cash threshold**
 
 **→ METRICS.md A5 + §2.2 (the time-box).** If N15 has not been reached by **T** after a *sustained*

@@ -10,8 +10,8 @@
 # 🎯 STATUS — read this first
 
 **The goal we steer by: ≈2–3 retained paying accounts** (METRICS.md **N1a**). That covers infra.
-**The founder does not need a salary from this in the near term**, so N1a — not the 47-account
-job-replacement figure (N1b) — is the near-term target. **Do not plan against N1b.**
+**The founder does not need a salary from this in the near term**, so N1a — not the job-replacement
+figure (N1b) — is the near-term target. **Do not plan against N1b.**
 
 **The bet.** EU teams building internal AI assistants have recordings their assistant cannot see.
 We turn those into timestamped Markdown it can cite, without the footage leaving the EU.
