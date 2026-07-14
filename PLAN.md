@@ -36,9 +36,12 @@ all **whether anyone can be reached at all.** All five open assumptions live in 
 that pays for the infra (N1a) and the traffic that tells you whether to continue (the A2 sample
 floor) are the same traffic.** It is a good-post-sized number, not a content-engine-sized number.
 
-**Where we are now.** Phase 0 ✅, Phase 0.1 ✅, **Phase 0.2 ✅ done** — the licensed corpus exists, the
-A4 category gap is closed, and we have the **first artifacts we are allowed to show anyone.**
-**Next: Phase 0.3 — the demand instrument. It is the long pole and everything else waits on it.**
+**Where we are now.** Phase 0 ✅, Phase 0.1 ✅, Phase 0.2 ✅, **Phase 1 ✅ done** — `src/Core` and Stage A
+are built, and the weakest measured category has a fix (METRICS.md **N7c**) whose *effect on the model*
+is still unproven.
+**Next: Phase 0.3 — the demand instrument. It is the long pole, it is unstarted, and everything else
+waits on it.** ⚠️ Phase 1 was engineering; it moved **A5 not at all.** The clock (METRICS.md §2.2) does
+not start until the first post ships, and no amount of pipeline quality starts it.
 
 > ⚠️ **Two things 0.2 changed that you must not carry forward unread.**
 > **(1) The output side of the pipeline is not bounded by segment length** — dense slides overflow
@@ -283,27 +286,43 @@ is ordinary build work.
 
 ---
 
-## Phase 1 — Core + Stage A
+## Phase 1 — Core + Stage A ✅ DONE 2026-07-14
 
-`src/Core` (domain, provider interfaces, pipeline skeleton) + Stage A (ffprobe/ffmpeg wrapper,
-segmentation, static detection — port learnings from Phase 0). Golden tests on the **committed CC
-clips** in `tests/fixtures/videos/` (Phase 0.2). docker-compose.yml (postgres + fake-gcs-server)
-lands here.
+> **Completed.** `src/Core` (domain, the four provider seams, pipeline skeleton) + Stage A for real:
+> ffprobe/ffmpeg wrapper, static-content detection, **forced block boundaries**, segmentation, split
+> policy, compute cost ledger. 77 tests green (42 unit on synthesized frames, 35 integration on the
+> committed CC clips). docker-compose.yml landed. **Spend: €0** — Stage A is pure local compute.
 
-🚨 **Stage A now has a second job, and it is the important one.** Continuous screen recordings —
-**the ICP's own content type** — under-segment into vague ~86 s blocks (METRICS.md **N7b**, **N32**).
-The private path holds the bytes, so **static-content detection should force block boundaries** on
-footage the model would otherwise run together. This is the one thing the private path can do that
-the public path structurally cannot, and it is aimed squarely at our weakest measured category.
+1. **The cost lever survived the port, exactly.** The C# static-content detector reproduces the Phase-0
+   measurement on the same recording — same static share, same run count. That test is the fidelity
+   gate on **METRICS.md N4**: if it ever goes red, the blended cost figure is quietly wrong and nothing
+   else would say so.
+2. 🚨 **N7b is addressed — and the mechanism is the opposite of what this plan assumed.** We expected
+   static-content detection to force the boundaries. **It cannot: the window that produced the failure
+   barely moves at all** (METRICS.md **N7c** owns the figures). It is a presenter talking over a frozen
+   IDE. Stillness is *why* the model is blind there, so it cannot also be the cure. Boundaries are
+   forced on **elapsed narration** and suppressed on **silence** — a signal that needs the audio, hence
+   the bytes, hence the private path. The gain on that window is in METRICS.md **N7c**.
+3. **Suppressing boundaries inside static runs was tried and rejected.** It reads as obviously sensible
+   ("a slide held for minutes is one block"), it is right about slide talks, and it leaves **160-second
+   blocks on the ICP's own footage** — worse than the status quo it was meant to fix. The measurement is
+   the only reason we know.
 
-**Starter prompt:**
-> Read PLAN.md Phase 1, ARCHITECTURE.md §3 Stage A, experiments/001-*/RESULTS.md.
-> Plan mode first, TDD for segmentation/static-detection per DEVELOPMENT.md §4.
+⚠️ **What Phase 1 did NOT prove: that Stage B *obeys* the boundaries.** It ships a deterministic input
+whose effect on the model is **unmeasured** — that needs a Vertex call. **Do not treat N7b as closed.**
+
+**Judgment calls made unsupervised are listed in `HANDOFF.md` at the repo root — read it before Phase 2.**
 
 ## Phase 2 — Stages B/C/D
 
 Stage B against Vertex with structured output; record/replay fixtures + `tests/Live/`;
 Stage C fusion; Stage D persist + output renderer; source deletion.
+
+🚨 **First job of the phase, before any of the below: does Stage B actually honour Stage A's block
+boundaries?** Phase 1 can prove they are *emitted* (METRICS.md N7c); only a Vertex call proves they are
+*obeyed*. Put the boundaries in the prompt, run the window that failed, and count the blocks. **If the
+model ignores them, the fallback is to cut real segments at the boundaries** — which forces the issue
+at the price of more calls. Everything else in this phase is cheaper than this question.
 
 **Hard requirements carried in from the benchmark phases:**
 

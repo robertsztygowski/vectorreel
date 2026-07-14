@@ -18,6 +18,11 @@ OWNER="METRICS.md"
 DOCS=(PLAN.md ARCHITECTURE.md BUSINESS_MODEL.md DISTRIBUTION.md CLAUDE.md DEVELOPMENT.md INFRA.md)
 
 # Canonical values owned by METRICS.md. Extend this list whenever a new number becomes load-bearing.
+#
+# ⚠️ Keep each pattern to a SINGLE unbroken token. The check is line-scoped, so a multi-word pattern
+# is defeated the moment prose reflows across a line break — '94% static' silently stopped matching
+# when the wrap landed between the two words, which is exactly when a doc is being edited and the
+# check is most needed.
 PATTERNS=(
   '0\.65'          # N6  all-in COGS / video-hour
   '0\.011'         # N6  all-in COGS / video-minute
@@ -28,7 +33,8 @@ PATTERNS=(
   '3\.80'          # N4d dense-content full-video cost — the ~13x blow-up
   '86 s'           # N7b under-segmentation on continuous screen recordings
   '17\.1'          # N7c Stage A forced-cue floor, boundaries per 10-min segment
-  '94% static'     # N7c the finding that inverts the intuition — the failure window barely moves
+  '94%'            # N7c the finding that inverts the intuition — the failure window barely moves
+  '179'            # N7c longest frozen stretch inside that window
   '258'            # §1.2b video tokenization rate; the coverage-guard denominator
   '63 retained'    # N1b job-replacement accounts
   '€131'           # N0  contribution per account

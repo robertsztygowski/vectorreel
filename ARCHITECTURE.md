@@ -62,11 +62,53 @@ Org policy: `constraints/gcp.resourceLocations` restricted to EU. All service ac
 
 ## 3. Processing pipeline (the core IP)
 
-### Stage A — Probe & prepare (CPU, ffmpeg)
-1. `ffprobe`: duration, resolution, audio streams, container sanity. Reject/flag corrupt files early.
-2. Normalize: transcode to a processing-friendly rendition if needed (target ≤ 720p for analysis; slide-heavy content survives lower resolution and it cuts token cost massively).
-3. **Segmentation:** split into segments of ~10–15 min with ~15–30 s overlap (overlap prevents context loss at boundaries).
-4. **Static-content detection (cost control):** compute frame-difference / perceptual-hash timeline. Segments where the image is nearly static (one slide, talking head) are flagged `low_motion` → processed with lower video fps sampling. This single mechanism is expected to cut Gemini video-token cost by a large factor on typical corporate content. Emit per-segment sampling config.
+### Stage A — Probe & prepare (CPU, ffmpeg) ✅ built in Phase 1
+
+**One ffmpeg pass extracts two signals, and the distinction between them is the whole design:**
+
+| Signal | Question it answers | What it drives |
+|---|---|---|
+| **Stillness** (frames: 1 fps, 160×90 gray, mean-abs-diff vs the *previous* frame) | *Is the picture moving?* | **Cost** — a frozen stretch is analysed at `MEDIA_RESOLUTION_LOW` |
+| **Silence** (audio: `silencedetect`) | *Is anyone talking?* | **Block boundaries** — a citation belongs where the narration pauses |
+
+🚨 **They are not interchangeable, and assuming they were is the trap.** See §8 and METRICS.md N7b/N7c.
+
+1. `ffprobe`: duration, resolution, audio streams, container sanity. Reject corrupt files early — a
+   rejection here is a Vertex call never paid for. (Frame rate is a *rational*; one committed fixture
+   is `19001/317`.)
+2. Normalize: transcode to a processing-friendly rendition if needed (target ≤ 720p for analysis).
+3. **Static-content detection (cost).** Frame-difference timeline; runs of near-static picture ≥ 10 s
+   are routed to **`MEDIA_RESOLUTION_LOW`** — measured ~45% cheaper, quality intact.
+   ⚠️ **Not lower fps.** Phase 0 tested fps reduction (config B) and **rejected** it: it destabilises
+   timestamps and coverage. **Media resolution is the lever; sampling rate is not** (§8).
+   🔒 The metric and thresholds are a **faithful port of the Phase-0 experiment and are not free
+   parameters** — METRICS.md N4's blended cost is an output of this algorithm at exactly these values.
+   A calibration test asserts the port still reproduces the original measurement.
+4. **Forced block boundaries (citation granularity) — the fix for N7b.** Stage A computes the block
+   boundaries and **hands them to Stage B**, so granularity stops depending on the model noticing
+   anything. Rule: **force a boundary on elapsed speech, suppress it on silence, snap it to a pause,
+   and follow the picture when it does move** (drift from an anchor frame, not from the previous one —
+   frame-to-frame differencing cannot see slow continuous change).
+5. **Segmentation:** ~10–15 min segments with ~15–30 s overlap, each cut **snapped to a block boundary**
+   so it lands on a scene change or a pause rather than mid-sentence. Emit per-segment sampling config
+   and the boundaries inside it (rebased into segment time — Stage B's prompt speaks in segment time).
+
+> 🔑 **Why forcing boundaries works, and why it is the private path's exclusive advantage.**
+> Continuous screen recordings under-segment (METRICS.md **N7b**) — and the reason is **not** that they
+> change too fast. Phase 1 measured the window that produced the failure and found **it hardly changes
+> at all** (METRICS.md **N7c**): a presenter talking over a frozen IDE, held still for minutes. The model
+> has nothing to segment on, and **every pixel-based rule is blind for exactly the same reason it is.**
+> Boundaries must
+> therefore come from the *narration*, not the picture — which needs the audio, which needs the bytes.
+> **The public YouTube path can never do this** (§1): no bytes, no ffmpeg, no audio timeline.
+>
+> ⚠️ **Suppressing boundaries inside static runs is the rule that looks right and is wrong.** It is
+> correct for slide talks and it switches the fix off precisely where the ICP lives, leaving 160-second
+> blocks — *worse* than the status quo. Tried, measured, rejected (METRICS.md N7c).
+>
+> ⚠️ **Phase 1 proves what Stage A *emits*, not what Stage B *obeys*.** That verdict needs a Vertex call
+> and is the first thing Phase 2 must check. If the model ignores the cues, the fallback is cutting real
+> segment boundaries at them — which forces the issue, at the price of more calls.
 
 ### Stage B — Segment analysis (Vertex Gemini, native video)
 For each segment (parallel, bounded concurrency per tenant):
@@ -291,9 +333,14 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
 - 🚨 **Continuous screen recordings are the weak category — and they are what the paying product
   ingests.** Blocks cluster and coarsen against slide talks (METRICS.md **N7b**, **N32**), so
   citations get vague exactly where the ICP lives. Seen in all three benchmark phases; it is
-  reproducible, not noise. The private path *can* fix what the public path cannot: it holds
-  the bytes, so **Stage A's static-content detection should force block boundaries** on footage the
-  model would otherwise run together.
+  reproducible, not noise.
+  ✅ **Addressed in Phase 1 — but *not* the way this section previously assumed** (METRICS.md **N7c**
+  owns the measurement). It said static-content detection should force the boundaries. **It cannot: the
+  footage that fails hardly moves at all.** Stillness is what makes the model blind there, so it cannot
+  also be the cure. Stage A forces boundaries on **elapsed narration** and suppresses them on
+  **silence** — a signal that needs the *audio*, which needs the bytes, which is why the public path can
+  never do it (§3).
+  ⚠️ Still unproven: whether Stage B *honours* the boundaries. Phase 2's first job.
 
 ## 9. Build order
 
