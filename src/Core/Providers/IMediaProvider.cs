@@ -23,6 +23,10 @@ public interface IMediaProbe
 /// </summary>
 public interface IMediaScanner
 {
-    /// <summary>Decode a source file down to the frames and silences Stage A reasons about.</summary>
-    Task<MediaScan> ScanAsync(string path, CancellationToken cancellationToken);
+    /// <summary>
+    /// Decode a source file down to the frames and silences Stage A reasons about.
+    /// <paramref name="hasAudioStream"/> comes from the probe: asking ffmpeg to map an audio stream that
+    /// does not exist makes it fail outright, and a video with no audio track is a case we actually have.
+    /// </summary>
+    Task<MediaScan> ScanAsync(string path, bool hasAudioStream, CancellationToken cancellationToken);
 }

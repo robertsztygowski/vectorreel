@@ -20,15 +20,11 @@ namespace VectorReel.Core.Media;
 /// </summary>
 public sealed partial class FfmpegMediaScanner(MediaToolOptions options) : IMediaScanner
 {
-    /// <inheritdoc />
+    /// <summary>Scan a source file that is known to have an audio track.</summary>
     public Task<MediaScan> ScanAsync(string path, CancellationToken cancellationToken) =>
         ScanAsync(path, hasAudioStream: true, cancellationToken);
 
-    /// <summary>
-    /// Scan a source file. <paramref name="hasAudioStream"/> comes from the probe: mapping an audio
-    /// stream that does not exist makes ffmpeg fail outright, and a video with no audio track at all
-    /// is a case we actually have.
-    /// </summary>
+    /// <inheritdoc />
     public async Task<MediaScan> ScanAsync(string path, bool hasAudioStream, CancellationToken cancellationToken)
     {
         var stageA = StageAOptions.Default;
