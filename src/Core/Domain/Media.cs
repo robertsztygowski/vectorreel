@@ -33,6 +33,9 @@ public sealed record SilenceInterval(TimeSpan Start, TimeSpan End)
 /// </summary>
 public sealed record MediaScan(IReadOnlyList<GrayFrame> Frames, IReadOnlyList<SilenceInterval> Silences)
 {
+    /// <summary>Frames sampled per second of video. 1 fps, identical to the Phase-0 experiment — see <c>StageAOptions</c>.</summary>
+    public const int SamplesPerSecond = 1;
+
     /// <summary>Analysis frame width. Identical to the Phase-0 experiment — see <c>StageAOptions</c>.</summary>
     public const int FrameWidth = 160;
 
