@@ -1,5 +1,8 @@
 # HANDOFF — Phase 1 (Core + Stage A), night of 2026-07-14
 
+> ⚠️ **Phase numbering note (2026-07-15):** this memo predates the MVP-first replan. Everywhere it
+> says "Phase 2" it means the pipeline phase, which is now **PLAN.md Phase 3**.
+
 **Status: green and committed.** Nothing is half-applied. `dotnet build` clean, 77 tests pass
 (42 unit, 35 integration), `dotnet format` clean, `scripts/check-docs.sh` passes, docker compose
 comes up healthy. **Spend: €0.** No Vertex call, no `gcloud`, no deploy — Stage A is pure local

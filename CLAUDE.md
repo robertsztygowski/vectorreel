@@ -64,8 +64,9 @@ status banner before quoting it.
    timeout.** ~8% of benchmark calls degenerated (61k output / 63k thinking tokens). Unguarded
    calls break the SLO and the margin.
 10. **No US-based analytics or tracking on any mdreel property. Ever.** **Google Analytics is
-    prohibited** (ruled unlawful by several EU DPAs over US transfers). Analytics is **Plausible,
-    EU-hosted, cookieless — no consent banner.** The same test applies to *every* tool: heatmaps,
+    prohibited** (ruled unlawful by several EU DPAs over US transfers). Analytics is **Umami,
+    self-hosted in the EU, cookieless — no consent banner** (decided 2026-07-15; was Plausible;
+    shares the product's Postgres, never a second idle DB). The same test applies to *every* tool: heatmaps,
     session replay, chat widgets, A/B platforms, marketing pixels. **If it phones home to the US, it
     does not ship.** We sell EU residency to DPOs and our own copy tells them where to look — GA on
     this site is spotted in ten seconds. (Google **Ads** is fine — that is delivery. The Google

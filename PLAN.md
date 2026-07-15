@@ -24,13 +24,21 @@ in a lab coat.**
 all **whether anyone can be reached at all.** All five open assumptions live in **METRICS.md §2**.
 
 > ## 🚨 The one risk that governs the plan: **A5 — distribution.**
-> The founder has ruled out outreach, so the motion is **self-serve / inbound**. That makes
-> **traffic the long pole**: A1, A2, A3 and A4 are each only *reachable* through it, and content
-> compounds over **months**. Building for three months and *then* starting to publish serializes
-> the two slowest processes in the company.
+> The founder has ruled out outreach, so the motion is **self-serve / inbound** — traffic is the
+> long pole, and A1–A4 are each only *reachable* through it.
 >
-> **⇒ The governing rule: start the slowest thing (distribution) first, and run it in parallel
-> with all engineering.** That single rule is why the phases below are ordered as they are.
+> **⇒ The sequencing rule — REVERSED 2026-07-15: ship the MVP first (Phases 2–4), then launch
+> everything at once (Phase 5).** The old rule ("start distribution first, in parallel") would have
+> pointed the one-shot launch surfaces (HN, LinkedIn, Reddit) at an email-capture box converting in
+> the low assumed range, when a live paste-a-URL tool is the high-conversion scenario that makes
+> paid acquisition viable at all (METRICS.md §1.6). The ad-tranche gate ("page **and gallery**
+> live") already contradicted the old sequencing (old 0.3 open question #1); launching after the
+> MVP resolves it by construction, and the two tranches merge into one (METRICS.md N26/N27).
+>
+> **The price of the reversal is a new zombie surface: the build itself.** The T-clock does not
+> start until launch, so the MVP is gated by a hard **ship-by date (METRICS.md §2.2 SB)** — if the
+> date arrives first, **launch with whatever exists.** "Further engineering is procrastination in a
+> lab coat" now applies to Phases 2–4.
 
 **The one number to hold in your head: METRICS.md N15.** It is doing double duty — **the traffic
 that pays for the infra (N1a) and the traffic that tells you whether to continue (the A2 sample
@@ -38,14 +46,15 @@ floor) are the same traffic.** It is a good-post-sized number, not a content-eng
 
 **Where we are now.** Phase 0 ✅, Phase 0.1 ✅, Phase 0.2 ✅, **Phase 1 ✅ done** — `src/Core` and Stage A
 are built, and the weakest measured category has a fix (METRICS.md **N7c**) whose *effect on the model*
-is still unproven.
-**Next: Phase 0.3 — the demand instrument. It is the long pole, it is unstarted, and everything else
-waits on it.** ⚠️ Phase 1 was engineering; it moved **A5 not at all.** The clock (METRICS.md §2.2) does
-not start until the first post ships, and no amount of pipeline quality starts it.
+is still unproven. Phase 0.3 as a standalone phase is **superseded** — its content lives in
+**Phase 5 — LAUNCH**.
+**Next: Phase 2 — the frontend, on mocked fixtures.** Then contracts (2.5), the pipeline (3),
+payments (4), launch (5). The clock (METRICS.md §2.2) starts at the Phase 5 launch; the ship-by
+gate (METRICS.md §2.2 SB) makes sure that day comes.
 
 > ⚠️ **Two things 0.2 changed that you must not carry forward unread.**
 > **(1) The output side of the pipeline is not bounded by segment length** — dense slides overflow
-> the token cap even at 10 minutes, and the naive fix costs ~13× (METRICS.md **N4d**). A Phase 2
+> the token cap even at 10 minutes, and the naive fix costs ~13× (METRICS.md **N4d**). A Phase 3
 > requirement, not a detail.
 > **(2) The weakest content category is the one the paying product ingests** — continuous screen
 > recordings under-segment (METRICS.md **N7b**, **N32**). The *free* path is strong; the *paid* path
@@ -81,11 +90,11 @@ they are not restated here.** This table is only the map from assumption → pha
 
 | | Assumption (METRICS.md §2) | Settled in |
 |---|---|---|
-| **A5** | Distribution works. **Top risk.** | **Phase 0.3 onward** |
-| **A1** | EU residency is a purchase driver | Phase 0.3 landing-page headline A/B |
-| **A2** | Buyers buy rather than DIY | Phase 4 Stripe checkout |
-| **A3** | Recurring flow, not one-time backfill | Phase 4 cohort hour-decay — **plus the N20 signup field, which reads it two months earlier** |
-| **A4** | Output is citable in a KB | **Accuracy ✅ measured in Phase 0.2** (METRICS.md N30–N32) — but *trust* is only proven by `upload_repeat` in Phase 3. Accuracy is necessary, not sufficient. |
+| **A5** | Distribution works. **Top risk.** | **Phase 5 (launch) onward** — gated by the ship-by date (METRICS.md §2.2 SB) |
+| **A1** | EU residency is a purchase driver | Phase 5 landing-page headline A/B, on cold T-LAUNCH traffic (METRICS.md N27) |
+| **A2** | Buyers buy rather than DIY | Phase 4 ships the Stripe checkout; the read accrues from the Phase 5 launch |
+| **A3** | Recurring flow, not one-time backfill | Phase 4 instruments cohort hour-decay — **plus the N20 signup field, which reads it two months earlier** |
+| **A4** | Output is citable in a KB | **Accuracy ✅ measured in Phase 0.2** (METRICS.md N30–N32) — but *trust* is only proven by `upload_repeat`, built in Phase 3, read post-launch. Accuracy is necessary, not sufficient. |
 
 ⚠️ **Do not invoke a decision rule below its sample floor (METRICS.md §2.1).** The most likely way
 this plan fails is not a bad number — it is a *verdict called on 40 visitors*.
@@ -124,10 +133,10 @@ themselves. See `tests/fixtures/videos/README.md`.
 1. **~8% degenerate-generation rate.** `seg4_configA` (474 s, 61k output tokens) and
    `seg2_configB` (323 s, 63k thinking tokens) ran away. This is the source of the observed
    1.3× retry overhead and it will break the <15 min/video-hour SLO. → hard output-token caps
-   + timeouts are now a Phase 2 requirement.
+   + timeouts are now a Phase 3 requirement.
 2. **The cost ledger is missing ~30% of true COGS.** ffmpeg transcode/segmentation on Cloud Run
    is ~€0.15/video-hour (estimate) and is not metered anywhere. → CLAUDE.md rule 6 extended to
-   compute, not just LLM calls. Phase 2 requirement.
+   compute, not just LLM calls. Phase 3 requirement.
 
 ---
 
@@ -148,7 +157,7 @@ themselves. See `tests/fixtures/videos/README.md`.
    whole public path can just run low-res — **N4b, at ~⅔ the default-resolution cost, with quality
    intact.** This is what sizes N10.
 
-**Three findings that become Phase 2/3 requirements:**
+**Three findings that become Phase 3 requirements:**
 
 - 🚨 **The coverage guard must divide by the *fetched* duration, not the requested window.** Vertex
   clamps the window to the video's end, so on a video shorter than the window the Phase-0 guard sees
@@ -195,7 +204,7 @@ ever publishable.**
 - 🚨 **Segment length does not bound Stage B's output — text density does.** A 15-min window blew
   the output cap on *both* slide talks; the dense middle of one blew it **even at 10 min**. The
   pipeline must **react** (halve and re-run), and the naive version of that costs **~13×**
-  (METRICS.md **N4d**). → Phase 2.
+  (METRICS.md **N4d**). → Phase 3.
 - 🚨 **The weakest category is the paid product's own content type.** Continuous screen recordings
   under-segment into ~86 s blocks — vague citations, exactly where the ICP lives (METRICS.md
   **N7b**). The public YouTube path is *strong*; the private path is the one that needs the work.
@@ -204,86 +213,27 @@ ever publishable.**
 
 ---
 
-## Phase 0.3 — Demand instrument: publish (no product code) 🚨 THE LONG POLE
+## Phase 0.3 — ⛔ SUPERSEDED 2026-07-15 → folded into Phase 5 — LAUNCH
 
-**This is the phase that decides the business, and it must start now and run in parallel with
-every engineering phase below.** Do not serialize it after the build.
+**Decision (2026-07-15): ship the MVP first (Phases 2–4), then launch everything at once.**
+Rationale in the STATUS block. Everything this phase contained — the headline A/B, measurement,
+the artifact post, the ad tranche — lives in **Phase 5** below, unchanged in substance. The move
+settled three things:
 
-Rationale: with no outreach, **traffic is the only way any evidence reaches us.** The target is
-METRICS.md **N15** — and it is doing double duty: the visitors that cover infra (N1a) are the same
-visitors that reach the A2 sample floor. **Both input rates are assumptions.** Content compounds
-over **months**; building for three months and *then* starting to post serializes the two slowest
-processes in the company.
+1. The old open question #1 (the ad gate needed the gallery, then a later deliverable) is resolved
+   by construction: at launch the page, gallery, tool and checkout are all live, and the two ad
+   tranches merged into one (METRICS.md N26/N27).
+2. **Analytics: Umami, self-hosted in the EU** (decided 2026-07-15; was Plausible — METRICS.md
+   §6.2, CLAUDE.md rule 10). Self-hosting also removes the "create the analytics account"
+   founder-only item.
+3. The build is now the thing that can rot, so it got the deadline: **the ship-by gate
+   (METRICS.md §2.2 SB).**
 
-⏱️ **T0 — the time-box (METRICS.md §2.2) starts on the day the first post ships.** Record the date.
+The consent question (old open question #2 — whether first-party UTM attribution persisted to
+`payment_succeeded` is "strictly necessary" under GDPR, vs. the `sessionStorage`-at-signup route)
+is **still open and still the founder's**; it is carried forward as a Phase 5 pre-flight item.
 
-Work:
-
-1. **Landing page headline A/B** (page is already deployed on Cloud Run):
-   - Arm A — *"Your recordings never leave the EU."*
-   - Arm B — *"Your AI assistant can't see what's on screen in your videos."*
-   - **This is the A1 test.** If Arm A does not clearly beat Arm B, **EU is a checkbox, not a
-     wedge**, and all positioning moves to the capability story. Directional, not significant.
-2. **Email capture.** Nothing more.
-2b. **Measurement, before the first visitor** (METRICS.md §6):
-   - **Plausible (EU-hosted, cookieless)** — no consent banner, no funnel tax. 🚨 **Never Google
-     Analytics** (CLAUDE.md rule 10).
-   - **UTM capture on first touch, persisted first-party.** It must survive to `payment_succeeded`
-     or real CAC can never be computed. **Design it in now; it cannot be bolted on at Phase 4.**
-   - The scoreboard shows **capture-rate by referrer** — the qualification proxy (METRICS.md §6.5) —
-     and **displays the sample floor next to every number** (§6.6).
-2c. **Ad tranche T-A** (METRICS.md N26): €300–400, one-time, Google Search, long-tail exact/phrase.
-   **Buys evidence, not customers** — real CPCs, cost per capture, and a clean A1 verdict on *cold*
-   traffic. Hard stop at budget. **Not before the page and gallery are live.**
-3. **The artifact post** — the single best inbound asset, and it's already written: side-by-side
-   *plain transcript vs. mdreel Markdown*, plus a RAG answering a question that is **only**
-   answerable from on-screen content. ✅ **The material now exists and is legally shareable:**
-   `experiments/001-*/out/corpus_md/JvbBFwlqxeI_full.md` — the FOSDEM talk, CC BY, processed
-   end-to-end, attribution inside the file. Channels: LinkedIn (existing .NET/architecture audience
-   — the cheapest traffic source available, by an order of magnitude), HN, r/RAG, r/LocalLLaMA.
-
-> **Broadcasting is not outreach.** This requires zero 1:1 contact with anyone.
-
-### 🔑 Founder pre-flight — the agent cannot start these, and one of them gates everything
-
-**✅ Domain gate cleared 2026-07-15 — `https://mdreel.com` is live** (INFRA.md: Cloudflare DNS-only →
-Google-served, `europe-west1`, managed TLS). This **unblocks 2b, 2c and 3.** Remaining founder-only
-items below.
-
-| Founder-only | Why the agent can't |
-|---|---|
-| ~~Buy + verify the domain, delegate DNS~~ **✅ done 2026-07-15** (`mdreel.com` live) | *Was: your card, registrar, Search Console — now complete.* |
-| **Create the Plausible account** (EU-hosted, paid) | Account + payment. *Agent then installs the script, defines events, builds the scoreboard.* |
-| **Google Ads account + payment method** (2c) | Your card. *Agent can write the campaign, keywords, negatives — nothing spends without you.* |
-| **Post to LinkedIn / HN / Reddit** | Your identity and your voice. *Agent drafts; you publish.* |
-
-Everything else in this phase — the A/B, email capture, first-party UTM plumbing, storage, deploy —
-is ordinary build work.
-
-### ⚠️ Two open questions to settle *before* building — do not let a fresh session guess
-
-1. **2c contradicts Phase 3.** The ad tranche is gated on "the page **and gallery** being live", but
-   the gallery is a **Phase 3** deliverable. Either the gate is wrong or T-A is later than this phase
-   implies. **Decide what T-A actually needs in order to buy honest evidence.**
-2. 🚨 **The consent question, which our own copy invites scrutiny of.** Plausible is genuinely
-   cookieless — but **first-party UTM attribution persisted all the way to `payment_succeeded` is not
-   obviously "strictly necessary"** under GDPR, and a DPO reading our EU-residency claims is exactly
-   the reader who will check. A clean route exists (hold attribution in `sessionStorage` and attach it
-   to the form submission, tying it to a purpose the user actively initiates rather than to ambient
-   tracking) — **but this is a decision about the product's legal posture, and it is the founder's.**
-
-**Starter prompt:**
-> Phase 0.3 — the demand instrument. Read PLAN.md (STATUS block, then Phase 0.3), METRICS.md §2.2 +
-> §6 + N15/N20/N26, DISTRIBUTION.md, and CLAUDE.md rule 10. **Plan mode first.**
-> This phase ships **no product code**: landing page + email capture + measurement + the post.
-> Build **measurement before the page** (§6): Plausible, EU-hosted, cookieless; first-touch UTM
-> persisted first-party so it can survive to `payment_succeeded` — **it cannot be bolted on at
-> Phase 4, and without it real CAC is uncomputable forever** (METRICS.md N29). Every number on the
-> scoreboard shows its sample floor beside it.
-> The artifact post is built on `experiments/001-*/out/corpus_md/JvbBFwlqxeI_full.md` (CC BY —
-> keep the attribution). **Stop and ask me** about the two open questions above; do not guess them.
-> 🚨 No Google Analytics, no US-hosted anything, no consent banner (rule 10). If it phones home to
-> the US, it does not ship.
+✅ The domain gate remains cleared — `https://mdreel.com` is live (INFRA.md).
 
 ---
 
@@ -312,18 +262,91 @@ is ordinary build work.
 ⚠️ **What Phase 1 did NOT prove: that Stage B *obeys* the boundaries.** It ships a deterministic input
 whose effect on the model is **unmeasured** — that needs a Vertex call. **Do not treat N7b as closed.**
 
-**Judgment calls made unsupervised are listed in `HANDOFF.md` at the repo root — read it before Phase 2.**
+**Judgment calls made unsupervised are listed in `HANDOFF.md` at the repo root — read it before
+Phase 3.** (HANDOFF.md predates the 2026-07-15 renumbering and calls the pipeline phase "Phase 2".)
 
-## Phase 2 — Stages B/C/D
+## Phase 2 — Frontend look & feel (mock-first, no product backend)
 
-Stage B against Vertex with structured output; record/replay fixtures + `tests/Live/`;
-Stage C fusion; Stage D persist + output renderer; source deletion.
+**Goal: see the whole product before the backend exists.** Every screen in `web/` (Next.js),
+running entirely on **committed fixtures** — the real Phase-0.2 corpus outputs are the mock data,
+so the look-and-feel review happens on genuine product output, not lorem ipsum.
+
+1. **Screens:** landing page (both headline arms wired, arm assignment stubbed) · free YouTube
+   tool (paste URL → mocked job progress → real Markdown from `experiments/001-*/out/corpus_md/`) ·
+   gallery (index + detail pages fed by the corpus files, attribution + original video embedded) ·
+   magic-link signup (stub, including the N20 one-field question) · upload + job status · output
+   viewer/download · **pricing page — ONE plan + the free tool, not tiers** (decided 2026-07-15;
+   tiers presuppose the A3 answer we do not have — METRICS.md A3).
+2. **Plumbing that cannot be bolted on later, built now even though it fires nothing:**
+   first-touch UTM capture persisted first-party (METRICS.md §6.3), `ab_arm` assignment, and the
+   METRICS.md §3 event names as a typed client module (stub transport). Without this, real CAC is
+   uncomputable forever (METRICS.md N29).
+3. **No product backend.** A thin mock API inside `web/` serving the fixtures is fine — it becomes
+   the first consumer of the Phase 2.5 contract.
+
+Model note: Sonnet-OK UI phase. Exit: every screen navigable end-to-end on mocks; founder has
+seen it and signed off on the look.
+
+**Starter prompt:**
+> Phase 2 — frontend look & feel. Read PLAN.md (STATUS, Phase 2), ARCHITECTURE §4–§5,
+> METRICS.md §3 + §6.3, and CLAUDE.md rule 10. **Plan mode first.** Build every screen in `web/`
+> on committed fixtures from `experiments/001-*/out/corpus_md/` — no product backend, no Vertex
+> calls. Wire first-touch UTM capture and the §3 event names now (stub transport). Pricing page
+> shows ONE plan + the free tool. No US-hosted anything (rule 10).
+
+## Phase 2.5 — Freeze the contracts (frontend ⇄ backend)
+
+Both contracts already exist as drafts — the work is **ratification, not invention**:
+
+1. **Markdown output contract** — ARCHITECTURE §4, reviewed against the real corpus outputs; fix
+   any drift between the spec and what the pipeline actually produced, then freeze. Consistency of
+   this schema across all files is a product feature — downstream RAG depends on it.
+2. **API contract** — ARCHITECTURE §5 trimmed to the MVP subset: the public YouTube-tool endpoint
+   + `POST /uploads`, `POST /jobs`, `GET /jobs/{id}` (status/polling shape), `GET
+   /jobs/{id}/output.md|json`, `DELETE /jobs/{id}` (erasure is not deferrable — GDPR).
+3. **Deliverables:** updated ARCHITECTURE §4/§5, a committed JSON schema + sample fixtures under
+   `tests/fixtures/`, and the Phase 2 frontend re-pointed at those fixtures — **the mocks consuming
+   the ratified fixtures is the proof the contract is real.**
+
+**Starter prompt:**
+> Phase 2.5 — freeze the frontend⇄backend contracts. Read PLAN.md (Phase 2.5), ARCHITECTURE §4–§5,
+> and the rendered outputs in `experiments/001-*/out/corpus_md/`. **Plan mode first.** Ratify the
+> Markdown output contract and the MVP API subset, commit schema + fixtures, re-point the Phase 2
+> mocks at them, and update ARCHITECTURE §4/§5 in the same commit.
+
+## Phase 3 — Simplest working pipeline (merges old "Stages B/C/D" + the thin trial slice)
+
+**The product is the validation instrument. Build only the instrument** — Stage B against Vertex
+with structured output; record/replay fixtures + `tests/Live/`; Stage C fusion; Stage D persist +
+output renderer; source deletion. Both ingestion paths, wired to the Phase 2 frontend, in the
+simplest form that honours the guards below.
 
 🚨 **First job of the phase, before any of the below: does Stage B actually honour Stage A's block
 boundaries?** Phase 1 can prove they are *emitted* (METRICS.md N7c); only a Vertex call proves they are
 *obeyed*. Put the boundaries in the prompt, run the window that failed, and count the blocks. **If the
 model ignores them, the fallback is to cut real segments at the boundaries** — which forces the issue
 at the price of more calls. Everything else in this phase is cheaper than this question.
+
+**Build order inside the phase: YouTube path first — it is the smaller half.** No Stage A, no
+upload, no GCS round-trip: Stage B directly on `fileData.fileUri` + offset segmentation → C → D,
+wired to the Phase 2 tool page. Free/public only.
+
+- **Free YouTube tool — the top-of-funnel hook.** Paste a YouTube URL → get Markdown. Zero
+  friction, zero trust required, wow in 60 seconds. This replaces "upload your confidential
+  internal recording to a stranger's website" as the first ask — which was a brutal opening
+  move and the biggest leak in the old funnel.
+  - ⚠️ **Abuse controls, day one:** cap at first ~10–15 min, **cache by video ID**, rate-limit
+    per IP. The YouTube path can't use the static-content lever, so it runs at the un-blended cost
+    (METRICS.md §1.2) — **1,000 abusive hour-long videos is real money against a fixed base this
+    small.** Enforce METRICS.md N10 (daily spend) and N11 (cache-hit rate); caching makes a popular
+    gallery page cost ≈ €0 on repeat views.
+- **Process the gallery corpus — 10–25 curated CC-licensed talks** — as the pipeline's shakedown
+  run. Pages exist since Phase 2; they go *public* at Phase 5. **Not a scaled content farm:**
+  curated + CC-licensed + attributed, or Google's scaled-content-abuse policy and rights-holders
+  make it a fight we cannot afford.
+
+**Then the private path — the real test:** magic-link signup → signed upload → Stage A (✅ built in
+Phase 1) → B → C → D → Markdown back by email/download. 2 h free. Nothing else.
 
 **Hard requirements carried in from the benchmark phases:**
 
@@ -339,29 +362,6 @@ at the price of more calls. Everything else in this phase is cheaper than this q
 - 🚨 **Two-sided coverage guard + per-timestamp normalization** (Phase 0.2). The model mixes
   `mm:ss:cs` and `hh:mm:ss` *within one response*; a one-sided guard accepted blocks at `04:48:10`
   in a 15-minute clip. **A citation to a timestamp that does not exist is worse than no citation.**
-
-**Second ingestion path:** the YouTube path (Stage B directly on `fileData.fileUri`, no Stage A,
-offset-based segmentation) lands here as a parallel, simpler pipeline. Free/public only.
-
-## Phase 3 — Thin trial slice (collapses old Phases 1 / 4 / 5)
-
-**The product is the validation instrument. Build only the instrument.**
-
-- **Free YouTube tool — the top-of-funnel hook.** Paste a YouTube URL → get Markdown. Zero
-  friction, zero trust required, wow in 60 seconds. This replaces "upload your confidential
-  internal recording to a stranger's website" as the first ask — which was a brutal opening
-  move and the biggest leak in the old funnel.
-  - ⚠️ **Abuse controls, day one:** cap at first ~10–15 min, **cache by video ID**, rate-limit
-    per IP. The YouTube path can't use the static-content lever, so it runs at the un-blended cost
-    (METRICS.md §1.2) — **1,000 abusive hour-long videos is real money against a fixed base this
-    small.** Enforce METRICS.md N10 (daily spend) and N11 (cache-hit rate); caching makes a popular
-    gallery page cost ≈ €0 on repeat views.
-- **Curated public gallery — 10–25 processed talks**, each with attribution + the original video
-  embedded. **Not a scaled content farm.** Mass auto-generated transcript pages are exactly what
-  Google's scaled-content-abuse policy targets, and republishing copyrighted transcripts at
-  volume is a fight we cannot afford. Curated + CC-licensed + attributed is defensible.
-- **The real test:** magic-link signup → upload **your own** recording → Markdown back by email.
-  2 h free. Nothing else.
 
 Infra: Cloud Run + GCS + in-process queue. **No Cloud SQL, no Cloud Tasks, no Terraform yet** —
 Cloud SQL idles at ~€25–50/mo, which is a meaningful fraction of the entire fixed base we are
@@ -379,12 +379,26 @@ signup, 2 h free → payment.
 > YouTube ingestion *cannot* serve the ICP anyway: Vertex only accepts public videos or ones
 > owned by **our** GCP account, so customers' unlisted/private recordings will never work.
 
-## Phase 4 — Payment link + funnel instrumentation
+**Starter prompt:**
+> Phase 3 — the pipeline, simplest working form. Read PLAN.md (STATUS, Phase 3), **HANDOFF.md**
+> (it calls this phase "Phase 2"), ARCHITECTURE §3, METRICS.md N7c/N4d/N10/N11, and CLAUDE.md
+> rules 8–9. **Plan mode first.** First job: prove Stage B obeys Stage A's boundaries (one Vertex
+> call, the window that failed). Then the YouTube path end-to-end behind the Phase 2 tool page
+> with day-one abuse controls; then the private upload path. Every Stage B call sets
+> `maxOutputTokens`, a bounded `thinkingBudget`, and a timeout (rule 9). Never download YouTube
+> bytes (rule 8).
+
+## Phase 4 — Payments + instrumentation (the pricing page goes live)
 
 - **ONE Stripe payment link.** Not three tiers. Not metered overage. Not a free-trial gate.
-  → **This is the A2 test.** Nobody clicks it = it's a vitamin, not a painkiller.
+  → **This is the A2 test.** Nobody clicks it = it's a vitamin, not a painkiller. The Phase 2
+  pricing page (one plan + free tool) goes live with the real link.
 - **Instrumentation — the whole point of the phase.** Events: signup, YT-tool use, upload,
-  download, **second upload**, checkout click.
+  download, **second upload**, checkout click — the METRICS.md §3 schema, flowing into our own
+  Postgres (the §6.2 source of truth). The Phase 2 client module gets its real transport here.
+  Where that Postgres lives (smallest Cloud SQL vs. a container next to the worker) is decided at
+  the top of this phase — and Umami (Phase 5) shares the same instance, never a second one
+  (METRICS.md §6.2).
 - 🚨 **Cohort hour-decay, instrumented before the first user.** Hours uploaded in week 1 vs.
   week 4, per signup cohort. **This is the A3 test, and A3 decides what business we are in**
   (decision rule: METRICS.md A3). If it says backfill, the correct product is a **prepaid credit
@@ -392,12 +406,70 @@ signup, 2 h free → payment.
   it first or lose the data forever.**
 - **The N20 signup field** (METRICS.md) ships here too: archive-hours vs monthly-hours, one
   skippable control. **It reads A3 roughly two months before the cohort data can.**
+- **First-touch UTM attribution verified end-to-end:** the Phase 2 capture must land on the tenant
+  row and survive to `payment_succeeded` (METRICS.md §6.3) — test it before launch, not after.
 
-## Phase 5 — Read the data → choose the pricing model
+**Starter prompt:**
+> Phase 4 — payments + instrumentation. Read PLAN.md (Phase 4), METRICS.md §3 + §6 + N20/N29, and
+> ARCHITECTURE §6. **Plan mode first.** One Stripe payment link; the §3 event schema into our own
+> Postgres; cohort hour-decay + the N20 field instrumented before any user exists; UTM survival to
+> `payment_succeeded` proven by a test. Pricing page: ONE plan.
 
-Was *"lock pricing / onboard design partner #1"*. Pricing is now an **output** of the cohort
-data, not an input decided in advance. Rerun the benchmark matrix through the real pipeline;
-set pricing from A3; write the verdict into BUSINESS_MODEL §6.
+## Phase 5 — 🚀 LAUNCH (the old Phase 0.3, upgraded) — ⏱️ T0 starts here
+
+**Everything goes live at once, against a full funnel.** ⏱️ **T0 — the time-box (METRICS.md §2.2)
+starts on the day the first post ships. Record the date in METRICS.md §2.2.** If the ship-by gate
+(METRICS.md §2.2 SB) fires first, this phase runs with whatever exists — that is the rule.
+
+Work:
+
+1. **Measurement, before the first visitor** (METRICS.md §6):
+   - **Umami, self-hosted in the EU, cookieless** — no consent banner, no funnel tax; shares the
+     Phase 4 Postgres instance (METRICS.md §6.2). 🚨 **Never Google Analytics** (CLAUDE.md rule 10).
+   - The weekly scoreboard: signup-rate by referrer (the §6.5 qualification proxy), and **the
+     sample floor displayed next to every number** (§6.6).
+2. **Landing page headline A/B** — live arm assignment on the Phase 2 wiring:
+   - Arm A — *"Your recordings never leave the EU."*
+   - Arm B — *"Your AI assistant can't see what's on screen in your videos."*
+   - **This is the A1 test.** If Arm A does not clearly beat Arm B, **EU is a checkbox, not a
+     wedge**, and all positioning moves to the capability story. Directional, not significant.
+3. **Gallery goes public** — the 10–25 talks processed in Phase 3, curated, attributed, originals
+   embedded.
+4. **The artifact post** — the single best inbound asset, and it's already written: side-by-side
+   *plain transcript vs. mdreel Markdown*, plus a RAG answering a question that is **only**
+   answerable from on-screen content. ✅ **The material exists and is legally shareable:**
+   `experiments/001-*/out/corpus_md/JvbBFwlqxeI_full.md` — the FOSDEM talk, CC BY, processed
+   end-to-end, attribution inside the file. Channels: LinkedIn (existing .NET/architecture audience
+   — the cheapest traffic source available, by an order of magnitude), HN, r/RAG, r/LocalLLaMA.
+5. **Ad tranche T-LAUNCH** (METRICS.md N27): one-time, Google Search, long-tail exact/phrase.
+   **Buys evidence, not customers** — real CPCs, cost per signup, a clean A1 verdict on *cold*
+   traffic, and **measured N12**. Hard stop at budget. Per-keyword kill rule per METRICS.md §6.7.
+
+> **Broadcasting is not outreach.** This requires zero 1:1 contact with anyone.
+
+### 🔑 Founder pre-flight — the agent cannot do these
+
+| Founder-only | Why the agent can't |
+|---|---|
+| ~~Buy + verify the domain~~ **✅ done 2026-07-15** (`mdreel.com` live, INFRA.md) | — |
+| ~~Analytics account~~ **✅ obsolete** — Umami is self-hosted, no account exists | — |
+| **Google Ads account + payment method** (T-LAUNCH) | Your card. *Agent writes the campaign, keywords, negatives — nothing spends without you.* |
+| **Post to LinkedIn / HN / Reddit** | Your identity and your voice. *Agent drafts; you publish.* |
+| 🚨 **The consent decision** (carried from old 0.3): is first-party UTM persisted to `payment_succeeded` "strictly necessary" under GDPR, or does attribution live in `sessionStorage` and attach only at signup? | **A decision about the product's legal posture — the founder's.** A DPO reading our EU-residency copy is exactly the reader who will check. |
+
+**Starter prompt:**
+> Phase 5 — LAUNCH. Read PLAN.md (STATUS, Phase 5), METRICS.md §2.2 + §6 + N15/N26/N27,
+> DISTRIBUTION.md, and CLAUDE.md rule 10. **Plan mode first.** Measurement before the first
+> visitor: Umami self-hosted EU (shared Postgres), scoreboard with sample floors. Then A/B live,
+> gallery public, draft the artifact post + the ads campaign for founder review. **Stop and ask
+> me** about the consent decision; do not guess it. Record T0 in METRICS.md §2.2 the day the first
+> post ships. 🚨 No Google Analytics, no US-hosted anything, no consent banner (rule 10).
+
+## Phase 6 — Read the data → choose the pricing model (was Phase 5)
+
+Pricing is an **output** of the cohort data, not an input decided in advance. Rerun the benchmark
+matrix through the real pipeline; set pricing from A3; write the verdict into BUSINESS_MODEL §6.
+The one-plan pricing page from Phase 4 stays until this phase says otherwise.
 
 **Kill criteria — the honest version.** If, past the sample floors (METRICS.md §2.1): nobody pays,
 the EU headline arm loses the A/B, and cohort hour-decay says backfill — **stop.** The TAM

@@ -49,6 +49,7 @@ PATTERNS=(
   '€65M'           # N16 TAM
   '2–5%'           # N12 visitor -> trial
   '5–15%'          # N13 trial -> paid
+  '2026-09-15'     # SB  MVP ship-by gate (§2.2)
 )
 
 fail=0

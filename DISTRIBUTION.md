@@ -1,7 +1,7 @@
 # DISTRIBUTION — how mdreel gets in front of people
 
 > Living doc. Owns **A5 — the top risk in the business.** Companion to BUSINESS_MODEL.md (§7 is
-> the strategic sketch; this file is the operating plan) and PLAN.md Phase 0.3.
+> the strategic sketch; this file is the operating plan) and PLAN.md Phase 5 (launch).
 > Created 2026-07-14 from `experiments/agents/out/w1-decision-memo.md`.
 
 ## Why this document exists
@@ -38,9 +38,14 @@ effort, and sustained effort is exactly what a founder with a day job does not r
 **The question stopped being *"can I afford to wait?"* and became *"will I still be publishing in
 month nine?"*** That is what the time-box (METRICS.md §2.2) tests, and the answer is allowed to be no.
 
-**The corollary that reorders the roadmap:** content compounds over *months*. Building for three
-months and *then* starting to publish serializes the two slowest processes in the company.
-**Distribution starts at PLAN.md Phase 0.3, in parallel with all engineering.**
+**The sequencing decision — reversed 2026-07-15.** The original rule ("distribution starts first,
+in parallel with all engineering") lost to a stronger fact about the launch surfaces themselves:
+HN/LinkedIn/Reddit posts are largely **one-shot**, and pointing that first wave at an email-capture
+box converts in the low assumed range, while a live paste-a-URL tool is the high-conversion
+scenario that makes paid acquisition viable at all (METRICS.md §1.6). **So the MVP ships first and
+everything launches at once — PLAN.md Phase 5.** The cost of the reversal is that the *build* can
+now rot instead of the publishing; that risk is carried by the hard **ship-by gate (METRICS.md
+§2.2 SB)** — if the date arrives first, launch with whatever exists.
 
 ## The core insight: the product is the marketing
 
@@ -114,7 +119,7 @@ whether GDPR is a genuine blocker or a form field, **because we were the ones wh
 **unprompted** GDPR mention in an inbound reply is a strictly stronger A1 signal than the A/B.
 **Log those separately.**
 
-## The launch artifact (Phase 0.3) — already written
+## The launch artifact (PLAN.md Phase 5) — already written
 
 Side-by-side: **plain transcript vs. mdreel Markdown**, plus a RAG answering a question that
 is **only** answerable from on-screen content. This is the entire pitch in one image.
@@ -124,7 +129,7 @@ public CC corpus (PLAN.md Phase 0.2) unblocks it.**
 
 ## The A1 experiment — is EU actually the wedge?
 
-Landing-page headline A/B (PLAN.md Phase 0.3):
+Landing-page headline A/B (PLAN.md Phase 5):
 
 - **Arm A —** *"Your recordings never leave the EU."*
 - **Arm B —** *"Your AI assistant can't see what's on screen in your videos."*
@@ -161,7 +166,7 @@ neither "yes" nor "no":
 
 | Job | Verdict | Why |
 |---|---|---|
-| **1 — Buy evidence** | ✅ **Fund now (T-A / N26)** | N12 and N13 are guesses and *every* traffic number derives from them. Paid replaces them with measured values in ~3 weeks; organic takes months. **And it is a better instrument than organic for A1:** LinkedIn sends warm, biased visitors who already know the founder — a terrible sample for testing whether "EU residency" converts a *stranger*. Search sends **cold, intent-matched, randomizable** traffic. |
+| **1 — Buy evidence** | ✅ **Fund at launch (T-LAUNCH, METRICS.md N27)** | N12 and N13 are guesses and *every* traffic number derives from them. Paid replaces them with measured values in ~3 weeks; organic takes months. **And it is a better instrument than organic for A1:** LinkedIn sends warm, biased visitors who already know the founder — a terrible sample for testing whether "EU residency" converts a *stranger*. Search sends **cold, intent-matched, randomizable** traffic. |
 | **2 — Buy customers** | 🛑 **Blocked on A3** | The CAC ceiling swings ~10× on whether usage is recurring flow or one-time backfill, and **A3 has zero evidence.** Scaling paid before A3 is how a bootstrapped company scales into a wall — it feels like growth right up until the cohort data lands. |
 | **3 — Buy reach on LinkedIn** | ❌ **Don't** | €6–12/click to reach the .NET/architecture audience **already reached organically, for free.** The worst euro available. Revisit only if organic proves that audience converts *and* its reach is exhausted. |
 

@@ -95,7 +95,8 @@ Metric: **hours of video processed**. Simple, scales with value, easy to predict
 > ⚠️ **Prices above are hypotheses and are now explicitly gated on the A3 finding** (see §8).
 > If usage turns out to be one-time **backfill** rather than recurring **flow**, subscription
 > tiers are the wrong instrument entirely and this table becomes a **prepaid credit pack**
-> (*"€200 for 20 hours"*). Do not lock these prices until PLAN.md Phase 5.
+> (*"€200 for 20 hours"*). Do not lock these prices until PLAN.md Phase 6. The MVP ships a
+> **one-plan pricing page + the free tool** (PLAN.md Phase 4), not this table.
 
 ### Unit economics — measured, and no longer the risk
 
@@ -112,7 +113,7 @@ What matters at the business level, and only this:
 - 🎯 **The binding constraint is retained paying accounts (METRICS.md N1a), not COGS.** Everything
   in this document should be read against it.
 - ⚠️ **Two caveats that could still move the numbers:** the ledger currently omits ~30% of true
-  COGS (ffmpeg/Cloud Run compute is metered nowhere — CLAUDE.md rule 6, closed in PLAN.md Phase 2),
+  COGS (ffmpeg/Cloud Run compute is metered nowhere — CLAUDE.md rule 6, closed in PLAN.md Phase 3),
   and the figures cover **one** content category so far (PLAN.md Phase 0.2 closes the other two).
 
 ## 7. Go-to-market
@@ -122,8 +123,10 @@ What matters at the business level, and only this:
 > The motion is **self-serve / inbound**. → **DISTRIBUTION.md is authoritative**; this is the summary.
 
 **The consequence, stated plainly:** with no outreach, **traffic becomes the long pole and the
-top risk (A5)** — every other question is only *reachable* through it. Distribution therefore
-starts at PLAN.md Phase 0.3 and runs **in parallel with all engineering**, never after it.
+top risk (A5)** — every other question is only *reachable* through it. **Sequencing reversed
+2026-07-15:** the MVP ships first and everything launches at once (PLAN.md Phase 5), so the first
+one-shot wave of posts lands on a live tool rather than an email box; the build is held to the
+hard ship-by gate (METRICS.md §2.2 SB). → DISTRIBUTION.md for the reasoning.
 
 1. **The product is the marketing.** Free public YouTube tool → paste a URL, get real Markdown in
    60 s, no signup, no trust required. It replaces *"upload your confidential internal recording

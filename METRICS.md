@@ -67,7 +67,7 @@ before the cheapest tier stops earning.
 > justify optimization work. **N1 is the constraint. Guard the margin; stop chasing it.**
 >
 > ⚠️ **N5 is an estimate, and it is ~30% of true COGS.** The ledger meters LLM calls and *not*
-> compute. Until PLAN.md Phase 2 closes this, every figure here is optimistic by roughly a third
+> compute. Until PLAN.md Phase 3 closes this, every figure here is optimistic by roughly a third
 > (CLAUDE.md rule 6).
 >
 > ⚠️ **Scope:** one content category only (demo screen-recording). Slide-talk and talking-head are
@@ -83,7 +83,7 @@ local bytes → no ffmpeg → no *per-segment* static detection), so the N4 blen
 | **N4a** | Stage B, default media resolution | **0.45** | measured | Range 0.41–0.51 across 6 videos. ⚠️ **"Flat across categories" is true only of the INPUT** — video tokenizes at a fixed 258 tok/s regardless of what is on screen. It is **not** true of the total: output is the other half of the bill, and output scales with on-screen text density. See **N4d**. |
 | **N4b** | **⭐ Stage B, blanket `MEDIA_RESOLUTION_LOW`** | **0.28** | measured | **The lever survives after all.** Stage A's *per-segment* static routing is impossible here, but `mediaResolution` is a **request-level** knob needing no local analysis. 3.9× fewer video tokens; quality held (coverage 98% vs 97%, OCR still verbatim). **Reconfirmed in Phase 0.2** on a licensed 5-video corpus: 0.22–0.29 €/video-hour, first clean 10-minute segment. |
 | **N4c** | **🚩 Public-path LLM subtotal** = N4b + Stage C fusion | **≈ 0.38** | derived | **The number that sizes N10.** Assumes the public path runs at low media resolution by default — it should. **Holds only where Stage B does not overflow — i.e. the Phase-3 free tool, which is capped at the first 10 minutes. It is NOT the cost of a whole dense video: that is N4d.** |
-| **N4d** | 🚨 **Dense slide-heavy talk, processed IN FULL** (Stage B + C, incl. overflow retries) | **≈ 3.80** | measured, **n = 1** | **~13× N4c, and the most uncomfortable number in this file.** A 29-minute FOSDEM talk needed **22 Stage B calls**: dense slides blow the 65,535-token output cap even at a 10-minute segment, and the overflow response (halve and re-run) **pays for the failed parent call and both halves**. Measured once, and it is **strategy-dependent, not physics** — a pipeline that segments dense content shorter *up front* avoids the wasted parent calls. **Treat as an upper bound on a naive implementation, and as the reason Phase 2 must not ship one.** |
+| **N4d** | 🚨 **Dense slide-heavy talk, processed IN FULL** (Stage B + C, incl. overflow retries) | **≈ 3.80** | measured, **n = 1** | **~13× N4c, and the most uncomfortable number in this file.** A 29-minute FOSDEM talk needed **22 Stage B calls**: dense slides blow the 65,535-token output cap even at a 10-minute segment, and the overflow response (halve and re-run) **pays for the failed parent call and both halves**. Measured once, and it is **strategy-dependent, not physics** — a pipeline that segments dense content shorter *up front* avoids the wasted parent calls. **Treat as an upper bound on a naive implementation, and as the reason Phase 3 must not ship one.** |
 
 > **Audio is now the floor.** At low media resolution, audio (priced 3.3× video per token) plus
 > *output* tokens are the bulk of the call. Cutting video resolution further buys almost nothing.
@@ -100,7 +100,7 @@ local bytes → no ffmpeg → no *per-segment* static detection), so the N4 blen
 |---|---|---|---|
 | **N7** | **Runaway-generation rate** — Stage B calls hitting `maxOutputTokens` | **> 8%** (measured baseline) | Guards regressed (ARCHITECTURE §3). Source of the 1.3× retry overhead in §1.2. ⚠️ **The 8% baseline is a whole-corpus average and it hides the case that matters: on dense slide-heavy footage the overflow rate is far higher — Phase 0.2 saw 2 of 2 slide talks overflow at a 15-min window, and the dense middle of one overflow even at 10 min.** Track this **per content category**, not as one number; the average is reassuring precisely where the product is weakest. |
 | **N7b** | ⚠️ **Under-segmentation on continuous screen recordings** — Stage B blocks per 10-min segment | **< 10** | The model emits ~86 s blocks on continuous screen-recorded footage (7 blocks/10 min) versus ~25 s on slide talks. Seen in **all three phases** (0, 0.1, 0.2) — it is reproducible, not noise. **This is the ICP's own content type** (internal demos, screen recordings), so it is the weakest category in the most important place. Coarse blocks = coarse citations. |
-| **N7c** | ⭐ **Stage A forced-cue floor** — block boundaries Stage A *hands* Stage B, per 10-min segment (private path only) | **< 13** | The answer to **N7b**, and the reason Stage A exists beyond cost. Stage A computes boundaries from the bytes and gives them to Stage B, so granularity stops depending on the model noticing anything. Measured locally on the **exact window that produced the N7b failure**: **7 → 17.1 boundaries per 10 min, worst block 162 s → 49 s.** ⚠️ **This measures what Stage A *emits*, not what Stage B *obeys*** — that verdict needs a Vertex call and is the first thing Phase 2 must check. Thresholds are **assumed (n = 1 recording)**, not measured. |
+| **N7c** | ⭐ **Stage A forced-cue floor** — block boundaries Stage A *hands* Stage B, per 10-min segment (private path only) | **< 13** | The answer to **N7b**, and the reason Stage A exists beyond cost. Stage A computes boundaries from the bytes and gives them to Stage B, so granularity stops depending on the model noticing anything. Measured locally on the **exact window that produced the N7b failure**: **7 → 17.1 boundaries per 10 min, worst block 162 s → 49 s.** ⚠️ **This measures what Stage A *emits*, not what Stage B *obeys*** — that verdict needs a Vertex call and is the first thing Phase 3 must check. Thresholds are **assumed (n = 1 recording)**, not measured. |
 | N8 | All-in COGS per video-hour (LLM **+ compute**) | > €1.50 | Guardrail breached — investigate. |
 | N9 | Wall-clock per video-hour | > 15 min | SLO breach. Gated on the N7 guards — one unbounded call alone blows this. |
 | N10 | Free YouTube tool spend | > €5/day | Abuse. Caps + cache are failing. **Sized off N4c:** at the Phase-3 10-min cap, one uncached request ≈ €0.06, so the daily cap ≈ **80 uncached videos/day**. Comfortable for a demo tool, and cheap to defend. |
@@ -226,23 +226,25 @@ do not have the €400. **Pinned rule: CAC payback ≤ 3 months.**
 
 | # | Tranche | When | Budget | Buys an answer to | 🚨 Gate to proceed |
 |---|---|---|---|---|---|
-| **N26** | **T-A — price discovery** | After PLAN.md Phase 0.3 (page + gallery live) | **€300–400, one-time** | Real CPCs on our long-tail terms · cost per email capture · **a clean A1 verdict on *cold* traffic** | — |
-| **N27** | **T-B — the decisive read** | After Phase 3 (YouTube tool + signup live) | **€500–800, one-time** | 🚨 **Measured N12.** Does the tool lift conversion into the range where N25 permits real keywords? | T-A found **any** keyword under the N25 line |
-| **N28** | **T-C — scale or kill** | After Phase 4 **and** A3 has returned | CAC-driven | Real CAC. Scale or stop. | **A3 = flow, AND measured CAC < N23.** **If A3 = backfill, paid acquisition is dead** — the product becomes a prepaid credit pack sold organically. |
+| **N26** | ~~**T-A — price discovery**~~ **MERGED into N27** (2026-07-15) | — | — | *Was: real CPCs + cost per capture + cold A1, against a bare capture page.* **T-A was an artifact of the old sequencing:** its own gate ("page **and gallery** live") already pointed past the phase it sat in. With launch moved after the MVP, page, gallery, tool and checkout all go live together, and one tranche buys everything T-A and T-B bought separately. | — |
+| **N27** | **T-LAUNCH — the decisive read** | At PLAN.md Phase 5 (launch: page + gallery + tool + signup + Stripe link all live) | **€500–800, one-time** | Real CPCs on our long-tail terms · cost per signup · **a clean A1 verdict on *cold* traffic** · 🚨 **Measured N12.** Does the tool lift conversion into the range where N25 permits real keywords? | — |
+| **N28** | **T-C — scale or kill** | After **A3 has returned** (post-launch) | CAC-driven | Real CAC. Scale or stop. | **A3 = flow, AND measured CAC < N23.** **If A3 = backfill, paid acquisition is dead** — the product becomes a prepaid credit pack sold organically. |
 
 **Hard constraints.**
 
 - **Spend nothing before the landing page *and* gallery exist** — otherwise you are paying for
-  traffic with nothing to convert on.
-- **Until the Stripe link ships (Phase 4), `trial→paid` (N13) cannot be measured at all.** T-A and
-  T-B therefore buy **conversion and A1 — never CAC.** ⚠️ **Do not mistake a good cost-per-signup in
-  T-B for a viable CAC.** That error is how a paid budget survives its own disproof.
+  traffic with nothing to convert on. Under the 2026-07-15 sequencing this is satisfied by
+  construction: nothing spends before Phase 5.
+- **The Stripe link is live at launch, so `trial→paid` (N13) *accrues* from day one — but below the
+  §2.1 sample floors T-LAUNCH still buys conversion and A1 — never CAC.** ⚠️ **Do not mistake a good
+  cost-per-signup in T-LAUNCH for a viable CAC.** That error is how a paid budget survives its own
+  disproof.
 - **Per-keyword kill rule, mechanical, no deliberation:** if a keyword's cost-per-signup implies a
   CAC above **N23**, pause it that week.
 
-**Why paid is worth funding *now*, despite all of the above:** **N12 and N13 are guesses, and every
-traffic number in this file derives from them.** Paid search replaces them with measured values in
-~3 weeks; organic takes months. **And paid is a strictly *better instrument* than organic for A1:**
+**Why paid is worth funding at launch, rather than left to organic:** **N12 and N13 are guesses,
+and every traffic number in this file derives from them.** Paid search replaces them with measured
+values in ~3 weeks; organic takes months. **And paid is a strictly *better instrument* than organic for A1:**
 LinkedIn sends warm, biased visitors who already know the founder — a terrible sample for testing
 whether "EU residency" converts a *stranger*. Search sends **cold, intent-matched, randomizable**
 traffic. **For settling A1, €400 of search beats nine months of posting to people who like you.**
@@ -286,7 +288,8 @@ is wrong.** Set the honest-read date in advance; call nothing before it.
 
 | # | | Value |
 |---|---|---|
-| **T0** | **Start.** First publication of the demand instrument (PLAN.md Phase 0.3). | *set on the day — record it here* |
+| **SB** | 🚧 **MVP ship-by gate** (decided 2026-07-15). The MVP (PLAN.md Phases 2–4) must be live by this date. **If it is not, launch anyway with whatever exists.** Launching after the build moved the zombie surface from distribution onto the build itself — this gate is the transferred deadline discipline. | **2026-09-15** |
+| **T0** | **Start.** First publication — the PLAN.md Phase 5 launch. | *set on launch day — record it here* |
 | **T1** | **Checkpoint.** Honest read. No verdict may be called before this. | **T0 + 4 months** |
 | **T** | **🚨 DEADLINE.** A5 is settled here, one way or the other. | **T0 + 9 months** |
 
@@ -441,7 +444,7 @@ future self in a hurry, six months from now.
 
 | Layer | Tool | Scope |
 |---|---|---|
-| **Pre-signup analytics** | **Plausible (EU-hosted)** | Visitors, referrer, page. **Cookieless ⇒ no consent banner ⇒ no funnel tax.** This is the *only* instrument that exists during PLAN.md Phase 0.3, and it is sufficient. |
+| **Pre-signup analytics** | **Umami, self-hosted in the EU** (our own GCP, EU region; shares the product's Postgres instance — never a second idle database) | Visitors, referrer, page. **Cookieless ⇒ no consent banner ⇒ no funnel tax.** Goes live with the PLAN.md Phase 5 launch. **Decided 2026-07-15 (was Plausible):** self-hosting keeps analytics data on our own EU infra and off the subprocessor list entirely. |
 | **Post-signup events** | **Our own Postgres** (§3 schema) | 🔑 **The source of truth. Not a third-party tool.** Every event already carries `referrer` and `ab_arm`. |
 | **Revenue** | **Stripe** | From Phase 4. Do not rebuild it. |
 | **Ad cost** | **Google Ads** (delivery only) | ✅ Google **Ads** is fine — that is ad *delivery*. ❌ The Google **tracking pixel** is not. Conversions are measured in our own DB (§6.3), which is more accurate anyway. |
@@ -456,8 +459,8 @@ future self in a hurry, six months from now.
 `payment_succeeded`.**
 
 ⚠️ **If the UTM does not survive to the payment row, real CAC cannot be computed — and we will end
-up trusting Google's number instead.** Attribution has to be designed in at Phase 3, not bolted on
-at Phase 4.
+up trusting Google's number instead.** Attribution has to be designed into the frontend at PLAN.md
+Phase 2, not bolted on at Phase 4.
 
 ### 6.4 🚨 Ad spend belongs in the cost ledger
 
@@ -500,9 +503,8 @@ cannot observe.** So in practice:
 
 | Phase | The numbers that matter | Reads |
 |---|---|---|
-| **0.3** | Visitors by referrer · email captures by referrer · **capture-rate by referrer** (the §6.5 proxy). Once **T-A** runs: CPC + cost-per-capture **by keyword**. | A5, A1, real CPCs |
-| **3** | 🚨 **visitor → signup (N12).** | **The decisive number** — it sets N25 and therefore whether paid acquisition exists at all. Plus `upload_repeat` → A4. |
-| **4** | trial → paid (N13) · **real CAC by keyword vs. N23** · cohort hour-decay · Stripe revenue vs. **N1a** | A2, A3, the goal |
+| **5 — launch** | Visitors by referrer · 🚨 **visitor → signup (N12)** — **the decisive number**, it sets N25 and therefore whether paid acquisition exists at all · **signup-rate by referrer** (the §6.5 proxy). Once **T-LAUNCH** runs: CPC + cost-per-signup **by keyword**. | A5, A1, N12, real CPCs |
+| **post-launch** | trial → paid (N13) · **real CAC by keyword vs. N23** · cohort hour-decay · `upload_repeat` · Stripe revenue vs. **N1a** | A2, A3, A4, the goal |
 
 ### 6.7 Cadence
 

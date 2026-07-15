@@ -56,7 +56,7 @@ down for enterprise compliance, the public path dies. Keep it isolated from the 
 | Payments | Stripe (EU entity, EUR) | Subscriptions + metered overage. |
 | IaC | Terraform | Region pinning and org policy as code from day one. |
 | Observability | Cloud Logging + OpenTelemetry traces; per-job cost ledger in DB | Founder's standard; per-job token/cost tracking is a product feature (usage page), not just ops. |
-| **Analytics** | **Plausible (EU-hosted), cookieless** — pre-signup only. Post-signup truth is our own `events` table. | **CLAUDE.md rule 10 — no US analytics, ever.** Cookieless ⇒ **no consent banner ⇒ no funnel tax**, and it becomes a line on `/gdpr` rather than a liability. METRICS.md §6. |
+| **Analytics** | **Umami, self-hosted in the EU, cookieless** (decided 2026-07-15; was Plausible) — pre-signup only, shares the product's Postgres instance. Post-signup truth is our own `events` table. | **CLAUDE.md rule 10 — no US analytics, ever.** Cookieless ⇒ **no consent banner ⇒ no funnel tax**; self-hosted ⇒ analytics data never leaves our own EU infra and no subprocessor is added. METRICS.md §6. |
 
 Org policy: `constraints/gcp.resourceLocations` restricted to EU. All service accounts least-privilege. CMEK: not in MVP, keep design compatible.
 
@@ -107,7 +107,7 @@ Org policy: `constraints/gcp.resourceLocations` restricted to EU. All service ac
 > blocks — *worse* than the status quo. Tried, measured, rejected (METRICS.md N7c).
 >
 > ⚠️ **Phase 1 proves what Stage A *emits*, not what Stage B *obeys*.** That verdict needs a Vertex call
-> and is the first thing Phase 2 must check. If the model ignores the cues, the fallback is cutting real
+> and is the first thing Phase 3 must check. If the model ignores the cues, the fallback is cutting real
 > segment boundaries at them — which forces the issue, at the price of more calls.
 
 ### Stage B — Segment analysis (Vertex Gemini, native video)
@@ -162,7 +162,7 @@ and bills twice. Phase 0.2 paid for exactly that.
 > content analysis, guaranteed to terminate, and the pieces are exactly what Stage C already fuses.
 >
 > ⚠️ **But naive halving is a cost amplifier — you pay for the failed parent AND both halves**
-> (METRICS.md **N4d**: ~13× on a dense talk). Phase 2 must **segment dense content shorter up
+> (METRICS.md **N4d**: ~13× on a dense talk). Phase 3 must **segment dense content shorter up
 > front**, using halving only as the backstop. Shipping the naive loop is shipping N4d.
 
 ⚠️ **Guard coverage on BOTH sides.** An under-coverage guard alone is half a guard: Phase 0.2
@@ -274,8 +274,8 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
 - 🔑 **`tenants.first_utm_*` / `first_referrer` / `ab_arm`.** Attribution must be **first-party** and
   must **survive from first touch all the way to `payment_succeeded`.** Ad platforms report their
   own conversions and are marking their own homework; **the only trustworthy CAC is our spend ÷ our
-  payments, joined on our data** (METRICS.md §6.3). **Design this in at Phase 3 — it cannot be
-  bolted on at Phase 4.**
+  payments, joined on our data** (METRICS.md §6.3). **Design this into the frontend at PLAN.md
+  Phase 2 — it cannot be bolted on at Phase 4.**
 - 🚨 **`ad_spend`.** Ad euros are a real cost that is currently metered nowhere — **the same bug as
   the ffmpeg omission.** Contribution per account is a fiction if acquisition cost is missing from
   it. CLAUDE.md rule 6 now covers ad spend as well as LLM calls and compute.
@@ -286,8 +286,9 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
 - **Retention by design:** source video deleted post-processing by default; configurable; documented data-flow diagram on /gdpr page.
 - **Erasure:** `DELETE /jobs/{id}` cascades storage + DB; audit-logged.
 - **No training on customer data:** Vertex AI standard terms + contractual clause in our DPA; stated publicly.
-- **Subprocessor list (short, published):** Google Cloud (EU regions), Stripe, email provider,
-  **Plausible (EU-hosted analytics)**. That's it for MVP — and the shortness is itself the product.
+- **Subprocessor list (short, published):** Google Cloud (EU regions), Stripe, email provider.
+  That's it for MVP — and the shortness is itself the product. (Analytics is **self-hosted Umami**
+  on our own EU GCP — not a subprocessor at all.)
 - 🚨 **No US-based analytics or tracking, on any property, ever** (CLAUDE.md rule 10). **Google
   Analytics is prohibited** — ruled unlawful by several EU DPAs over US transfers. Analytics is
   **cookieless, so there is no consent banner.** Applies equally to heatmaps, session replay, chat
@@ -311,7 +312,7 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
 - 🚨 **The ledger must meter compute, not just LLM calls.** ffmpeg transcode/segmentation on Cloud
   Run is **~30% of true COGS and is currently metered nowhere** — every cost figure we hold is
   optimistic by roughly a third until this lands. CLAUDE.md rule 6 is extended from "every LLM
-  call" to "every LLM call **and every compute step**". → PLAN.md Phase 2.
+  call" to "every LLM call **and every compute step**". → PLAN.md Phase 3.
 - **Levers, in order of impact:**
   1. **Low media resolution** (`mediaResolution: MEDIA_RESOLUTION_LOW`) — measured ~45% cheaper.
      **fps-reduction was tested and rejected:** it destabilizes timestamps and coverage.
@@ -340,7 +341,7 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
   also be the cure. Stage A forces boundaries on **elapsed narration** and suppresses them on
   **silence** — a signal that needs the *audio*, which needs the bytes, which is why the public path can
   never do it (§3).
-  ⚠️ Still unproven: whether Stage B *honours* the boundaries. Phase 2's first job.
+  ⚠️ Still unproven: whether Stage B *honours* the boundaries. Phase 3's first job.
 
 ## 9. Build order
 

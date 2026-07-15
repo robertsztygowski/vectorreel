@@ -66,7 +66,8 @@ gcloud run deploy vectorreel-web --source web --region europe-west1 \
 **`https://mdreel.com` serves the landing page over HTTPS.** Google-managed cert (issuer: Google
 Trust Services `WR3`, `CN=mdreel.com`), backed by `vectorreel-web` in `europe-west1`. **Cloudflare is
 DNS-only (grey cloud)** — no US-jurisdiction proxy in the request path; Google (EU) serves both the
-page and the TLS. **This clears the domain gate on PLAN.md Phase 0.3** (measurement, ads, first post).
+page and the TLS. **This clears the domain gate for launch — PLAN.md Phase 5, formerly Phase 0.3**
+(measurement, ads, first post).
 
 **How it was set up (for reference / reproduction):**
 - Cloudflare zone `mdreel.com` (Free); registrar nameservers → Cloudflare's two.
