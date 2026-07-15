@@ -41,29 +41,46 @@ gcloud services enable cloudtasks.googleapis.com secretmanager.googleapis.com \
 | Item | Value |
 |---|---|
 | **Service** | `vectorreel-web` |
-| **Region** | `europe-central2` (Warsaw, EU) |
-| **URL** | https://vectorreel-web-92936629017.europe-central2.run.app |
+| **Region** | `europe-west1` (Belgium, EU) — **moved here 2026-07-15**; `europe-central2`/`europe-west3` are NOT among the 8 Cloud Run domain-mapping-supported regions, so a native mapping needs an EU region that is |
+| **URL** | https://vectorreel-web-92936629017.europe-west1.run.app |
 | **Access** | public (`--allow-unauthenticated`) |
-| **Container** | nginx:1.27-alpine serving static site on port 8080 |
-| **Scaling** | min 0 / max 3 instances, 256Mi / 1 CPU (scale-to-zero) |
+| **Container** | nginx static site (`web/Dockerfile`, port 8080) |
+| **Scaling** | min 0 (scale-to-zero); deploy defaults otherwise |
 | **Source** | `web/` (index.html, styles.css, favicon.svg, Dockerfile, nginx.conf) |
-| **Deployed** | 2026-07-14, first revision `vectorreel-web-00001-lvc` |
+| **Deployed** | 2026-07-15, revision `vectorreel-web-00001-8zw` |
 
-Build artifacts land in Artifact Registry repo `cloud-run-source-deploy` (auto-created, europe-central2).
+⚠️ **A now-stale `vectorreel-web` copy still runs in `europe-central2`** (the original). **Delete it once
+`mdreel.com` serves from west1:**
+`gcloud run services delete vectorreel-web --region europe-central2 --project tensile-runway-442915-j6`
+
+Build artifacts land in Artifact Registry repo `cloud-run-source-deploy` (auto-created per region).
 
 **Redeploy after editing `web/`:**
 ```bash
-gcloud run deploy vectorreel-web --source web --region europe-central2 \
+gcloud run deploy vectorreel-web --source web --region europe-west1 \
   --allow-unauthenticated --project tensile-runway-442915-j6 --quiet
 ```
 
-### Custom domain — `mdreel.com`
+### Custom domain — `mdreel.com`  (Route A: Google-served, Cloudflare DNS-only)
 
 **Product name: `mdreel`. Domain `mdreel.com` purchased 2026-07-15** (founder, personal registrar).
-Remaining, in order:
-- **DNS delegation + Search Console verification** — founder-only (registrar access).
-- **Map `mdreel.com` (apex + `www`) to the `vectorreel-web` Cloud Run service** via Cloud Run domain
-  mappings, `europe-central2`.
+**Cloudflare is DNS-only (grey cloud)** — no US-jurisdiction proxy in the request path; Google (EU,
+`europe-west1`) serves the page and provisions the TLS cert. Steps (🧑 = founder-only):
+
+1. 🧑 **Cloudflare zone** — add `mdreel.com` (Free plan); at the registrar set the nameservers to
+   Cloudflare's two. Wait for the zone to go **Active**.
+2. 🧑 **Create the mapping in the Cloud Console** (the CLI needs `gcloud beta`, which is not
+   installable in the dev SDK): Cloud Run → *Manage custom domains* → *Add mapping* → service
+   `vectorreel-web`, region `europe-west1`, domains `mdreel.com` + `www.mdreel.com`. It runs Search
+   Console verification inline — add the TXT it gives you to Cloudflare (grey cloud), then verify.
+3. 🧑 **Add the returned records to Cloudflare, all DNS-only (grey cloud):**
+   | Name | Type | Value |
+   |---|---|---|
+   | `@` | A | `216.239.32.21` · `216.239.34.21` · `216.239.36.21` · `216.239.38.21` |
+   | `@` | AAAA | `2001:4860:4802:32::15` · `2001:4860:4802:34::15` · `2001:4860:4802:36::15` · `2001:4860:4802:38::15` |
+   | `www` | CNAME | `ghs.googlehosted.com` |
+4. Google auto-provisions the managed cert (15 min–24 h). Then delete the stale `europe-central2`
+   copy (see above).
 
 This domain is the gate on PLAN.md Phase 0.3 (measurement, ads, first post).
 
