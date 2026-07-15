@@ -84,19 +84,23 @@ Two things that shape strategy rather than sizing, and belong here:
 
 Metric: **hours of video processed**. Simple, scales with value, easy to predict.
 
+**The MVP ships exactly two plans plus a trial credit (decided 2026-07-15). No free tier, no free
+tool.** The small plan is **hard-capped** (processing pauses at the limit); the larger one meters
+overage past its cap.
+
 | Plan | Price | Included | Notes |
 |---|---|---|---|
-| Free trial | €0 | 2 h of video, full quality | No credit card. Must produce a "wow" on the customer's own video. |
-| Pro | €149/mo | 25 h/mo, UI + API, webhooks | Overage: €8/h. Target: single team, L&D dept. |
-| Business | €690/mo | 150 h/mo, connectors (Drive/SharePoint/Zoom — post-MVP), DPA self-service, priority support | Overage: €6/h. |
-| API pay-as-you-go | €0.15/min (€9/h) | No subscription | For developers embedding the product in pipelines; stickiest revenue. |
+| Trial credit | €0 | **1 h one-time at signup (METRICS.md N33)**, full quality | No credit card. Replaces the old "2 h free" trial. Must produce a "wow" on the customer's own video. |
+| **Pro** *(MVP — the small plan)* | €149/mo | 25 h/mo, UI + API, webhooks, MCP | **Hard cap — no overage** (2026-07-15): processing pauses at the limit; upgrade to continue. Target: single team, L&D dept. |
+| **Business** *(MVP — the larger plan)* | €690/mo | 150 h/mo, priority support | Overage: **€6/h** past the cap. Connectors (Drive/SharePoint/Zoom) and DPA self-service stay post-MVP. |
+| API pay-as-you-go (later) | €0.15/min (€9/h) | No subscription | Not in MVP. For developers embedding the product in pipelines; stickiest revenue. |
 | Enterprise (later) | Annual contract | Custom volume, SSO, audit log, self-hosted option | Not in MVP scope. |
 
 > ⚠️ **Prices above are hypotheses and are now explicitly gated on the A3 finding** (see §8).
 > If usage turns out to be one-time **backfill** rather than recurring **flow**, subscription
 > tiers are the wrong instrument entirely and this table becomes a **prepaid credit pack**
-> (*"€200 for 20 hours"*). Do not lock these prices until PLAN.md Phase 6. The MVP ships a
-> **one-plan pricing page + the free tool** (PLAN.md Phase 4), not this table.
+> (*"€200 for 20 hours"*). Do not lock these prices until PLAN.md Phase 6. The MVP ships only the
+> **two plans marked above + the N33 trial credit** (PLAN.md Phase 4), not the full table.
 
 ### Unit economics — measured, and no longer the risk
 
@@ -128,10 +132,12 @@ top risk (A5)** — every other question is only *reachable* through it. **Seque
 one-shot wave of posts lands on a live tool rather than an email box; the build is held to the
 hard ship-by gate (METRICS.md §2.2 SB). → DISTRIBUTION.md for the reasoning.
 
-1. **The product is the marketing.** Free public YouTube tool → paste a URL, get real Markdown in
-   60 s, no signup, no trust required. It replaces *"upload your confidential internal recording
-   to a stranger's website"* as the first ask — which was the biggest leak in the old funnel.
-   Then: *"now try it on your own recording"* → 2 h free → one Stripe link.
+1. **The gallery is the demo.** *(Revised 2026-07-15 — the free public YouTube tool was dropped:
+   an open compute endpoint is a bot/abuse surface a fixed base this small cannot carry.)* The
+   curated gallery does the tool's funnel job at zero compute per visitor: a skeptic verifies real
+   Markdown against talks they already know, no signup, no trust required — which still avoids
+   *"upload your confidential internal recording to a stranger's website"* as the first ask.
+   Then: *"try it on your own recording"* → trial credit (METRICS.md N33) → two-plan checkout (§6).
 2. **Curated public gallery** — 10–25 processed CC-licensed talks; a compounding SEO asset and a
    permanent live demo. **Curated, attributed — never a scaled transcript farm** (CLAUDE.md r8).
 3. **Developer-led content:** honest technical blog (chunking, cost engineering, GDPR
@@ -178,18 +184,22 @@ inputs to A5 and A2, and METRICS.md §6 lists them as anti-metrics for a reason.
 
 ## 10. Explicit non-goals for MVP
 
-- **YouTube processing is never a paid feature.** The free public YouTube tool + curated gallery
-  exist for *distribution only* (A5) — paste a URL, see real output, zero friction, zero trust
-  required. **The paid product is private recordings.** Two hard reasons this is not negotiable:
+- **YouTube processing is never a paid feature — and since 2026-07-15 it has no public input box
+  either.** The free tool was dropped (abuse/cost surface); the **curated gallery**, produced by
+  us, is the only YouTube-facing surface and exists for *distribution only* (A5) — see real
+  output, zero friction, zero trust required. **The paid product is private recordings.** Two hard
+  reasons this is not negotiable:
   (1) Vertex only ingests videos that are public or owned by **our** GCP account, so a customer's
   unlisted/internal recordings can *never* work this way; (2) the moment it becomes a paid tier
   we have changed businesses and walked into the §8 buyer-confusion risk — *"is this a YouTube
   tool?"* is a worse question than *"is this a transcription tool?"*
 - No self-hosted edition (documented as roadmap; architecture must not preclude it).
 - No connectors (upload + API only).
-- **No plan tiers, no metered overage, no dashboard, no Terraform/Cloud SQL** until there is a
-  paying customer (PLAN.md "Deferred"). Cloud SQL alone idles at ~€25–50/mo against a ~€300/mo
-  fixed base.
+- **No Terraform, no Cloud Tasks, no connectors, no DPA self-service** until there is a paying
+  customer (PLAN.md "Deferred"). *(Revised 2026-07-15: the two-plan checkout — one hard-capped, one
+  with overage — the authenticated panel, and the MCP server moved INTO the MVP; §6 and PLAN.md
+  Phases 2R/4 own the details.)* Cloud SQL still enters only when the events store demands it —
+  it idles at ~€25–50/mo against a ~€300/mo fixed base.
 - No built-in chat/RAG/search over processed videos — we produce files, we do not compete with the customer's retrieval stack.
 - No fine-tuning, no training on customer data — ever, contractually.
 - No SOC 2 / ISO 27001 certification yet — design for auditability, certify when a customer demands it.

@@ -82,7 +82,7 @@ local bytes → no ffmpeg → no *per-segment* static detection), so the N4 blen
 |---|---|---|---|---|
 | **N4a** | Stage B, default media resolution | **0.45** | measured | Range 0.41–0.51 across 6 videos. ⚠️ **"Flat across categories" is true only of the INPUT** — video tokenizes at a fixed 258 tok/s regardless of what is on screen. It is **not** true of the total: output is the other half of the bill, and output scales with on-screen text density. See **N4d**. |
 | **N4b** | **⭐ Stage B, blanket `MEDIA_RESOLUTION_LOW`** | **0.28** | measured | **The lever survives after all.** Stage A's *per-segment* static routing is impossible here, but `mediaResolution` is a **request-level** knob needing no local analysis. 3.9× fewer video tokens; quality held (coverage 98% vs 97%, OCR still verbatim). **Reconfirmed in Phase 0.2** on a licensed 5-video corpus: 0.22–0.29 €/video-hour, first clean 10-minute segment. |
-| **N4c** | **🚩 Public-path LLM subtotal** = N4b + Stage C fusion | **≈ 0.38** | derived | **The number that sizes N10.** Assumes the public path runs at low media resolution by default — it should. **Holds only where Stage B does not overflow — i.e. the Phase-3 free tool, which is capped at the first 10 minutes. It is NOT the cost of a whole dense video: that is N4d.** |
+| **N4c** | **🚩 Public-path LLM subtotal** = N4b + Stage C fusion | **≈ 0.38** | derived | **The number that sizes N10.** Assumes the public path runs at low media resolution by default — it should. **Holds only where Stage B does not overflow — i.e. short, capped runs. Originally this sized the free tool (retired 2026-07-15); it remains the right basis for internal gallery-production runs. It is NOT the cost of a whole dense video: that is N4d.** |
 | **N4d** | 🚨 **Dense slide-heavy talk, processed IN FULL** (Stage B + C, incl. overflow retries) | **≈ 3.80** | measured, **n = 1** | **~13× N4c, and the most uncomfortable number in this file.** A 29-minute FOSDEM talk needed **22 Stage B calls**: dense slides blow the 65,535-token output cap even at a 10-minute segment, and the overflow response (halve and re-run) **pays for the failed parent call and both halves**. Measured once, and it is **strategy-dependent, not physics** — a pipeline that segments dense content shorter *up front* avoids the wasted parent calls. **Treat as an upper bound on a naive implementation, and as the reason Phase 3 must not ship one.** |
 
 > **Audio is now the floor.** At low media resolution, audio (priced 3.3× video per token) plus
@@ -103,8 +103,8 @@ local bytes → no ffmpeg → no *per-segment* static detection), so the N4 blen
 | **N7c** | ⭐ **Stage A forced-cue floor** — block boundaries Stage A *hands* Stage B, per 10-min segment (private path only) | **< 13** | The answer to **N7b**, and the reason Stage A exists beyond cost. Stage A computes boundaries from the bytes and gives them to Stage B, so granularity stops depending on the model noticing anything. Measured locally on the **exact window that produced the N7b failure**: **7 → 17.1 boundaries per 10 min, worst block 162 s → 49 s.** ⚠️ **This measures what Stage A *emits*, not what Stage B *obeys*** — that verdict needs a Vertex call and is the first thing Phase 3 must check. Thresholds are **assumed (n = 1 recording)**, not measured. |
 | N8 | All-in COGS per video-hour (LLM **+ compute**) | > €1.50 | Guardrail breached — investigate. |
 | N9 | Wall-clock per video-hour | > 15 min | SLO breach. Gated on the N7 guards — one unbounded call alone blows this. |
-| N10 | Free YouTube tool spend | > €5/day | Abuse. Caps + cache are failing. **Sized off N4c:** at the Phase-3 10-min cap, one uncached request ≈ €0.06, so the daily cap ≈ **80 uncached videos/day**. Comfortable for a demo tool, and cheap to defend. |
-| N11 | Gallery cache-hit rate | < 90% | Gallery pages must cost ≈ €0 on repeat views. |
+| N10 | ~~Free YouTube tool spend~~ **Public compute spend** — **rescoped 2026-07-15: the free tool is DROPPED** (founder decision — a bot/abuse surface not worth defending, even capped) | **> €0** | There is no visitor-triggered processing anywhere public: the gallery is pre-rendered. **Any Vertex/compute euro traceable to an unauthenticated caller is a bug, not a threshold breach.** |
+| N11 | ~~Gallery cache-hit rate~~ **RETIRED 2026-07-15** | — | Moot: with the free tool gone, gallery pages are pre-rendered static content — there is no per-view compute to cache. |
 
 > ⚠️ **N7's threshold is a rate of *runaway* generations, not of cap-hits.** The Phase-0.1 spike hit
 > the `thinkingBudget` cap on 5 of 8 Stage B calls and every one returned good output
@@ -154,6 +154,13 @@ local bytes → no ffmpeg → no *per-segment* static detection), so the N4 blen
 > top risk — and why the *first* real traffic is worth more as a measurement than as revenue.
 > → DISTRIBUTION.md.
 
+**N33 — the trial credit: 1 hour of processing, one-time, granted at signup** (`assumed` — pin the
+exact size before Phase 4 ships). Decided 2026-07-15, replacing the old *"2 h free"*: **there is no
+free tier and no free tool**, but the try-before-buy step survives as a credit. It is what keeps
+the funnel rates above meaningful and **A2/A4 measurable at all** (without trials there are no
+trial→paid or second-upload readings), and its worst case costs ≈ one N6 per signup — cents, not a
+tier.
+
 ### 1.5 Market — bottom-up; **every input an assumption**
 
 | # | | Accounts | @ €2,400 blended ACV |
@@ -195,18 +202,18 @@ do not have the €400. **Pinned rule: CAC payback ≤ 3 months.**
 | Pessimistic | 2% | 5% | 1,000 | **€0.39** — buys nothing |
 | **Central (today's assumption)** | 3.5% | 7.5% | 381 | **€1.03** — buys nothing with volume |
 | Optimistic | 5% | 15% | 133 | **€2.95** — marginal |
-| **If the free YouTube tool works as designed** | **~12%** | 10% | **83** | **€4.73** — *buys real keywords* |
+| ~~If the free YouTube tool works as designed~~ **The frictionless-demo ceiling** (the tool that defined it was dropped 2026-07-15 — kept as the reference upper bound) | **~12%** | 10% | **83** | **€4.73** — *would buy real keywords* |
 
-> ### 🚩 The finding: **Phase 3 decides whether paid acquisition is possible at all.**
+> ### 🚩 The finding: **measured N12 decides whether paid acquisition is possible at all.**
 >
 > Affordable CPC swings **12×** across that table, and **conversion is not a market fact — it is a
-> product fact.** A landing page with an email box converts cold search traffic at 2–5%. A
-> zero-friction tool that hands a stranger real Markdown in 60 seconds, on a video they already
-> know, can plausibly convert far higher. **That difference is what moves the affordable CPC from
-> €1.03 (buys nothing) to €4.73 (buys real keywords).**
->
-> **The free YouTube tool is therefore not merely a top-of-funnel hook. It is the precondition for
-> paid acquisition existing as an option.**
+> product fact.** A landing page with an email box converts cold search traffic at 2–5%.
+> ⚠️ **The free tool was the design that aimed at the ~12% row, and it was dropped 2026-07-15**
+> (abuse/bot surface — PLAN.md Phase 2 founder review). The conversion burden now sits on the
+> **gallery (verification without trust, zero compute per visitor) + the N33 trial credit.** Where
+> that funnel actually lands between 3.5% and 12% is unknowable until T-LAUNCH measures it — and
+> that measurement is what moves the affordable CPC from €1.03 (buys nothing) toward €4.73 (buys
+> real keywords), or doesn't.
 
 > ### ⚠️ The scissors — why paid search cannot be the growth engine *today*
 >
@@ -227,7 +234,7 @@ do not have the €400. **Pinned rule: CAC payback ≤ 3 months.**
 | # | Tranche | When | Budget | Buys an answer to | 🚨 Gate to proceed |
 |---|---|---|---|---|---|
 | **N26** | ~~**T-A — price discovery**~~ **MERGED into N27** (2026-07-15) | — | — | *Was: real CPCs + cost per capture + cold A1, against a bare capture page.* **T-A was an artifact of the old sequencing:** its own gate ("page **and gallery** live") already pointed past the phase it sat in. With launch moved after the MVP, page, gallery, tool and checkout all go live together, and one tranche buys everything T-A and T-B bought separately. | — |
-| **N27** | **T-LAUNCH — the decisive read** | At PLAN.md Phase 5 (launch: page + gallery + tool + signup + Stripe link all live) | **€500–800, one-time** | Real CPCs on our long-tail terms · cost per signup · **a clean A1 verdict on *cold* traffic** · 🚨 **Measured N12.** Does the tool lift conversion into the range where N25 permits real keywords? | — |
+| **N27** | **T-LAUNCH — the decisive read** | At PLAN.md Phase 5 (launch: page + gallery + panel + signup + checkout all live) | **€500–800, one-time** | Real CPCs on our long-tail terms · cost per signup · **a clean A1 verdict on *cold* traffic** · 🚨 **Measured N12.** Does the gallery-led funnel (+ the N33 trial credit) lift conversion into the range where N25 permits real keywords? | — |
 | **N28** | **T-C — scale or kill** | After **A3 has returned** (post-launch) | CAC-driven | Real CAC. Scale or stop. | **A3 = flow, AND measured CAC < N23.** **If A3 = backfill, paid acquisition is dead** — the product becomes a prepaid credit pack sold organically. |
 
 **Hard constraints.**
@@ -325,13 +332,13 @@ Emit with `tenant_id`, `user_id`, `session_id`, `occurred_at` (UTC), `referrer`,
 | Event | Fires when | Carries |
 |---|---|---|
 | `page_view` | Landing / gallery page load | `path`, `ab_arm`, `referrer` |
-| `yt_tool_used` | Free YouTube tool run | `video_id`, `duration_sec`, `cache_hit`, `cost_cents` |
+| ~~`yt_tool_used`~~ | **RETIRED 2026-07-15** — the free tool was dropped; no public processing exists | — |
 | `signup` | Magic-link completed | `referrer`, `ab_arm`, **`archive_hours`, `monthly_hours`** (N20) |
 | `upload_started` | Private upload begins | `duration_sec` |
 | `job_completed` | Markdown delivered | `job_id`, `duration_sec`, `cost_cents`, `wall_clock_sec` |
 | `output_downloaded` | User retrieves the Markdown | `job_id` |
 | **`upload_repeat`** | **2nd+ upload by the same tenant** | `n_th`, `days_since_first` — **the A4 signal** |
-| `checkout_clicked` | Stripe link opened | — **the A2 signal** |
+| `checkout_clicked` | Stripe checkout opened | `plan` — **the A2 signal** |
 | **`checkout_abandoned`** | `checkout_clicked`, no payment inside 24 h | **`reason`** (N21) |
 | `payment_succeeded` | Stripe confirms | `amount_cents` — **the only signal that isn't a proxy** |
 
@@ -363,7 +370,10 @@ intent. Directional, not significant: we need a signal, not a paper. Subject to 
 form field, because *we* raised it.** → **N22** is the stronger instrument.
 
 ### A2 — Willingness to pay
-`checkout_clicked` → `payment_succeeded`. **One Stripe link, not three tiers** — tiers presuppose
+`checkout_clicked` → `payment_succeeded`. **Two plans (decided 2026-07-15): a small plan with a
+hard cap and a larger one with metered overage** (prices: BUSINESS_MODEL §6) — still no free tier,
+no annual, no enterprise. ⚠️ **A3 still owns the *shape*:** if cohort decay says backfill, both
+plans become prepaid credit packs. Two plans, not three tiers, because tiers presuppose
 the A3 answer we do not have. **Payment is the only non-proxy signal in this document. Everything
 else is a story we tell ourselves about intent.**
 

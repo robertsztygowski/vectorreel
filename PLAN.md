@@ -30,8 +30,8 @@ all **whether anyone can be reached at all.** All five open assumptions live in 
 > **⇒ The sequencing rule — REVERSED 2026-07-15: ship the MVP first (Phases 2–4), then launch
 > everything at once (Phase 5).** The old rule ("start distribution first, in parallel") would have
 > pointed the one-shot launch surfaces (HN, LinkedIn, Reddit) at an email-capture box converting in
-> the low assumed range, when a live paste-a-URL tool is the high-conversion scenario that makes
-> paid acquisition viable at all (METRICS.md §1.6). The ad-tranche gate ("page **and gallery**
+> the low assumed range, instead of at a live product — gallery, trial credit, checkout — which is
+> what gives cold traffic something to convert on (METRICS.md §1.6). The ad-tranche gate ("page **and gallery**
 > live") already contradicted the old sequencing (old 0.3 open question #1); launching after the
 > MVP resolves it by construction, and the two tranches merge into one (METRICS.md N26/N27).
 >
@@ -47,10 +47,13 @@ floor) are the same traffic.** It is a good-post-sized number, not a content-eng
 **Where we are now.** Phase 0 ✅, Phase 0.1 ✅, Phase 0.2 ✅, **Phase 1 ✅ done** — `src/Core` and Stage A
 are built, and the weakest measured category has a fix (METRICS.md **N7c**) whose *effect on the model*
 is still unproven. Phase 0.3 as a standalone phase is **superseded** — its content lives in
-**Phase 5 — LAUNCH**.
-**Next: Phase 2 — the frontend, on mocked fixtures.** Then contracts (2.5), the pipeline (3),
-payments (4), launch (5). The clock (METRICS.md §2.2) starts at the Phase 5 launch; the ship-by
-gate (METRICS.md §2.2 SB) makes sure that day comes.
+**Phase 5 — LAUNCH**. **Phase 2 ✅ built and 🔍 founder-reviewed 2026-07-15** — design approved
+as the baseline, **but the review revised the product scope** (free tool DROPPED, two-plan pricing,
+trial credit, panel + auth + docs screens added — the full verdict is in the Phase 2 revision
+block).
+**Next: Phase 2R — build the revised screens.** Then contracts (2.5), the pipeline (3), payments
+(4), launch (5). The clock (METRICS.md §2.2) starts at the Phase 5 launch; the ship-by gate
+(METRICS.md §2.2 SB) makes sure that day comes.
 
 > ⚠️ **Two things 0.2 changed that you must not carry forward unread.**
 > **(1) The output side of the pipeline is not bounded by segment length** — dense slides overflow
@@ -265,11 +268,23 @@ whose effect on the model is **unmeasured** — that needs a Vertex call. **Do n
 **Judgment calls made unsupervised are listed in `HANDOFF.md` at the repo root — read it before
 Phase 3.** (HANDOFF.md predates the 2026-07-15 renumbering and calls the pipeline phase "Phase 2".)
 
-## Phase 2 — Frontend look & feel (mock-first, no product backend)
+## Phase 2 — Frontend look & feel (mock-first, no product backend) ✅ BUILT 2026-07-15
+
+> **Built, not yet signed off.** All 7 screens run end-to-end on committed fixtures — verified via
+> `next build`/`npm test`/lint clean, a local Docker smoke test (the exact multi-stage image Cloud
+> Run will build), and a live job-flow check confirming a YouTube-tool download is **byte-identical**
+> to its source fixture. **Not yet redeployed** (CLAUDE.md rule 5 — deploy is deliberate) and **not
+> yet visually reviewed by the founder** — the phase's own exit criterion ("founder has seen it and
+> signed off on the look") is the one item still open. INFRA.md has the new Dockerfile/build notes
+> and the redeploy command (unchanged target).
 
 **Goal: see the whole product before the backend exists.** Every screen in `web/` (Next.js),
 running entirely on **committed fixtures** — the real Phase-0.2 corpus outputs are the mock data,
 so the look-and-feel review happens on genuine product output, not lorem ipsum.
+
+> ⚠️ **The numbered list below is the v1 as-built record — what the founder review looked at.
+> The review block after it REVISES this scope** (free tool gone, two-plan pricing, panel + docs
+> added). Phase 2R builds the delta; read the review block as authoritative.
 
 1. **Screens:** landing page (both headline arms wired, arm assignment stubbed) · free YouTube
    tool (paste URL → mocked job progress → real Markdown from `experiments/001-*/out/corpus_md/`) ·
@@ -287,12 +302,43 @@ so the look-and-feel review happens on genuine product output, not lorem ipsum.
 Model note: Sonnet-OK UI phase. Exit: every screen navigable end-to-end on mocks; founder has
 seen it and signed off on the look.
 
-**Starter prompt:**
-> Phase 2 — frontend look & feel. Read PLAN.md (STATUS, Phase 2), ARCHITECTURE §4–§5,
-> METRICS.md §3 + §6.3, and CLAUDE.md rule 10. **Plan mode first.** Build every screen in `web/`
-> on committed fixtures from `experiments/001-*/out/corpus_md/` — no product backend, no Vertex
-> calls. Wire first-touch UTM capture and the §3 event names now (stub transport). Pricing page
-> shows ONE plan + the free tool. No US-hosted anything (rule 10).
+### 🔍 Founder review 2026-07-15 — verdict, and a revised scope (Phase 2R)
+
+**Design: approved as the baseline** (screenshots in `experiments/screenshots/`). The gallery page
+and the terminal-framed Markdown preview in particular are keepers. Two defects: a glitched shared
+footer (overlapping duplicate logos + stray white box — seen on the free-tool page; verify it is
+not global) and the job page header still reading "Processing your video" after completion.
+
+**Scope revisions (all founder decisions, 2026-07-15):**
+
+1. 🚨 **The free YouTube tool is DROPPED.** A public compute endpoint is a bot/abuse surface and an
+   ops tax that a fixed base this small cannot carry — even capped. **No visitor-triggered
+   processing exists anywhere public** (METRICS.md N10 is rescoped accordingly; N11 retired).
+   Remove the page, the nav item, the footer links, and the pricing-page card.
+2. **The gallery stays and takes over the tool's funnel job** — it demos both *that* we process
+   YouTube video and *what* the output looks like, at zero compute per visitor. Showcase-only:
+   produced by us, never an input box. (BUSINESS_MODEL §10 boundary reaffirmed.)
+3. **Pricing: two plans, no free tier** — a small plan with a **hard cap** and a larger plan with
+   **metered overage** (prices live in BUSINESS_MODEL §6). Signup grants a **one-time trial credit
+   (METRICS.md N33)** replacing "2 h free" — the hero CTA, CTA banner, and all "free" copy need
+   rewording.
+4. **NEW screens — sign-in/signup (magic link) + the authenticated panel:** process a new video
+   (upload), a job list of processed videos, and content management (view / download / delete).
+   This overrides the old "no dashboard, no job list" exclusion.
+5. **NEW screen — docs:** REST API + webhooks + MCP, **all three shipping in the MVP** (the MCP
+   server itself lands in Phase 4 as a thin layer over the API; it is the **first candidate to cut**
+   if the SB gate tightens).
+
+Exit criterion unchanged: revised screens navigable on mocks, founder signs off again.
+
+**Starter prompt (Phase 2R):**
+> Phase 2R — revised frontend scope. Read PLAN.md (STATUS, then the Phase 2 founder-review block),
+> ARCHITECTURE §4–§5, METRICS.md §3 + N33, BUSINESS_MODEL §6, and CLAUDE.md rule 10. **Plan mode
+> first.** Remove the free-tool page/nav/footer/pricing references; rebuild pricing as the two
+> BUSINESS_MODEL §6 plans + N33 trial credit (no free tier — re-copy the hero and CTA banner);
+> add sign-in/signup, the authenticated panel (upload · job list · manage/download/delete, all on
+> mocked fixtures), and the docs page (REST + webhooks + MCP). Fix the shared-footer glitch and the
+> job-done header copy. Still no product backend, no Vertex calls. No US-hosted anything (rule 10).
 
 ## Phase 2.5 — Freeze the contracts (frontend ⇄ backend)
 
@@ -328,25 +374,20 @@ model ignores them, the fallback is to cut real segments at the boundaries** —
 at the price of more calls. Everything else in this phase is cheaper than this question.
 
 **Build order inside the phase: YouTube path first — it is the smaller half.** No Stage A, no
-upload, no GCS round-trip: Stage B directly on `fileData.fileUri` + offset segmentation → C → D,
-wired to the Phase 2 tool page. Free/public only.
+upload, no GCS round-trip: Stage B directly on `fileData.fileUri` + offset segmentation → C → D.
+🚨 **Internal-only since the 2026-07-15 review: the free tool is dropped, so this path has NO
+public endpoint.** It exists to produce gallery content, run by us. The day-one abuse-control
+workload (caps, per-IP limits, video-ID cache) went with it — METRICS.md N10 now reads "any
+unauthenticated compute spend is a bug".
 
-- **Free YouTube tool — the top-of-funnel hook.** Paste a YouTube URL → get Markdown. Zero
-  friction, zero trust required, wow in 60 seconds. This replaces "upload your confidential
-  internal recording to a stranger's website" as the first ask — which was a brutal opening
-  move and the biggest leak in the old funnel.
-  - ⚠️ **Abuse controls, day one:** cap at first ~10–15 min, **cache by video ID**, rate-limit
-    per IP. The YouTube path can't use the static-content lever, so it runs at the un-blended cost
-    (METRICS.md §1.2) — **1,000 abusive hour-long videos is real money against a fixed base this
-    small.** Enforce METRICS.md N10 (daily spend) and N11 (cache-hit rate); caching makes a popular
-    gallery page cost ≈ €0 on repeat views.
 - **Process the gallery corpus — 10–25 curated CC-licensed talks** — as the pipeline's shakedown
   run. Pages exist since Phase 2; they go *public* at Phase 5. **Not a scaled content farm:**
   curated + CC-licensed + attributed, or Google's scaled-content-abuse policy and rights-holders
   make it a fight we cannot afford.
 
 **Then the private path — the real test:** magic-link signup → signed upload → Stage A (✅ built in
-Phase 1) → B → C → D → Markdown back by email/download. 2 h free. Nothing else.
+Phase 1) → B → C → D → Markdown back in the panel (job list, download) + by email. Trial credit
+per METRICS.md N33. Nothing else.
 
 **Hard requirements carried in from the benchmark phases:**
 
@@ -367,38 +408,48 @@ Infra: Cloud Run + GCS + in-process queue. **No Cloud SQL, no Cloud Tasks, no Te
 Cloud SQL idles at ~€25–50/mo, which is a meaningful fraction of the entire fixed base we are
 trying to cover (METRICS.md N2/N1a). **At survival scale, an idle database is a real tax.**
 
-**Explicitly NOT built:** dashboard, job list, usage page, markdown preview, connectors, plan
-tiers, DPA self-service flow, MCP server.
+**Explicitly NOT built** (revised 2026-07-15 — the panel, two-plan checkout and MCP server moved
+*into* the MVP): connectors, DPA self-service flow, usage/cost-analytics page beyond the panel's
+job list, team/multi-user management, SSO.
 
-**The funnel:** paste a YT link → see real output → *"now try it on your own recording"* →
-signup, 2 h free → payment.
+**The funnel:** browse the gallery → verify real output on a talk you already know →
+*"try it on your own recording"* → signup + trial credit (METRICS.md N33) → two-plan checkout.
 
-> **The discipline to hold: the YouTube tool is free and public; the paid product is private
-> recordings.** The moment YouTube processing becomes a paid tier, we have changed businesses —
-> and walked into the BUSINESS_MODEL §8 buyer-confusion risk ("is this a YouTube tool?").
+> **The discipline to hold: YouTube processing is showcase-only — the gallery we curate and
+> produce ourselves; the paid product is private recordings.** The moment customers can buy
+> YouTube processing, we have changed businesses — and walked into the BUSINESS_MODEL §8
+> buyer-confusion risk ("is this a YouTube tool?").
 > YouTube ingestion *cannot* serve the ICP anyway: Vertex only accepts public videos or ones
 > owned by **our** GCP account, so customers' unlisted/private recordings will never work.
+> Reaffirmed at the 2026-07-15 review: no YT input box anywhere, public or paid.
 
 **Starter prompt:**
 > Phase 3 — the pipeline, simplest working form. Read PLAN.md (STATUS, Phase 3), **HANDOFF.md**
-> (it calls this phase "Phase 2"), ARCHITECTURE §3, METRICS.md N7c/N4d/N10/N11, and CLAUDE.md
+> (it calls this phase "Phase 2"), ARCHITECTURE §3, METRICS.md N7c/N4d, and CLAUDE.md
 > rules 8–9. **Plan mode first.** First job: prove Stage B obeys Stage A's boundaries (one Vertex
-> call, the window that failed). Then the YouTube path end-to-end behind the Phase 2 tool page
-> with day-one abuse controls; then the private upload path. Every Stage B call sets
-> `maxOutputTokens`, a bounded `thinkingBudget`, and a timeout (rule 9). Never download YouTube
-> bytes (rule 8).
+> call, the window that failed). Then the YouTube path end-to-end as the internal gallery-production
+> runner — it has NO public endpoint; then the private upload path wired to the Phase 2R panel.
+> Every Stage B call sets `maxOutputTokens`, a bounded `thinkingBudget`, and a timeout (rule 9).
+> Never download YouTube bytes (rule 8).
 
 ## Phase 4 — Payments + instrumentation (the pricing page goes live)
 
-- **ONE Stripe payment link.** Not three tiers. Not metered overage. Not a free-trial gate.
-  → **This is the A2 test.** Nobody clicks it = it's a vitamin, not a painkiller. The Phase 2
-  pricing page (one plan + free tool) goes live with the real link.
-- **Instrumentation — the whole point of the phase.** Events: signup, YT-tool use, upload,
+- **Two Stripe checkouts — the two plans** (revised 2026-07-15; prices and caps live in
+  BUSINESS_MODEL §6): the small plan with a **hard cap** (processing pauses at the limit), the
+  larger with **metered overage**. **No free tier**; signup grants the one-time trial credit
+  (METRICS.md **N33**). → **This is the A2 test.** Nobody buys either = it's a vitamin, not a
+  painkiller (`checkout_clicked` carries the plan). The Phase 2R pricing page goes live with real
+  checkout.
+- **Instrumentation — the whole point of the phase.** Events: signup, upload,
   download, **second upload**, checkout click — the METRICS.md §3 schema, flowing into our own
   Postgres (the §6.2 source of truth). The Phase 2 client module gets its real transport here.
   Where that Postgres lives (smallest Cloud SQL vs. a container next to the worker) is decided at
   the top of this phase — and Umami (Phase 5) shares the same instance, never a second one
   (METRICS.md §6.2).
+- **Docs + MCP go live** (revised 2026-07-15): the docs page documents the real REST API +
+  webhooks, and the **MCP server ships as a thin layer over that API** (ARCHITECTURE §5). ⚠️ **The
+  MCP server is the first candidate to cut if the SB gate (METRICS.md §2.2) tightens** — the API
+  and webhooks are not.
 - 🚨 **Cohort hour-decay, instrumented before the first user.** Hours uploaded in week 1 vs.
   week 4, per signup cohort. **This is the A3 test, and A3 decides what business we are in**
   (decision rule: METRICS.md A3). If it says backfill, the correct product is a **prepaid credit
@@ -410,10 +461,12 @@ signup, 2 h free → payment.
   row and survive to `payment_succeeded` (METRICS.md §6.3) — test it before launch, not after.
 
 **Starter prompt:**
-> Phase 4 — payments + instrumentation. Read PLAN.md (Phase 4), METRICS.md §3 + §6 + N20/N29, and
-> ARCHITECTURE §6. **Plan mode first.** One Stripe payment link; the §3 event schema into our own
+> Phase 4 — payments + instrumentation. Read PLAN.md (Phase 4), METRICS.md §3 + §6 + N20/N29/N33,
+> BUSINESS_MODEL §6, and ARCHITECTURE §5–§6. **Plan mode first.** Two Stripe checkouts (small plan
+> hard-capped, larger with overage) + the N33 trial credit; the §3 event schema into our own
 > Postgres; cohort hour-decay + the N20 field instrumented before any user exists; UTM survival to
-> `payment_succeeded` proven by a test. Pricing page: ONE plan.
+> `payment_succeeded` proven by a test; docs page + MCP server (thin layer over the REST API — cut
+> it first if the SB gate tightens).
 
 ## Phase 5 — 🚀 LAUNCH (the old Phase 0.3, upgraded) — ⏱️ T0 starts here
 

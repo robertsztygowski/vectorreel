@@ -47,25 +47,30 @@ everything launches at once — PLAN.md Phase 5.** The cost of the reversal is t
 now rot instead of the publishing; that risk is carried by the hard **ship-by gate (METRICS.md
 §2.2 SB)** — if the date arrives first, launch with whatever exists.
 
-## The core insight: the product is the marketing
+## The core insight: the gallery is the demo
 
-The free public YouTube tool is not a demo — **it is the distribution engine**, and it exists for
-this reason alone.
+**Revised 2026-07-15 — the free YouTube tool was dropped.** An open compute endpoint is a bot and
+abuse surface, and an ops tax, that a fixed base this small cannot carry — even capped. The job the
+tool did in the funnel — *let a skeptic verify real output on a video they already know, before
+trusting us with anything* — moves to the **curated gallery**, which does it at **zero compute per
+visitor** (pre-rendered pages, produced by us; there is no public input box anywhere).
 
 **The funnel:**
 
 ```
-  paste a YouTube URL  ──►  see real Markdown in 60s  ──►  "now try it on your own recording"
-   (free, no signup,          (the wow, on content         (magic-link, 2h free)
-    zero trust required)       they already know)                    │
-                                                                     ▼
-                                                            one Stripe payment link
+  browse the gallery      ──►  verify real Markdown on a  ──►  "try it on your own recording"
+  (10–25 processed talks,       talk you already know           (magic-link signup +
+   zero friction, zero cost)    — the wow, pre-rendered)         trial credit, METRICS.md N33)
+                                                                          │
+                                                                          ▼
+                                                          two-plan checkout (BUSINESS_MODEL §6)
 ```
 
-Why this ordering matters: the old funnel opened with *"upload your confidential internal
+Why this ordering matters: the original funnel opened with *"upload your confidential internal
 recording to a stranger's website."* That is a brutal first ask and was the biggest leak in the
-design. Pasting a public YouTube link costs the visitor nothing and risks nothing — and because
-they already know the video, they can **verify the output is good** without trusting us at all.
+design. The gallery keeps the fix — **verification without trust** — while removing the endpoint
+that had to be defended. The trade: the visitor verifies on *our* examples, not a video of their
+choosing; the trial credit is what closes that last gap, on their own footage.
 
 ## Channels, in priority order
 
@@ -98,7 +103,7 @@ The differentiation *is* the unglamorous engineering, so write about it (BUSINES
 Honesty is the sales asset here. Overclaiming EU sovereignty gets destroyed by any competent DPO.
 
 ### 4. Communities — HN, r/RAG, r/LocalLLaMA
-Launch surface for the artifact post and the free tool. **One-shot, non-compounding** — treat as
+Launch surface for the artifact post and the gallery. **One-shot, non-compounding** — treat as
 spikes, not a strategy. A launch post is not a distribution plan.
 
 ### 5. `llms.txt` + public API docs

@@ -23,7 +23,7 @@
                 │                                   └─► webhook to customer / UI download / GET via API       │
                 │                                                                                             │
  YouTube URL ───┼─► ✂ NO Stage A ─► Stage B (fileData.fileUri + videoMetadata offsets) ─► C ─► D              │
-   (public)     │      no bytes ever downloaded — Google fetches   ◄── PUBLIC PATH (free tool + gallery)      │
+   (public)     │      no bytes ever downloaded — Google fetches   ◄── PUBLIC PATH (gallery production, internal-only) │
                 └─────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -31,11 +31,11 @@
 
 | | **Private path** (upload) | **Public path** (YouTube) |
 |---|---|---|
-| Purpose | **The paid product.** Internal recordings. | **Distribution only** — free tool + gallery (DISTRIBUTION.md). Never a paid tier. |
+| Purpose | **The paid product.** Internal recordings. | **Distribution only** — producing the curated gallery, run by us (DISTRIBUTION.md). **The free tool was dropped 2026-07-15: this path has NO public endpoint.** Never a paid tier. |
 | Ingestion | Signed upload → GCS URI | `fileData.fileUri` = YouTube URL (+ mandatory `mimeType`). **We never download bytes.** ✅ Verified in both EU regions, Phase 0.1. |
 | Stage A | Yes — ffmpeg, segmentation, static detection | **No.** No local bytes → no ffmpeg → no *per-segment* static detection. But see Cost: a **request-level** resolution knob survives. |
 | Segmentation | ffmpeg cuts | ✅ **`videoMetadata.startOffset/endOffset`, confirmed server-side** (Phase 0.1): equal-length windows cost identical tokens at any position, tokens scale linearly with length. **Long videos segment without ever holding the bytes.** |
-| Cost | All-in, blended (METRICS.md N6) | **Its own profile — METRICS.md §1.2b.** Cheaper than feared: `mediaResolution: LOW` needs no local analysis, so it applies here (N4b). Still hard abuse caps + result caching (METRICS.md N10). |
+| Cost | All-in, blended (METRICS.md N6) | **Its own profile — METRICS.md §1.2b.** Cheaper than feared: `mediaResolution: LOW` needs no local analysis, so it applies here (N4b). With no public endpoint, spend is bounded by our own gallery runs (METRICS.md N10: any unauthenticated compute spend is a bug). |
 | Constraint | — | Vertex accepts **public videos only, or ones owned by *our* GCP account** → customers' unlisted/private recordings can **never** use this path. |
 
 ⚠️ **VPC Service Controls disables `fileUri` media URLs entirely.** If the project is ever locked
@@ -183,7 +183,7 @@ Public videos only. See §1. Three requirements are specific to this path (all m
 
 - **Run it at `mediaResolution: MEDIA_RESOLUTION_LOW` by default.** No Stage A means no *per-segment*
   static routing — but media resolution is a **request-level** knob that needs no local analysis, and
-  it holds quality on this content (METRICS.md N4b). It is the main input to the abuse caps (N10).
+  it holds quality on this content (METRICS.md N4b) and keeps gallery-production runs cheap (N4c).
 - 🚨 **The coverage guard must divide by the FETCHED duration, not the requested window.** On this
   path the video's length is unknown up front, and Vertex clamps the window to the video's end.
   Divide the video token count by the fixed tokenization rate (METRICS.md §1.2b) to recover what was
@@ -248,7 +248,10 @@ Base: `/api/v1`, auth: `Authorization: Bearer <api_key>`.
 | `GET /usage` | Hours processed this period, remaining quota. |
 | `POST /webhooks/test` | Verify webhook config (HMAC signature). |
 
-Errors: RFC 7807 problem+json. Rate limits per key. OpenAPI spec published; docs page includes `llms.txt`.
+Errors: RFC 7807 problem+json. Rate limits per key. OpenAPI spec published; docs page includes
+`llms.txt` and covers **REST + webhooks + MCP**. **The MCP server ships in the MVP** (decided
+2026-07-15) as a thin layer over this API — no separate business logic; PLAN.md Phase 4 owns the
+build order and the cut rule.
 
 ## 6. Data model (initial)
 
@@ -351,13 +354,17 @@ gets built in*.
 
 ## 10. Deliberately deferred
 
+*(Revised 2026-07-15 — moved INTO the MVP at the Phase 2 founder review: the two-plan checkout
+(one hard-capped, one with metered overage — BUSINESS_MODEL §6), the authenticated panel (upload ·
+job list · manage/download/delete), the docs page, and the MCP server.)*
+
 **Until there is a paying customer:** Terraform / Cloud SQL / Cloud Tasks (Cloud SQL idles at
-~€25–50/mo against a ~€300/mo fixed base — real burn at zero users), plan tiers + metered overage,
-dashboard / job list / usage UI, markdown preview, DPA self-service flow.
+~€25–50/mo against a ~€300/mo fixed base — real burn at zero users), usage/cost-analytics UI
+beyond the panel's job list, DPA self-service flow, team/multi-user management.
 
-**Roadmap proper:** connectors (Teams/Zoom/Drive), MCP server (thin layer over the API — good
-v1.1), speaker diarization improvements, multi-language UI, SSO/SAML, CMEK, SOC 2, self-hosted
-edition (the provider-abstraction seam and stateless workers keep it feasible), Mistral backend,
-EU-owned infra migration.
+**Roadmap proper:** connectors (Teams/Zoom/Drive), speaker diarization improvements,
+multi-language UI, SSO/SAML, CMEK, SOC 2, self-hosted edition (the provider-abstraction seam and
+stateless workers keep it feasible), Mistral backend, EU-owned infra migration.
 
-**Never (hard boundary, BUSINESS_MODEL §10):** YouTube processing as a *paid* feature.
+**Never (hard boundary, BUSINESS_MODEL §10):** YouTube processing as a *paid* feature — and since
+2026-07-15, no public YouTube input box at all (the gallery is produced internally).
