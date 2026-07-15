@@ -1,4 +1,4 @@
-# Development Guidelines — vectorreel
+# Development Guidelines — mdreel
 
 > How the software gets built. Companion to ARCHITECTURE.md (what to build) and
 > BUSINESS_MODEL.md (why). Hard rules are mirrored in CLAUDE.md.

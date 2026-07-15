@@ -1,4 +1,4 @@
-# CLAUDE.md — vectorreel
+# CLAUDE.md — mdreel
 
 EU SaaS: video → structured, timestamped Markdown for AI knowledge bases.
 
@@ -63,7 +63,7 @@ status banner before quoting it.
 9. **Stage B calls always set `maxOutputTokens`, a bounded `thinkingBudget`, and a wall-clock
    timeout.** ~8% of benchmark calls degenerated (61k output / 63k thinking tokens). Unguarded
    calls break the SLO and the margin.
-10. **No US-based analytics or tracking on any vectorreel property. Ever.** **Google Analytics is
+10. **No US-based analytics or tracking on any mdreel property. Ever.** **Google Analytics is
     prohibited** (ruled unlawful by several EU DPAs over US transfers). Analytics is **Plausible,
     EU-hosted, cookieless — no consent banner.** The same test applies to *every* tool: heatmaps,
     session replay, chat widgets, A/B platforms, marketing pixels. **If it phones home to the US, it

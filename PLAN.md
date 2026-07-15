@@ -236,7 +236,7 @@ Work:
    **Buys evidence, not customers** — real CPCs, cost per capture, and a clean A1 verdict on *cold*
    traffic. Hard stop at budget. **Not before the page and gallery are live.**
 3. **The artifact post** — the single best inbound asset, and it's already written: side-by-side
-   *plain transcript vs. vectorreel Markdown*, plus a RAG answering a question that is **only**
+   *plain transcript vs. mdreel Markdown*, plus a RAG answering a question that is **only**
    answerable from on-screen content. ✅ **The material now exists and is legally shareable:**
    `experiments/001-*/out/corpus_md/JvbBFwlqxeI_full.md` — the FOSDEM talk, CC BY, processed
    end-to-end, attribution inside the file. Channels: LinkedIn (existing .NET/architecture audience

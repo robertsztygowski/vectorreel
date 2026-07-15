@@ -34,7 +34,7 @@ Delivery: web UI for manual use + first-class REST API (and later an MCP server)
 
 ### The positioning statement
 
-> **For EU engineering teams building an internal AI assistant, vectorreel turns the recordings
+> **For EU engineering teams building an internal AI assistant, mdreel turns the recordings
 > your assistant can't see — demos, trainings, incident reviews — into timestamped Markdown it can
 > cite, without the footage ever leaving the EU.**
 

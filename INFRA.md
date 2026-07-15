@@ -1,7 +1,7 @@
 # Infrastructure Notes — GCP Access & Decisions
 
-> Operational notes for vectorreel infrastructure. Companion to ARCHITECTURE.md.
-> Last verified: 2026-07-14.
+> Operational notes for mdreel infrastructure. Companion to ARCHITECTURE.md.
+> Last verified: 2026-07-15.
 
 ## Current GCP project (MVP — provisional)
 
@@ -17,7 +17,7 @@
 **Decision (2026-07-14):** Proceed on the existing `tensile-runway-442915-j6` project **for now**.
 Access verified: project reachable, billing on, core APIs enabled.
 
-### APIs already enabled (relevant to vectorreel)
+### APIs already enabled (relevant to mdreel)
 - `aiplatform.googleapis.com` — Vertex AI (Gemini)
 - `run.googleapis.com` — Cloud Run
 - `sqladmin.googleapis.com` / `sql-component.googleapis.com` — Cloud SQL
@@ -57,8 +57,19 @@ gcloud run deploy vectorreel-web --source web --region europe-central2 \
   --allow-unauthenticated --project tensile-runway-442915-j6 --quiet
 ```
 
-**TODO:** map a custom domain (e.g. apex + `www`) via Cloud Run domain mappings or a
-load balancer once a domain is chosen (product name still TBD in BUSINESS_MODEL.md).
+### Custom domain — `mdreel.com`
+
+**Product name: `mdreel`. Domain `mdreel.com` purchased 2026-07-15** (founder, personal registrar).
+Remaining, in order:
+- **DNS delegation + Search Console verification** — founder-only (registrar access).
+- **Map `mdreel.com` (apex + `www`) to the `vectorreel-web` Cloud Run service** via Cloud Run domain
+  mappings, `europe-central2`.
+
+This domain is the gate on PLAN.md Phase 0.3 (measurement, ads, first post).
+
+> ⚠️ The Cloud Run **service is still named `vectorreel-web`** — the code/service rename (C#
+> namespaces, assembly names, service name) is **deferred to a dedicated refactor**. Domain and
+> service name are independent; the mapping works regardless of the service's internal name.
 
 ## Open flags to revisit before / at production
 
@@ -72,7 +83,7 @@ load balancer once a domain is chosen (product name still TBD in BUSINESS_MODEL.
 
 2. **Auth identity.** gcloud is authenticated as `info@propspire.com`, while the founder's
    personal email is `robertsztygowski@gmail.com`. Confirm which identity/service account owns
-   vectorreel infra long-term; provision a least-privilege service account for CI/deploys rather
+   mdreel infra long-term; provision a least-privilege service account for CI/deploys rather
    than using a human account.
 
 3. **Region pinning still applies at resource level.** Even without the org policy, pin every

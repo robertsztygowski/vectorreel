@@ -429,7 +429,7 @@ a self-own a competent DPO spots in ten seconds, and it drags a consent banner o
 we are trying to measure.
 
 **The same test applies to every tool we ever add** — heatmaps, session replay, chat widgets, A/B
-platforms, marketing pixels. **If it phones home to the US, it does not go on a vectorreel
+platforms, marketing pixels. **If it phones home to the US, it does not go on a mdreel
 property.** This rule is written down precisely because tools like these get added *casually*, by a
 future self in a hurry, six months from now.
 

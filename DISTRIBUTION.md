@@ -1,4 +1,4 @@
-# DISTRIBUTION — how vectorreel gets in front of people
+# DISTRIBUTION — how mdreel gets in front of people
 
 > Living doc. Owns **A5 — the top risk in the business.** Companion to BUSINESS_MODEL.md (§7 is
 > the strategic sketch; this file is the operating plan) and PLAN.md Phase 0.3.
@@ -116,7 +116,7 @@ whether GDPR is a genuine blocker or a form field, **because we were the ones wh
 
 ## The launch artifact (Phase 0.3) — already written
 
-Side-by-side: **plain transcript vs. vectorreel Markdown**, plus a RAG answering a question that
+Side-by-side: **plain transcript vs. mdreel Markdown**, plus a RAG answering a question that
 is **only** answerable from on-screen content. This is the entire pitch in one image.
 
 Previously blocked — the benchmark ran on company-internal video that cannot be shared. **The
