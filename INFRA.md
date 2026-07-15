@@ -80,6 +80,13 @@ This domain is the gate on PLAN.md Phase 0.3 (measurement, ads, first post).
    - **TODO before production:** create a dedicated `vectorreel-eu` project so EU data-residency
      (the core product positioning) can be enforced at the org-policy level. Project creation
      likely needs elevated org/billing rights — get exact `gcloud projects create` commands ready.
+   - **Cleanup done 2026-07-15:** the unrelated `hamster`, `lynx`/zaileposzlo.pl and `stt-mbank`
+     workloads were deleted (Cloud Run services, the `lynx-db` Cloud SQL instance, two Artifact
+     Registry repos, three buckets, five secrets, two service accounts). The project is now
+     effectively mdreel-only, but it is **still the Propspire billing project** — the dedicated-
+     project TODO above stands.
+     ⚠️ Left in place, ownership unconfirmed: the `resend-api-key` secret and the `github-actions`
+     ("Orca") service account — review whether either is still needed.
 
 2. **Auth identity.** gcloud is authenticated as `info@propspire.com`, while the founder's
    personal email is `robertsztygowski@gmail.com`. Confirm which identity/service account owns
