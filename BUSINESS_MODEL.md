@@ -9,7 +9,14 @@
 
 ## 2. Problem
 
-Companies sit on hours of high-value video: internal trainings, product demos, sales calls, all-hands recordings, onboarding sessions, Teams/Zoom meetings. They are building AI knowledge bases and agents (RAG, MCP-connected assistants), but:
+Companies sit on hours of high-value **asset video**: internal trainings, product demos, onboarding sessions, recorded walkthroughs, sprint reviews, conference talks. They are building AI knowledge bases and agents (RAG, MCP-connected assistants), but:
+
+> ⚠️ **Asset video, not meetings — this is a hard scope line, set by competitor analysis
+> (experiments/002-competitor-analysis, 2026-07-15).** The *meeting-recap* job (Teams/Zoom call
+> summaries) is owned outright by the bundled suites already in the buyer's tenant (§8, threat #1).
+> We do not fight there. Our ground is the video those tools never touch — demos, trainings,
+> walkthroughs, talks — turned into a document an agent can cite. **Never say "meeting notes."**
+
 
 - Agents and RAG pipelines are text-centric. Video is a dead asset for them.
 - Plain transcription loses most of the value: what is *shown on screen* (slides, UI walkthroughs, diagrams, code, on-screen text) never makes it into the transcript.
@@ -55,11 +62,49 @@ Direct competitor: **Cloudglue** (US, launched 2025; multimodal transcripts, ext
 | Source retention | Stores video library | **Source video deleted after processing by default** (configurable) |
 | Buyer message | Developer platform | "Feed your videos to your agents without leaving the EU" |
 
-Honesty rule for all marketing/compliance copy: current stack is **EU data residency on GCP (Google DPA, Vertex AI no-training terms, EU-regional processing)** — *not* full EU sovereignty (Google is a US company subject to CLOUD Act). State this plainly on the /gdpr page and publish a roadmap item: "EU-owned infrastructure option" (OVHcloud/Scaleway) and later a self-hosted enterprise edition. Honesty here is a sales asset; overclaiming gets destroyed by any competent DPO.
+**What is and isn't the wedge (competitor-informed 2026-07-15 — experiments/002-competitor-analysis):**
+
+- ❌ **On-screen-text OCR is table-stakes, not a differentiator.** Cloudglue (Scene Text
+  Recognition), Twelve Labs, Mixpeek and Azure AI Video Indexer all read on-screen text — and
+  Azure does it EU-hosted at no premium. *"We read your slides"* invites *"so does Cloudglue."*
+  **Never lead with the OCR capability.**
+- ✅ **The wedge is the deliverable + the combination nobody else sells:** one portable, timestamped
+  Markdown file that separates *spoken* from *shown*, is schema-consistent across hundreds of files,
+  carries **zero retrieval lock-in**, and is processed entirely in the EU with no human-in-the-loop
+  and no non-EEA transfer. Every rival traps the same raw signals inside a proprietary
+  collections/search index — a platform with gravity, not a document you own. **Sell the artifact.**
+- 🛡️ **The one *durable* moat is no lock-in.** EU residency is perishable (a competitor is one
+  `europe-west3` deploy from erasing it — §8) and, per the market, unpriceable (no one charges an EU
+  premium; residency is a DPO *deal-unblocker*, not a markup). The portable-file / bring-your-own-RAG
+  model is the one thing a platform competitor **structurally will not copy**, because it undermines
+  their own retrieval revenue. **In the direct ring, lead with no lock-in; second the EU residency as
+  the DPO's reason to say yes.**
+
+Honesty rule for all marketing/compliance copy: current stack is **EU data residency on GCP (Google DPA, Vertex AI no-training terms, EU-regional processing)** — *not* full EU sovereignty (Google is a US company subject to CLOUD Act). State this plainly on the /gdpr page and publish a roadmap item: "EU-owned infrastructure option" (OVHcloud/Scaleway) and later a self-hosted enterprise edition. Honesty here is a sales asset; overclaiming gets destroyed by any competent DPO. **Competitor
+analysis confirmed the sales-asset half is live, not theoretical:** EU-hosted incumbents' residency
+claims *leak* under inspection — Amberscript ships files to non-EEA transcribers and its Summary
+feature to a US LLM (experiments/002-competitor-analysis). An honest, non-leaking EU story is itself
+a differentiator.
+
+**Positioning lines per competitor ring (competitor-informed 2026-07-15 — the copy the mockup and
+launch page must use):**
+
+- **vs Cloudglue / Twelve Labs (structured-video, direct):** *"The same structured video
+  understanding — but as a portable Markdown file your agent owns, processed entirely in the EU, with
+  no retrieval stack to lock you in."* (Match their capability; beat their lock-in and their DPO story.)
+- **vs Amberscript / Happy Scribe (EU transcription):** *"Not a transcript — a knowledge-base document
+  that also captures what's on screen, with a residency story that doesn't leak to a US LLM or an
+  offshore transcriber."* (Never compete on €/hour here.)
+- **vs Gemini / Deepgram / AssemblyAI (infra / DIY):** *"You could wire this yourself; here's the
+  pipeline you'd rebuild badly — boundary-safe chunking, runaway-generation guards, one consistent
+  schema across every file, compliance packaged."* (Sell the boring hard parts.)
+- **vs Copilot / Zoom / Meet (bundled substitutes):** *"Those summarize your meetings. This turns your
+  demos, trainings and walkthroughs — the asset video they never touch — into something your AI
+  assistant can cite."* (Change the job; never say "meeting notes.")
 
 ## 5. Target customers (initial ICP)
 
-1. **Software companies / IT departments (50–500 employees) building internal AI assistants** — have Teams/Zoom recordings, demo libraries, sprint reviews; have an "AI adoption" mandate; developer buyer, uses the API.
+1. **Software companies / IT departments (50–500 employees) building internal AI assistants** — have demo libraries, training/onboarding recordings, recorded walkthroughs and conference talks (**asset video — not meeting recordings**, §2); have an "AI adoption" mandate; developer buyer, uses the API.
 2. **L&D / training teams** in EU mid-market companies — training video libraries they want searchable/agent-usable; UI buyer.
 3. **AI consultancies & software houses** building RAG/agents for their clients — resell processing as part of delivery; API + volume pricing.
 
@@ -101,6 +146,30 @@ overage past its cap.
 > tiers are the wrong instrument entirely and this table becomes a **prepaid credit pack**
 > (*"€200 for 20 hours"*). Do not lock these prices until PLAN.md Phase 6. The MVP ships only the
 > **two plans marked above + the N33 trial credit** (PLAN.md Phase 4), not the full table.
+
+### The on-ramp canyon — and the €99 Starter fallback (competitor-informed 2026-07-15)
+
+**Competitor analysis (experiments/002-competitor-analysis) surfaced our single weakest point vs the
+field: the on-ramp.** Every rival's first *paid* step is a low, impulse-shaped buy — Happy Scribe
+€8.50, Cloudglue Mini $15, Amberscript €19. Ours is **€149/mo**, reached only after a one-time trial
+credit (N33). Cloudglue fills that gap with $15/$45 stepping-stones; we have a canyon between "1 h
+free" and "€149/mo."
+
+- **Launch default: hold the line at the two plans above (Pro / Business).** Per-hour sits inside
+  the *structured-video* band the competitors price in (Cloudglue $4.80–7.50/h), and Pro carries the
+  highest contribution → the highest CAC ceiling (METRICS.md N23), which matters because paid search
+  is the A1 *instrument* (DISTRIBUTION.md).
+- **Pre-build a €99/mo hard-capped Starter as a one-switch fallback, kept dark.** Flip to it *only*
+  if the launch shows the €149 step throttling checkout — trial→checkout below the A2 floor
+  (METRICS.md), or "too expensive" dominating inbound feedback (METRICS.md N21/N22).
+- **Do NOT drop to a €59 impulse tier.** A DPO-gated B2B purchase is not a $15 impulse: €59 collapses
+  the CAC ceiling (METRICS.md N23), invites bill-shopping against €2–4/h transcription, and starves
+  the paid-search instrument. Modeled and rejected.
+
+**Credit-pack pivot is de-risked, not a downgrade.** If cohort hour-decay says *backfill* (A3), the
+prepaid-pack shape (*"€200 for 20 h"* above) is the **category-normal** form: Cloudglue's entire
+ladder is already prepaid credit packs (*"subscriptions? contact us"*), and Amberscript / Happy
+Scribe both sell top-up credits. Keep the packs pre-designed but dark; deploy only on the A3 signal.
 
 ### Unit economics — measured, and no longer the risk
 
@@ -157,13 +226,19 @@ hard ship-by gate (METRICS.md §2.2 SB). → DISTRIBUTION.md for the reasoning.
 
 Risks *not* on the assumption list, and how we answer them:
 
+> **Threat ranking was reset by competitor analysis (experiments/002-competitor-analysis,
+> 2026-07-15):** the #1 competitor is not another video-to-Markdown tool — it is the **bundled
+> meeting-recap already in the buyer's tenant.** The rows below are ordered by that finding.
+
 | Risk | Mitigation |
 |---|---|
+| **🥇 The bundled meeting-recap is the true default** — M365 Copilot / Teams Premium, Zoom AI Companion, Google Meet "take notes for me" are already in the tenant, already DPO-approved, at ~zero marginal cost, and own the *meeting-notes* job completely. | **Do not fight there. Change the job.** Anchor every surface on **asset video** — demos, trainings, onboarding, walkthroughs, talks — the video those tools never touch, turned into an **agent-citable document with verbatim on-screen text**. **Never say "meeting notes"** (§2). The moment the copy drifts to meetings, we lose to an $18/seat incumbent inside the account. |
 | **Gemini/OpenAI make DIY trivial** ("just send the video to the model") | Value shifts to the pipeline: chunking long video without losing boundary context, cost control, a consistent schema across hundreds of files, batch reliability, compliance packaging. **Sell the boring hard parts.** ⚠️ **The sharp edge:** ICP #1 and #3 are dev teams building AI assistants — *the audience best equipped to build this themselves.* This is A2, and only the Stripe checkout settles it. |
-| **Cloudglue moves into the EU** | Speed, the EU-owned-infra roadmap, and a no-lock-in file model they won't copy — it would undermine their own platform play. |
+| **Cloudglue moves into the EU** | Cloudglue is **one `europe-west3` deploy from erasing the residency edge**, and already out-executes us on distribution (MCP + live Playground + $15 on-ramp). So residency is **not** the durable answer: **lead with the no-lock-in portable-file model they structurally won't copy** (it undermines their own platform play), ship the EU-owned-infra roadmap (§4), and close the on-ramp gap (the €99 fallback, §6). |
+| **On-screen-text OCR is not a unique wedge** — Cloudglue, Twelve Labs, Mixpeek and Azure Video Indexer all read on-screen text; AssemblyAI/Deepgram give EU residency free. | Never market OCR or "EU" *alone* as the differentiator — a technical buyer answers *"so does Cloudglue."* Sell the **combination + the portable artifact** (spoken/shown separated, schema-consistent, no lock-in, clean EU processing); treat residency as a **DPO deal-unblocker, not a markup** (§4). |
 | **Output quality disappoints on messy real-world video** | ⚠️ **This mitigation is now weaker than it was.** It used to read *"the design-partner phase tunes prompts on real corporate footage before launch"* — **there is no design-partner phase; outreach is ruled out.** What remains: the public CC corpus (PLAN.md Phase 0.2) tunes against three content categories, and `upload_repeat` (METRICS.md A4) detects failure *after* launch rather than before it. **We now find out in production. Accept that consciously.** |
 | **Vertex model pricing/availability changes** | Provider abstraction from day one (ARCHITECTURE.md); Mistral (EU) as the planned second backend. |
-| **Buyer confusion: "is this a transcription tool?"** | All messaging anchors on *agents / knowledge bases* — **never on "transcription"**. The demo shows a RAG answering a question that is only answerable from on-screen content. |
+| **Buyer confusion: "is this a transcription tool?" — or worse, "is this a meeting-notes tool?"** | All messaging anchors on *agents / knowledge bases* and *asset video* — **never "transcription," never "meeting notes"** (the worse confusion — it walks us straight into threat #1). The demo shows a RAG answering a question that is only answerable from on-screen content. |
 
 ## 9. Success criteria
 

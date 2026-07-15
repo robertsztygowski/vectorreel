@@ -72,6 +72,14 @@ design. The gallery keeps the fix — **verification without trust** — while r
 that had to be defended. The trade: the visitor verifies on *our* examples, not a video of their
 choosing; the trial credit is what closes that last gap, on their own footage.
 
+> **⚠️ The gallery must out-work a live Playground (competitor-informed 2026-07-15 —
+> experiments/002-competitor-analysis).** Cloudglue's demo is an interactive Playground where a
+> skeptic pastes *their own* URL; ours is deliberately pre-rendered (no compute, no abuse surface —
+> METRICS.md N10). That means the gallery carries **more proof burden**, so **curate it around talks
+> the ICP already knows** (well-known conference talks in their domain) — the skeptic then verifies
+> the output against ground truth they already hold in their head, which is the only substitute for
+> "try it on your own video first."
+
 ## Channels, in priority order
 
 ### 1. LinkedIn — the founder's .NET/architecture audience
@@ -88,7 +96,8 @@ for that talk's subject matter, (c) proof the output is real.
 🚨 **Curated — never a scaled content farm.** Mass auto-generated transcript pages are precisely
 what Google's scaled-content-abuse policy targets, and republishing copyrighted transcripts at
 volume is a fight a bootstrapped company cannot afford. **Rules: CC-licensed sources only,
-attributed, original video embedded, human-selected.** See CLAUDE.md rule 8.
+attributed, original video embedded, human-selected — and preferentially talks the ICP already
+knows, so the page doubles as ground-truth proof (see the core-insight note above).** See CLAUDE.md rule 8.
 
 ### 3. The technical blog — sell the boring hard parts
 The differentiation *is* the unglamorous engineering, so write about it (BUSINESS_MODEL §8 —
@@ -106,8 +115,14 @@ Honesty is the sales asset here. Overclaiming EU sovereignty gets destroyed by a
 Launch surface for the artifact post and the gallery. **One-shot, non-compounding** — treat as
 spikes, not a strategy. A launch post is not a distribution plan.
 
-### 5. `llms.txt` + public API docs
-Long game: be the thing an agent recommends.
+### 5. `llms.txt` + public API docs + MCP
+Long game: be the thing an agent recommends. **Competitor analysis (experiments/002) shows this is a
+*primary* channel for the direct ring, not just a long game** — Cloudglue, Twelve Labs, Mixpeek,
+VideoDB all ship an MCP server + llms.txt precisely so an AI assistant recommends them inside the
+IDE. For a bootstrapper with no outreach, "be what the agent recommends" is one of the cheapest
+surfaces available. The MCP server lands in PLAN.md Phase 4 as a thin layer over the API; keep its
+distribution value in mind if the SB gate (METRICS.md §2.2) forces a cut decision — the API +
+llms.txt are the floor.
 
 ### 6. 🔑 Inbound replies — the one conversation channel that survives
 

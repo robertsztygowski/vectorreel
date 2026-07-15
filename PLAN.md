@@ -51,9 +51,14 @@ is still unproven. Phase 0.3 as a standalone phase is **superseded** — its con
 as the baseline, **but the review revised the product scope** (free tool DROPPED, two-plan pricing,
 trial credit, panel + auth + docs screens added — the full verdict is in the Phase 2 revision
 block).
-**Next: Phase 2R — build the revised screens.** Then contracts (2.5), the pipeline (3), payments
-(4), launch (5). The clock (METRICS.md §2.2) starts at the Phase 5 launch; the ship-by gate
-(METRICS.md §2.2 SB) makes sure that day comes.
+**Next: Phase 2R — build the revised screens, and make the mockup *encode the competitor findings*
+(experiments/002-competitor-analysis).** The positioning was reset 2026-07-15 by that analysis
+(BUSINESS_MODEL §2/§4/§6/§8): anchor on **asset video, never meetings** (the bundled recap is the
+#1 competitor); sell the **portable Markdown artifact, not the OCR** (OCR is table-stakes); lead the
+direct-ring message with **no lock-in**, EU residency second as the DPO deal-unblocker; and scaffold
+a **€99 Starter fallback (dark)** to close the on-ramp canyon. Then contracts (2.5), the pipeline
+(3), payments (4), launch (5). The clock (METRICS.md §2.2) starts at the Phase 5 launch; the ship-by
+gate (METRICS.md §2.2 SB) makes sure that day comes.
 
 > ⚠️ **Two things 0.2 changed that you must not carry forward unread.**
 > **(1) The output side of the pipeline is not bounded by segment length** — dense slides overflow
@@ -328,17 +333,40 @@ not global) and the job page header still reading "Processing your video" after 
 5. **NEW screen — docs:** REST API + webhooks + MCP, **all three shipping in the MVP** (the MCP
    server itself lands in Phase 4 as a thin layer over the API; it is the **first candidate to cut**
    if the SB gate tightens).
+6. 🆕 **Competitor-informed positioning — the whole mockup must *encode the 002 findings*, not just
+   the screen list** (added 2026-07-15 after experiments/002-competitor-analysis; the decisions live
+   in BUSINESS_MODEL §2/§4/§6/§8). This is the founder's explicit ask: *see a mockup that represents
+   all the findings first.* Concretely, the copy across landing / gallery / pricing / docs must:
+   - **Anchor on asset video, never meetings.** No "meeting notes," no "Teams/Zoom," anywhere in the
+     copy — that job is owned by the bundled recap (BUSINESS_MODEL §8 threat #1). Grep the mockup for
+     "meeting" before sign-off.
+   - **Sell the deliverable, not the OCR.** The hero and the gallery preview lead with the *one
+     portable, spoken-vs-shown Markdown file an agent cites* — not "we read your slides" (OCR is
+     table-stakes, BUSINESS_MODEL §4). The gallery detail page is the proof: show the file.
+   - **Lead the direct-ring message with *no lock-in*; second the EU residency** as the DPO
+     deal-unblocker (BUSINESS_MODEL §4). Wire the two A1 headline arms as before, but the *body* copy
+     uses the four per-ring positioning lines (BUSINESS_MODEL §4).
+   - **Pricing page: build the two live plans + the N33 trial credit, AND scaffold the €99 Starter
+     fallback behind a feature flag (dark)** so flipping it later is one switch, not a rebuild
+     (BUSINESS_MODEL §6). Do not show the €99 plan by default.
+   - **Curate the gallery around talks the ICP already knows** (ground-truth proof — DISTRIBUTION.md
+     core-insight note), since the pre-rendered gallery must out-work Cloudglue's live Playground.
 
 Exit criterion unchanged: revised screens navigable on mocks, founder signs off again.
 
 **Starter prompt (Phase 2R):**
-> Phase 2R — revised frontend scope. Read PLAN.md (STATUS, then the Phase 2 founder-review block),
-> ARCHITECTURE §4–§5, METRICS.md §3 + N33, BUSINESS_MODEL §6, and CLAUDE.md rule 10. **Plan mode
-> first.** Remove the free-tool page/nav/footer/pricing references; rebuild pricing as the two
-> BUSINESS_MODEL §6 plans + N33 trial credit (no free tier — re-copy the hero and CTA banner);
-> add sign-in/signup, the authenticated panel (upload · job list · manage/download/delete, all on
-> mocked fixtures), and the docs page (REST + webhooks + MCP). Fix the shared-footer glitch and the
-> job-done header copy. Still no product backend, no Vertex calls. No US-hosted anything (rule 10).
+> Phase 2R — revised frontend scope + competitor-informed positioning. Read PLAN.md (STATUS, then
+> the Phase 2 founder-review block, especially scope revision #6), BUSINESS_MODEL §2/§4/§6/§8,
+> DISTRIBUTION.md (core insight + channels), ARCHITECTURE §4–§5, METRICS.md §3 + N33, and CLAUDE.md
+> rule 10. **Plan mode first.** Remove the free-tool page/nav/footer/pricing references; rebuild
+> pricing as the two BUSINESS_MODEL §6 plans + N33 trial credit (no free tier — re-copy the hero and
+> CTA banner) **and scaffold the €99 Starter fallback dark behind a flag**; add sign-in/signup, the
+> authenticated panel (upload · job list · manage/download/delete, all on mocked fixtures), and the
+> docs page (REST + webhooks + MCP). **Encode the 002 positioning in the copy: asset video not
+> meetings (grep for "meeting"), sell the portable Markdown artifact not the OCR, lead the direct-ring
+> message with no-lock-in and second the EU residency, use the four per-ring positioning lines
+> (BUSINESS_MODEL §4).** Fix the shared-footer glitch and the job-done header copy. Still no product
+> backend, no Vertex calls. No US-hosted anything (rule 10).
 
 ## Phase 2.5 — Freeze the contracts (frontend ⇄ backend)
 
