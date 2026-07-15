@@ -17,17 +17,27 @@ namespace VectorReel.Tests.Integration;
 /// </summary>
 public static class CalibrationFixtures
 {
-    /// <summary>The full ~50-minute internal demo: a real screen recording, the ICP's content type.</summary>
+    /// <summary>
+    /// The full ~50-minute internal demo: a real screen recording, the ICP's content type.
+    /// After <c>scripts/fetch-calibration.sh</c> it lives in <c>.calibration/</c>; the env var and the
+    /// original Downloads path are kept as overrides for whoever has it there already.
+    /// </summary>
     public static string? Demo { get; } = FirstExisting(
         Environment.GetEnvironmentVariable("VECTORREEL_CALIBRATION_DEMO"),
+        Path.Combine(Fixtures.RepoRoot, ".calibration", "isolation-demo.mp4"),
         Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             "Downloads",
             "Isolation Component V2 demo.mp4"));
 
-    /// <summary>The 12.8-minute window that produced the under-segmentation failure in Phase 0.</summary>
+    /// <summary>
+    /// The 12.8-minute window that produced the under-segmentation failure in Phase 0.
+    /// <c>scripts/fetch-calibration.sh</c> regenerates it into <c>.calibration/</c> from the demo — it is
+    /// a window of the master, so it is never stored separately.
+    /// </summary>
     public static string? Seg2 { get; } = FirstExisting(
         Environment.GetEnvironmentVariable("VECTORREEL_CALIBRATION_SEG2"),
+        Path.Combine(Fixtures.RepoRoot, ".calibration", "seg2_720p.mp4"),
         Path.Combine(Fixtures.RepoRoot, "experiments", "001-gemini-video-benchmark", "work", "seg2_720p.mp4"));
 
     private static string? FirstExisting(params string?[] candidates)

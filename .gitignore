@@ -24,6 +24,11 @@ TestResults/
 *.local
 appsettings.*.local.json
 
+# Confidential calibration footage — the internal demo + its derived seg2 window.
+# Fetched from the EU dev bucket by scripts/fetch-calibration.sh; NEVER committed
+# (company-confidential, ~293 MB). The tests skip when it is absent.
+.calibration/
+
 # Key material — must never exist in the repo (DEVELOPMENT.md §6: ADC only, no key files)
 *-key.json
 *service-account*.json
