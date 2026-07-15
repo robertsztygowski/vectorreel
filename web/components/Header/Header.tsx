@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 import { BrandMark } from '../BrandMark';
 
 const NAV_LINKS = [
-  { href: '/gallery', label: 'Gallery' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/docs', label: 'Docs' },
+  { href: '/gallery', label: 'gallery' },
+  { href: '/pricing', label: 'pricing' },
+  { href: '/docs', label: 'docs' },
 ];
 
 export function Header() {
@@ -17,7 +17,6 @@ export function Header() {
       <div className="wrap header-inner">
         <Link className="brand" href="/" aria-label="mdreel home">
           <BrandMark />
-          <span>mdreel</span>
         </Link>
         <nav className="nav" aria-label="Primary">
           {NAV_LINKS.map((link) => (
@@ -25,9 +24,11 @@ export function Header() {
               {link.label}
             </Link>
           ))}
-          <Link href="/signin">Sign in</Link>
-          <Link className="btn btn-ghost" href="/signup">
-            Get started
+          <Link href="/signin" className="btn-ghost" style={{ height: 34, padding: '0 14px' }}>
+            sign in
+          </Link>
+          <Link className="btn-mini" href="/signup">
+            get started →
           </Link>
         </nav>
       </div>

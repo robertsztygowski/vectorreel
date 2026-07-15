@@ -54,35 +54,53 @@ export default function DocsPage() {
   return (
     <>
       <div className="page-head">
-        <div className="wrap page-narrow">
-          <h1>API, webhooks &amp; MCP</h1>
-          <p className="lead">
-            mdreel is API-first. Everything the UI does is a call you can make yourself — REST for pipelines, webhooks
-            for completion, and an MCP server so an assistant can process a video from inside your IDE. All three ship
-            in the MVP.
+        <div className="wrap page-head-inner">
+          <p className="kicker"># docs</p>
+          <h1>API, webhooks &amp; MCP.</h1>
+          <p className="lead" style={{ maxWidth: '56ch' }}>
+            mdreel is API-first — everything the UI does is a call you can make yourself. REST for pipelines, webhooks
+            for completion, MCP so an assistant can process a video from inside the IDE.
           </p>
         </div>
       </div>
 
-      <div className="page-body">
-        <div className="wrap page-narrow docs">
+      <div className="docs-body">
+        <nav className="docs-toc" aria-label="On this page">
+          <div className="docs-toc-inner">
+            <span className="toc-label">contents</span>
+            <a href="#rest">rest api</a>
+            <a href="#webhooks">webhooks</a>
+            <a href="#mcp">mcp server</a>
+            <a href="#llms-txt">llms.txt</a>
+            <a href="#gdpr-docs">data &amp; residency</a>
+          </div>
+        </nav>
+
+        <div className="docs-main docs">
           <section id="rest">
             <h2>REST API</h2>
-            <p>
-              Base URL <code>/api/v1</code>. Authenticate with a bearer token:{' '}
-              <code>Authorization: Bearer &lt;API_KEY&gt;</code>. Errors are RFC 7807 <code>problem+json</code>; rate
-              limits are per key.
-            </p>
+            <div className="doc-meta">
+              <span className="k">base url</span>
+              <span>
+                https://mdreel.com<b>/api/v1</b>
+              </span>
+              <span className="k">auth</span>
+              <span>bearer token per key</span>
+              <span className="k">errors</span>
+              <span>RFC 7807 · application/problem+json</span>
+              <span className="k">rate limits</span>
+              <span>per API key</span>
+            </div>
             <div className="endpoint-table">
               {ENDPOINTS.map((e) => (
                 <div className="endpoint-row" key={`${e.method} ${e.path}`}>
                   <span className={`method method-${e.method.toLowerCase()}`}>{e.method}</span>
-                  <code>{e.path}</code>
+                  <span className="path">{e.path}</span>
                   <span className="endpoint-purpose">{e.purpose}</span>
                 </div>
               ))}
             </div>
-            <CodeCard title="create-job.sh" content={CREATE_JOB} />
+            <CodeCard title="create a job" lang="bash" content={CREATE_JOB} />
           </section>
 
           <section id="webhooks">
@@ -92,7 +110,7 @@ export default function DocsPage() {
               is signed with HMAC-SHA256 over the raw body in an <code>X-Mdreel-Signature</code> header — verify it
               before trusting the event.
             </p>
-            <CodeCard title="job.completed" content={WEBHOOK} />
+            <CodeCard title="job.complete" lang="http" content={WEBHOOK} />
           </section>
 
           <section id="mcp">
@@ -102,7 +120,11 @@ export default function DocsPage() {
               assistant can process a recording and cite its Markdown without leaving the editor. Point your MCP client
               at it:
             </p>
-            <CodeCard title=".mcp.json" content={MCP} />
+            <CodeCard title=".mcp.json" lang="json" content={MCP} />
+            <p style={{ marginTop: 18, fontFamily: 'var(--mono)', fontSize: 13 }}>
+              <span style={{ color: 'var(--ink-faint)' }}>tools:</span> process_video · get_job_status · fetch_markdown ·
+              delete_job
+            </p>
           </section>
 
           <section id="llms-txt">

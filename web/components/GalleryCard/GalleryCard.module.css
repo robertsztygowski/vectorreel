@@ -7,8 +7,9 @@
 .thumb {
   display: block;
   aspect-ratio: 16 / 9;
-  background: var(--bg-alt);
+  background: var(--code-tint);
   overflow: hidden;
+  border-bottom: 1px solid var(--line);
 }
 
 .thumb img {
@@ -24,23 +25,27 @@
 
 .badge {
   display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   color: var(--brand);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .body h3 {
   margin: 0 0 6px;
-  font-size: 17px;
-  letter-spacing: -0.01em;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
   line-height: 1.3;
+  font-variation-settings: "opsz" 24;
 }
 
 .meta {
   margin: 0;
+  font-family: var(--mono);
   color: var(--ink-faint);
-  font-size: 13.5px;
+  font-size: 12px;
 }

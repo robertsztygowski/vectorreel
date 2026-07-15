@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { assignAbArmIfAbsent, type AbArm } from '@/lib/attribution';
-import { CodeCard } from '../CodeCard/CodeCard';
+import { ArtifactCard } from './ArtifactCard';
 
 const ARM_COPY: Record<AbArm, { h1: string; lead: string }> = {
   A: {
@@ -16,23 +16,6 @@ const ARM_COPY: Record<AbArm, { h1: string; lead: string }> = {
       'mdreel turns your demos, trainings and walkthroughs into one portable Markdown file your agent owns — capturing on-screen text and demos, not just the transcript. No lock-in; bring your own RAG.',
   },
 };
-
-const SAMPLE_MARKDOWN = `---
-title: "Q3 Platform Demo — Billing Module"
-duration: "00:47:12"
-language: "en"
-tags: [demo, billing]
----
-
-# Q3 Platform Demo — Billing Module
-
-## [00:03:40] Invoice workflow
-**Spoken:** We open the invoice editor and
-apply proration before sending…
-**On screen:**
-> Invoices → Create → "Apply proration"
-> code: InvoiceService.CreateAsync(...)
-**Visual:** Presenter navigates the admin panel.`;
 
 export function Hero() {
   // Renders Arm A during SSR (no layout shift), then swaps to whatever arm this visitor is
@@ -48,22 +31,27 @@ export function Hero() {
     <section className="hero">
       <div className="wrap hero-grid">
         <div className="hero-copy">
-          <span className="pill">🇪🇺 EU-hosted · GDPR-first · no lock-in</span>
+          <div className="hero-meta">
+            <span><b>region:</b> eu-central</span>
+            <span><b>gdpr:</b> compliant</span>
+            <span><b>lock-in:</b> none</span>
+          </div>
           <h1>{copy.h1}</h1>
           <p className="lead">{copy.lead}</p>
           <div className="cta-row">
             <a className="btn btn-primary" href="/signup">
-              Start free — 1 hour
+              start free — 1 hour
             </a>
             <a className="btn btn-ghost" href="#how">
-              See how it works
+              see how it works ↓
             </a>
           </div>
-          <p className="micro">No credit card · One portable Markdown file · Bring your own RAG</p>
+          <p className="micro">no credit card · one portable .md file · bring your own RAG</p>
         </div>
 
-        <div className="hero-visual" aria-hidden="true">
-          <CodeCard title="demo-billing.md" content={SAMPLE_MARKDOWN} rotate />
+        <div className="hero-visual">
+          <ArtifactCard />
+          <p className="artifact-note">↑ actual output — one file, agent-citable</p>
         </div>
       </div>
     </section>

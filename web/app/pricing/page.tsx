@@ -11,40 +11,38 @@ export default function PricingPage() {
   return (
     <>
       <div className="page-head">
-        <div className="wrap page-narrow">
-          <h1>Simple, hours-based pricing</h1>
-          <p className="lead">
-            You pay for hours of video processed — and you get a portable Markdown file your agent owns, with no
-            retrieval stack to lock you in. Every plan is EU-only, source deleted after processing.
+        <div className="wrap page-head-inner">
+          <p className="kicker"># pricing</p>
+          <h1 style={{ maxWidth: '20ch' }}>Simple, hours-based pricing.</h1>
+          <p className="lead" style={{ maxWidth: '52ch' }}>
+            You pay for hours of video processed. You get a portable, timestamped Markdown document per video —
+            processed EU-only, source deleted afterwards.
           </p>
         </div>
       </div>
-      <div className="page-body">
-        <div className="wrap">
-          <div className="trial-banner">
-            <div>
-              <p className="trial-title">
-                Start with {TRIAL_CREDIT_HOURS} hour of processing, free
-              </p>
-              <p className="trial-sub">
-                One-time trial credit at signup — no credit card. Run it on your own footage and see the file before
-                you pay.
-              </p>
-            </div>
-            <Link className="btn btn-primary" href="/signup">
-              Start free — {TRIAL_CREDIT_HOURS} hour
-            </Link>
-          </div>
 
+      <div className="trial-line">
+        <div className="wrap trial-line-inner">
+          <p>
+            <b>trial:</b> {TRIAL_CREDIT_HOURS} hour free at signup · no credit card — process a real video and see the
+            file before you pay
+          </p>
+          <Link className="btn-mini" href="/signup" style={{ height: 42, padding: '0 20px', fontSize: 13 }}>
+            start free — {TRIAL_CREDIT_HOURS} hour
+          </Link>
+        </div>
+      </div>
+
+      <div className="section">
+        <div className="wrap" style={{ padding: '64px 32px 72px' }}>
           <div className="pricing-grid">
             {plans.map((plan) => (
               <PricingCard key={plan.id} plan={plan} />
             ))}
           </div>
-
           <p className="pricing-foot">
-            Bigger archive or an ongoing pipeline? Volume, API pay-as-you-go and self-hosted options come after we
-            learn how teams actually use it. <Link href="/docs">See the API &amp; MCP docs →</Link>
+            ≈ €6 per hour of structured video on Pro. Volume tiers, API pay-as-you-go and a self-hosted edition come
+            later — after we learn how teams actually use it. <Link href="/docs">Read the docs →</Link>
           </p>
         </div>
       </div>
