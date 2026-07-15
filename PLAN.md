@@ -246,12 +246,13 @@ Work:
 
 ### 🔑 Founder pre-flight — the agent cannot start these, and one of them gates everything
 
-**The site is still on a `run.app` URL.** Plausible tracks a *domain*, ads cannot sensibly point at
-a `run.app` URL, and nobody clicks one from LinkedIn. **The domain is the gate on 2b, 2c and 3.**
+**✅ Domain gate cleared 2026-07-15 — `https://mdreel.com` is live** (INFRA.md: Cloudflare DNS-only →
+Google-served, `europe-west1`, managed TLS). This **unblocks 2b, 2c and 3.** Remaining founder-only
+items below.
 
 | Founder-only | Why the agent can't |
 |---|---|
-| **Buy + verify the domain, delegate DNS** | Your card, your registrar, Search Console verification |
+| ~~Buy + verify the domain, delegate DNS~~ **✅ done 2026-07-15** (`mdreel.com` live) | *Was: your card, registrar, Search Console — now complete.* |
 | **Create the Plausible account** (EU-hosted, paid) | Account + payment. *Agent then installs the script, defines events, builds the scoreboard.* |
 | **Google Ads account + payment method** (2c) | Your card. *Agent can write the campaign, keywords, negatives — nothing spends without you.* |
 | **Post to LinkedIn / HN / Reddit** | Your identity and your voice. *Agent drafts; you publish.* |

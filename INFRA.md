@@ -61,28 +61,30 @@ gcloud run deploy vectorreel-web --source web --region europe-west1 \
   --allow-unauthenticated --project tensile-runway-442915-j6 --quiet
 ```
 
-### Custom domain — `mdreel.com`  (Route A: Google-served, Cloudflare DNS-only)
+### Custom domain — `mdreel.com`  ✅ LIVE 2026-07-15  (Route A: Google-served, Cloudflare DNS-only)
 
-**Product name: `mdreel`. Domain `mdreel.com` purchased 2026-07-15** (founder, personal registrar).
-**Cloudflare is DNS-only (grey cloud)** — no US-jurisdiction proxy in the request path; Google (EU,
-`europe-west1`) serves the page and provisions the TLS cert. Steps (🧑 = founder-only):
+**`https://mdreel.com` serves the landing page over HTTPS.** Google-managed cert (issuer: Google
+Trust Services `WR3`, `CN=mdreel.com`), backed by `vectorreel-web` in `europe-west1`. **Cloudflare is
+DNS-only (grey cloud)** — no US-jurisdiction proxy in the request path; Google (EU) serves both the
+page and the TLS. **This clears the domain gate on PLAN.md Phase 0.3** (measurement, ads, first post).
 
-1. 🧑 **Cloudflare zone** — add `mdreel.com` (Free plan); at the registrar set the nameservers to
-   Cloudflare's two. Wait for the zone to go **Active**.
-2. 🧑 **Create the mapping in the Cloud Console** (the CLI needs `gcloud beta`, which is not
-   installable in the dev SDK): Cloud Run → *Manage custom domains* → *Add mapping* → service
-   `vectorreel-web`, region `europe-west1`, domains `mdreel.com` + `www.mdreel.com`. It runs Search
-   Console verification inline — add the TXT it gives you to Cloudflare (grey cloud), then verify.
-3. 🧑 **Add the returned records to Cloudflare, all DNS-only (grey cloud):**
-   | Name | Type | Value |
-   |---|---|---|
-   | `@` | A | `216.239.32.21` · `216.239.34.21` · `216.239.36.21` · `216.239.38.21` |
-   | `@` | AAAA | `2001:4860:4802:32::15` · `2001:4860:4802:34::15` · `2001:4860:4802:36::15` · `2001:4860:4802:38::15` |
-   | `www` | CNAME | `ghs.googlehosted.com` |
-4. Google auto-provisions the managed cert (15 min–24 h). Then delete the stale `europe-central2`
-   copy (see above).
+**How it was set up (for reference / reproduction):**
+- Cloudflare zone `mdreel.com` (Free); registrar nameservers → Cloudflare's two.
+- Cloud Run domain mapping created in the **Cloud Console** (the dev SDK lacks `gcloud beta`):
+  service `vectorreel-web` @ `europe-west1`, domains `mdreel.com` + `www.mdreel.com`; ownership
+  verified via a Search Console TXT.
+- Records in Cloudflare, all **DNS-only (grey cloud)** — flipping these off *Proxied* was the one
+  gotcha: while proxied, Google cannot validate/issue the cert (and it would put a US proxy in path):
+  | Name | Type | Value |
+  |---|---|---|
+  | `@` | A | `216.239.32.21` · `216.239.34.21` · `216.239.36.21` · `216.239.38.21` |
+  | `@` | AAAA | `2001:4860:4802:32::15` · `2001:4860:4802:34::15` · `2001:4860:4802:36::15` · `2001:4860:4802:38::15` |
+  | `www` | CNAME | `ghs.googlehosted.com` |
+  | `@` | TXT | `google-site-verification=…` (kept DNS-only) |
+- Cert provisioned ~1 min after the records went grey (Google quotes up to 24 h).
 
-This domain is the gate on PLAN.md Phase 0.3 (measurement, ads, first post).
+**Remaining:** delete the stale `europe-central2` `vectorreel-web` copy (see above):
+`gcloud run services delete vectorreel-web --region europe-central2 --project tensile-runway-442915-j6`
 
 > ⚠️ The Cloud Run **service is still named `vectorreel-web`** — the code/service rename (C#
 > namespaces, assembly names, service name) is **deferred to a dedicated refactor**. Domain and
