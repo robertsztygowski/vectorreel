@@ -1,4 +1,4 @@
-/* mdreel landing — modern, simple, self-contained */
+/* mdreel — design tokens ported from the original static landing page (web/styles.css) */
 
 :root {
   --ink: #0e0e14;
@@ -14,6 +14,8 @@
   --shadow: 0 12px 40px -12px rgba(30, 27, 75, 0.18);
   --radius: 16px;
   --wrap: 1120px;
+  --ok: #16a34a;
+  --err: #dc2626;
   font-synthesis: none;
 }
 
@@ -25,8 +27,10 @@ body {
   margin: 0;
   color: var(--ink);
   background: var(--bg);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
+  /* No web-font load: rule 10 (no US-hosted analytics/fonts/scripts). The former
+     fonts.googleapis.com preconnect had no matching stylesheet link, so this stack has always
+     been what actually rendered. */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -49,6 +53,7 @@ a { color: inherit; text-decoration: none; }
 .nav { display: flex; align-items: center; gap: 28px; }
 .nav a { color: var(--ink-soft); font-size: 15px; font-weight: 500; transition: color 0.15s; }
 .nav a:hover { color: var(--ink); }
+.nav a.active { color: var(--ink); }
 
 /* ---------- Buttons ---------- */
 .btn {
@@ -59,6 +64,7 @@ a { color: inherit; text-decoration: none; }
   white-space: nowrap;
 }
 .btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-primary { background: var(--grad); color: #fff; box-shadow: 0 8px 24px -8px var(--ring); }
 .btn-primary:hover { box-shadow: 0 12px 30px -8px var(--ring); }
 .btn-ghost { background: #fff; color: var(--ink); border-color: var(--border); height: 40px; }
@@ -94,8 +100,8 @@ a { color: inherit; text-decoration: none; }
 .code-card {
   width: 100%; max-width: 460px; background: #14141c; border-radius: var(--radius);
   box-shadow: var(--shadow); overflow: hidden; border: 1px solid #23232f;
-  transform: rotate(0.5deg);
 }
+.code-card.rotate { transform: rotate(0.5deg); }
 .code-head {
   display: flex; align-items: center; gap: 7px; padding: 12px 16px;
   background: #1b1b25; border-bottom: 1px solid #262633;
@@ -109,6 +115,7 @@ a { color: inherit; text-decoration: none; }
   margin: 0; padding: 18px 20px; font-size: 13px; line-height: 1.7;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color: #c9c9d6; white-space: pre-wrap; word-break: break-word;
+  max-height: 60vh; overflow-y: auto;
 }
 .c-fm { color: #6b6b80; }
 .c-h { color: #a5b4fc; font-weight: 700; }
@@ -140,7 +147,7 @@ a { color: inherit; text-decoration: none; }
 .step p { margin: 0; color: var(--ink-soft); font-size: 15.5px; }
 .step em { font-style: normal; color: var(--ink); font-weight: 600; }
 
-/* Feature cards */
+/* Feature / gallery cards */
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s; }
 .card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #d9d9ea; }
@@ -190,6 +197,33 @@ a { color: inherit; text-decoration: none; }
 .footer-col a { display: block; color: var(--ink-soft); font-size: 15px; margin-bottom: 10px; transition: color 0.15s; }
 .footer-col a:hover { color: var(--ink); }
 .footer-bottom { display: flex; justify-content: space-between; gap: 16px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--ink-faint); font-size: 13px; flex-wrap: wrap; }
+
+/* ---------- Inner-page header (tool / gallery / pricing / signup / upload / jobs) ---------- */
+.page-head { padding: 56px 0 40px; border-bottom: 1px solid var(--border); background: var(--bg-alt); }
+.page-head h1 { margin: 0 0 12px; font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.03em; line-height: 1.1; font-weight: 800; }
+.page-head .lead { margin: 0; }
+.page-body { padding: 48px 0 88px; }
+.page-narrow { max-width: 640px; }
+
+/* ---------- Form fields (shared by signup / upload) ---------- */
+.field { display: block; margin-bottom: 18px; }
+.field label { display: block; font-size: 14px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
+.field .hint { display: block; font-size: 13px; color: var(--ink-faint); margin-top: 6px; }
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="number"],
+.field input[type="file"] {
+  width: 100%; height: 46px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--border);
+  font-size: 15px; background: #fff; color: var(--ink); font-family: inherit;
+}
+.field input:focus { outline: 2px solid var(--ring); border-color: var(--brand); }
+
+/* ---------- Status badges ---------- */
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.badge-queued { background: var(--bg-alt); color: var(--ink-faint); }
+.badge-processing { background: rgba(99, 102, 241, 0.12); color: var(--brand); }
+.badge-done { background: rgba(22, 163, 74, 0.12); color: var(--ok); }
+.badge-failed { background: rgba(220, 38, 38, 0.12); color: var(--err); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {

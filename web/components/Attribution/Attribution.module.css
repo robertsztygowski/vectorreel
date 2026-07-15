@@ -1,0 +1,28 @@
+.note {
+  background: #14141c;
+  color: #c9c9d6;
+  border-radius: var(--radius);
+  padding: 24px 26px;
+}
+
+.title {
+  margin: 0 0 10px;
+  font-weight: 700;
+  color: #fff;
+  font-size: 14px;
+}
+
+.note p {
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.note p:last-child {
+  margin-bottom: 0;
+}
+
+.note a {
+  color: #a5b4fc;
+  text-decoration: underline;
+}

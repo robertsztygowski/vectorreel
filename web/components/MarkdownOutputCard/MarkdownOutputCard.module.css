@@ -1,0 +1,99 @@
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+
+.tab,
+.tabActive {
+  border: none;
+  background: transparent;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.tabActive {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(30, 27, 75, 0.1);
+}
+
+.downloadBtn {
+  margin-left: auto;
+  height: 36px;
+}
+
+.rendered {
+  padding: 30px 32px;
+}
+
+.rendered h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+.summary {
+  color: var(--ink-soft);
+  font-size: 15px;
+  margin: 0 0 28px;
+}
+
+.section {
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+
+.section h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+
+.timestamp {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 14px;
+  margin-right: 6px;
+}
+
+.block {
+  margin-bottom: 10px;
+}
+
+.block:last-child {
+  margin-bottom: 0;
+}
+
+.blockLabel {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-faint);
+  margin-bottom: 2px;
+}
+
+.block p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+  white-space: pre-wrap;
+}

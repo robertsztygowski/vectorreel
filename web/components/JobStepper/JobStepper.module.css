@@ -1,0 +1,60 @@
+.stepper {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 26px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-bottom: 18px;
+}
+
+.dot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+
+.marker {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex: 0 0 auto;
+}
+
+.pending .marker { border-color: var(--border); color: var(--ink-faint); }
+.active .marker { border-color: var(--brand); color: var(--brand); box-shadow: 0 0 0 3px var(--ring); }
+.active { color: var(--ink); }
+.done .marker { border-color: var(--ok); background: var(--ok); color: #fff; }
+.done { color: var(--ink); }
+.failed .marker { border-color: var(--err); background: var(--err); color: #fff; }
+.failed { color: var(--err); }
+
+.bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-alt);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--grad);
+  transition: width 0.3s ease;
+}
+
+.fillFailed {
+  height: 100%;
+  background: var(--err);
+}

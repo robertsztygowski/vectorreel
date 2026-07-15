@@ -10,6 +10,9 @@ node_modules/
 dist/
 *.log
 
+# Playwright MCP scratch (console logs + page snapshots — tooling artifacts, never committed)
+.playwright-mcp/
+
 # .NET
 bin/
 obj/

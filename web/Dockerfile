@@ -1,12 +1,26 @@
-# Static landing page served by nginx on Cloud Run (listens on 8080).
-FROM nginx:1.27-alpine
+# Next.js 15 standalone app on Cloud Run (listens on 8080).
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci
 
-# Replace default server config with our Cloud Run-friendly one (port 8080).
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm run build
 
-# Copy the site.
-COPY index.html styles.css favicon.svg /usr/share/nginx/html/
+FROM node:20-alpine AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# fixtures/ is read via fs at request time (lib/corpus.ts), not statically imported, so Next's
+# output-file-tracing won't discover it automatically — copy it explicitly.
+COPY --from=build /app/public ./public
+COPY --from=build /app/fixtures ./fixtures
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
 
 EXPOSE 8080
-
-# nginx runs in the foreground (base image default CMD already does this).
+CMD ["node", "server.js"]
