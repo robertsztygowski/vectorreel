@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using VectorReel.Core.Domain;
-using VectorReel.Core.Media;
+using MdReel.Core.Domain;
+using MdReel.Core.Media;
 
-namespace VectorReel.Tests.Integration;
+namespace MdReel.Tests.Integration;
 
 /// <summary>Real ffmpeg against the committed fixtures. No cloud, no spend.</summary>
 public sealed class MediaScannerTests

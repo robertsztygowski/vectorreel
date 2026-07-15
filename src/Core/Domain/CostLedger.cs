@@ -1,4 +1,4 @@
-namespace VectorReel.Core.Domain;
+namespace MdReel.Core.Domain;
 
 /// <summary>What kind of resource a ledger entry accounts for.</summary>
 public enum CostKind

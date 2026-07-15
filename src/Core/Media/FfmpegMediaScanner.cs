@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using VectorReel.Core.Domain;
-using VectorReel.Core.Pipeline.StageA;
-using VectorReel.Core.Providers;
+using MdReel.Core.Domain;
+using MdReel.Core.Pipeline.StageA;
+using MdReel.Core.Providers;
 
-namespace VectorReel.Core.Media;
+namespace MdReel.Core.Media;
 
 /// <summary>
 /// Extracts both of Stage A's signals from a source file in <b>one</b> ffmpeg pass: the downscaled

@@ -1,6 +1,6 @@
-using VectorReel.Core.Domain;
+using MdReel.Core.Domain;
 
-namespace VectorReel.Tests.Unit.StageA;
+namespace MdReel.Tests.Unit.StageA;
 
 /// <summary>
 /// Synthesized frames. Every Stage A algorithm is a pure function over a frame sequence, so its

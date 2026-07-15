@@ -1,7 +1,7 @@
 using System.Text.Json;
-using VectorReel.Core.Pipeline.StageA;
+using MdReel.Core.Pipeline.StageA;
 
-namespace VectorReel.Tests.Unit.StageA;
+namespace MdReel.Tests.Unit.StageA;
 
 /// <summary>
 /// 🔒 <b>The fidelity gate on the cost model — now reproducible on any clone, with no video.</b>
@@ -40,7 +40,7 @@ public sealed class N4FidelityTests
     private static string RepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "VectorReel.slnx")))
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "MdReel.slnx")))
         {
             directory = directory.Parent;
         }

@@ -1,9 +1,9 @@
+using MdReel.Core.Domain;
+using MdReel.Core.Media;
+using MdReel.Core.Pipeline.StageA;
 using Microsoft.Extensions.Logging.Abstractions;
-using VectorReel.Core.Domain;
-using VectorReel.Core.Media;
-using VectorReel.Core.Pipeline.StageA;
 
-namespace VectorReel.Tests.Integration;
+namespace MdReel.Tests.Integration;
 
 /// <summary>
 /// Stage A driven end to end, exactly as the Worker will drive it: a real file in, real ffmpeg, a

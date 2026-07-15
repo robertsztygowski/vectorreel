@@ -1,6 +1,6 @@
-using VectorReel.Core.Domain;
+using MdReel.Core.Domain;
 
-namespace VectorReel.Tests.Unit.Domain;
+namespace MdReel.Tests.Unit.Domain;
 
 public sealed class CostLedgerTests
 {

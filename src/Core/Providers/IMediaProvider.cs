@@ -1,6 +1,6 @@
-using VectorReel.Core.Domain;
+using MdReel.Core.Domain;
 
-namespace VectorReel.Core.Providers;
+namespace MdReel.Core.Providers;
 
 /// <summary>
 /// Reads a source file's shape without decoding it. Backed by ffprobe.

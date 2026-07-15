@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <RootNamespace>VectorReel.Worker</RootNamespace>
-    <AssemblyName>VectorReel.Worker</AssemblyName>
+    <RootNamespace>MdReel.Worker</RootNamespace>
+    <AssemblyName>MdReel.Worker</AssemblyName>
     <UserSecretsId>dotnet-Worker-0e0211b4-9ae6-4a79-a595-7be42105d1dc</UserSecretsId>
   </PropertyGroup>
 

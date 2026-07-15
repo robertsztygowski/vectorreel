@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace VectorReel.Core.Media;
+namespace MdReel.Core.Media;
 
 /// <summary>What a finished child process produced.</summary>
 public sealed record ProcessResult(int ExitCode, byte[] StandardOutput, string StandardError);

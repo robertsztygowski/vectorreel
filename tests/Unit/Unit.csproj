@@ -3,8 +3,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>VectorReel.Tests.Unit</RootNamespace>
-    <AssemblyName>VectorReel.Tests.Unit</AssemblyName>
+    <RootNamespace>MdReel.Tests.Unit</RootNamespace>
+    <AssemblyName>MdReel.Tests.Unit</AssemblyName>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

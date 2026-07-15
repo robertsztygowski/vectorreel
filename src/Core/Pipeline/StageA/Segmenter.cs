@@ -1,6 +1,6 @@
-using VectorReel.Core.Domain;
+using MdReel.Core.Domain;
 
-namespace VectorReel.Core.Pipeline.StageA;
+namespace MdReel.Core.Pipeline.StageA;
 
 /// <summary>
 /// Cuts the video into the windows Stage B analyses (ARCHITECTURE.md §3, step 3), routes each to a

@@ -1,4 +1,4 @@
-namespace VectorReel.Core.Domain;
+namespace MdReel.Core.Domain;
 
 /// <summary>
 /// What ffprobe tells us about a source file before any analysis happens (ARCHITECTURE.md §3, Stage A step 1).

@@ -1,6 +1,6 @@
-using VectorReel.Core.Media;
+using MdReel.Core.Media;
 
-namespace VectorReel.Tests.Integration;
+namespace MdReel.Tests.Integration;
 
 /// <summary>Real ffprobe against the committed fixtures. No cloud, no spend.</summary>
 public sealed class MediaProbeTests

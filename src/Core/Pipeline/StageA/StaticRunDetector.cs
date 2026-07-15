@@ -1,6 +1,6 @@
-using VectorReel.Core.Domain;
+using MdReel.Core.Domain;
 
-namespace VectorReel.Core.Pipeline.StageA;
+namespace MdReel.Core.Pipeline.StageA;
 
 /// <summary>
 /// Finds the stretches where the picture is frozen. This is the <b>cost</b> lever and nothing else

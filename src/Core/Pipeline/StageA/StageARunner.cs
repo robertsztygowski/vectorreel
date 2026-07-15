@@ -1,9 +1,9 @@
 using System.Diagnostics;
+using MdReel.Core.Domain;
+using MdReel.Core.Providers;
 using Microsoft.Extensions.Logging;
-using VectorReel.Core.Domain;
-using VectorReel.Core.Providers;
 
-namespace VectorReel.Core.Pipeline.StageA;
+namespace MdReel.Core.Pipeline.StageA;
 
 /// <summary>What Stage A hands to Stage B.</summary>
 /// <param name="Probe">What the file is.</param>

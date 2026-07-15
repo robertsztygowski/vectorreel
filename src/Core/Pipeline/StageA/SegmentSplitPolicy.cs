@@ -1,6 +1,6 @@
-using VectorReel.Core.Domain;
+using MdReel.Core.Domain;
 
-namespace VectorReel.Core.Pipeline.StageA;
+namespace MdReel.Core.Pipeline.StageA;
 
 /// <summary>
 /// What Stage B does when a segment overflows the model's output cap.

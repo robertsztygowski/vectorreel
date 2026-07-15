@@ -4,8 +4,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>VectorReel.Tests.Integration</RootNamespace>
-    <AssemblyName>VectorReel.Tests.Integration</AssemblyName>
+    <RootNamespace>MdReel.Tests.Integration</RootNamespace>
+    <AssemblyName>MdReel.Tests.Integration</AssemblyName>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

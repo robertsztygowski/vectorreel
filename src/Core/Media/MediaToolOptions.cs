@@ -1,4 +1,4 @@
-namespace VectorReel.Core.Media;
+namespace MdReel.Core.Media;
 
 /// <summary>Where the ffmpeg binaries are. Both variables appear in <c>.env.example</c> (DEVELOPMENT.md §6).</summary>
 public sealed record MediaToolOptions

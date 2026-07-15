@@ -1,6 +1,6 @@
-using VectorReel.Core.Domain;
+using MdReel.Core.Domain;
 
-namespace VectorReel.Core.Providers;
+namespace MdReel.Core.Providers;
 
 /// <summary>
 /// Stage B — segment analysis against a multimodal model (Vertex Gemini today, Mistral or a

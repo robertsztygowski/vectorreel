@@ -1,4 +1,4 @@
-namespace VectorReel.Core.Pipeline.StageA;
+namespace MdReel.Core.Pipeline.StageA;
 
 /// <summary>
 /// Every tunable in Stage A, in one place, each labelled with where it came from.

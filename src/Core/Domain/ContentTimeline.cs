@@ -1,4 +1,4 @@
-namespace VectorReel.Core.Domain;
+namespace MdReel.Core.Domain;
 
 /// <summary>Why Stage A placed a block boundary here. Carried through to Stage B, and worth logging.</summary>
 public enum CueKind

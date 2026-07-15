@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text.Json;
-using VectorReel.Core.Domain;
-using VectorReel.Core.Providers;
+using MdReel.Core.Domain;
+using MdReel.Core.Providers;
 
-namespace VectorReel.Core.Media;
+namespace MdReel.Core.Media;
 
 /// <summary>
 /// Stage A step 1 (ARCHITECTURE.md §3): find out what the file is, and reject it here if we can't

@@ -1,8 +1,8 @@
 using System.Text.Json;
-using VectorReel.Core.Media;
-using VectorReel.Core.Pipeline.StageA;
+using MdReel.Core.Media;
+using MdReel.Core.Pipeline.StageA;
 
-namespace VectorReel.Tests.Integration;
+namespace MdReel.Tests.Integration;
 
 /// <summary>
 /// Writes the committed, <b>non-confidential</b> derived fixture that lets the N4 fidelity gate run on

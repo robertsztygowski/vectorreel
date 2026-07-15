@@ -1,4 +1,4 @@
-namespace VectorReel.Core.Media;
+namespace MdReel.Core.Media;
 
 /// <summary>
 /// The source file is not something we can process — not a video, truncated, or unreadable.

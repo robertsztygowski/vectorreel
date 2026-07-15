@@ -1,4 +1,4 @@
-namespace VectorReel.Tests.Integration;
+namespace MdReel.Tests.Integration;
 
 /// <summary>
 /// The private calibration assets — the ICP's own content type, and the only footage that reproduces

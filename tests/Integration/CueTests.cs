@@ -1,8 +1,8 @@
-using VectorReel.Core.Domain;
-using VectorReel.Core.Media;
-using VectorReel.Core.Pipeline.StageA;
+using MdReel.Core.Domain;
+using MdReel.Core.Media;
+using MdReel.Core.Pipeline.StageA;
 
-namespace VectorReel.Tests.Integration;
+namespace MdReel.Tests.Integration;
 
 /// <summary>
 /// Cue detection against the committed CC clips. Unlike the calibration suite these run on any clone,

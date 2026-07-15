@@ -1,4 +1,4 @@
-namespace VectorReel.Core.Domain;
+namespace MdReel.Core.Domain;
 
 /// <summary>
 /// A grayscale frame sampled from the source video, downscaled hard. One frame per second.

@@ -1,7 +1,7 @@
-using VectorReel.Core.Media;
-using VectorReel.Core.Pipeline.StageA;
+using MdReel.Core.Media;
+using MdReel.Core.Pipeline.StageA;
 
-namespace VectorReel.Tests.Integration;
+namespace MdReel.Tests.Integration;
 
 /// <summary>Static-run detection against real video. The cost lever, measured end to end.</summary>
 public sealed class StaticRunTests

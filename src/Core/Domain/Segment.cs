@@ -1,4 +1,4 @@
-namespace VectorReel.Core.Domain;
+namespace MdReel.Core.Domain;
 
 /// <summary>
 /// How much of the frame Vertex is asked to look at. The measured cost lever (ARCHITECTURE.md §8):

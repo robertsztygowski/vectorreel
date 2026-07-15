@@ -1,4 +1,4 @@
-namespace VectorReel.Worker;
+namespace MdReel.Worker;
 
 /// <summary>
 /// Queue-driven pipeline worker. A shell until Phase 2: the stage handlers stay thin

@@ -1,4 +1,4 @@
-namespace VectorReel.Tests.Integration;
+namespace MdReel.Tests.Integration;
 
 /// <summary>
 /// The three committed CC clips (tests/fixtures/videos/README.md). They are the golden inputs for
@@ -27,7 +27,7 @@ public static class Fixtures
     private static string FindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "VectorReel.slnx")))
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "MdReel.slnx")))
         {
             directory = directory.Parent;
         }

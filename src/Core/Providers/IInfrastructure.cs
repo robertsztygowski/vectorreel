@@ -1,4 +1,4 @@
-namespace VectorReel.Core.Providers;
+namespace MdReel.Core.Providers;
 
 /// <summary>
 /// Stage C — fusion of the ordered segment analyses into one document (text-only model call).

@@ -1,7 +1,7 @@
-using VectorReel.Core.Domain;
-using VectorReel.Core.Pipeline.StageA;
+using MdReel.Core.Domain;
+using MdReel.Core.Pipeline.StageA;
 
-namespace VectorReel.Tests.Unit.StageA;
+namespace MdReel.Tests.Unit.StageA;
 
 /// <summary>
 /// The overflow path. Stage B calls this when a segment blows the model's output cap — which is a

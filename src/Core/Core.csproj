@@ -4,8 +4,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>VectorReel.Core</RootNamespace>
-    <AssemblyName>VectorReel.Core</AssemblyName>
+    <RootNamespace>MdReel.Core</RootNamespace>
+    <AssemblyName>MdReel.Core</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
