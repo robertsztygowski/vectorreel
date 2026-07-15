@@ -132,22 +132,27 @@ block 66 s instead of 49 s), which is the entire argument for keeping that test.
 
 ---
 
-## 5. 🚩 The best calibration asset we have is not in the repo, and it is going to vanish
+## 5. ✅ Calibration assets — RESOLVED 2026-07-15
 
-The two files that made tonight's measurements trustworthy are **untracked and confidential**:
+Was: the only copies of the footage that makes the calibration trustworthy were on one laptop, one
+of them in a scratch dir slated for deletion. Now handled two ways, belt and braces:
 
-- `~/Downloads/Isolation Component V2 demo.mp4` — the real 50-minute ICP recording
-- `experiments/001-gemini-video-benchmark/work/seg2_720p.mp4` — **the exact window that failed**
+- **The N4 fidelity gate no longer needs the video at all.** `tests/fixtures/golden/demo_motion.json`
+  (~38 KB, committed, non-confidential — change-rate scalars only) pins it via a pure unit test that
+  runs on any clone. Regenerate with `VECTORREEL_WRITE_FIXTURES=1` if the ffmpeg extraction ever
+  legitimately changes.
+- **The master demo is durable in the EU dev bucket** (`gs://…-vectorreel-dev/calibration/`,
+  europe-central2, private). `scripts/fetch-calibration.sh` pulls it into `.calibration/` (gitignored)
+  and regenerates seg2 locally — seg2 is a window of the demo, so it is never stored separately. The
+  cue tests search `.calibration/` first, so after one fetch they run instead of skip.
 
-They are correctly uncommitted (confidential, ~300 MB). But `work/` is scratch, and the next
-cleanup deletes the only footage that reproduces N7b. The tests **skip** cleanly when they are
-absent — which means a fresh clone is green *and the acceptance gate silently never runs*.
-
-**Decide where these live.** DEVELOPMENT.md §4 already anticipates this ("larger benchmark videos in
-a GCS dev bucket, fetched by script"). Without them, Phase 2 has nothing to regress against, and the
-claim "N7b is fixed" becomes unfalsifiable.
-
-Point `VECTORREEL_CALIBRATION_DEMO` / `VECTORREEL_CALIBRATION_SEG2` at them to run those tests.
+**Two residual notes for you:**
+1. The bucket's `publicAccessPrevention` is **`inherited`, not `enforced`.** The object is private
+   (no public IAM/ACL, checked), so nothing is exposed — but for a company selling EU compliance,
+   `gcloud storage buckets update … --public-access-prevention` on the dev bucket is a cheap belt.
+2. `scripts/check-domains.sh` in your tree is **yours** (domain-name brainstorming) and is left
+   untracked on purpose — it is built to hold a pasted Cloudflare session cookie + `x-atok`, so
+   committing it would invite a secret into git (rule 1). Gitignore it if you want it to live here.
 
 ---
 
