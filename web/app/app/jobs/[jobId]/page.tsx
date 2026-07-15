@@ -2,22 +2,18 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { JobStepper, type JobStageKey, type JobStatusState } from '@/components/JobStepper/JobStepper';
 import { MarkdownOutputCard } from '@/components/MarkdownOutputCard/MarkdownOutputCard';
-import { trackJobCompleted, trackOutputDownloaded, trackUploadRepeat, trackYtToolUsed } from '@/lib/events';
+import { trackJobCompleted, trackOutputDownloaded, trackUploadRepeat } from '@/lib/events';
 import type { ParsedMarkdown } from '@/lib/corpus';
-import type { JobKind } from '@/lib/mockJobs';
 
-const STAGES_BY_KIND: Record<JobKind, JobStageKey[]> = {
-  youtube: ['B', 'C', 'D'],
-  upload: ['A', 'B', 'C', 'D'],
-};
+const STAGES: JobStageKey[] = ['A', 'B', 'C', 'D'];
 
 const UPLOAD_COUNT_KEY = 'mdreel_upload_count';
 const UPLOAD_FIRST_KEY = 'mdreel_upload_first_at';
 
 interface JobStatusResponse {
-  kind: JobKind;
   status: JobStatusState;
   stage?: JobStageKey;
   progress: number;
@@ -71,16 +67,6 @@ export default function JobStatusPage() {
       const data = (await res.json()) as OutputJson;
       setOutput(data);
 
-      if (status.kind === 'youtube') {
-        trackYtToolUsed({
-          video_id: data.filename.replace(/\.md$/, ''),
-          duration_sec: status.duration_sec ?? 0,
-          cache_hit: false,
-          cost_cents: status.cost_cents ?? 0,
-        });
-        return;
-      }
-
       trackJobCompleted({
         job_id: jobId,
         duration_sec: status.duration_sec ?? 0,
@@ -106,37 +92,38 @@ export default function JobStatusPage() {
         <div className="wrap page-narrow">
           <h1>Job not found</h1>
           <p className="lead">This job id doesn&apos;t exist — it may have expired or was never created.</p>
+          <Link className="btn btn-ghost" href="/app">
+            Back to library
+          </Link>
         </div>
       </div>
     );
   }
 
+  const done = status?.status === 'done';
+  const failed = status?.status === 'failed';
+
   return (
     <>
       <div className="page-head">
         <div className="wrap page-narrow">
-          <h1>{status?.kind === 'youtube' ? 'Processing your video' : 'Processing your recording'}</h1>
+          <h1>{done ? 'Your Markdown is ready' : failed ? 'Processing failed' : 'Processing your recording'}</h1>
           <p className="lead">
-            {status?.status === 'done'
-              ? 'Done — your Markdown is ready below.'
-              : 'This mirrors the real pipeline stages, but every step here is simulated.'}
+            {done
+              ? 'Done — download it below, or find it any time in your library.'
+              : failed
+                ? 'Simulated failure for QA — nothing was charged.'
+                : 'This mirrors the real pipeline stages, but every step here is simulated.'}
           </p>
         </div>
       </div>
       <div className="page-body">
         <div className="wrap page-narrow">
           {status && !output && (
-            <JobStepper
-              stages={STAGES_BY_KIND[status.kind]}
-              status={status.status}
-              activeStage={status.stage}
-              progress={status.progress}
-            />
+            <JobStepper stages={STAGES} status={status.status} activeStage={status.stage} progress={status.progress} />
           )}
 
-          {status?.status === 'failed' && (
-            <p style={{ color: 'var(--err)', marginTop: 16 }}>Job failed — simulated failure for QA.</p>
-          )}
+          {failed && <p style={{ color: 'var(--err)', marginTop: 16 }}>Job failed — simulated failure for QA.</p>}
 
           {output && (
             <div style={{ marginTop: 28 }}>
@@ -148,6 +135,9 @@ export default function JobStatusPage() {
                 filename={output.filename}
                 onDownload={() => trackOutputDownloaded({ job_id: jobId })}
               />
+              <p className="micro" style={{ marginTop: 20 }}>
+                <Link href="/app">← Back to your library</Link>
+              </p>
             </div>
           )}
         </div>

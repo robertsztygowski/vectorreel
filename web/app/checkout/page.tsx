@@ -1,10 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { PRICING } from '@/lib/pricing';
+import { Suspense, useState } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { getPlan, PLANS } from '@/lib/pricing';
 import { trackCheckoutAbandoned, trackPaymentSucceeded } from '@/lib/events';
 
-export default function CheckoutPage() {
+function CheckoutInner() {
+  const searchParams = useSearchParams();
+  const plan = getPlan(searchParams.get('plan')) ?? PLANS.pro;
   const [result, setResult] = useState<'succeeded' | 'abandoned' | null>(null);
 
   if (result === 'succeeded') {
@@ -13,6 +17,9 @@ export default function CheckoutPage() {
         <div className="wrap page-narrow">
           <h1>Payment succeeded</h1>
           <p className="lead">This was simulated — no real Stripe integration until Phase 4. Welcome to mdreel!</p>
+          <Link className="btn btn-primary" href="/app">
+            Open your workspace
+          </Link>
         </div>
       </div>
     );
@@ -44,7 +51,11 @@ export default function CheckoutPage() {
         <div className="wrap page-narrow">
           <div className="card" style={{ marginBottom: 20 }}>
             <p style={{ margin: 0, fontWeight: 700, fontSize: 18 }}>
-              mdreel {PRICING.planName} — €{PRICING.priceEur}/mo
+              mdreel {plan.name} — €{plan.priceEur}/mo
+            </p>
+            <p style={{ margin: '6px 0 0', color: 'var(--ink-faint)', fontSize: 14.5 }}>
+              {plan.hoursPerMonth} h/mo ·{' '}
+              {plan.capKind === 'hard' ? 'hard cap, no overage' : `€${plan.overagePerHourEur}/h overage`}
             </p>
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -52,7 +63,7 @@ export default function CheckoutPage() {
               className="btn btn-primary"
               type="button"
               onClick={() => {
-                trackPaymentSucceeded({ amount_cents: PRICING.priceEur * 100 });
+                trackPaymentSucceeded({ amount_cents: plan.priceEur * 100 });
                 setResult('succeeded');
               }}
             >
@@ -72,5 +83,13 @@ export default function CheckoutPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={null}>
+      <CheckoutInner />
+    </Suspense>
   );
 }

@@ -45,15 +45,6 @@ export function trackPageView(path: string): void {
   emit('page_view', { path });
 }
 
-export function trackYtToolUsed(args: {
-  video_id: string;
-  duration_sec: number;
-  cache_hit: boolean;
-  cost_cents: number;
-}): void {
-  emit('yt_tool_used', args);
-}
-
 export function trackSignup(args: { archive_hours: number | null; monthly_hours: number | null }): void {
   emit('signup', args);
 }
@@ -79,8 +70,8 @@ export function trackUploadRepeat(args: { n_th: number; days_since_first: number
   emit('upload_repeat', args);
 }
 
-export function trackCheckoutClicked(): void {
-  emit('checkout_clicked');
+export function trackCheckoutClicked(plan: string): void {
+  emit('checkout_clicked', { plan });
 }
 
 export function trackCheckoutAbandoned(args: { reason: string }): void {

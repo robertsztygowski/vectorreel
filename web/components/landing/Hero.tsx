@@ -8,12 +8,12 @@ const ARM_COPY: Record<AbArm, { h1: string; lead: string }> = {
   A: {
     h1: 'Your recordings never leave the EU.',
     lead:
-      "mdreel processes trainings, demos and meetings into clean, timestamped Markdown — capturing both what's said and what's shown on screen. Processed entirely in the EU, source video deleted after processing.",
+      "One portable, timestamped Markdown file your agent can cite — separating what's said from what's shown on screen. No retrieval stack to lock you in, processed entirely in the EU, source video deleted after processing.",
   },
   B: {
-    h1: "Your AI assistant can't see what's on screen in your videos.",
+    h1: "Your AI assistant can't cite what's on screen in your videos.",
     lead:
-      'mdreel turns company recordings into clean, timestamped Markdown your agents can actually cite — capturing on-screen text and demos, not just the transcript.',
+      'mdreel turns your demos, trainings and walkthroughs into one portable Markdown file your agent owns — capturing on-screen text and demos, not just the transcript. No lock-in; bring your own RAG.',
   },
 };
 
@@ -53,13 +53,13 @@ export function Hero() {
           <p className="lead">{copy.lead}</p>
           <div className="cta-row">
             <a className="btn btn-primary" href="/signup">
-              Start free — 2 hours
+              Start free — 1 hour
             </a>
             <a className="btn btn-ghost" href="#how">
               See how it works
             </a>
           </div>
-          <p className="micro">No credit card · Plain Markdown out · Bring your own RAG</p>
+          <p className="micro">No credit card · One portable Markdown file · Bring your own RAG</p>
         </div>
 
         <div className="hero-visual" aria-hidden="true">

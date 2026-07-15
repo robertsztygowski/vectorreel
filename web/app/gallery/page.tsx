@@ -12,7 +12,9 @@ export default function GalleryPage() {
         <div className="wrap">
           <h1>Gallery</h1>
           <p className="lead">
-            Curated, CC-licensed talks processed end-to-end by mdreel — attribution and the original video included.
+            Talks you already know, processed end-to-end by mdreel — so you can check the output against ground truth
+            you already hold. Each one is the single portable Markdown file your agent would cite. CC-licensed,
+            attributed, original video included.
           </p>
         </div>
       </div>

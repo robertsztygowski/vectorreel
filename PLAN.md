@@ -51,7 +51,12 @@ is still unproven. Phase 0.3 as a standalone phase is **superseded** — its con
 as the baseline, **but the review revised the product scope** (free tool DROPPED, two-plan pricing,
 trial credit, panel + auth + docs screens added — the full verdict is in the Phase 2 revision
 block).
-**Next: Phase 2R — build the revised screens, and make the mockup *encode the competitor findings*
+**Phase 2R ✅ built 2026-07-16** — the revised screens are implemented and encode the competitor
+findings (free tool dropped; two-plan pricing + N33 trial credit, no free tier; €99 Starter dark
+behind a flag; sign-in/signup + authenticated panel + docs; positioning recopy; footer + job-done
+defects fixed). All on mocked fixtures — no backend, no Vertex. **Next: founder sign-off, then Phase
+2.5 (contracts).**
+**Phase 2R scope — *encode the competitor findings*
 (experiments/002-competitor-analysis).** The positioning was reset 2026-07-15 by that analysis
 (BUSINESS_MODEL §2/§4/§6/§8): anchor on **asset video, never meetings** (the bundled recap is the
 #1 competitor); sell the **portable Markdown artifact, not the OCR** (OCR is table-stakes); lead the
@@ -353,6 +358,8 @@ not global) and the job page header still reading "Processing your video" after 
      core-insight note), since the pre-rendered gallery must out-work Cloudglue's live Playground.
 
 Exit criterion unchanged: revised screens navigable on mocks, founder signs off again.
+**Built 2026-07-16** — all screens implemented on mocked fixtures; lint/typecheck/build/tests green,
+grep-for-"meeting" clean, `/tool` returns 404, pricing hides €99 by default. Awaiting founder sign-off.
 
 **Starter prompt (Phase 2R):**
 > Phase 2R — revised frontend scope + competitor-informed positioning. Read PLAN.md (STATUS, then

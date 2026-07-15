@@ -2,15 +2,15 @@ export function TrustStrip() {
   return (
     <section className="strip">
       <div className="wrap strip-inner">
-        <span>Built for the teams putting video to work</span>
+        <span>Built for asset video — not call recaps</span>
         <div className="strip-items">
-          <span>Internal trainings</span>
-          <i />
           <span>Product demos</span>
           <i />
-          <span>Sales &amp; onboarding calls</span>
+          <span>Internal trainings</span>
           <i />
-          <span>All-hands &amp; Teams/Zoom</span>
+          <span>Recorded walkthroughs</span>
+          <i />
+          <span>Conference talks</span>
         </div>
       </div>
     </section>

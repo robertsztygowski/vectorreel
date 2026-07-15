@@ -1,26 +1,32 @@
 'use client';
 
 import Link from 'next/link';
-import { PRICING } from '@/lib/pricing';
+import type { Plan } from '@/lib/pricing';
 import { trackCheckoutClicked } from '@/lib/events';
 import styles from './PricingCard.module.css';
 
-export function PricingCard() {
+export function PricingCard({ plan }: { plan: Plan }) {
   return (
-    <div className={`card ${styles.card}`}>
-      <p className={styles.planName}>{PRICING.planName}</p>
+    <div className={`card ${styles.card} ${plan.highlighted ? styles.highlighted : ''} ${plan.dark ? styles.dark : ''}`}>
+      {plan.highlighted && <span className={styles.badge}>Most teams start here</span>}
+      {plan.dark && <span className={styles.badgeDark}>Dark — fallback only</span>}
+      <p className={styles.planName}>{plan.name}</p>
       <p className={styles.price}>
-        €{PRICING.priceEur}
+        €{plan.priceEur}
         <span>/mo</span>
       </p>
+      <p className={styles.tagline}>{plan.tagline}</p>
       <ul className={styles.list}>
-        <li>{PRICING.hoursPerMonth} hours of video processed per month</li>
-        <li>€{PRICING.overagePerHourEur}/hour overage</li>
-        <li>UI + API access, webhooks</li>
-        <li>EU-only processing, source deleted after processing</li>
+        {plan.features.map((f) => (
+          <li key={f}>{f}</li>
+        ))}
       </ul>
-      <Link href="/checkout" className={`btn btn-primary ${styles.cta}`} onClick={() => trackCheckoutClicked()}>
-        Get started
+      <Link
+        href={`/checkout?plan=${plan.id}`}
+        className={`btn ${plan.highlighted ? 'btn-primary' : 'btn-ghost'} ${styles.cta}`}
+        onClick={() => trackCheckoutClicked(plan.id)}
+      >
+        Choose {plan.name}
       </Link>
     </div>
   );

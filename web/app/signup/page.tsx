@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import Link from 'next/link';
 import { getAbArm, getFirstTouch } from '@/lib/attribution';
 import { trackSignup } from '@/lib/events';
+import { markSignedIn } from '@/lib/session';
+import { TRIAL_CREDIT_HOURS } from '@/lib/pricing';
 import { Field } from '@/components/Field/Field';
 
 export default function SignupPage() {
@@ -28,6 +31,7 @@ export default function SignupPage() {
       archive_hours: skip || !archiveHours ? null : Number(archiveHours),
       monthly_hours: skip || !monthlyHours ? null : Number(monthlyHours),
     });
+    markSignedIn(email);
     setSubmitted(true);
   }
 
@@ -36,7 +40,13 @@ export default function SignupPage() {
       <div className="page-body">
         <div className="wrap page-narrow">
           <h1>Check your inbox</h1>
-          <p className="lead">We sent a magic link to {email || 'your email'} (mock — no email actually sent this phase).</p>
+          <p className="lead">
+            We sent a magic link to {email || 'your email'} (mock — no email actually sent this phase). Your{' '}
+            {TRIAL_CREDIT_HOURS}-hour trial credit is ready.
+          </p>
+          <Link className="btn btn-primary" href="/app">
+            Open your workspace
+          </Link>
         </div>
       </div>
     );
@@ -46,8 +56,11 @@ export default function SignupPage() {
     <>
       <div className="page-head">
         <div className="wrap page-narrow">
-          <h1>Get early access</h1>
-          <p className="lead">No password. We&apos;ll email you a magic link.</p>
+          <h1>Start free — {TRIAL_CREDIT_HOURS} hour of processing</h1>
+          <p className="lead">
+            No password, no credit card. We&apos;ll email you a magic link, and your one-time {TRIAL_CREDIT_HOURS}-hour
+            trial credit is waiting on your own footage.
+          </p>
         </div>
       </div>
       <div className="page-body">
@@ -100,6 +113,9 @@ export default function SignupPage() {
               </button>
             </div>
           </form>
+          <p className="micro" style={{ marginTop: 20 }}>
+            Already have an account? <Link href="/signin">Sign in</Link>
+          </p>
         </div>
       </div>
     </>

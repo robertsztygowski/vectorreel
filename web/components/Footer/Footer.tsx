@@ -7,21 +7,22 @@ export function Footer() {
       <div className="wrap footer-grid">
         <div className="footer-brand">
           <Link className="brand" href="/">
-            <BrandMark gradientId="footer-g" size={24} />
+            <BrandMark size={24} />
             <span>mdreel</span>
           </Link>
-          <p>Video to Markdown for AI knowledge bases. Processed in the EU.</p>
+          <p>The portable Markdown file your AI agents can cite — from the asset video they can&apos;t see. Processed in the EU.</p>
         </div>
         <nav className="footer-col" aria-label="Product">
           <h4>Product</h4>
-          <Link href="/tool">Free tool</Link>
           <Link href="/gallery">Gallery</Link>
           <Link href="/pricing">Pricing</Link>
+          <Link href="/signup">Get started</Link>
         </nav>
         <nav className="footer-col" aria-label="Developers">
           <h4>Developers</h4>
-          <Link href="/pricing">API access</Link>
-          <Link href="/gallery">llms.txt</Link>
+          <Link href="/docs">API &amp; webhooks</Link>
+          <Link href="/docs#mcp">MCP server</Link>
+          <Link href="/docs#llms-txt">llms.txt</Link>
         </nav>
         <nav className="footer-col" aria-label="Trust">
           <h4>Trust</h4>

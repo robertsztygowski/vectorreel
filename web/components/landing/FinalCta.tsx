@@ -4,14 +4,14 @@ export function FinalCta() {
   return (
     <section id="waitlist" className="section cta-final">
       <div className="wrap cta-box">
-        <h2>Turn your video library into something your agents can read.</h2>
-        <p className="lead">We&apos;re onboarding design partners now. Get 2 hours free on your own footage.</p>
+        <h2>Turn your video library into something your agents can cite.</h2>
+        <p className="lead">Start with 1 hour of processing free, on your own footage. No credit card, no lock-in.</p>
         <div className="cta-row" style={{ justifyContent: 'center' }}>
           <Link className="btn btn-primary" href="/signup">
-            Get early access
+            Start free — 1 hour
           </Link>
         </div>
-        <p className="micro">No spam, unsubscribe anytime.</p>
+        <p className="micro">Plain Markdown out · EU-only · source deleted after processing.</p>
       </div>
     </section>
   );

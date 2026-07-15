@@ -2,7 +2,9 @@
 
 import { useRef, useState, type ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { trackUploadStarted } from '@/lib/events';
+import { TRIAL_CREDIT_HOURS } from '@/lib/pricing';
 
 function formatMinutes(totalSeconds: number): string {
   const m = Math.floor(totalSeconds / 60);
@@ -52,7 +54,7 @@ export default function UploadPage() {
         }),
       });
       const { jobId } = (await jobRes.json()) as { jobId: string };
-      router.push(`/jobs/${jobId}`);
+      router.push(`/app/jobs/${jobId}`);
     } finally {
       setStarting(false);
     }
@@ -62,10 +64,10 @@ export default function UploadPage() {
     <>
       <div className="page-head">
         <div className="wrap page-narrow">
-          <h1>Upload a recording</h1>
+          <h1>Process a recording</h1>
           <p className="lead">
-            2 hours free. Your file stays on your device this phase — nothing is actually uploaded (no product
-            backend yet).
+            Uses your {TRIAL_CREDIT_HOURS}-hour trial credit. Your file stays on your device this phase — nothing is
+            actually uploaded (no product backend yet).
           </p>
         </div>
       </div>
@@ -93,9 +95,14 @@ export default function UploadPage() {
             Simulate failure (QA)
           </label>
 
-          <button className="btn btn-primary" type="button" onClick={handleStart} disabled={!file || starting}>
-            {starting ? 'Starting…' : 'Start processing'}
-          </button>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <button className="btn btn-primary" type="button" onClick={handleStart} disabled={!file || starting}>
+              {starting ? 'Starting…' : 'Start processing'}
+            </button>
+            <Link className="btn btn-ghost" href="/app">
+              Back to library
+            </Link>
+          </div>
         </div>
       </div>
     </>

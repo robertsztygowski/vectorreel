@@ -1,17 +1,27 @@
 const FEATURES = [
   {
+    icon: '📄',
+    title: 'One portable file — no lock-in',
+    body: 'You get plain Markdown, not a proprietary retrieval index. Own it, version it, and drop it into your RAG, Obsidian, SharePoint or vector DB. The one thing a platform competitor structurally won\u2019t copy.',
+  },
+  {
     icon: '🖥️',
     title: (
       <>
-        Spoken <span className="amp">+</span> on-screen
+        Spoken <span className="amp">vs</span> shown, separated
       </>
     ),
-    body: 'Captures verbatim on-screen text — slides, UI, code — separated from the transcript so your RAG can weight them independently.',
+    body: 'What was said and what was on the screen — slides, UI, code — kept in distinct blocks so your RAG can weight them independently. Not a transcript: a knowledge-base document.',
+  },
+  {
+    icon: '🤖',
+    title: 'Built for agents',
+    body: 'A deterministic schema that stays identical across every file, so hundreds of videos read the same to an agent. Designed to be cited by an LLM, not just read by a human.',
   },
   {
     icon: '🇪🇺',
     title: 'EU data residency',
-    body: 'Compute, storage and AI endpoints pinned to EU regions. Short, published subprocessor list. Honest sovereignty roadmap.',
+    body: 'Compute, storage and AI endpoints pinned to EU regions, with an honest sovereignty roadmap. The reason your DPO says yes — not a markup.',
   },
   {
     icon: '🗑️',
@@ -19,19 +29,9 @@ const FEATURES = [
     body: 'Source video is erased after processing unless you choose to retain it. Right-to-erasure endpoint, audit-logged.',
   },
   {
-    icon: '📄',
-    title: 'No lock-in',
-    body: 'You get plain Markdown files — no proprietary retrieval stack. Bring your own RAG, Obsidian, SharePoint or vector DB.',
-  },
-  {
-    icon: '🤖',
-    title: 'Built for agents',
-    body: 'A deterministic, consistent schema across every file. Designed to be consumed by LLMs and agents, not just read by humans.',
-  },
-  {
     icon: '🔌',
-    title: 'API-first',
-    body: 'First-class REST API with webhooks, per-job cost transparency, and an MCP server on the roadmap. Embed it in your pipeline.',
+    title: 'REST, webhooks & MCP',
+    body: 'A first-class REST API with webhooks and an MCP server so an assistant can process a video from inside your IDE. Per-job cost transparency built in.',
   },
 ];
 

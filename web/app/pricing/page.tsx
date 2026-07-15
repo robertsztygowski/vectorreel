@@ -1,37 +1,51 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PricingCard } from '@/components/PricingCard/PricingCard';
+import { TRIAL_CREDIT_HOURS, visiblePlans } from '@/lib/pricing';
+import { SHOW_STARTER_PLAN } from '@/lib/flags';
 
 export const metadata: Metadata = { title: 'Pricing — mdreel' };
 
 export default function PricingPage() {
+  const plans = visiblePlans(SHOW_STARTER_PLAN);
   return (
     <>
       <div className="page-head">
         <div className="wrap page-narrow">
-          <h1>Simple pricing</h1>
+          <h1>Simple, hours-based pricing</h1>
           <p className="lead">
-            One plan for the paid product, plus a free tool for public YouTube videos. No tiers yet — that&apos;s an
-            open question we&apos;re still reading the data on.
+            You pay for hours of video processed — and you get a portable Markdown file your agent owns, with no
+            retrieval stack to lock you in. Every plan is EU-only, source deleted after processing.
           </p>
         </div>
       </div>
       <div className="page-body">
-        <div className="wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 28 }}>
-          <PricingCard />
-          <div className="card" style={{ flex: '1 1 320px', maxWidth: 420 }}>
-            <div className="card-ic">🎁</div>
-            <h3>Free YouTube tool</h3>
-            <p>
-              Paste any public YouTube URL and get real Markdown back in under a minute — no signup, no card, no
-              limit on how many times you try it.
-            </p>
-            <p style={{ marginTop: 14 }}>
-              <Link className="btn btn-ghost" href="/tool">
-                Try the free tool
-              </Link>
-            </p>
+        <div className="wrap">
+          <div className="trial-banner">
+            <div>
+              <p className="trial-title">
+                Start with {TRIAL_CREDIT_HOURS} hour of processing, free
+              </p>
+              <p className="trial-sub">
+                One-time trial credit at signup — no credit card. Run it on your own footage and see the file before
+                you pay.
+              </p>
+            </div>
+            <Link className="btn btn-primary" href="/signup">
+              Start free — {TRIAL_CREDIT_HOURS} hour
+            </Link>
           </div>
+
+          <div className="pricing-grid">
+            {plans.map((plan) => (
+              <PricingCard key={plan.id} plan={plan} />
+            ))}
+          </div>
+
+          <p className="pricing-foot">
+            Bigger archive or an ongoing pipeline? Volume, API pay-as-you-go and self-hosted options come after we
+            learn how teams actually use it. <Link href="/docs">See the API &amp; MCP docs →</Link>
+          </p>
         </div>
       </div>
     </>

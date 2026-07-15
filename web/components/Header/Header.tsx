@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 import { BrandMark } from '../BrandMark';
 
 const NAV_LINKS = [
-  { href: '/tool', label: 'Free tool' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/pricing', label: 'Pricing' },
+  { href: '/docs', label: 'Docs' },
 ];
 
 export function Header() {
@@ -16,7 +16,7 @@ export function Header() {
     <header className="site-header">
       <div className="wrap header-inner">
         <Link className="brand" href="/" aria-label="mdreel home">
-          <BrandMark gradientId="brand-g" />
+          <BrandMark />
           <span>mdreel</span>
         </Link>
         <nav className="nav" aria-label="Primary">
@@ -25,6 +25,7 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <Link href="/signin">Sign in</Link>
           <Link className="btn btn-ghost" href="/signup">
             Get started
           </Link>
