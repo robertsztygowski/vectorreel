@@ -1,8 +1,8 @@
-# CLAUDE.md — mdreel
+# Copilot instructions — mdreel
 
-> ⚠️ **Kept in sync with `.github/copilot-instructions.md`.** These two files are mirrors: **any
-> rule added, changed, or removed here must be applied to the other file in the same commit — and
-> vice versa.** Never let them drift.
+> ⚠️ **Kept in sync with `CLAUDE.md`.** These two files are mirrors: **any rule added, changed, or
+> removed here must be applied to `CLAUDE.md` in the same commit — and vice versa.** Never let them
+> drift.
 
 EU SaaS: video → structured, timestamped Markdown for AI knowledge bases.
 
