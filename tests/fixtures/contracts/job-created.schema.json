@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mdreel.com/schemas/job-created.schema.json",
+  "title": "POST /jobs response (202)",
+  "description": "Frozen 2026-07-16 (Phase 2.5). ARCHITECTURE.md §5.",
+  "type": "object",
+  "required": ["jobId"],
+  "additionalProperties": false,
+  "properties": {
+    "jobId": { "type": "string", "minLength": 1 }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mdreel.com/schemas/job-status.schema.json",
+  "title": "GET /jobs/{id} response (200)",
+  "description": "Frozen 2026-07-16 (Phase 2.5). ARCHITECTURE.md §5. stage is present only while processing; cost_cents/duration_sec/wall_clock_sec appear when known (always on done).",
+  "type": "object",
+  "required": ["status", "progress"],
+  "additionalProperties": false,
+  "properties": {
+    "status": { "enum": ["queued", "processing", "done", "failed"] },
+    "stage": {
+      "description": "Pipeline stage: A probe/prepare, B segment analysis, C fusion, D persist.",
+      "enum": ["A", "B", "C", "D"]
+    },
+    "progress": { "type": "number", "minimum": 0, "maximum": 100 },
+    "cost_cents": { "type": "integer", "minimum": 0 },
+    "duration_sec": { "type": "number", "minimum": 0 },
+    "wall_clock_sec": { "type": "number", "minimum": 0 }
+  }
+}

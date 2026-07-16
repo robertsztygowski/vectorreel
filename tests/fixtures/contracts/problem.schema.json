@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mdreel.com/schemas/problem.schema.json",
+  "title": "Error response (RFC 7807 application/problem+json)",
+  "description": "Frozen 2026-07-16 (Phase 2.5). ARCHITECTURE.md §5 — every non-2xx API response. Extension members are allowed per RFC 7807.",
+  "type": "object",
+  "required": ["title", "status"],
+  "properties": {
+    "type": { "type": "string", "format": "uri-reference", "default": "about:blank" },
+    "title": { "type": "string", "minLength": 1 },
+    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+    "detail": { "type": "string" },
+    "instance": { "type": "string", "format": "uri-reference" }
+  }
+}

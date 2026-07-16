@@ -1,0 +1,5 @@
+# The output contract is LF-only (ARCHITECTURE §4) and its parser rejects CRLF, so the contract
+# fixtures — and their committed mirror inside web/ — must survive a Windows checkout unmangled.
+tests/fixtures/output/** text eol=lf
+tests/fixtures/contracts/** text eol=lf
+web/fixtures/** text eol=lf
