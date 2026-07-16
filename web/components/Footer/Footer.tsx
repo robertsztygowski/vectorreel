@@ -3,7 +3,7 @@ import { BrandMark } from '../BrandMark';
 
 export function Footer() {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer footer-split-proposed">
       <div className="wrap footer-inner">
         <div className="footer-grid">
           <div className="footer-brand">

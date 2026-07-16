@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { getAbArm, getFirstTouch } from '@/lib/attribution';
 import { trackSignup } from '@/lib/events';
 import { markSignedIn } from '@/lib/session';
@@ -9,6 +10,7 @@ import { TRIAL_CREDIT_HOURS } from '@/lib/pricing';
 import { Field } from '@/components/Field/Field';
 
 export default function SignupPage() {
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [archiveHours, setArchiveHours] = useState('');
   const [monthlyHours, setMonthlyHours] = useState('');
@@ -35,19 +37,21 @@ export default function SignupPage() {
     setSubmitted(true);
   }
 
-  if (submitted) {
+  const showSent = submitted || searchParams.get('state') === 'sent';
+
+  if (showSent) {
     return (
-      <div className="page-body">
-        <div className="wrap page-narrow">
-          <h1>Check your inbox</h1>
+      <div className="auth-col wrap page-narrow">
+        <p className="sent-line">
+          link expires in 15 minutes — <span className="ok-text">your 1 h trial credit is ready</span>
+        </p>
+        <h1>Check your inbox.</h1>
           <p className="lead">
-            We sent a magic link to {email || 'your email'} (mock — no email actually sent this phase). Your{' '}
-            {TRIAL_CREDIT_HOURS}-hour trial credit is ready.
+          We sent a magic link to {email || 'jonas@acme.eu'} — it signs you straight into your workspace.
           </p>
           <Link className="btn btn-primary" href="/app">
-            Open your workspace
+          open your workspace
           </Link>
-        </div>
       </div>
     );
   }
@@ -56,15 +60,15 @@ export default function SignupPage() {
     <>
       <div className="page-head">
         <div className="wrap page-narrow">
-          <h1>Start free — {TRIAL_CREDIT_HOURS} hour of processing</h1>
+          <p className="kicker"># start free</p>
+          <h1>Start free — {TRIAL_CREDIT_HOURS} hour of processing.</h1>
           <p className="lead">
-            No password, no credit card. We&apos;ll email you a magic link, and your one-time {TRIAL_CREDIT_HOURS}-hour
-            trial credit is waiting on your own footage.
+            No password, no credit card — we email a magic link and your one-time 1-hour trial credit is waiting, on
+            your own footage.
           </p>
         </div>
       </div>
-      <div className="page-body">
-        <div className="wrap page-narrow">
+      <div className="auth-col wrap page-narrow">
           <form
             onSubmit={(e: FormEvent) => {
               e.preventDefault();
@@ -106,17 +110,17 @@ export default function SignupPage() {
 
             <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
               <button className="btn btn-primary" type="submit">
-                Send magic link
+                send magic link
               </button>
               <button className="btn btn-ghost" type="button" onClick={() => submit(true)}>
-                Skip &amp; send link
+                skip &amp; send link
               </button>
             </div>
           </form>
-          <p className="micro" style={{ marginTop: 20 }}>
-            Already have an account? <Link href="/signin">Sign in</Link>
+          <p className="auth-alt">
+            already have an account? <Link href="/signin">sign in</Link>
           </p>
-        </div>
+          <p className="auth-coda">the magic link is the only credential — nothing to leak, nothing to rotate.</p>
       </div>
     </>
   );

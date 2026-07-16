@@ -82,7 +82,7 @@ export default function DocsPage() {
             <div className="doc-meta">
               <span className="k">base url</span>
               <span>
-                https://mdreel.com<b>/api/v1</b>
+                https://api.mdreel.eu<b>/api/v1</b>
               </span>
               <span className="k">auth</span>
               <span>bearer token per key</span>
@@ -110,7 +110,7 @@ export default function DocsPage() {
               is signed with HMAC-SHA256 over the raw body in an <code>X-Mdreel-Signature</code> header — verify it
               before trusting the event.
             </p>
-            <CodeCard title="job.complete" lang="http" content={WEBHOOK} />
+            <CodeCard title="job.completed" lang="http" content={WEBHOOK} />
           </section>
 
           <section id="mcp">
@@ -122,8 +122,8 @@ export default function DocsPage() {
             </p>
             <CodeCard title=".mcp.json" lang="json" content={MCP} />
             <p style={{ marginTop: 18, fontFamily: 'var(--mono)', fontSize: 13 }}>
-              <span style={{ color: 'var(--ink-faint)' }}>tools:</span> process_video · get_job_status · fetch_markdown ·
-              delete_job
+              <span style={{ color: 'var(--ink-faint)' }}>tools:</span> process_video(uploadId|url) · get_job(jobId) ·
+              get_output(jobId) · list_jobs()
             </p>
           </section>
 

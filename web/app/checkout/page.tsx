@@ -9,29 +9,37 @@ import { trackCheckoutAbandoned, trackPaymentSucceeded } from '@/lib/events';
 function CheckoutInner() {
   const searchParams = useSearchParams();
   const plan = getPlan(searchParams.get('plan')) ?? PLANS.pro;
+  const forcedState = searchParams.get('state');
   const [result, setResult] = useState<'succeeded' | 'abandoned' | null>(null);
+  const effectiveResult = (forcedState === 'done' ? 'succeeded' : forcedState === 'abandoned' ? 'abandoned' : result);
 
-  if (result === 'succeeded') {
+  if (effectiveResult === 'succeeded') {
     return (
-      <div className="page-body">
-        <div className="wrap page-narrow">
-          <h1>Payment succeeded</h1>
-          <p className="lead">This was simulated — no real Stripe integration until Phase 4. Welcome to mdreel!</p>
+      <div className="auth-col wrap page-narrow">
+        <p className="sent-line">
+          <span className="ok-text">✓ payment confirmed — receipt sent to jonas@acme.eu</span>
+        </p>
+        <h1>Payment succeeded.</h1>
+        <p className="lead">
+          Welcome to pro — your plan is active immediately, and 25 hours of processing are ready in your workspace
+          starting now.
+        </p>
           <Link className="btn btn-primary" href="/app">
-            Open your workspace
+          open your workspace
           </Link>
-        </div>
       </div>
     );
   }
 
-  if (result === 'abandoned') {
+  if (effectiveResult === 'abandoned') {
     return (
-      <div className="page-body">
-        <div className="wrap page-narrow">
-          <h1>Checkout abandoned</h1>
-          <p className="lead">No worries — you can come back to this any time from the pricing page.</p>
-        </div>
+      <div className="auth-col wrap page-narrow">
+        <p className="sent-line">nothing was charged</p>
+        <h1>Checkout abandoned.</h1>
+        <p className="lead">Your workspace, plan and trial balance are exactly as you left them.</p>
+        <Link className="btn btn-ghost" href="/pricing">
+          ← back to pricing
+        </Link>
       </div>
     );
   }
@@ -40,22 +48,26 @@ function CheckoutInner() {
     <>
       <div className="page-head">
         <div className="wrap page-narrow">
-          <h1>Checkout (mock)</h1>
+          <p className="kicker"># checkout</p>
+          <h1>Order summary.</h1>
           <p className="lead">
-            A real Stripe payment link goes here in Phase 4 — for now, use the buttons below to exercise both
-            outcomes.
+            Pro, billed monthly. Review the terms below and continue to payment.
           </p>
         </div>
       </div>
-      <div className="page-body">
-        <div className="wrap page-narrow">
+      <div className="auth-col wrap page-narrow">
           <div className="card" style={{ marginBottom: 20 }}>
-            <p style={{ margin: 0, fontWeight: 700, fontSize: 18 }}>
-              mdreel {plan.name} — €{plan.priceEur}/mo
+            <p style={{ margin: 0, fontFamily: 'var(--font-mono-stack)', fontSize: 13, color: 'var(--ink-faint)' }}>
+              order — jonas@acme.eu
             </p>
-            <p style={{ margin: '6px 0 0', color: 'var(--ink-faint)', fontSize: 14.5 }}>
-              {plan.hoursPerMonth} h/mo ·{' '}
-              {plan.capKind === 'hard' ? 'hard cap, no overage' : `€${plan.overagePerHourEur}/h overage`}
+            <p style={{ margin: '8px 0 0', fontFamily: 'var(--font-mono-stack)', fontSize: 13 }}>
+              plan: {plan.id} · price: €{plan.priceEur}/mo · included: {plan.hoursPerMonth} h/mo
+            </p>
+            <p style={{ margin: '8px 0 0', fontFamily: 'var(--font-mono-stack)', fontSize: 13 }}>
+              cap:{' '}
+              {plan.capKind === 'hard'
+                ? 'hard — processing pauses at the limit, never surprise bills'
+                : `metered — €${plan.overagePerHourEur}/h past the cap`}
             </p>
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -67,7 +79,7 @@ function CheckoutInner() {
                 setResult('succeeded');
               }}
             >
-              Simulate payment_succeeded
+              continue to payment →
             </button>
             <button
               className="btn btn-ghost"
@@ -77,10 +89,12 @@ function CheckoutInner() {
                 setResult('abandoned');
               }}
             >
-              Simulate abandon
+              simulate abandon
             </button>
           </div>
-        </div>
+          <p className="pay-note" style={{ marginTop: 14 }}>
+            payments by Stripe — card details never touch mdreel servers
+          </p>
       </div>
     </>
   );

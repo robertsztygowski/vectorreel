@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { JobStepper, type JobStageKey, type JobStatusState } from '@/components/JobStepper/JobStepper';
 import { MarkdownOutputCard } from '@/components/MarkdownOutputCard/MarkdownOutputCard';
@@ -29,11 +29,13 @@ interface OutputJson extends ParsedMarkdown {
 
 export default function JobStatusPage() {
   const params = useParams<{ jobId: string }>();
+  const searchParams = useSearchParams();
   const jobId = params.jobId;
   const [status, setStatus] = useState<JobStatusResponse | null>(null);
   const [output, setOutput] = useState<OutputJson | null>(null);
   const [notFound, setNotFound] = useState(false);
   const trackedDoneRef = useRef(false);
+  const forcedState = searchParams.get('state') as JobStatusState | null;
 
   useEffect(() => {
     let cancelled = false;
@@ -44,7 +46,15 @@ export default function JobStatusPage() {
         setNotFound(true);
         return;
       }
-      setStatus(await res.json());
+      const next = (await res.json()) as JobStatusResponse;
+      if (forcedState) {
+        if (forcedState === 'queued') setStatus({ status: 'queued', progress: 0 });
+        else if (forcedState === 'processing') setStatus({ status: 'processing', stage: 'C', progress: 64 });
+        else if (forcedState === 'failed') setStatus({ status: 'failed', progress: 100 });
+        else setStatus({ ...next, status: 'done', progress: 100, stage: 'D' });
+        return;
+      }
+      setStatus(next);
     }
     poll();
     const timer = setInterval(() => {
@@ -55,7 +65,7 @@ export default function JobStatusPage() {
       cancelled = true;
       clearInterval(timer);
     };
-  }, [jobId, status?.status]);
+  }, [forcedState, jobId, status?.status]);
 
   useEffect(() => {
     if (status?.status !== 'done' || trackedDoneRef.current) return;

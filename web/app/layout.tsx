@@ -38,6 +38,16 @@ export const metadata: Metadata = {
     title: 'mdreel — video to Markdown for AI knowledge bases',
     description: 'One portable Markdown file your agent owns — no lock-in, processed in the EU.',
     type: 'website',
+    images: [{ url: '/og-card.png', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'mdreel — video to Markdown for AI knowledge bases',
+    description: 'One portable Markdown file your agent owns — no lock-in, processed in the EU.',
+    images: ['/og-card.png'],
+  },
+  icons: {
+    icon: [{ url: '/favicon.ico', sizes: '16x16 32x32 48x48', type: 'image/x-icon' }],
   },
 };
 

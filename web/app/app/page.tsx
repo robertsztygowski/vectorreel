@@ -19,7 +19,7 @@ export default function AppLibraryPage() {
               <p className="lead">Every recording you&apos;ve processed — view, download the Markdown, or erase it.</p>
             </div>
             <Link className="btn btn-primary" href="/app/upload">
-              Process a video
+              process a video
             </Link>
           </div>
         </div>
