@@ -12,34 +12,39 @@ function CheckoutInner() {
   const forcedState = searchParams.get('state');
   const [result, setResult] = useState<'succeeded' | 'abandoned' | null>(null);
   const effectiveResult = (forcedState === 'done' ? 'succeeded' : forcedState === 'abandoned' ? 'abandoned' : result);
+  const orderDate = new Date().toISOString().slice(0, 10);
 
   if (effectiveResult === 'succeeded') {
     return (
-      <div className="auth-col wrap page-narrow">
-        <p className="sent-line">
-          <span className="ok-text">✓ payment confirmed — receipt sent to jonas@acme.eu</span>
-        </p>
-        <h1>Payment succeeded.</h1>
-        <p className="lead">
-          Welcome to pro — your plan is active immediately, and 25 hours of processing are ready in your workspace
-          starting now.
-        </p>
+      <div className="wrap">
+        <div className="auth-col">
+          <p className="sent-line">
+            <span className="ok-text">✓ payment confirmed — receipt sent to jonas@acme.eu</span>
+          </p>
+          <h1>Payment succeeded.</h1>
+          <p className="lead">
+            Welcome to pro — your plan is active immediately, and 25 hours of processing are ready in your workspace
+            starting now.
+          </p>
           <Link className="btn btn-primary" href="/app">
-          open your workspace
+            open your workspace
           </Link>
+        </div>
       </div>
     );
   }
 
   if (effectiveResult === 'abandoned') {
     return (
-      <div className="auth-col wrap page-narrow">
-        <p className="sent-line">nothing was charged</p>
-        <h1>Checkout abandoned.</h1>
-        <p className="lead">Your workspace, plan and trial balance are exactly as you left them.</p>
-        <Link className="btn btn-ghost" href="/pricing">
-          ← back to pricing
-        </Link>
+      <div className="wrap">
+        <div className="auth-col">
+          <p className="sent-line">nothing was charged</p>
+          <h1>Checkout abandoned.</h1>
+          <p className="lead">Your workspace, plan and trial balance are exactly as you left them.</p>
+          <Link className="btn btn-ghost" href="/pricing">
+            ← back to pricing
+          </Link>
+        </div>
       </div>
     );
   }
@@ -47,30 +52,41 @@ function CheckoutInner() {
   return (
     <>
       <div className="page-head">
-        <div className="wrap page-narrow">
-          <p className="kicker"># checkout</p>
-          <h1>Order summary.</h1>
-          <p className="lead">
-            Pro, billed monthly. Review the terms below and continue to payment.
-          </p>
+        <div className="wrap page-head-inner">
+          <div style={{ maxWidth: '52ch' }}>
+            <p className="kicker"># checkout</p>
+            <h1>Order summary.</h1>
+            <p className="lead">Pro, billed monthly. Review the terms below and continue to payment.</p>
+          </div>
         </div>
       </div>
-      <div className="auth-col wrap page-narrow">
-          <div className="card" style={{ marginBottom: 20 }}>
-            <p style={{ margin: 0, fontFamily: 'var(--font-mono-stack)', fontSize: 13, color: 'var(--ink-faint)' }}>
-              order — jonas@acme.eu
-            </p>
-            <p style={{ margin: '8px 0 0', fontFamily: 'var(--font-mono-stack)', fontSize: 13 }}>
-              plan: {plan.id} · price: €{plan.priceEur}/mo · included: {plan.hoursPerMonth} h/mo
-            </p>
-            <p style={{ margin: '8px 0 0', fontFamily: 'var(--font-mono-stack)', fontSize: 13 }}>
-              cap:{' '}
-              {plan.capKind === 'hard'
-                ? 'hard — processing pauses at the limit, never surprise bills'
-                : `metered — €${plan.overagePerHourEur}/h past the cap`}
-            </p>
+      <div className="wrap">
+        <div className="auth-col">
+          <div className="doc-card order-card">
+            <div className="doc-card-head">
+              <span className="file">order — jonas@acme.eu</span>
+              <span className="meta">{orderDate}</span>
+            </div>
+            <div className="order-grid">
+              <span className="k">plan:</span>
+              <span className="v-strong">{plan.id}</span>
+              <span className="k">price:</span>
+              <span>€{plan.priceEur} / mo</span>
+              <span className="k">included:</span>
+              <span>{plan.hoursPerMonth} h of video / month</span>
+              <span className="k">cap:</span>
+              <span>
+                {plan.capKind === 'hard'
+                  ? 'hard — processing pauses at the limit, never surprise bills'
+                  : `metered — €${plan.overagePerHourEur}/h past the cap`}
+              </span>
+              <span className="k">billing:</span>
+              <span>monthly — cancel any time</span>
+              <span className="k">vat:</span>
+              <span>added at checkout</span>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
             <button
               className="btn btn-primary"
               type="button"
@@ -92,9 +108,8 @@ function CheckoutInner() {
               simulate abandon
             </button>
           </div>
-          <p className="pay-note" style={{ marginTop: 14 }}>
-            payments by Stripe — card details never touch mdreel servers
-          </p>
+          <p className="pay-note">payments by Stripe — card details never touch mdreel servers</p>
+        </div>
       </div>
     </>
   );

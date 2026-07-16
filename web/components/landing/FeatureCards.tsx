@@ -44,8 +44,8 @@ const CLAIMS: { idx: string; paths: string[]; title: ReactNode; body: string }[]
   {
     idx: '06',
     paths: ['M6.5 3.5v4', 'M13.5 3.5v4', 'M4.5 7.5h11v3a5.5 5.5 0 0 1-11 0z', 'M10 16v3'],
-    title: 'REST, webhooks & MCP',
-    body: 'A first-class API with webhooks and an MCP server so an assistant can process a video from inside your IDE.',
+    title: 'Plugs into your stack',
+    body: 'REST API, webhooks and an MCP server, with per-job cost transparency built in — output drops into any repo, vector DB or wiki.',
   },
 ];
 

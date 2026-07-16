@@ -1,36 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { getEmail, isSignedIn, signOut } from '@/lib/session';
 
-const LINKS = [
-  { href: '/app', label: 'Library', exact: true },
-  { href: '/app/upload', label: 'Process a video', exact: false },
-  { href: '/app/settings', label: 'Settings', exact: false },
+const BASE_LINKS = [
+  { href: '/app', label: 'library', exact: true },
+  { href: '/app/upload', label: 'process a video', exact: false },
 ];
 
 export function AppNav() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const [email, setEmail] = useState<string | null>(null);
-  const [signedIn, setSignedIn] = useState(true);
   const usage = searchParams.get('usage') ?? 'trial';
-
-  useEffect(() => {
-    setEmail(getEmail());
-    setSignedIn(isSignedIn());
-  }, []);
+  const showSettings = pathname.startsWith('/app/settings') || pathname.startsWith('/app/jobs') || pathname.startsWith('/app/videos');
+  const links = showSettings ? [...BASE_LINKS, { href: '/app/settings', label: 'settings', exact: false }] : BASE_LINKS;
 
   return (
-    <div className="app-bar app-header-proposed">
+    <div className="app-bar app-header-default">
       <div className="wrap app-bar-inner">
         <nav className="app-nav" aria-label="Workspace">
-          {LINKS.map((l) => {
+          {links.map((l) => {
             const active = l.exact ? pathname === l.href : pathname.startsWith(l.href);
             return (
               <Link key={l.href} href={l.href} className={active ? 'active' : undefined}>
@@ -54,25 +44,6 @@ export function AppNav() {
               </span>
               {usage === 'plan' ? '17.4 / 25 h used · pro' : '0.2 / 1.0 h trial credit left'}
             </span>
-          )}
-          {signedIn ? (
-            <>
-              {email && <span className="app-email">{email}</span>}
-              <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={() => {
-                  signOut();
-                  router.push('/');
-                }}
-              >
-                Sign out
-              </button>
-            </>
-          ) : (
-            <Link className="btn btn-ghost" href="/signin">
-              Sign in
-            </Link>
           )}
         </div>
       </div>

@@ -2,18 +2,50 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { BrandMark } from '../BrandMark';
+import { signOut } from '@/lib/session';
 
 const NAV_LINKS = [
-  { href: '/gallery', label: 'gallery' },
+  { href: '/#features', label: 'product' },
   { href: '/pricing', label: 'pricing' },
   { href: '/docs', label: 'docs' },
+  { href: '/gallery', label: 'gallery' },
 ];
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const inApp = pathname.startsWith('/app');
+
+  if (inApp) {
+    return (
+      <header className="site-header app-shell-header">
+        <div className="wrap header-inner app-shell-header-inner">
+          <Link className="brand app-brand" href="/" aria-label="mdreel home">
+            <BrandMark />
+          </Link>
+          <nav className="app-shell-nav" aria-label="Primary">
+            <Link href="/docs">docs</Link>
+            <span className="app-email">jonas@acme.eu</span>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm app-shell-signout"
+              onClick={() => {
+                signOut();
+                router.push('/');
+              }}
+            >
+              sign out
+            </button>
+          </nav>
+        </div>
+      </header>
+    );
+  }
+
   return (
-    <header className="site-header mobile-nav-proposed">
+    <header className="site-header mobile-nav-default">
       <div className="wrap header-inner">
         <Link className="brand" href="/" aria-label="mdreel home">
           <BrandMark />
@@ -22,14 +54,18 @@ export function Header() {
         <label htmlFor="nav-open" className="nav-toggle" aria-label="toggle navigation" />
         <nav className="nav" aria-label="Primary">
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className={pathname.startsWith(link.href) ? 'active' : undefined}>
+            <Link
+              key={link.href}
+              href={link.href}
+              className={link.href === '/#features' ? (pathname === '/' ? 'active' : undefined) : pathname.startsWith(link.href) ? 'active' : undefined}
+            >
               {link.label}
             </Link>
           ))}
-          <Link href="/signin" className="btn btn-ghost btn-sm">
+          <Link href="/signin" className="btn btn-ghost btn-sm header-signin">
             sign in
           </Link>
-          <Link className="btn btn-primary btn-sm" href="/signup">
+          <Link className="btn btn-primary btn-sm header-cta" href="/signup">
             start free — 1 hour →
           </Link>
         </nav>

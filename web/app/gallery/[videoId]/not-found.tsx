@@ -31,8 +31,16 @@ export default function GalleryVideoNotFound() {
               </span>
             </div>
             <div className="doc-line">
+              <span className="n">4</span>
+              <span className="t fence">---</span>
+            </div>
+            <div className="doc-line">
+              <span className="n">5</span>
+              <span className="t">&nbsp;</span>
+            </div>
+            <div className="doc-line">
               <span className="n">6</span>
-              <span className="t h"># not found</span>
+              <span className="t h"># Not found</span>
             </div>
             <div className="doc-line">
               <span className="n">7</span>

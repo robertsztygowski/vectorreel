@@ -12,11 +12,15 @@ export default async function GalleryDetailPage({ params }: { params: Promise<{ 
   const meta = getVideoMeta(videoId);
   if (!meta) notFound();
 
+  const categoryEntries = loadCorpusIndex().filter((entry) => entry.category === meta.corpus.category);
+  const specimenNumber = String(categoryEntries.findIndex((entry) => entry.video_id === videoId) + 1).padStart(2, '0');
   const licence = getLicenceBlock(meta.corpus);
 
   return (
     <GalleryDetailViewer
       videoId={meta.corpus.video_id}
+      specimenNumber={specimenNumber}
+      categoryLabel={meta.corpus.category.replace('_', ' ')}
       title={meta.corpus.title}
       duration={formatHms(meta.corpus.duration_s)}
       channel={meta.corpus.channel}

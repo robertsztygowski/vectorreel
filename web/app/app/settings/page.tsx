@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -10,7 +10,17 @@ function tabHref(screen: SettingsScreen, usage: string) {
   return `/app/settings?screen=${screen}&usage=${usage}`;
 }
 
+// useSearchParams() forces a CSR bailout during prerender; the Suspense wrapper is required
+// for `next build` — same pattern as checkout/page.tsx.
 export default function AppSettingsPage() {
+  return (
+    <Suspense fallback={null}>
+      <SettingsInner />
+    </Suspense>
+  );
+}
+
+function SettingsInner() {
   const searchParams = useSearchParams();
   const usage = searchParams.get('usage') ?? 'plan';
   const screen = (searchParams.get('screen') as SettingsScreen) ?? 'keys';
@@ -19,7 +29,7 @@ export default function AppSettingsPage() {
 
   return (
     <div className="app-page">
-      <div className="wrap app-page-narrow">
+      <div className="wrap">
         <h1 className="app-h1">Settings</h1>
 
         <div className="settings-tabs">
@@ -215,7 +225,7 @@ export default function AppSettingsPage() {
               <span className="k">email</span>
               <span>jonas@acme.eu</span>
               <span className="k">plan</span>
-              <span>pro — EUR 149/mo</span>
+              <span>pro — €149/mo</span>
               <span className="k">default retention</span>
               <span>0 days — source deleted after processing (default)</span>
               <span className="k">compliance</span>

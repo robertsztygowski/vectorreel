@@ -53,10 +53,21 @@ const MCP = `{
 export default function DocsPage() {
   return (
     <>
-      <div className="page-head">
-        <div className="wrap page-head-inner">
+      <div className="page-head" style={{ padding: 0 }}>
+        <div className="wrap" style={{ padding: '64px 32px 48px' }}>
           <p className="kicker"># docs</p>
-          <h1>API, webhooks &amp; MCP.</h1>
+          <h1
+            style={{
+              fontSize: 'clamp(32px, 3.6vw, 46px)',
+              lineHeight: 1.05,
+              letterSpacing: '-0.014em',
+              fontWeight: 500,
+              fontVariationSettings: "'opsz' 64",
+              margin: '0 0 18px',
+            }}
+          >
+            API, webhooks &amp; MCP.
+          </h1>
           <p className="lead" style={{ maxWidth: '56ch' }}>
             mdreel is API-first — everything the UI does is a call you can make yourself. REST for pipelines, webhooks
             for completion, MCP so an assistant can process a video from inside the IDE.
@@ -64,7 +75,7 @@ export default function DocsPage() {
         </div>
       </div>
 
-      <div className="docs-body">
+      <div className="wrap docs-grid">
         <nav className="docs-toc" aria-label="On this page">
           <div className="docs-toc-inner">
             <span className="toc-label">contents</span>
@@ -76,7 +87,7 @@ export default function DocsPage() {
           </div>
         </nav>
 
-        <div className="docs-main docs">
+        <div className="docs-main docs docs-body">
           <section id="rest">
             <h2>REST API</h2>
             <div className="doc-meta">
@@ -96,7 +107,7 @@ export default function DocsPage() {
                 <div className="endpoint-row" key={`${e.method} ${e.path}`}>
                   <span className={`method method-${e.method.toLowerCase()}`}>{e.method}</span>
                   <span className="path">{e.path}</span>
-                  <span className="endpoint-purpose">{e.purpose}</span>
+                  <span className="purpose">{e.purpose}</span>
                 </div>
               ))}
             </div>

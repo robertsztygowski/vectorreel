@@ -18,7 +18,6 @@ export function CodeCard({ title, content, lang }: CodeCardProps) {
         {lines.map((line) => (
           <span key={line.key} className={line.className}>
             {line.text}
-            {'\n'}
           </span>
         ))}
       </pre>

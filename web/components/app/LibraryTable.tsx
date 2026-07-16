@@ -9,12 +9,15 @@ import { trackOutputDownloaded } from '@/lib/events';
 const DELETED_KEY = 'mdreel_deleted_videos';
 
 function formatDuration(totalSeconds: number): string {
-  const m = Math.round(totalSeconds / 60);
-  return `${m} min`;
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.round(totalSeconds % 60);
+  if (hours > 0) return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  return `${minutes}:${String(seconds).padStart(2, '0')}`;
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(iso).toISOString().slice(0, 10);
 }
 
 function readDeleted(): Set<string> {
@@ -53,9 +56,9 @@ export function LibraryTable({ items, categoryLabels }: { items: LibraryItem[]; 
   if (visible.length === 0) {
     return (
       <div className="empty-state">
-        <p>No processed videos yet.</p>
+        <p>No documents yet.</p>
         <Link className="btn btn-primary" href="/app/upload">
-          Process a video
+          upload a video
         </Link>
       </div>
     );
@@ -64,42 +67,85 @@ export function LibraryTable({ items, categoryLabels }: { items: LibraryItem[]; 
   return (
     <div className="lib-table" role="table" aria-label="Processed videos">
       <div className="lib-row lib-head" role="row">
-        <span role="columnheader">Video</span>
-        <span role="columnheader">Type</span>
-        <span role="columnheader">Length</span>
-        <span role="columnheader">Processed</span>
-        <span role="columnheader">Status</span>
+        <span role="columnheader">document</span>
+        <span role="columnheader">type</span>
+        <span role="columnheader">length</span>
+        <span role="columnheader">processed</span>
+        <span role="columnheader">status</span>
         <span role="columnheader" className="lib-actions-head">
-          Actions
+          actions
         </span>
       </div>
       {visible.map((item) => (
         <div className="lib-row" role="row" key={item.id}>
           <span role="cell" className="lib-title">
-            <Link href={`/app/videos/${item.id}`}>{item.title}</Link>
-            <small>{item.channel}</small>
+            {item.status === 'done' ? <Link href={`/app/videos/${item.id}`}>{item.title}</Link> : <span>{item.title}</span>}
+            <small>
+              {item.id}.md · {item.retentionLine}
+            </small>
           </span>
-          <span role="cell">{categoryLabels[item.category]}</span>
-          <span role="cell">{formatDuration(item.durationSec)}</span>
-          <span role="cell">{formatDate(item.processedAt)}</span>
+          <span role="cell" className="lib-cell">
+            {categoryLabels[item.category]}
+          </span>
+          <span role="cell" className="lib-cell">
+            {formatDuration(item.durationSec)}
+          </span>
+          <span role="cell" className="lib-cell">
+            {item.status === 'processing' ? 'now' : item.status === 'queued' || item.status === 'failed' ? '—' : formatDate(item.processedAt)}
+          </span>
           <span role="cell">
-            <span className="badge badge-done">Done</span>
+            <span className={`badge badge-${item.status}`}>{item.status}</span>
           </span>
           <span role="cell" className="lib-actions">
-            <Link href={`/app/videos/${item.id}`}>View</Link>
-            <button type="button" onClick={() => download(item.id)}>
-              Download
-            </button>
-            <button
-              type="button"
-              className="lib-delete"
-              onClick={() => {
-                if (window.confirm(`Delete "${item.title}"? This erases its output (mock).`)) remove(item.id);
-                else router.refresh();
-              }}
-            >
-              Delete
-            </button>
+            {item.status === 'done' && (
+              <>
+                <Link className="act-view" href={`/app/videos/${item.id}`}>
+                  view
+                </Link>
+                <button className="act-view" type="button" onClick={() => download(item.id)}>
+                  download
+                </button>
+                <button
+                  type="button"
+                  className="act-delete"
+                  onClick={() => {
+                    if (window.confirm(`Delete "${item.title}"? This erases its output (mock).`)) remove(item.id);
+                    else router.refresh();
+                  }}
+                >
+                  delete
+                </button>
+              </>
+            )}
+            {(item.status === 'queued' || item.status === 'processing') && (
+              <button
+                type="button"
+                className="act-delete"
+                onClick={() => {
+                  if (window.confirm(`Cancel "${item.title}"?`)) remove(item.id);
+                  else router.refresh();
+                }}
+              >
+                cancel
+              </button>
+            )}
+            {item.status === 'failed' && (
+              <>
+                <Link className="act-view" href={`/app/jobs/${item.jobId}?state=failed`}>
+                  details
+                </Link>
+                <button
+                  type="button"
+                  className="act-delete"
+                  onClick={() => {
+                    if (window.confirm(`Delete "${item.title}"? This erases its output (mock).`)) remove(item.id);
+                    else router.refresh();
+                  }}
+                >
+                  delete
+                </button>
+              </>
+            )}
           </span>
         </div>
       ))}

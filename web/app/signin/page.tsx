@@ -1,12 +1,22 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { Suspense, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { markSignedIn } from '@/lib/session';
 import { Field } from '@/components/Field/Field';
 
+// useSearchParams() forces a CSR bailout during prerender; the Suspense wrapper is required
+// for `next build` — same pattern as checkout/page.tsx.
 export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignInInner />
+    </Suspense>
+  );
+}
+
+function SignInInner() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -21,13 +31,17 @@ export default function SignInPage() {
 
   if (showSent) {
     return (
-      <div className="auth-col wrap page-narrow">
-        <p className="sent-line">link expires in 15 minutes</p>
-        <h1>Check your inbox.</h1>
-        <p className="lead">We sent a magic link to {email || 'jonas@acme.eu'} — it signs you straight into your workspace.</p>
+      <div className="wrap">
+        <div className="auth-col">
+          <p className="sent-line">link expires in 15 minutes</p>
+          <h1>Check your inbox.</h1>
+          <p className="lead">
+            We sent a magic link to {email || 'jonas@acme.eu'} — it signs you straight into your workspace.
+          </p>
           <Link className="btn btn-primary" href="/app">
-          open your workspace
+            open your workspace
           </Link>
+        </div>
       </div>
     );
   }
@@ -35,20 +49,23 @@ export default function SignInPage() {
   return (
     <>
       <div className="page-head">
-        <div className="wrap page-narrow">
-          <p className="kicker"># sign in</p>
-          <h1>Sign in.</h1>
-          <p className="lead">No password — we email you a magic link.</p>
+        <div className="wrap page-head-inner">
+          <div style={{ maxWidth: '52ch' }}>
+            <p className="kicker"># sign in</p>
+            <h1>Sign in.</h1>
+            <p className="lead">No password — we email you a magic link.</p>
+          </div>
         </div>
       </div>
-      <div className="auth-col wrap page-narrow">
+      <div className="wrap">
+        <div className="auth-col">
           <form
             onSubmit={(e: FormEvent) => {
               e.preventDefault();
               submit();
             }}
           >
-            <Field label="Work email" htmlFor="email">
+            <Field label="work email" htmlFor="email" style={{ marginBottom: 26 }}>
               <input
                 id="email"
                 type="email"
@@ -58,13 +75,16 @@ export default function SignInPage() {
                 placeholder="you@company.com"
               />
             </Field>
-            <button className="btn btn-primary" type="submit">
-              send magic link
-            </button>
+            <div className="auth-actions" style={{ marginBottom: 20 }}>
+              <button className="btn btn-primary" type="submit">
+                send magic link
+              </button>
+            </div>
           </form>
           <p className="auth-alt">
             new here? <Link href="/signup">start free — 1 hour</Link>
           </p>
+        </div>
       </div>
     </>
   );

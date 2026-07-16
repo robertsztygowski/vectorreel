@@ -1,4 +1,5 @@
 import { loadCorpusIndex, getVideoMeta, type CorpusEntry } from './corpus';
+import { encodeJobToken } from './mockJobs';
 
 // Server-only mocked "already processed" library for the authenticated panel (/app). Derived from
 // the committed corpus fixtures so the panel review happens on genuine product output, not lorem
@@ -11,6 +12,9 @@ export interface LibraryItem {
   category: CorpusEntry['category'];
   durationSec: number;
   processedAt: string;
+  status: 'queued' | 'processing' | 'done' | 'failed';
+  retentionLine: string;
+  jobId: string;
 }
 
 const CATEGORY_LABEL: Record<CorpusEntry['category'], string> = {
@@ -26,14 +30,38 @@ export function categoryLabel(category: CorpusEntry['category']): string {
 export function listLibrary(): LibraryItem[] {
   // Deterministic mock "processed_at" dates spaced a few days apart, newest first.
   const base = Date.UTC(2026, 6, 14); // 2026-07-14
-  return loadCorpusIndex().map((entry, i) => ({
-    id: entry.video_id,
-    title: entry.title,
-    channel: entry.channel,
-    category: entry.category,
-    durationSec: entry.duration_s,
-    processedAt: new Date(base - i * 2 * 86_400_000).toISOString(),
-  }));
+  const mockStates: Array<LibraryItem['status']> = ['done', 'done', 'processing', 'queued', 'failed'];
+  return loadCorpusIndex().map((entry, i) => {
+    const processedAt = new Date(base - i * 2 * 86_400_000).toISOString();
+    const status = mockStates[i] ?? 'done';
+    const retentionLine =
+      status === 'processing'
+        ? 'processing — source held'
+        : status === 'queued'
+          ? 'queued — source held'
+          : status === 'failed'
+            ? 'failed — nothing was charged'
+            : 'source deleted';
+
+    const jobId = encodeJobToken({
+      ref: `job-${entry.video_id}`,
+      createdAtMs: Date.parse(processedAt),
+      fail: status === 'failed',
+      meta: { filename: `${entry.video_id}.mp4`, durationSec: entry.duration_s },
+    });
+
+    return {
+      id: entry.video_id,
+      title: entry.title,
+      channel: entry.channel,
+      category: entry.category,
+      durationSec: entry.duration_s,
+      processedAt,
+      status,
+      retentionLine,
+      jobId,
+    };
+  });
 }
 
 export function getLibraryItem(videoId: string): LibraryItem | undefined {

@@ -10,10 +10,22 @@ export default function PricingPage() {
   const plans = visiblePlans(SHOW_STARTER_PLAN);
   return (
     <>
-      <div className="page-head">
-        <div className="wrap page-head-inner">
+      <div className="page-head" style={{ padding: 0 }}>
+        <div className="wrap" style={{ padding: '72px 32px 56px' }}>
           <p className="kicker"># pricing</p>
-          <h1 style={{ maxWidth: '20ch' }}>Simple, hours-based pricing.</h1>
+          <h1
+            style={{
+              maxWidth: '20ch',
+              fontSize: 'clamp(34px, 4vw, 52px)',
+              lineHeight: 1.04,
+              letterSpacing: '-0.015em',
+              fontWeight: 500,
+              fontVariationSettings: "'opsz' 68",
+              margin: '0 0 20px',
+            }}
+          >
+            Simple, hours-based pricing.
+          </h1>
           <p className="lead" style={{ maxWidth: '52ch' }}>
             You pay for hours of video processed. You get a portable, timestamped Markdown document per video —
             processed EU-only, source deleted afterwards.

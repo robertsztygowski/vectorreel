@@ -1,9 +1,29 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { BrandMark } from '../BrandMark';
 
 export function Footer() {
+  const pathname = usePathname();
+  const inApp = pathname.startsWith('/app');
+  const isLanding = pathname === '/';
+
+  if (inApp) return null;
+
+  if (!isLanding) {
+    return (
+      <footer className="site-footer footer-split-default">
+        <div className="wrap footer-bottom footer-bottom-only">
+          <span>© 2026 mdreel. Built in the EU.</span>
+          <span>EU data residency on Google Cloud · sovereignty roadmap published</span>
+        </div>
+      </footer>
+    );
+  }
+
   return (
-    <footer className="site-footer footer-split-proposed">
+    <footer className="site-footer footer-split-default">
       <div className="wrap footer-inner">
         <div className="footer-grid">
           <div className="footer-brand">

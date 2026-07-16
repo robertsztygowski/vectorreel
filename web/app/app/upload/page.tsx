@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type ChangeEvent } from 'react';
+import { Suspense, useRef, useState, type ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -13,7 +13,24 @@ function formatMinutes(totalSeconds: number): string {
   return `${m}m ${s}s`;
 }
 
+function formatClock(totalSeconds: number): string {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.round(totalSeconds % 60);
+  return [hours, minutes, seconds].map((part) => String(part).padStart(2, '0')).join(':');
+}
+
+// useSearchParams() forces a CSR bailout during prerender; the Suspense wrapper is required
+// for `next build` — same pattern as checkout/page.tsx.
 export default function UploadPage() {
+  return (
+    <Suspense fallback={null}>
+      <UploadInner />
+    </Suspense>
+  );
+}
+
+function UploadInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [file, setFile] = useState<File | null>(null);
@@ -95,7 +112,7 @@ export default function UploadPage() {
             <p className="coda">hard caps are the product — never surprise bills</p>
           </div>
         ) : (
-          <>
+          <div className="upload-stack">
             {!file && !selectedMock ? (
               <button className="drop-zone" type="button" onClick={() => fileInputRef.current?.click()}>
                 <span className="cta">
@@ -119,7 +136,7 @@ export default function UploadPage() {
                   </button>
                 </div>
                 <p className="count">
-                  will count {formatMinutes(durationSec ?? (47 * 60 + 12)).replace('m ', ':').replace('s', '')} against your{' '}
+                  will count {formatClock(durationSec ?? (47 * 60 + 12))} against your{' '}
                   {usage === 'plan' ? 'plan' : 'trial credit'}
                 </p>
               </div>
@@ -143,7 +160,7 @@ export default function UploadPage() {
               </p>
             </div>
 
-            <p className="eyebrow" style={{ marginTop: 36, marginBottom: 12 }}>
+            <p className="eyebrow upload-section-label">
               ## job options — sent as POST /jobs
             </p>
             <div className="options-table">
@@ -182,12 +199,12 @@ export default function UploadPage() {
               </span>
             </div>
 
-            <label className="micro" style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '20px 0 24px' }}>
+            <label className="micro upload-qa">
               <input type="checkbox" checked={simulateFail} onChange={(e) => setSimulateFail(e.target.checked)} />
               simulate failure (qa)
             </label>
 
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <div className="upload-actions">
               <button className="btn btn-primary btn-sm" type="button" onClick={handleStart} disabled={(!file && !selectedMock) || starting}>
                 {starting ? 'starting…' : 'start processing'}
               </button>
@@ -196,10 +213,10 @@ export default function UploadPage() {
               </Link>
             </div>
 
-            <p className="micro" style={{ marginTop: 48 }}>
+            <p className="micro upload-footnote">
               prefer the API? POST /uploads then POST /jobs — <Link href="/docs">do this via API →</Link>
             </p>
-          </>
+          </div>
         )}
       </div>
     </div>

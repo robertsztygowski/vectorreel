@@ -1,13 +1,18 @@
-import styles from './JobStepper.module.css';
-
 export type JobStageKey = 'A' | 'B' | 'C' | 'D';
 export type JobStatusState = 'queued' | 'processing' | 'done' | 'failed';
 
 const STAGE_LABELS: Record<JobStageKey, string> = {
-  A: 'Probe & prepare',
-  B: 'Segment analysis',
-  C: 'Fusion',
-  D: 'Persist & notify',
+  A: 'ingest & chunk',
+  B: 'transcribe audio',
+  C: 'read the screen',
+  D: 'compose document',
+};
+
+const STATUS_LABELS: Record<JobStatusState, string> = {
+  queued: 'queued',
+  processing: 'processing',
+  done: 'done',
+  failed: 'failed',
 };
 
 interface JobStepperProps {
@@ -22,9 +27,7 @@ export function JobStepper({ stages, status, activeStage, progress }: JobStepper
 
   function stateFor(index: number): 'pending' | 'active' | 'done' | 'failed' {
     if (status === 'done') return 'done';
-    if (status === 'failed') {
-      return index <= activeIndex ? 'failed' : 'pending';
-    }
+    if (status === 'failed') return index <= activeIndex ? 'failed' : 'pending';
     if (status === 'queued') return 'pending';
     if (index < activeIndex) return 'done';
     if (index === activeIndex) return 'active';
@@ -32,25 +35,33 @@ export function JobStepper({ stages, status, activeStage, progress }: JobStepper
   }
 
   return (
-    <div className={styles.stepper}>
-      <div className={styles.row}>
-        <span className={`${styles.dot} ${status === 'queued' ? styles.active : styles.done}`}>
-          <span className={styles.marker}>{status === 'queued' ? '…' : '✓'}</span>
-          Queued
-        </span>
-        {stages.map((stage, i) => {
-          const state = stateFor(i);
-          return (
-            <span key={stage} className={`${styles.dot} ${styles[state]}`}>
-              <span className={styles.marker}>{state === 'done' ? '✓' : state === 'failed' ? '!' : i + 1}</span>
-              {STAGE_LABELS[stage]}
-            </span>
-          );
-        })}
-      </div>
-      <div className={styles.bar}>
-        <div className={status === 'failed' ? styles.fillFailed : styles.fill} style={{ width: `${progress}%` }} />
-      </div>
+    <div className="stages">
+      {stages.map((stage, index) => {
+        const state = stateFor(index);
+        return (
+          <div key={stage} className="stage">
+            <div className="stage-head">
+              <span className="name">
+                {stage}
+                <span style={{ color: 'var(--accent)' }}> / </span>
+                {STAGE_LABELS[stage]}
+              </span>
+              <span className={`is-${state}`}>
+                {state === 'done' ? STATUS_LABELS.done : state === 'active' ? STATUS_LABELS.processing : state === 'failed' ? STATUS_LABELS.failed : 'pending'}
+              </span>
+            </div>
+            <div className="stage-bar">
+              <i
+                className={`is-${state}`}
+                style={{
+                  width: state === 'done' ? '100%' : state === 'active' ? `${progress}%` : '0%',
+                  backgroundColor: state === 'failed' ? 'var(--err)' : state === 'done' ? 'var(--ok)' : 'var(--accent)',
+                }}
+              />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

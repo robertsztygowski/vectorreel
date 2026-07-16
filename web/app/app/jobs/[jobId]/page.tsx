@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { JobStepper, type JobStageKey, type JobStatusState } from '@/components/JobStepper/JobStepper';
@@ -9,7 +9,6 @@ import { trackJobCompleted, trackOutputDownloaded, trackUploadRepeat } from '@/l
 import type { ParsedMarkdown } from '@/lib/corpus';
 
 const STAGES: JobStageKey[] = ['A', 'B', 'C', 'D'];
-
 const UPLOAD_COUNT_KEY = 'mdreel_upload_count';
 const UPLOAD_FIRST_KEY = 'mdreel_upload_first_at';
 
@@ -27,10 +26,30 @@ interface OutputJson extends ParsedMarkdown {
   filename: string;
 }
 
+function decodeJobSummary(jobId: string): { filename?: string; durationSec?: number } {
+  try {
+    const normalized = jobId.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+    const json = globalThis.atob(padded);
+    const token = JSON.parse(json) as { meta?: { filename?: string; durationSec?: number } };
+    return { filename: token.meta?.filename, durationSec: token.meta?.durationSec };
+  } catch {
+    return {};
+  }
+}
+
+function formatClock(totalSeconds: number): string {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.round(totalSeconds % 60);
+  return [hours, minutes, seconds].map((part) => String(part).padStart(2, '0')).join(':');
+}
+
 export default function JobStatusPage() {
   const params = useParams<{ jobId: string }>();
   const searchParams = useSearchParams();
   const jobId = params.jobId;
+  const jobSummary = useMemo(() => decodeJobSummary(jobId), [jobId]);
   const [status, setStatus] = useState<JobStatusResponse | null>(null);
   const [output, setOutput] = useState<OutputJson | null>(null);
   const [notFound, setNotFound] = useState(false);
@@ -98,12 +117,12 @@ export default function JobStatusPage() {
 
   if (notFound) {
     return (
-      <div className="page-body">
+      <div className="app-page">
         <div className="wrap page-narrow">
           <h1>Job not found</h1>
           <p className="lead">This job id doesn&apos;t exist — it may have expired or was never created.</p>
           <Link className="btn btn-ghost" href="/app">
-            Back to library
+            back to library
           </Link>
         </div>
       </div>
@@ -112,46 +131,54 @@ export default function JobStatusPage() {
 
   const done = status?.status === 'done';
   const failed = status?.status === 'failed';
+  const title = jobSummary.filename ?? (done && output ? output.filename.replace(/\.md$/, '.mp4') : 'Processing your recording');
 
   return (
-    <>
-      <div className="page-head">
-        <div className="wrap page-narrow">
-          <h1>{done ? 'Your Markdown is ready' : failed ? 'Processing failed' : 'Processing your recording'}</h1>
-          <p className="lead">
-            {done
-              ? 'Done — download it below, or find it any time in your library.'
-              : failed
-                ? 'Simulated failure for QA — nothing was charged.'
-                : 'This mirrors the real pipeline stages, but every step here is simulated.'}
-          </p>
+    <div className="app-page">
+      <div className="wrap">
+        <div className="app-head-row">
+          <div>
+            <h1>{title}</h1>
+            <p className="lead">
+              {done
+                ? 'Done — download it below, or find it any time in your library.'
+                : failed
+                  ? 'Simulated failure for QA — nothing was charged.'
+                  : 'This mirrors the real pipeline stages, but every step here is simulated.'}
+            </p>
+          </div>
+          {status && <span className={`badge badge-${status.status}`}>{status.status}</span>}
         </div>
-      </div>
-      <div className="page-body">
-        <div className="wrap page-narrow">
-          {status && !output && (
-            <JobStepper stages={STAGES} status={status.status} activeStage={status.stage} progress={status.progress} />
-          )}
 
-          {failed && <p style={{ color: 'var(--err)', marginTop: 16 }}>Job failed — simulated failure for QA.</p>}
+        {status && <JobStepper stages={STAGES} status={status.status} activeStage={status.stage} progress={status.progress} />}
 
-          {output && (
-            <div style={{ marginTop: 28 }}>
-              <MarkdownOutputCard
-                h1={output.h1}
-                frontmatter={output.frontmatter}
-                sections={output.sections}
-                raw={output.raw}
-                filename={output.filename}
-                onDownload={() => trackOutputDownloaded({ job_id: jobId })}
-              />
-              <p className="micro" style={{ marginTop: 20 }}>
-                <Link href="/app">← Back to your library</Link>
+        {failed && <p style={{ color: 'var(--err)', marginTop: 16 }}>Job failed — simulated failure for QA.</p>}
+
+        {output && (
+          <div style={{ marginTop: 28 }}>
+            <div className="ledger" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', marginBottom: 14 }}>
+              <p style={{ margin: 0 }}>
+                <span className="k">ledger:</span> counts {formatClock(status?.duration_sec ?? 0)} against your trial credit · wall-clock{' '}
+                {formatClock(status?.wall_clock_sec ?? 0)}
+              </p>
+              <p className="retention-ok" style={{ margin: 0 }}>
+                ✓ source video deleted after processing
               </p>
             </div>
-          )}
-        </div>
+            <MarkdownOutputCard
+              h1={output.h1}
+              frontmatter={output.frontmatter}
+              sections={output.sections}
+              raw={output.raw}
+              filename={output.filename}
+              onDownload={() => trackOutputDownloaded({ job_id: jobId })}
+            />
+            <p className="micro" style={{ marginTop: 20 }}>
+              <Link href="/app">← back to library</Link>
+            </p>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }

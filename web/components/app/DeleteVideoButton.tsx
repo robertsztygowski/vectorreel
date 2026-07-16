@@ -23,8 +23,8 @@ export function DeleteVideoButton({ videoId, title }: { videoId: string; title: 
   }
 
   return (
-    <button type="button" className="btn btn-ghost" onClick={remove}>
-      Delete
+    <button type="button" className="btn btn-ghost btn-sm" onClick={remove}>
+      delete
     </button>
   );
 }
