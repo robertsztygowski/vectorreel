@@ -54,8 +54,12 @@ block).
 **Phase 2R ✅ built 2026-07-16** — the revised screens are implemented and encode the competitor
 findings (free tool dropped; two-plan pricing + N33 trial credit, no free tier; €99 Starter dark
 behind a flag; sign-in/signup + authenticated panel + docs; positioning recopy; footer + job-done
-defects fixed). All on mocked fixtures — no backend, no Vertex. **Next: founder sign-off, then Phase
-2.5 (contracts).**
+defects fixed). All on mocked fixtures — no backend, no Vertex.
+**Phase 2.5 ✅ built 2026-07-16** — both contracts are frozen: ARCHITECTURE §4 (Markdown output,
+drift-corrected against the real corpus) + §5 (MVP API subset, no public compute endpoint), with
+JSON Schemas + canonical fixtures committed under `tests/fixtures/{contracts,output}/` and the
+web mocks re-pointed at them (strict parser; byte round-trip + schema tests). **Next: founder
+sign-off on the 2R screens + 2.5 rulings, then Phase 3 (the pipeline).**
 **Phase 2R scope — *encode the competitor findings*
 (experiments/002-competitor-analysis).** The positioning was reset 2026-07-15 by that analysis
 (BUSINESS_MODEL §2/§4/§6/§8): anchor on **asset video, never meetings** (the bundled recap is the
@@ -375,19 +379,32 @@ grep-for-"meeting" clean, `/tool` returns 404, pricing hides €99 by default. A
 > (BUSINESS_MODEL §4).** Fix the shared-footer glitch and the job-done header copy. Still no product
 > backend, no Vertex calls. No US-hosted anything (rule 10).
 
-## Phase 2.5 — Freeze the contracts (frontend ⇄ backend)
+## Phase 2.5 — Freeze the contracts (frontend ⇄ backend) ✅ BUILT 2026-07-16
 
 Both contracts already exist as drafts — the work is **ratification, not invention**:
 
 1. **Markdown output contract** — ARCHITECTURE §4, reviewed against the real corpus outputs; fix
    any drift between the spec and what the pipeline actually produced, then freeze. Consistency of
    this schema across all files is a product feature — downstream RAG depends on it.
-2. **API contract** — ARCHITECTURE §5 trimmed to the MVP subset: the public YouTube-tool endpoint
-   + `POST /uploads`, `POST /jobs`, `GET /jobs/{id}` (status/polling shape), `GET
+2. **API contract** — ARCHITECTURE §5 trimmed to the MVP subset: ~~the public YouTube-tool
+   endpoint +~~ `POST /uploads`, `POST /jobs`, `GET /jobs/{id}` (status/polling shape), `GET
    /jobs/{id}/output.md|json`, `DELETE /jobs/{id}` (erasure is not deferrable — GDPR).
+   *(Corrected 2026-07-16: the public-tool endpoint predated the 2026-07-15 review that dropped
+   the free tool — the frozen contract has NO public compute endpoint, and it gained `GET /jobs`,
+   which the founder-approved panel job list needed and §5 never specced.)*
 3. **Deliverables:** updated ARCHITECTURE §4/§5, a committed JSON schema + sample fixtures under
    `tests/fixtures/`, and the Phase 2 frontend re-pointed at those fixtures — **the mocks consuming
    the ratified fixtures is the proof the contract is real.**
+
+> ✅ **Done 2026-07-16.** §4 frozen with the eight real-corpus drift points ruled on (bracketed
+> headings; pinned block grammar; required `## Source & licence` provenance section; LF-only;
+> `source_filename`→`source`; `generator: mdreel@<version>`; H1 == title; `output.json` = the
+> structured document, raw Stage-B blocks stay internal). §5 frozen as the MVP subset above plus
+> `GET /jobs`, `GET /usage`, `POST /webhooks/test`; response shapes live as JSON Schemas in
+> `tests/fixtures/contracts/`, canonical fixtures (the Phase-0.2 corpus, format-normalized,
+> content untouched) + their `.json` twins in `tests/fixtures/output/`, executable grammar in
+> `web/lib/outputDocument.ts` (byte round-trip), mocks re-pointed and schema-validated in CI
+> (`web/lib/contracts.test.ts`). Founder review rides along with the Phase 2R sign-off.
 
 **Starter prompt:**
 > Phase 2.5 — freeze the frontend⇄backend contracts. Read PLAN.md (Phase 2.5), ARCHITECTURE §4–§5,
