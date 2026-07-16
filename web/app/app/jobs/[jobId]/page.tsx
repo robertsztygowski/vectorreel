@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { JobStepper, type JobStageKey, type JobStatusState } from '@/components/JobStepper/JobStepper';
 import { MarkdownOutputCard } from '@/components/MarkdownOutputCard/MarkdownOutputCard';
 import { trackJobCompleted, trackOutputDownloaded, trackUploadRepeat } from '@/lib/events';
-import type { ParsedMarkdown } from '@/lib/corpus';
+import type { OutputDocument } from '@/lib/outputDocument';
 
 const STAGES: JobStageKey[] = ['A', 'B', 'C', 'D'];
 const UPLOAD_COUNT_KEY = 'mdreel_upload_count';
@@ -21,9 +21,11 @@ interface JobStatusResponse {
   wall_clock_sec?: number;
 }
 
-interface OutputJson extends ParsedMarkdown {
+// GET /jobs/{id}/output.json returns the bare contract document (output.schema.json); the raw
+// Markdown bytes come from GET /jobs/{id}/output.md — fetched alongside for the raw tab/download.
+interface JobOutputView {
+  document: OutputDocument;
   raw: string;
-  filename: string;
 }
 
 function decodeJobSummary(jobId: string): { filename?: string; durationSec?: number } {
@@ -51,7 +53,7 @@ export default function JobStatusPage() {
   const jobId = params.jobId;
   const jobSummary = useMemo(() => decodeJobSummary(jobId), [jobId]);
   const [status, setStatus] = useState<JobStatusResponse | null>(null);
-  const [output, setOutput] = useState<OutputJson | null>(null);
+  const [output, setOutput] = useState<JobOutputView | null>(null);
   const [notFound, setNotFound] = useState(false);
   const trackedDoneRef = useRef(false);
   const forcedState = searchParams.get('state') as JobStatusState | null;
@@ -91,10 +93,14 @@ export default function JobStatusPage() {
     trackedDoneRef.current = true;
 
     (async () => {
-      const res = await fetch(`/api/jobs/${jobId}/output.json`);
-      if (!res.ok) return;
-      const data = (await res.json()) as OutputJson;
-      setOutput(data);
+      const [jsonRes, mdRes] = await Promise.all([
+        fetch(`/api/jobs/${jobId}/output.json`),
+        fetch(`/api/jobs/${jobId}/output.md`),
+      ]);
+      if (!jsonRes.ok || !mdRes.ok) return;
+      const document = (await jsonRes.json()) as OutputDocument;
+      const raw = await mdRes.text();
+      setOutput({ document, raw });
 
       trackJobCompleted({
         job_id: jobId,
@@ -131,14 +137,15 @@ export default function JobStatusPage() {
 
   const done = status?.status === 'done';
   const failed = status?.status === 'failed';
-  const title = jobSummary.filename ?? (done && output ? output.filename.replace(/\.md$/, '.mp4') : 'Processing your recording');
+  const sourceFilename = jobSummary.filename ?? (done && output ? output.document.frontmatter.source : 'Processing your recording');
+  const outputFilename = `${(jobSummary.filename ?? 'output.mp4').replace(/\.[^./]+$/, '')}.md`;
 
   return (
     <div className="app-page">
       <div className="wrap">
         <div className="app-head-row">
           <div>
-            <h1>{title}</h1>
+            <h1>{sourceFilename}</h1>
             <p className="lead">
               {done
                 ? 'Done — download it below, or find it any time in your library.'
@@ -166,11 +173,10 @@ export default function JobStatusPage() {
               </p>
             </div>
             <MarkdownOutputCard
-              h1={output.h1}
-              frontmatter={output.frontmatter}
-              sections={output.sections}
+              frontmatter={output.document.frontmatter}
+              sections={output.document.sections}
               raw={output.raw}
-              filename={output.filename}
+              filename={outputFilename}
               onDownload={() => trackOutputDownloaded({ job_id: jobId })}
             />
             <p className="micro" style={{ marginTop: 20 }}>

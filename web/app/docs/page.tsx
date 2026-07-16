@@ -7,8 +7,9 @@ export const metadata: Metadata = { title: 'Docs — mdreel API, webhooks & MCP'
 const ENDPOINTS: { method: string; path: string; purpose: string }[] = [
   { method: 'POST', path: '/uploads', purpose: 'Get a signed GCS URL + uploadId for a resumable upload.' },
   { method: 'POST', path: '/jobs', purpose: 'Start a job from an uploadId. Returns 202 { jobId }.' },
+  { method: 'GET', path: '/jobs', purpose: 'List your jobs, newest first — the same list the panel shows.' },
   { method: 'GET', path: '/jobs/{id}', purpose: 'Poll status: queued · processing (stage, progress) · done · failed.' },
-  { method: 'GET', path: '/jobs/{id}/output.md', purpose: 'Download the Markdown (or output.json for structured blocks).' },
+  { method: 'GET', path: '/jobs/{id}/output.md', purpose: 'Download the Markdown (or output.json for the structured document).' },
   { method: 'DELETE', path: '/jobs/{id}', purpose: 'Right-to-erasure: deletes outputs + metadata, audit-logged.' },
   { method: 'GET', path: '/usage', purpose: 'Hours processed this period and remaining quota.' },
   { method: 'POST', path: '/webhooks/test', purpose: 'Verify a webhook endpoint (HMAC signature).' },

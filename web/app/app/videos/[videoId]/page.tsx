@@ -23,14 +23,13 @@ export default async function LibraryVideoPage({ params }: { params: Promise<{ v
             <h1>{`${item.id}.md`}</h1>
             <p className="lead">{item.channel} · processed {formatDate(item.processedAt)}</p>
           </div>
-          <DeleteVideoButton videoId={item.id} title={item.title} />
+          <DeleteVideoButton videoId={item.id} jobId={item.jobId} title={item.title} />
         </div>
         <div style={{ display: 'grid', gap: 20, maxWidth: 880 }}>
           <p className="micro">
             <Link href="/app">← back to your library</Link>
           </p>
           <MarkdownOutputCard
-            h1={meta.parsed.h1}
             frontmatter={meta.parsed.frontmatter}
             sections={meta.parsed.sections}
             raw={meta.raw}

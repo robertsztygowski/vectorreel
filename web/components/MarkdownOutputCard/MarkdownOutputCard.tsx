@@ -1,18 +1,17 @@
 'use client';
 
 import { Fragment, useMemo, useState } from 'react';
-import type { Block, Frontmatter, Section } from '@/lib/corpus';
+import type { OutputBlock, OutputFrontmatter, OutputSection } from '@/lib/outputDocument';
 
-const BLOCK_LABELS: Record<Block['label'], string> = {
+const BLOCK_LABELS: Record<OutputBlock['label'], string> = {
   spoken: 'spoken',
   on_screen: 'on screen',
   visual: 'visual',
 };
 
 interface MarkdownOutputCardProps {
-  h1: string;
-  frontmatter: Frontmatter;
-  sections: Section[];
+  frontmatter: OutputFrontmatter;
+  sections: OutputSection[];
   raw: string;
   filename: string;
   onDownload?: () => void;
@@ -20,14 +19,14 @@ interface MarkdownOutputCardProps {
 
 function classifyRawLine(line: string): { className?: string } {
   if (line === '---') return { className: 'fence' };
-  if (/^(title|duration|language|processed_at|generator|summary|tags):/.test(line)) return { className: 'key' };
+  if (/^(title|source|duration|language|processed_at|generator|summary|tags):/.test(line)) return { className: 'key' };
   if (/^#\s+/.test(line)) return { className: 'h' };
   if (/^\*\*(Spoken|On screen|Visual):\*\*/i.test(line)) return { className: 'key' };
   if (/^>\s?/.test(line)) return { className: 'quote' };
   return {};
 }
 
-export function MarkdownOutputCard({ h1, frontmatter, sections, raw, filename, onDownload }: MarkdownOutputCardProps) {
+export function MarkdownOutputCard({ frontmatter, sections, raw, filename, onDownload }: MarkdownOutputCardProps) {
   const [tab, setTab] = useState<'rendered' | 'raw'>('rendered');
   const rawLines = useMemo(() => raw.replace(/\r\n/g, '\n').split('\n'), [raw]);
 
@@ -72,7 +71,7 @@ export function MarkdownOutputCard({ h1, frontmatter, sections, raw, filename, o
             {frontmatter.tags.join(', ')}]
           </p>
           <h2 style={{ margin: '0 0 40px', fontSize: 28, fontWeight: 600, letterSpacing: '-0.01em', fontVariationSettings: "'opsz' 40", paddingBottom: 18, borderBottom: '1px solid var(--hairline)' }}>
-            {h1}
+            {frontmatter.title}
           </h2>
           {frontmatter.summary && (
             <p style={{ margin: '0 0 28px', fontSize: 15.5, lineHeight: 1.6, color: 'var(--ink-soft)' }}>{frontmatter.summary}</p>

@@ -4,8 +4,11 @@ import { NextResponse } from 'next/server';
 // never PUT to; the client only reads the picked file's local .duration via a hidden <video>.
 export async function POST() {
   const uploadId = crypto.randomUUID();
-  return NextResponse.json({
-    uploadId,
-    uploadUrl: `https://storage.invalid/mock-upload/${uploadId}`,
-  });
+  return NextResponse.json(
+    {
+      uploadId,
+      uploadUrl: `https://storage.invalid/mock-upload/${uploadId}`,
+    },
+    { status: 201 },
+  );
 }

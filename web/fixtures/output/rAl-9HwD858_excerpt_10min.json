@@ -1,0 +1,76 @@
+{
+  "frontmatter": {
+    "title": "Building a Rust String Splitter: Lifetimes, Strings, and Generics",
+    "source": "https://www.youtube.com/watch?v=rAl-9HwD858",
+    "duration": "01:33:23",
+    "language": "en",
+    "processed_at": "2026-07-14T19:38:48Z",
+    "generator": "mdreel@0.0.0-fixture",
+    "summary": "The speaker introduces a live-coding session motivated by the 2019 Rust Survey, which highlighted a demand for intermediate-level Rust content, particularly video explanations of lifetimes, strings, and generics. He plans a shorter, more beginner-friendly stream to build a `strsplit` library, demonstrating how to implement an iterator for string splitting while addressing common Rust complexities and taking live questions from the audience. The initial steps involve setting up the project, defining the `StrSplit` struct, and outlining the `Iterator` trait implementation with a basic test case.",
+    "tags": [
+      "rust",
+      "lifetimes",
+      "generics",
+      "strings",
+      "iterator",
+      "live-coding"
+    ]
+  },
+  "sections": [
+    {
+      "timestamp": "00:00:00",
+      "heading": "Introduction and Stream Goals",
+      "blocks": [
+        {
+          "label": "spoken",
+          "text": "Hello everyone. Uh, I saw the Rust Survey 2019 results. Um, and while reading through, I came across this little bit. People are asking for more learning material about Rust, specifically intermediate level material, and a lot of it is asking for video content specifically. Uh, and uh, if you're watching this, maybe you already know, I have a YouTube channel where I do live intermediate and uploaded intermediate Rust content. So I was like, yeah, this sounds like my wheelhouse. Um, and so I tweeted out like, what would you like to see? If I were to do some of this that's like a little less advanced of the stuff I normally do and a little shorter and a little more self-contained than what I usually do, like what do you want to see? Um, and I got a ton of responses to this. And that was pretty cool to see all the ideas that people had. Um, the suggestions were sort of all over the place. Uh, and what I basically what I got from it is people are confused about lifetimes and they don't want to see another explanation of lifetimes. They want to they want to see code that actually uses them uh in order to try to understand what's going on. Uh and so I figured maybe that's something I could do. Um, I have I only have one video that's like more beginner friendly than the normal ones I do, which are usually much longer sessions where we build something real in Rust. Um, and that is where we did a live coding of a linked hash map. Um, and that one actually turned out pretty well. I think that's something that's easy to follow if you're relatively newer to the language. Um, but I figured I would do something that's sort of dedicated to this and and if it turns out to work well, I might do more in the future. Um, and so that's where we are now. Um, specifically in the stream, what I want to do is basically have us write a bunch of code and Rust. Uh not very much, but sort of uh you'll see, uh where we cover like multiple lifetimes, uh a little bit about strings because that seems to be something that's confusing people, and a little bit of generics depending on how we uh how we turn out on time. Um, my guess is this stream will be about 90 minutes. That's sort of the target range I'm I'm going for for this. Uh, which is much shorter than my usual streams. I'll try to be less verbose than I usually am. Um, and if you if this is the first time you watch any of my videos, first of all, welcome. Uh, and second of all, uh, if you go to my Twitter account, I have um, this is basically where I post any new two videos that I'm about to release. Uh, both to announce the live streams in the first place, to ask for input and what you want to see, uh, and also whenever I upload a recording of a live stream, then I will put them up here."
+        },
+        {
+          "label": "on_screen",
+          "text": "Rust Blog, Rust Survey 2019 Results, People are in general asking for more learning material about Rust. In terms of expertise it's mainly beginner and intermediate level material being requested. A lot of these requests are also asked for video content specifically., Jon Gjengset, YouTube, Twitter, Live-coding a linked hash map in Rust, What, looks like, more beginner-friendly @rustlang stream is something that a lot of you'll want to see. So, let's do one! Wednesday @ 8PM UTC. I'll do a shorter, code-driven stream that covers multiple lifetimes, strings, and some generics. If it goes well, there may be more. **1/3, Jon Gjengset @jonhoo, Rust Survey 2019 Results"
+        },
+        {
+          "label": "visual",
+          "text": "The speaker is shown in a small window in the top right corner, while the main screen displays a Rust Blog post about the 2019 Rust Survey results. He scrolls through the blog post, then shows his YouTube channel, then his Twitter feed where he posted about the stream. He explains that people want more intermediate Rust content, especially video, and he plans to cover lifetimes, strings, and generics in a shorter stream. He also mentions his Twitter as a place for updates."
+        }
+      ]
+    },
+    {
+      "timestamp": "00:02:42",
+      "heading": "Setting Up the `strsplit` Library",
+      "blocks": [
+        {
+          "label": "spoken",
+          "text": "Uh, and so without further ado, let's get started. Um, because this stream is sort of geared more towards people who are still getting to grips with sort of some of the complexities in Rust, uh, I'll also be taking a bunch of questions from chat. So if at any point you get sort of uh, you feel like you're not quite following or you feel like uh, something doesn't make sense and you would like me to explain it again, then please mention it in chat and I'll try to make sure to look over there and now and again to like uh, make sure that you're all following along. And in particular, this is important because the people who are watching this after the fact, um, they won't have the opportunity to ask questions. If you have a question live, chances are someone else will also have it later and if you ask it, the answer will be recorded in the stream. Uh Great. Okay. So, uh, I also got some questions actually from people who relatively need to rustle. They're like, how do I even start a Rust project? Uh, that's not normally something I covered, but I figured given that we're starting something new, um, I'll start from the very beginning with cargo new. We're going to make a library. And the library we're going to make, um, is one that lets you take a string and split it by the string and walk the splits of that string. And so we're going to call it string split or stir split. Uh, it's not a very original name, but it doesn't have to be. Uh, and inside here you'll see that we have the cargo Toma we're going to define sort of meta data about our new crate. Um, and also source lib, which currently basically has nothing of real value. Um, and the starting point here, I there's a bunch of stuff I like to add as a prelude to any package that I make. Um, and that's things like I like to add uh warn for uh missing debug implementations. Um, Russ 2018 idioms and uh missing Docs. There are a bunch of others you might add to. Um, these aren't going to matter that much for the stream. We're not going to be writing a ton of documentation even though normally I do when I publish something like this. But here we're going to focus more on sort of the the insides of uh the thing we're going to build. Um, but I figured it would be good to give you that prelude. Um, it's something you can use in your own crates too. Um, I like this to be worn not deny because sometimes these change over time like the compiler gets smarter at some of these lints and you really don't want a lint to be breaking your compile because someone else is a later version of what you originally built with."
+        },
+        {
+          "label": "on_screen",
+          "text": "defenestration streams, fish\ncargo new --lib strsplit\nCreated library `strsplit` package\ncd strsplit\ndefenestration strsplit (master +%)\nCargo.toml\nsrc/lib.rs\n#![warn(missing_debug_implementations, rust_2018_idioms, missing_docs)]\nfn it_works() { assert_eq!(2 + 2, 4); }"
+        },
+        {
+          "label": "visual",
+          "text": "The screen changes to a terminal. The speaker explains he'll take questions, then types `cargo new --lib strsplit` to create a new library. He navigates to the directory, mentions `Cargo.toml`, and then opens `src/lib.rs` to add common Rust lints like `#[warn(missing_debug_implementations, rust_2018_idioms, missing_docs)]`."
+        }
+      ]
+    },
+    {
+      "timestamp": "00:05:23",
+      "heading": "Designing the `StrSplit` Iterator API",
+      "blocks": [
+        {
+          "label": "spoken",
+          "text": "Um, All right, so here's uh what we want. Well, we want a type. Um, and it's going to be called let's say string split. Um, and the methods really what we want for spring string split. Uh, is we're going to have add fields to it after a while. Uh, but there's going to be something that's going to be a new and it's going to take some haystack. This is usually haystack is usually uh, the thing that you are searching in. And it's going to take some needle. Uh, in this case, we're going to call it the delimiter. So this is the thing that we're splitting by. And it's going to return to self. Self here is sort of a special type that refers to the name of the Impala block. It's useful to use self rather than that we could write stir split here. Um, using self is just nice because it means that if we rename the type later, we don't have to change all the return types of the methods and stuff as well. Um, so in basically this is saying, uh, I want to split this by this. Um, and we could call this like split by instead of new, but we're not really doing API design here. This is just to give you a sense for what this type is to do. Um, and then what we want to do is implement iterator for stir split. Uh, so that the iterator trait is the iterator trait allows you to do something like uh, force part in let's say you have a X that's of type stir split. Um, then you can do four part in X as long as X or stir split X type uh, implementerator. Right? Uh, so the item here is going to be star. Uh, and the only thing that you need to implement on iterator is is the next function, which takes a mute reference to self and returns an optional item. Notice I haven't put any implementations any fields yet. I'm just giving you roughly the API we're going to be working with. Uh, and the idea here is that the the four loop construct is really turned into a wildless sum equals uh, the type.next. That's what 4D sugars do. Um, so it's going to keep calling next while it's still returning some and when it no longer return some uh, then uh, the loop will be terminated. And so the idea here is uh we we could argue right this as a test. Um, although this test won't really do much at the moment. Uh, the idea is that you have some string like let's say a b c d e. Um, and you want to do for letter in hack. Well, I guess in this case it's going to be stir split new uh hack and then let's say here uh space. Right? That's going to be the idea and this is going to produce A then B then C then D then E. Ideally. Um, we'll probably not talk about higher kind lifetimes, that probably won't come up. Um, won't that just add noise when debuining early prototypes? Yes, uh, this whole thing at the this prelude um, is in the initial phases of development, you probably don't want it on uh, because it's just going to cause you get more warnings, so it's harder to see which ones are, which ones matter and which ones are more stylistic if you will. Um, How do you decide between library and binary and how do you check the library output results while coding? Um, so you decide between library and binary depending on whether you are whether you're building a binary or a library, right? Uh, binary is if you're building a program that someone's going to run on the command line. Everything else is a library. Um, you might build a thing that has both a library and a binary, in which case it doesn't really matter. The only difference between the lib and bin flags are that the bin flag creates a source main and the lib flag"
+        },
+        {
+          "label": "on_screen",
+          "text": "pub struct StrSplit {}\nimpl StrSplit {}\npub fn new(haystack: &str, delimiter: &str) -> Self {}\nimpl Iterator for StrSplit {}\ntype Item = &str;\nfn next(&mut self) -> Option<Self::Item> {}\n#![test]\nfn it_works() {}\nlet haystack = \"a b c d e\";\nlet letters = StrSplit::new(haystack, \" \");\nassert_eq!(letters, vec![\"a\", \"b\", \"c\", \"d\", \"e\"].into_iter());"
+        },
+        {
+          "label": "visual",
+          "text": "The speaker defines the `StrSplit` struct, its `new` method, and the `Iterator` trait with `Item = &str` and the `next` method signature. He then adds a test function to demonstrate its intended behavior and answers a chat question about `#[warn]` attributes and the distinction between Rust libraries and binaries."
+        }
+      ]
+    }
+  ],
+  "provenance": "Generated by **mdreel** from a Creative Commons video. The original remains the property of its authors.\n\n> \"Crust of Rust: Lifetime Annotations\" by Jon Gjengset (https://www.youtube.com/watch?v=rAl-9HwD858), CC BY 3.0\n>\n> Original video: https://www.youtube.com/watch?v=rAl-9HwD858\n> Licence: Creative Commons Attribution (CC BY) — https://creativecommons.org/licenses/by/3.0/"
+}

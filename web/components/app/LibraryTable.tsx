@@ -33,13 +33,16 @@ export function LibraryTable({ items, categoryLabels }: { items: LibraryItem[]; 
   const router = useRouter();
   const [deleted, setDeleted] = useState<Set<string>>(new Set());
 
-  // Mock deletion has no backend: persist a client-side set so a deleted item stays gone across
-  // navigations this phase. DELETE /jobs/{id} (GDPR erasure) is wired for real in Phase 4.
   useEffect(() => {
     setDeleted(readDeleted());
   }, []);
 
-  function remove(id: string) {
+  // GDPR erasure goes through DELETE /jobs/{id} (ARCHITECTURE §5). The mock route has no store,
+  // so a client-side set is still what keeps the item gone across navigations this phase — but it
+  // is only written after the route confirms, so the erasure contract is exercised for real.
+  async function remove(id: string, jobId: string) {
+    const res = await fetch(`/api/jobs/${jobId}`, { method: 'DELETE' });
+    if (!res.ok && res.status !== 404) return;
     const next = new Set(deleted);
     next.add(id);
     setDeleted(next);
@@ -109,7 +112,7 @@ export function LibraryTable({ items, categoryLabels }: { items: LibraryItem[]; 
                   type="button"
                   className="act-delete"
                   onClick={() => {
-                    if (window.confirm(`Delete "${item.title}"? This erases its output (mock).`)) remove(item.id);
+                    if (window.confirm(`Delete "${item.title}"? This erases its output (mock).`)) void remove(item.id, item.jobId);
                     else router.refresh();
                   }}
                 >
@@ -122,7 +125,7 @@ export function LibraryTable({ items, categoryLabels }: { items: LibraryItem[]; 
                 type="button"
                 className="act-delete"
                 onClick={() => {
-                  if (window.confirm(`Cancel "${item.title}"?`)) remove(item.id);
+                  if (window.confirm(`Cancel "${item.title}"?`)) void remove(item.id, item.jobId);
                   else router.refresh();
                 }}
               >
@@ -138,7 +141,7 @@ export function LibraryTable({ items, categoryLabels }: { items: LibraryItem[]; 
                   type="button"
                   className="act-delete"
                   onClick={() => {
-                    if (window.confirm(`Delete "${item.title}"? This erases its output (mock).`)) remove(item.id);
+                    if (window.confirm(`Delete "${item.title}"? This erases its output (mock).`)) void remove(item.id, item.jobId);
                     else router.refresh();
                   }}
                 >

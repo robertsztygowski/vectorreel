@@ -3,10 +3,11 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { highlightMarkdownLines } from '@/components/CodeCard/highlightMarkdown';
-import type { LicenceBlock, ParsedMarkdown } from '@/lib/corpus';
+import type { LicenceBlock, OutputDocument } from '@/lib/corpus';
 
 function tsToSeconds(ts: string): number {
-  const match = /\[(\d{2}):(\d{2}):(\d{2})\]/.exec(ts);
+  // Contract timestamps are bare "hh:mm:ss" (the brackets belong to the heading syntax).
+  const match = /^(\d{2}):(\d{2}):(\d{2})$/.exec(ts);
   if (!match) return 0;
   return Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3]);
 }
@@ -43,7 +44,7 @@ export function GalleryDetailViewer({
   duration: string;
   channel: string;
   date: string;
-  parsed: ParsedMarkdown;
+  parsed: OutputDocument;
   raw: string;
   filename: string;
   licence: LicenceBlock;
