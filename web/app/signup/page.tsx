@@ -3,9 +3,8 @@
 import { Suspense, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { getAbArm, getFirstTouch } from '@/lib/attribution';
-import { trackSignup } from '@/lib/events';
-import { markSignedIn } from '@/lib/session';
+import { emitSignupEvent } from '@/lib/events';
+import { markSignedIn, setSessionIds } from '@/lib/session';
 import { TRIAL_CREDIT_HOURS } from '@/lib/pricing';
 import { Field } from '@/components/Field/Field';
 
@@ -26,23 +25,13 @@ function SignupInner() {
   const [monthlyHours, setMonthlyHours] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  function submit(skip: boolean) {
-    // Assembles the exact future `tenants` row shape (ARCHITECTURE §6) so the forward path to
-    // payment_succeeded is proven now, even though there's no backend yet to persist it to.
-    const firstTouch = getFirstTouch();
-    console.log('[future tenant row]', {
-      first_utm_source: firstTouch?.utm_source ?? null,
-      first_utm_medium: firstTouch?.utm_medium ?? null,
-      first_utm_campaign: firstTouch?.utm_campaign ?? null,
-      first_utm_term: firstTouch?.utm_term ?? null,
-      first_referrer: firstTouch?.referrer ?? null,
-      ab_arm: getAbArm(),
-    });
-
-    trackSignup({
+  async function submit(skip: boolean) {
+    const response = await emitSignupEvent({
+      email,
       archive_hours: skip || !archiveHours ? null : Number(archiveHours),
       monthly_hours: skip || !monthlyHours ? null : Number(monthlyHours),
     });
+    if (response) setSessionIds({ tenant_id: response.tenant_id, user_id: response.user_id });
     markSignedIn(email);
     setSubmitted(true);
   }
@@ -87,7 +76,7 @@ function SignupInner() {
             <form
               onSubmit={(e: FormEvent) => {
                 e.preventDefault();
-                submit(false);
+                void submit(false);
               }}
             >
               <Field label="work email" htmlFor="email" style={{ marginBottom: 22 }}>
@@ -128,7 +117,7 @@ function SignupInner() {
                 <button className="btn btn-primary" type="submit">
                   send magic link
                 </button>
-                <button className="btn btn-ghost" type="button" onClick={() => submit(true)}>
+                <button className="btn btn-ghost" type="button" onClick={() => void submit(true)}>
                   skip &amp; send link
                 </button>
               </div>

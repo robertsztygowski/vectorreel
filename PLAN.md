@@ -58,8 +58,14 @@ defects fixed). All on mocked fixtures — no backend, no Vertex.
 **Phase 2.5 ✅ built 2026-07-16** — both contracts are frozen: ARCHITECTURE §4 (Markdown output,
 drift-corrected against the real corpus) + §5 (MVP API subset, no public compute endpoint), with
 JSON Schemas + canonical fixtures committed under `tests/fixtures/{contracts,output}/` and the
-web mocks re-pointed at them (strict parser; byte round-trip + schema tests). **Next: founder
-sign-off on the 2R screens + 2.5 rulings, then Phase 3 (the pipeline).**
+web mocks re-pointed at them (strict parser; byte round-trip + schema tests).
+**Phase 4 ✅ built 2026-07-16** — payments + instrumentation are shipped to the smallest useful
+scope: Postgres persistence is the METRICS.md §6.2 source of truth; `/api/v1/events`, checkout,
+and the Stripe webhook exist; signup writes the N20 field + first-touch attribution and grants the
+N33 trial credit; payments copy attribution for the CAC join; ad spend has a ledger seam; cohort
+hour-decay has a derived query; the web client posts real events and checkout. Deliberate cuts are
+listed in Phase 4. **Next: founder sign-off on the built funnel and deferred cuts, then Phase 3/5
+work as sequencing requires.**
 **Phase 2R scope — *encode the competitor findings*
 (experiments/002-competitor-analysis).** The positioning was reset 2026-07-15 by that analysis
 (BUSINESS_MODEL §2/§4/§6/§8): anchor on **asset video, never meetings** (the bundled recap is the
@@ -484,41 +490,46 @@ job list, team/multi-user management, SSO.
 > Every Stage B call sets `maxOutputTokens`, a bounded `thinkingBudget`, and a timeout (rule 9).
 > Never download YouTube bytes (rule 8).
 
-## Phase 4 — Payments + instrumentation (the pricing page goes live)
+## Phase 4 — Payments + instrumentation (the pricing page goes live) ✅ built 2026-07-16
 
-- **Two Stripe checkouts — the two plans** (revised 2026-07-15; prices and caps live in
-  BUSINESS_MODEL §6): the small plan with a **hard cap** (processing pauses at the limit), the
-  larger with **metered overage**. **No free tier**; signup grants the one-time trial credit
+- ✅ **Two Stripe checkouts — the two plans** (revised 2026-07-15; prices and caps live in
+  BUSINESS_MODEL §6): `POST /api/v1/checkout` creates checkout sessions for the live plans; the
+  Starter fallback stays dark behind a flag. **No free tier**; signup grants the N33 trial credit
   (METRICS.md **N33**). → **This is the A2 test.** Nobody buys either = it's a vitamin, not a
-  painkiller (`checkout_clicked` carries the plan). The Phase 2R pricing page goes live with real
-  checkout.
-- **Instrumentation — the whole point of the phase.** Events: signup, upload,
-  download, **second upload**, checkout click — the METRICS.md §3 schema, flowing into our own
-  Postgres (the §6.2 source of truth). The Phase 2 client module gets its real transport here.
-  Where that Postgres lives (smallest Cloud SQL vs. a container next to the worker) is decided at
-  the top of this phase — and Umami (Phase 5) shares the same instance, never a second one
-  (METRICS.md §6.2).
-- **Docs + MCP go live** (revised 2026-07-15): the docs page documents the real REST API +
-  webhooks, and the **MCP server ships as a thin layer over that API** (ARCHITECTURE §5). ⚠️ **The
-  MCP server is the first candidate to cut if the SB gate (METRICS.md §2.2) tightens** — the API
-  and webhooks are not.
-- 🚨 **Cohort hour-decay, instrumented before the first user.** Hours uploaded in week 1 vs.
-  week 4, per signup cohort. **This is the A3 test, and A3 decides what business we are in**
-  (decision rule: METRICS.md A3). If it says backfill, the correct product is a **prepaid credit
-  pack**, not a monthly subscription. **The question cannot be answered retroactively — instrument
-  it first or lose the data forever.**
-- **The N20 signup field** (METRICS.md) ships here too: archive-hours vs monthly-hours, one
-  skippable control. **It reads A3 roughly two months before the cohort data can.**
-- **First-touch UTM attribution verified end-to-end:** the Phase 2 capture must land on the tenant
-  row and survive to `payment_succeeded` (METRICS.md §6.3) — test it before launch, not after.
+  painkiller (`checkout_clicked` carries the plan). The Phase 2R pricing page now calls the real
+  checkout endpoint.
+- ✅ **Instrumentation — the whole point of the phase.** `POST /api/v1/events` ingests the
+  METRICS.md §3 schema into our own Postgres, the §6.2 source of truth. Signup upserts the tenant,
+  writes the N20 field and first-touch attribution once, and the Phase 2 client module now uses the
+  real first-party transport.
+- ✅ **Stripe webhook + CAC join.** `POST /api/v1/webhooks/stripe` is Stripe-signed and
+  unauthenticated; it records `payment_succeeded`, writes a payments row, copies tenant first-touch
+  attribution to that payment, and sets the tenant plan (METRICS.md §6.3).
+- ✅ **Cohort hour-decay, instrumented before the first user.** The tenant-hours-by-week derived
+  query exists, so A3 can be read from post-launch usage. **This is the A3 test, and A3 decides what
+  business we are in** (decision rule: METRICS.md A3). If it says backfill, the correct product is a
+  **prepaid credit pack**, not a monthly subscription. **The question cannot be answered
+  retroactively — instrument it first or lose the data forever.**
+- ✅ **Ad spend has a ledger seam.** The `ad_spend` table and ledger abstraction exist so N29 can be
+  joined with payments rather than trusting ad-platform conversion claims (METRICS.md §6.4).
 
-**Starter prompt:**
-> Phase 4 — payments + instrumentation. Read PLAN.md (Phase 4), METRICS.md §3 + §6 + N20/N29/N33,
-> BUSINESS_MODEL §6, and ARCHITECTURE §5–§6. **Plan mode first.** Two Stripe checkouts (small plan
-> hard-capped, larger with overage) + the N33 trial credit; the §3 event schema into our own
-> Postgres; cohort hour-decay + the N20 field instrumented before any user exists; UTM survival to
-> `payment_succeeded` proven by a test; docs page + MCP server (thin layer over the REST API — cut
-> it first if the SB gate tightens).
+**Deferred / gap list — deliberate smallest-shippable cuts, not omissions:**
+
+- **MCP server** — explicitly the first candidate to cut under the SB gate (METRICS.md §2.2); REST
+  and webhooks carry the MVP.
+- **Real magic-link auth** — the mock client session remains until identity is the bottleneck.
+- **Job-time trial-credit enforcement + usage quota metering** — signup grants the N33 state, but
+  processing-time enforcement waits for the job runner/usage loop.
+- **Umami** — Phase 5; it will share the same Postgres source of truth, never a second database
+  (METRICS.md §6.2).
+- **Live Stripe keys and production price IDs** — keep local/test wiring until deliberate prod
+  activation.
+- **OpenAPI spec publication** — endpoint shapes exist; publication waits for docs hardening.
+
+**Starter prompt (historical; Phase 4 is now built):**
+> Phase 4 follow-up — close only the deliberate gaps above. Read PLAN.md (Phase 4), METRICS.md §3 +
+> §6 + N20/N29/N33, BUSINESS_MODEL §6, and ARCHITECTURE §5–§6. **Plan mode first.** Do not expand
+> scope beyond the gap list unless the SB gate (METRICS.md §2.2) is safe.
 
 ## Phase 5 — 🚀 LAUNCH (the old Phase 0.3, upgraded) — ⏱️ T0 starts here
 

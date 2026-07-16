@@ -24,6 +24,18 @@ Access verified: project reachable, billing on, core APIs enabled.
 - `storage.googleapis.com` (+ storage-api, storage-component) — GCS
 - `artifactregistry.googleapis.com` — container images
 
+## Database decision — Phase 4
+
+**One shared Postgres instance is the product source of truth** (METRICS.md §6.2): application
+events, tenants, payments, usage ledger, and ad-spend ledger all join in our own data. Local
+development uses the docker-compose `vectorreel` database. Production uses the smallest practical
+Cloud SQL for PostgreSQL instance in `europe-central2`, keeping the resource explicitly EU-pinned
+(CLAUDE.md rule 2).
+
+Umami in Phase 5 shares this same Postgres instance and must not create a second idle database
+(METRICS.md §6.2). Stripe API keys and the Stripe webhook signing secret live in Secret Manager;
+never put them in repo files or Cloud Run plaintext env vars.
+
 ### APIs NOT yet enabled (needed later — enable when we reach them)
 - `cloudtasks.googleapis.com` — stage queues (Stage A→B→C→D)
 - `cloudbuild.googleapis.com` — CI container builds (if used)

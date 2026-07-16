@@ -1,10 +1,13 @@
+using System.Text;
+using MdReel.Api.Features.Instrumentation;
+using MdReel.Api.Features.Payments;
 using MdReel.Api.Features.PrivateProcessing;
 using MdReel.Core.Domain;
 using MdReel.Core.Media;
 using MdReel.Core.Pipeline.StageA;
 using MdReel.Core.Providers;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Text;
+using Npgsql;
 
 namespace MdReel.Api;
 
@@ -31,10 +34,49 @@ public partial class Program
         });
         services.AddSingleton<IMediaProbe, FfprobeMediaProbe>();
         services.AddSingleton<IMediaScanner, FfmpegMediaScanner>();
+        services.AddSingleton(CreatePaymentOptions(configuration));
+        services.AddSingleton<IEventStore, InMemoryEventStore>();
+        services.AddSingleton<ITenantStore, InMemoryTenantStore>();
+        services.AddSingleton<IPaymentStore, InMemoryPaymentStore>();
+        services.AddSingleton<IAdSpendLedger, InMemoryAdSpendLedger>();
+        services.AddSingleton<ICohortAnalytics, InMemoryCohortAnalytics>();
+        services.AddSingleton<IPaymentGateway>(sp =>
+        {
+            var options = sp.GetRequiredService<PaymentOptions>();
+            return string.IsNullOrWhiteSpace(options.StripeSecretKey)
+                ? new FakePaymentGateway()
+                : new StripePaymentGateway(options);
+        });
         services.AddSingleton<ICostLedger, InMemoryCostLedger>();
+
+        var postgresConnection = configuration["POSTGRES_CONNECTION"]
+            ?? configuration.GetConnectionString("Postgres")
+            ?? configuration["POSTGRES_CONNECTION_STRING"];
+        if (!string.IsNullOrWhiteSpace(postgresConnection))
+        {
+            services.AddSingleton(NpgsqlDataSource.Create(postgresConnection));
+            services.AddSingleton<ICostLedger, PostgresCostLedger>();
+            services.AddSingleton<IEventStore, PostgresEventStore>();
+            services.AddSingleton<ITenantStore, PostgresTenantStore>();
+            services.AddSingleton<IPaymentStore, PostgresPaymentStore>();
+            services.AddSingleton<IAdSpendLedger, PostgresAdSpendLedger>();
+            services.AddSingleton<ICohortAnalytics, PostgresCohortAnalytics>();
+        }
+
         services.AddSingleton<StageARunner>();
         services.AddSingleton<PrivatePipelineService>();
     }
+
+    private static PaymentOptions CreatePaymentOptions(ConfigurationManager configuration) => new()
+    {
+        StripeSecretKey = configuration["STRIPE_SECRET_KEY"],
+        StripeWebhookSecret = configuration["STRIPE_WEBHOOK_SECRET"],
+        ProPriceId = configuration["STRIPE_PRICE_PRO"],
+        BusinessPriceId = configuration["STRIPE_PRICE_BUSINESS"],
+        StarterPriceId = configuration["STRIPE_PRICE_STARTER"],
+        AppBaseUrl = configuration["APP_BASE_URL"] ?? "http://localhost",
+        ShowStarterPlan = string.Equals(configuration["SHOW_STARTER_PLAN"], "true", StringComparison.OrdinalIgnoreCase),
+    };
 
     private static void ConfigurePipeline(WebApplication app)
     {
@@ -74,8 +116,12 @@ public partial class Program
                 HttpMethods.IsPut(context.Request.Method)
                 && context.Request.Path.Value?.StartsWith("/api/v1/uploads/", StringComparison.Ordinal) == true
                 && context.Request.Path.Value?.EndsWith("/content", StringComparison.Ordinal) == true;
+            var isUnauthedInstrumentationOrWebhook =
+                HttpMethods.IsPost(context.Request.Method)
+                && (string.Equals(context.Request.Path.Value, "/api/v1/events", StringComparison.Ordinal)
+                    || string.Equals(context.Request.Path.Value, "/api/v1/webhooks/stripe", StringComparison.Ordinal));
 
-            if (isSignedUploadPut)
+            if (isSignedUploadPut || isUnauthedInstrumentationOrWebhook)
             {
                 await next(context);
                 return;
@@ -156,6 +202,9 @@ public partial class Program
         });
 
         MapFrozenJobSubset(api);
+        api.MapEvents();
+        api.MapCheckout();
+        api.MapStripeWebhooks();
 
         api.MapGet("/jobs/{id}", (string id, PrivatePipelineService pipeline) =>
         {

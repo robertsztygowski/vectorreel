@@ -281,11 +281,17 @@ Base: `/api/v1`, auth: `Authorization: Bearer <api_key>`.
 **Normative artifacts:** the response shapes live as JSON Schemas in `tests/fixtures/contracts/`
 (`upload-created`, `job-created`, `job-status`, `job-list`, `problem`, `output`) — validated
 against the web mocks by `web/lib/contracts.test.ts` today, and the source material for the
-OpenAPI spec published in Phase 3/4. This table is the human-readable statement of the same
+OpenAPI spec when publication is unblocked. This table is the human-readable statement of the same
 contract.
+
+**Phase 4 reality:** the backend now realizes the Postgres data model in §6 as the single source of
+truth (METRICS.md §6.2). The events table ingests the stable METRICS.md §3 event schema.
 
 | Method & path | Purpose |
 |---|---|
+| `POST /events` | First-party event ingestion for the METRICS.md §3 schema; also upserts signup tenants, first-touch attribution, and trial-credit state. |
+| `POST /checkout` | Creates Stripe Checkout sessions for the live plans; the dark Starter path stays flag-gated. |
+| `POST /webhooks/stripe` | Stripe-signed payment webhook; records payments, copies first-touch attribution to payment rows, and updates tenant plan state. |
 | `POST /uploads` | `201 { uploadId, uploadUrl }` — GCS signed URL (resumable upload; max size per plan). |
 | `POST /jobs` | Body: `{ uploadId, options { language_hint, retention_days, webhook_url, quality: standard\|high } }` → `202 { jobId }`. |
 | `GET /jobs` | The authenticated panel's job list: `{ jobs: [ { jobId, status, stage?, progress, source, duration_sec?, created_at, finished_at? } ] }`, newest first. Pagination is Phase 3, additive. |
@@ -299,13 +305,19 @@ contract.
 dropped 2026-07-15; METRICS.md N10: any unauthenticated compute spend is a bug). The gallery is
 pre-rendered; the internal YouTube path is a runner we invoke, not an API surface.
 
-Errors: RFC 7807 problem+json (`problem.schema.json`), on every non-2xx response. Rate limits per
-key. OpenAPI spec published (Phase 3/4, generated from the schemas above); docs page includes
-`llms.txt` and covers **REST + webhooks + MCP**. **The MCP server ships in the MVP** (decided
-2026-07-15) as a thin layer over this API — no separate business logic; PLAN.md Phase 4 owns the
-build order and the cut rule.
+Auth applies to the API except for two explicit Phase 4 exceptions: `POST /events` fires before a
+client has a product token, and `POST /webhooks/stripe` is authenticated by Stripe signature.
+
+Errors: RFC 7807 problem+json (`problem.schema.json`), on every non-2xx response, including the
+Phase 4 endpoints above. Rate limits per key. OpenAPI spec publication is deferred from Phase 4;
+when published, it is generated from the schemas above. The docs page includes `llms.txt` and covers
+**REST + webhooks**; MCP remains the first cut candidate under the SB gate (METRICS.md §2.2).
 
 ## 6. Data model (initial)
+
+**Phase 4 implementation status:** this schema is now backed by Postgres as the product source of
+truth (METRICS.md §6.2). Implemented pieces include tenant first-touch attribution, events using the
+METRICS.md §3 schema, `usage_ledger`, `ad_spend` (METRICS.md N29), and `payments`.
 
 ```
 tenants(id, name, plan, created_at, retention_days_default,
@@ -320,6 +332,9 @@ job_segments(job_id, index, status, sampling_fps, tokens_in, tokens_out, cost_ce
 usage_ledger(id, tenant_id, job_id, hours, cost_cents, billed_period)
 events(id, tenant_id, user_id, session_id, name, occurred_at, referrer, ab_arm, payload_json)
 ad_spend(id, day, channel, campaign, keyword, cost_cents, clicks, impressions)  -- METRICS.md N29
+payments(id, tenant_id, stripe_session_id, stripe_payment_intent_id, plan,
+         amount_cents, currency, first_utm_source, first_utm_medium, first_utm_campaign,
+         first_utm_term, first_referrer, ab_arm, paid_at)
 webhooks(id, tenant_id, url, secret, events)
 audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion events
 ```

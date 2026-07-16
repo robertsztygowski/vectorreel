@@ -9,4 +9,9 @@
     <ProjectReference Include="../Core/Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="10.0.0" />
+    <PackageReference Include="Stripe.net" Version="49.0.0" />
+  </ItemGroup>
+
 </Project>

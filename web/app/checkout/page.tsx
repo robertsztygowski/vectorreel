@@ -4,15 +4,40 @@ import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getPlan, PLANS } from '@/lib/pricing';
-import { trackCheckoutAbandoned, trackPaymentSucceeded } from '@/lib/events';
+import { canCallApi, postCheckout } from '@/lib/api';
+import { trackCheckoutAbandoned, trackCheckoutClicked, trackPaymentSucceeded } from '@/lib/events';
+import { getTenantId } from '@/lib/session';
 
 function CheckoutInner() {
   const searchParams = useSearchParams();
   const plan = getPlan(searchParams.get('plan')) ?? PLANS.pro;
   const forcedState = searchParams.get('state');
   const [result, setResult] = useState<'succeeded' | 'abandoned' | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const effectiveResult = (forcedState === 'done' ? 'succeeded' : forcedState === 'abandoned' ? 'abandoned' : result);
   const orderDate = new Date().toISOString().slice(0, 10);
+
+  async function continueToPayment() {
+    setError(null);
+    trackCheckoutClicked(plan.id);
+
+    if (!canCallApi()) {
+      trackPaymentSucceeded({ amount_cents: plan.priceEur * 100 });
+      setResult('succeeded');
+      return;
+    }
+
+    try {
+      const checkout = await postCheckout({ plan: plan.id, tenant_id: getTenantId() ?? '' });
+      if (checkout?.url) {
+        window.location.assign(checkout.url);
+        return;
+      }
+      setError('Checkout is unavailable. Please try again.');
+    } catch {
+      setError('Checkout is unavailable. Please try again.');
+    }
+  }
 
   if (effectiveResult === 'succeeded') {
     return (
@@ -91,8 +116,7 @@ function CheckoutInner() {
               className="btn btn-primary"
               type="button"
               onClick={() => {
-                trackPaymentSucceeded({ amount_cents: plan.priceEur * 100 });
-                setResult('succeeded');
+                void continueToPayment();
               }}
             >
               continue to payment →
@@ -108,6 +132,7 @@ function CheckoutInner() {
               simulate abandon
             </button>
           </div>
+          {error && <p className="pay-note error-text">{error}</p>}
           <p className="pay-note">payments by Stripe — card details never touch mdreel servers</p>
         </div>
       </div>

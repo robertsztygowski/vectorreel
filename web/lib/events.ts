@@ -1,8 +1,9 @@
 // Typed client module for the METRICS.md §3 event schema. Function names/payload keys match that
-// section exactly so Phase 4 can grep for them when wiring the real Postgres transport — the only
-// change needed then is inside emit(). For now, emit() is a stub: console.log + an in-memory
-// buffer (getEventLog()), no network call.
-import { getAbArm, getSessionId } from './attribution';
+// section exactly. emit() always records locally, and only sends first-party analytics to our API
+// when NEXT_PUBLIC_API_BASE is configured in a browser.
+import { getAbArm, getFirstTouch, getSessionId } from './attribution';
+import { postEvent, sendEvent, type SignupEventResponse } from './api';
+import { getTenantId, getUserId } from './session';
 
 export interface EventContext {
   tenant_id: string | null;
@@ -11,6 +12,11 @@ export interface EventContext {
   occurred_at: string;
   referrer: string | null;
   ab_arm: 'A' | 'B';
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_term: string | null;
+  first_referrer: string | null;
 }
 
 export interface TrackedEvent extends EventContext {
@@ -18,27 +24,89 @@ export interface TrackedEvent extends EventContext {
   [key: string]: unknown;
 }
 
+export interface SignupEventPayload {
+  email: string;
+  archive_hours: number | null;
+  monthly_hours: number | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_term: string | null;
+  first_referrer: string | null;
+}
+
 const eventLog: TrackedEvent[] = [];
+
+function attributionContext() {
+  const firstTouch = getFirstTouch();
+  return {
+    utm_source: firstTouch?.utm_source ?? null,
+    utm_medium: firstTouch?.utm_medium ?? null,
+    utm_campaign: firstTouch?.utm_campaign ?? null,
+    utm_term: firstTouch?.utm_term ?? null,
+    first_referrer: firstTouch?.referrer ?? null,
+  };
+}
 
 function baseContext(): EventContext {
   return {
-    tenant_id: null,
-    user_id: null,
+    tenant_id: getTenantId(),
+    user_id: getUserId(),
     session_id: getSessionId(),
     occurred_at: new Date().toISOString(),
     referrer: typeof document !== 'undefined' ? document.referrer || null : null,
     ab_arm: getAbArm(),
+    ...attributionContext(),
   };
 }
 
-function emit(name: string, payload: Record<string, unknown> = {}): void {
+function recordEvent(name: string, payload: object = {}): TrackedEvent {
   const event: TrackedEvent = { name, ...baseContext(), ...payload };
   console.log('[event]', event);
   eventLog.push(event);
+  return event;
+}
+
+function emit(name: string, payload: object = {}): void {
+  try {
+    sendEvent(recordEvent(name, payload));
+  } catch {
+    // Analytics must never break the page.
+  }
 }
 
 export function getEventLog(): TrackedEvent[] {
   return eventLog;
+}
+
+export function clearEventLog(): void {
+  eventLog.length = 0;
+}
+
+export function buildSignupEventPayload(args: {
+  email: string;
+  archive_hours: number | null;
+  monthly_hours: number | null;
+}): SignupEventPayload {
+  return {
+    email: args.email,
+    archive_hours: args.archive_hours,
+    monthly_hours: args.monthly_hours,
+    ...attributionContext(),
+  };
+}
+
+export async function emitSignupEvent(args: {
+  email: string;
+  archive_hours: number | null;
+  monthly_hours: number | null;
+}): Promise<SignupEventResponse | null> {
+  const event = recordEvent('signup', buildSignupEventPayload(args));
+  try {
+    return await postEvent<SignupEventResponse>(event);
+  } catch {
+    return null;
+  }
 }
 
 export function trackPageView(path: string): void {
