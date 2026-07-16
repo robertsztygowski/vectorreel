@@ -19,10 +19,63 @@ namespace MdReel.Core.Providers;
 public interface IVideoAnalyzer
 {
     /// <summary>Analyse one segment. <paramref name="segment"/> carries the sampling plan and the forced block cues.</summary>
-    Task<SegmentAnalysis> AnalyzeAsync(string sourceUri, Segment segment, CancellationToken cancellationToken);
+    Task<StageBModelResponse> AnalyzeAsync(
+        string sourceUri,
+        Segment segment,
+        StageBCallOptions callOptions,
+        CancellationToken cancellationToken);
 }
 
-/// <summary>What one block of a segment says. Mirrors the response schema in ARCHITECTURE.md §3.</summary>
+/// <summary>Required guards on every Stage B model call (CLAUDE.md rule 9).</summary>
+public sealed record StageBCallOptions(int MaxOutputTokens, int ThinkingBudget, TimeSpan Timeout)
+{
+    public static StageBCallOptions Default { get; } = new(
+        MaxOutputTokens: 12_000,
+        ThinkingBudget: 4_096,
+        Timeout: TimeSpan.FromSeconds(90));
+}
+
+/// <summary>How the model ended a Stage B call.</summary>
+public enum StageBFinishReason
+{
+    Stop,
+    MaxTokens,
+    Timeout,
+    InvalidJson,
+    Error,
+}
+
+/// <summary>Raw model block before timestamp normalization.</summary>
+public sealed record StageBModelBlock(
+    string Timestamp,
+    string? Spoken,
+    string? Speaker,
+    string? OnScreenText,
+    string? Visual,
+    string Kind);
+
+/// <summary>Structured Stage B payload as emitted by the model.</summary>
+public sealed record StageBModelOutput(
+    string SegmentStart,
+    string? Language,
+    IReadOnlyList<StageBModelBlock> Blocks,
+    string? Summary);
+
+/// <summary>Model response plus execution metadata needed by Stage B guards.</summary>
+public sealed record StageBModelResponse(
+    StageBFinishReason FinishReason,
+    StageBModelOutput? Output,
+    TimeSpan? FetchedDuration);
+
+/// <summary>Stage B's validated output for one segment.</summary>
+public sealed record SegmentAnalysis(
+    int SegmentIndex,
+    TimeSpan SegmentStart,
+    string? Language,
+    IReadOnlyList<AnalyzedBlock> Blocks,
+    string? Summary);
+
+/// <summary>What one validated block of a segment says.</summary>
 public sealed record AnalyzedBlock(
     TimeSpan At,
     string? Spoken,
@@ -30,11 +83,3 @@ public sealed record AnalyzedBlock(
     string? OnScreenText,
     string? Visual,
     string Kind);
-
-/// <summary>Stage B's structured output for one segment.</summary>
-public sealed record SegmentAnalysis(
-    int SegmentIndex,
-    TimeSpan SegmentStart,
-    string? Language,
-    IReadOnlyList<AnalyzedBlock> Blocks,
-    string? Summary);

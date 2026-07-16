@@ -1,0 +1,194 @@
+using System.Text;
+using System.Text.Json;
+using MdReel.Core.Domain;
+using MdReel.Core.Pipeline.StageA;
+using MdReel.Core.Providers;
+using Microsoft.Extensions.Logging;
+
+namespace MdReel.Core.Pipeline.StageB;
+
+/// <summary>
+/// Internal-only runner for gallery production from YouTube <c>fileData.fileUri</c> sources.
+/// No public endpoint should call this path.
+/// </summary>
+public sealed class YouTubeInternalGalleryRunner(
+    StageBRunner stageB,
+    ITextFuser fuser,
+    IObjectStorage objectStorage,
+    ILogger<YouTubeInternalGalleryRunner> logger)
+{
+    public async Task<YouTubeInternalGalleryRunResult> RunAsync(
+        YouTubeInternalGalleryRunRequest request,
+        StageBOptions stageBOptions,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(stageBOptions);
+
+        EnsureYouTubeUri(request.SourceUri);
+
+        var segments = PlanSegments(
+            request.Duration,
+            request.SegmentLength,
+            request.SegmentOverlap);
+
+        List<SegmentAnalysis> analyses = [];
+        foreach (var segment in segments)
+        {
+            var analyzed = await stageB.AnalyzeAsync(
+                request.SourceUri,
+                segment,
+                StageAOptions.Default,
+                stageBOptions,
+                cancellationToken);
+            analyses.AddRange(analyzed);
+        }
+
+        analyses = [.. analyses.OrderBy(static x => x.SegmentStart).ThenBy(static x => x.SegmentIndex)];
+        var markdown = await fuser.FuseAsync(analyses, cancellationToken);
+
+        var prefix = BuildPrefix(request.OutputPrefix, request.VideoId);
+        var stageBPath = $"{prefix}/stage-b.json";
+        var outputMarkdownPath = $"{prefix}/output.md";
+
+        await WriteUtf8Async(
+            request.OutputBucket,
+            stageBPath,
+            JsonSerializer.Serialize(new
+            {
+                job_id = request.JobId,
+                source_uri = request.SourceUri,
+                generated_at = DateTimeOffset.UtcNow,
+                segments = analyses,
+            }),
+            cancellationToken);
+
+        await WriteUtf8Async(
+            request.OutputBucket,
+            outputMarkdownPath,
+            markdown,
+            cancellationToken);
+
+        if (logger.IsEnabled(LogLevel.Information))
+        {
+            logger.LogInformation(
+                "YouTube internal runner finished job {JobId} ({VideoId}) with {Segments} Stage-B segments",
+                request.JobId,
+                request.VideoId,
+                analyses.Count);
+        }
+
+        return new YouTubeInternalGalleryRunResult(
+            request.JobId,
+            request.VideoId,
+            analyses.Count,
+            outputMarkdownPath,
+            stageBPath);
+    }
+
+    internal static IReadOnlyList<Segment> PlanSegments(
+        TimeSpan duration,
+        TimeSpan segmentLength,
+        TimeSpan overlap)
+    {
+        if (duration <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(duration), "Duration must be positive.");
+        }
+
+        if (segmentLength <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(segmentLength), "Segment length must be positive.");
+        }
+
+        if (overlap < TimeSpan.Zero || overlap >= segmentLength)
+        {
+            throw new ArgumentOutOfRangeException(nameof(overlap), "Overlap must be >= 0 and shorter than segment length.");
+        }
+
+        List<Segment> segments = [];
+        var cursor = TimeSpan.Zero;
+        var index = 0;
+
+        while (cursor < duration)
+        {
+            var end = cursor + segmentLength;
+            if (end > duration)
+            {
+                end = duration;
+            }
+
+            var overlapBefore = index == 0 ? TimeSpan.Zero : overlap;
+            var start = cursor - overlapBefore;
+            if (start < TimeSpan.Zero)
+            {
+                start = TimeSpan.Zero;
+                overlapBefore = TimeSpan.Zero;
+            }
+
+            segments.Add(new Segment(
+                Index: index,
+                Start: start,
+                End: end,
+                OverlapBefore: overlapBefore,
+                Sampling: new SamplingPlan(MediaResolution.Default, 0),
+                Cues: []));
+
+            index++;
+            cursor += segmentLength;
+        }
+
+        return segments;
+    }
+
+    internal static void EnsureYouTubeUri(string sourceUri)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceUri);
+
+        if (!Uri.TryCreate(sourceUri, UriKind.Absolute, out var parsed))
+        {
+            throw new ArgumentException("SourceUri must be a valid absolute URI.", nameof(sourceUri));
+        }
+
+        var isYouTubeHost =
+            string.Equals(parsed.Host, "youtu.be", StringComparison.OrdinalIgnoreCase)
+            || parsed.Host.EndsWith(".youtube.com", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(parsed.Host, "youtube.com", StringComparison.OrdinalIgnoreCase);
+
+        if (!isYouTubeHost || parsed.Scheme != Uri.UriSchemeHttps)
+        {
+            throw new ArgumentException(
+                "Internal YouTube runner accepts only https://youtube.com or https://youtu.be sources.",
+                nameof(sourceUri));
+        }
+    }
+
+    private async Task WriteUtf8Async(string bucket, string objectName, string content, CancellationToken cancellationToken)
+    {
+        await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+        await objectStorage.WriteAsync(bucket, objectName, stream, cancellationToken);
+    }
+
+    private static string BuildPrefix(string outputPrefix, string videoId)
+    {
+        var trimmed = outputPrefix.Trim().Trim('/');
+        return string.IsNullOrEmpty(trimmed) ? videoId : $"{trimmed}/{videoId}";
+    }
+}
+
+public sealed record YouTubeInternalGalleryRunRequest(
+    string JobId,
+    string VideoId,
+    string SourceUri,
+    TimeSpan Duration,
+    string OutputBucket,
+    string OutputPrefix,
+    TimeSpan SegmentLength,
+    TimeSpan SegmentOverlap);
+
+public sealed record YouTubeInternalGalleryRunResult(
+    string JobId,
+    string VideoId,
+    int StageBSegments,
+    string OutputMarkdownObject,
+    string StageBRawObject);

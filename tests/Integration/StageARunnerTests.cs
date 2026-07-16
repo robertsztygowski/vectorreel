@@ -85,5 +85,12 @@ public sealed class StageARunnerTests
             Path.Combine(Fixtures.VideoDirectory, "README.md"),
             StageAOptions.Default,
             CancellationToken.None));
+
+        var metered = Assert.Single(_ledger.Entries);
+        Assert.Equal("job-3", metered.JobId);
+        Assert.Equal(CostKind.Compute, metered.Kind);
+        Assert.Equal("stage_a.probe", metered.Step);
+        Assert.Equal("seconds", metered.Unit);
+        Assert.True(metered.Quantity > 0);
     }
 }

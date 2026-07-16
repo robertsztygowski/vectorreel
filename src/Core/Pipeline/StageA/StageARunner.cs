@@ -85,17 +85,21 @@ public sealed class StageARunner(
     private async Task<T> Meter<T>(string jobId, string step, Func<Task<T>> work)
     {
         var stopwatch = Stopwatch.StartNew();
-        var result = await work();
-        stopwatch.Stop();
+        try
+        {
+            return await work();
+        }
+        finally
+        {
+            stopwatch.Stop();
 
-        ledger.Record(new CostEntry(
-            JobId: jobId,
-            Kind: CostKind.Compute,
-            Step: step,
-            Quantity: stopwatch.Elapsed.TotalSeconds,
-            Unit: "seconds",
-            Cents: null));
-
-        return result;
+            ledger.Record(new CostEntry(
+                JobId: jobId,
+                Kind: CostKind.Compute,
+                Step: step,
+                Quantity: stopwatch.Elapsed.TotalSeconds,
+                Unit: "seconds",
+                Cents: null));
+        }
     }
 }
