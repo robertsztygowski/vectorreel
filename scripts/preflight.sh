@@ -149,6 +149,46 @@ fi
 ensure_bucket "raw-videos-eu"
 ensure_bucket "outputs-eu"
 
+# Spending guardrails (CLAUDE.md rule 4 / run guardrails): the real brake on runaway
+# cost is per-service --max-instances caps + --min-instances=0 (scale-to-zero), not the
+# budget alert. Assert the caps on every deployed Cloud Run service.
+check_run_caps() {
+  local service="$1"
+  local max_expected="$2"
+  local min_scale max_scale
+
+  if ! gcloud run services describe "$service" \
+      --region "$RUN_REGION" --project "$PROJECT" \
+      --format='value(spec.template.metadata.annotations["autoscaling.knative.dev/minScale"])' \
+      >/dev/null 2>&1; then
+    # Service may not be deployed yet in a fresh environment — not a preflight failure.
+    pass "Run caps $service" "not deployed (skipped)"
+    return
+  fi
+
+  min_scale="$(gcloud run services describe "$service" \
+    --region "$RUN_REGION" --project "$PROJECT" \
+    --format='value(spec.template.metadata.annotations["autoscaling.knative.dev/minScale"])' 2>/dev/null || true)"
+  max_scale="$(gcloud run services describe "$service" \
+    --region "$RUN_REGION" --project "$PROJECT" \
+    --format='value(spec.template.metadata.annotations["autoscaling.knative.dev/maxScale"])' 2>/dev/null || true)"
+
+  # An unset minScale annotation means scale-to-zero (the default), which is what we want.
+  if [[ -n "$min_scale" && "$min_scale" != "0" ]]; then
+    fail "Run caps $service" "min-instances=$min_scale (want 0/scale-to-zero)"
+    return
+  fi
+  if [[ "$max_scale" != "$max_expected" ]]; then
+    fail "Run caps $service" "max-instances=${max_scale:-unset} (want $max_expected)"
+    return
+  fi
+  pass "Run caps $service" "min=${min_scale:-0} max=$max_scale"
+}
+
+check_run_caps "vectorreel-web" "3"
+check_run_caps "vectorreel-api" "2"
+check_run_caps "vectorreel-worker" "1"
+
 printf '\nSummary\n'
 printf '%-48s %-4s %s\n' "Check" "Result" "Details"
 printf '%-48s %-4s %s\n' "-----" "------" "-------"

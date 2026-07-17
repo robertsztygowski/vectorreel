@@ -3,6 +3,20 @@
 > Operational notes for mdreel infrastructure. Companion to ARCHITECTURE.md.
 > Last verified: 2026-07-17.
 
+## Spending guardrails  ✅ 2026-07-17
+
+The real brake on runaway cost is **per-service `--max-instances` caps + `--min-instances=0`
+(scale-to-zero)**, not the budget alert (which only notifies). Both are in place:
+
+| Guardrail | Value |
+|---|---|
+| **Budget alert** | `mdreel-monthly-1000usd-equiv` on billing account `01BC4B-E1B72F-0D896D`, scoped to project `92936629017`, thresholds 50% / 90% / 100%. **Amount: 4000 PLN** — the billing account currency is **PLN**, so the founder-set ~$1000/month (GCP budget memo, 2026-07-17) is expressed as its PLN equivalent (~4 PLN/USD). |
+| **Cloud Run caps** | `vectorreel-web` max 3, `vectorreel-api` max 2, `vectorreel-worker` max 1; **`--min-instances=0` (scale-to-zero) on all three**. |
+
+`scripts/preflight.sh` asserts the caps (`check_run_caps`) on every deployed service — a service
+that has drifted off `min=0` or its expected max fails preflight. `billingbudgets.googleapis.com`
+was enabled 2026-07-17 to create the budget (no idle cost).
+
 ## Current GCP project (MVP — provisional)
 
 | Item | Value |
@@ -78,6 +92,12 @@ gcloud services enable cloudtasks.googleapis.com --project tensile-runway-442915
 > does NOT change CLAUDE.md rule 5 — deploys remain deliberate, from local, after `tests/Live/`
 > passes. Both services run `PipelineModel__Mode=fake` (zero Vertex spend); the API is Cloud
 > SQL–backed, the Worker uses the in-memory ledger and its gallery runner is disabled.
+>
+> **2026-07-17 (extended) — 8-hour autonomous build run.** The founder authorized, **for that run
+> only**, deploying to Cloud Run from local via `scripts/deploy.sh` after the definition-of-done
+> gate passes (CLAUDE.md rule 4), to ship the auth / analytics / payments milestones. Still
+> deliberate, still from local, still `PipelineModel__Mode=fake` (no Vertex spend), Stripe **test
+> mode only**. **No CI auto-deploy was enabled.** The standing rule 5 is unchanged outside that run.
 
 ### Deploy automation — `scripts/` (added 2026-07-17)
 
