@@ -5,6 +5,7 @@ import { Header } from '@/components/Header/Header';
 import { Footer } from '@/components/Footer/Footer';
 import { AttributionInit } from '@/components/AttributionInit';
 import { PageViewTracker } from '@/components/PageViewTracker';
+import { UmamiAnalytics } from '@/components/UmamiAnalytics';
 import './globals.css';
 
 // Self-hosted fonts (files committed under app/fonts) — the shipped site serves them from its own
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <AttributionInit />
         <PageViewTracker />
+        <UmamiAnalytics />
         <Header />
         <main>{children}</main>
         <Footer />

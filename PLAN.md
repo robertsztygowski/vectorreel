@@ -84,9 +84,19 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   `/me`, rate-limited group, Brevo `IEmailSender` (no-op until key). Web signin/signup rewritten to
 >   real forms, session-aware nav + real logout, same-origin auth via a **runtime middleware proxy**
 >   (`web/middleware.ts`, `API_ORIGIN`) — not `next.config` rewrites, which bake at build time.
->   Integration + web unit + an E2E auth-funnel spec are green; full DoD gate passed.
-> - **Next:** M2 api.mdreel.com domain mapping, M3 Umami, M4 Stripe test-mode, M5 Cloud Tasks seam,
->   M6 website wire-up. See the NEEDS-FOUNDER checklist below.
+>   Integration + web unit + an E2E auth-funnel spec are green; full DoD gate passed. **Deployed**
+>   (api+web) and verified live: register through the deployed web proxy provisions the tenant and
+>   returns a session.
+> - **M2 api.mdreel.com ✅ mapping created** — Cloud Run domain mapping via the Admin REST API;
+>   cert pending on DNS (CNAME in NEEDS-FOUNDER). The middleware proxy already serves the api
+>   same-origin, so nothing blocks.
+> - **M3 Umami analytics ✅ deployed** — self-hosted, cookieless, EU-only (rule 10), on the shared
+>   `mdreel-db` (own `umami` DB + least-privilege role; no second instance). Cloud Run min=0/max=1,
+>   secrets via Secret Manager; tracking script wired into the web layout (`NEXT_PUBLIC_UMAMI_*`);
+>   default admin password rotated into Secret Manager. Verified: a page_view reached the dashboard.
+>   No new fixed base cost (METRICS.md N2). `stats.mdreel.com` mapping created (CNAME in NEEDS-FOUNDER).
+> - **Next:** M4 Stripe test-mode, M5 Cloud Tasks seam, M6 website wire-up. See the NEEDS-FOUNDER
+>   checklist below.
 >
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Brevo API key** — transactional email is a no-op logging sender until set:
@@ -99,6 +109,11 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   (grey cloud)**: add `api` `CNAME` → `ghs.googlehosted.com`. The mapping is live and waiting on
 >   this record for its cert; until then the middleware proxy (`mdreel.com/api/v1/*`) already
 >   serves the api same-origin, so nothing is blocked. Details in INFRA.md.**Phase 2R scope — *encode the competitor findings*
+> - **stats.mdreel.com CNAME (M3 ✅ mapping created)** — Cloudflare zone `mdreel.com`, **DNS-only
+>   (grey cloud)**: add `stats` `CNAME` → `ghs.googlehosted.com`. Umami serves from its run.app URL
+>   until then; the switch is one build-arg change (`NEXT_PUBLIC_UMAMI_SCRIPT_URL`). The Umami admin
+>   password is in Secret Manager `mdreel-umami-admin-password` (not an action — just where to find
+>   it). Details in INFRA.md.**Phase 2R scope — *encode the competitor findings*
 (experiments/002-competitor-analysis).** The positioning was reset 2026-07-15 by that analysis
 (BUSINESS_MODEL §2/§4/§6/§8): anchor on **asset video, never meetings** (the bundled recap is the
 #1 competitor); sell the **portable Markdown artifact, not the OCR** (OCR is table-stakes); lead the

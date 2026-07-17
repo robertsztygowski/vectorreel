@@ -76,6 +76,9 @@ services:
         # Inlined client-side at build time; the browser runs on the host, so this is the
         # host-mapped api port, not the compose-internal hostname.
         NEXT_PUBLIC_API_BASE: "http://localhost:8080"
+        # Keep the analytics script out of the E2E build — tests must not call the Umami origin.
+        NEXT_PUBLIC_UMAMI_SCRIPT_URL: ""
+        NEXT_PUBLIC_UMAMI_WEBSITE_ID: ""
     environment:
       # Server-side rewrites proxy target (next.config.mjs). In-network hostname so the Identity
       # auth cookie stays first-party: browser → web:/api/v1/* → api. Runtime env (standalone).

@@ -14,6 +14,13 @@ COPY . .
 # host-reachable API URL so the browser (running on the host) posts events/checkout to the real API.
 ARG NEXT_PUBLIC_API_BASE=
 ENV NEXT_PUBLIC_API_BASE=$NEXT_PUBLIC_API_BASE
+# Self-hosted Umami analytics (CLAUDE.md rule 10). Public, non-secret values; defaults point at the
+# current EU Cloud Run Umami service. Switching to stats.mdreel.com later is a one-line change here.
+# Left empty by the e2e profile so tests never load the analytics script.
+ARG NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://mdreel-umami-92936629017.europe-west1.run.app
+ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID=d146675e-e289-439b-baba-901a21560db0
+ENV NEXT_PUBLIC_UMAMI_SCRIPT_URL=$NEXT_PUBLIC_UMAMI_SCRIPT_URL
+ENV NEXT_PUBLIC_UMAMI_WEBSITE_ID=$NEXT_PUBLIC_UMAMI_WEBSITE_ID
 RUN npm run build
 
 FROM node:20-alpine AS runtime

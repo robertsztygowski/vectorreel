@@ -142,6 +142,27 @@ All parameterized via `PROJECT`/`RUN_REGION`/`DATA_REGION`/… env vars with the
 | **Container** | `src/Worker/Dockerfile` (added 2026-07-17; repo-root context, `dotnet/runtime` + ffmpeg). Cloud Run services must listen on `$PORT`, so the Worker gained a minimal `HealthListener` (raw TCP 200-responder, active only when `PORT` is set — inert locally/in tests). |
 | **Config** | `PipelineModel__Mode=fake`, `YouTubeGalleryRunner` disabled (default), in-memory ledger, no DB, `--min-instances=0` |
 
+### `mdreel-umami` — analytics (Cloud Run)  ✅ deployed 2026-07-17  (M3, rule 10)
+
+Self-hosted, cookieless, **EU-only** analytics — the rule-10 replacement for US SaaS trackers, so
+**no consent banner**. Provisioned by `scripts/provision-umami.sh` (idempotent).
+
+| Item | Value |
+|---|---|
+| **Service** | `mdreel-umami` · **Region** `europe-west1` · **URL** https://mdreel-umami-92936629017.europe-west1.run.app |
+| **Image** | `ghcr.io/umami-software/umami:postgresql-latest` (deployed straight from GHCR) |
+| **Scaling** | `--min-instances=0` (scale-to-zero) · `--max-instances=1` — no new fixed base cost (METRICS.md **N2**) |
+| **Database** | own `umami` DB + least-privilege `umami_app` role on the **shared** `mdreel-db` instance (rule 10: never a second DB instance). `umami_app` owns only its DB/schema and has no privileges on product tables. |
+| **Secrets** | `DATABASE_URL=mdreel-umami-database-url:latest`, `APP_SECRET=mdreel-umami-app-secret:latest` (both Secret Manager, `europe-central2`); Cloud SQL via `--add-cloudsql-instances` unix socket |
+| **Website** | `mdreel.com`, id `d146675e-e289-439b-baba-901a21560db0` (not a secret). Tracking script wired into `web/app/layout.tsx` via `NEXT_PUBLIC_UMAMI_*` (Dockerfile ARG defaults); e2e build sets them empty so tests never hit the analytics origin. |
+| **Admin login** | `admin`; the default `umami` password was **rotated 2026-07-17** to a strong value in Secret Manager `mdreel-umami-admin-password` (retrieve with `gcloud secrets versions access latest --secret mdreel-umami-admin-password`). |
+| **Verified** | page_view via the collect API → Cloud SQL → dashboard stats returned `pageviews:1, visitors:1`. |
+
+**stats.mdreel.com** domain mapping created (same REST path as api.mdreel.com); cert pending on
+DNS. **NEEDS-FOUNDER**: Cloudflare CNAME `stats` → `ghs.googlehosted.com` (DNS-only). Once it
+resolves, switching the tracker to the custom origin is a single build-arg change
+(`NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://stats.mdreel.com`) + `scripts/deploy.sh web`.
+
 ### GCS buckets  ✅ created 2026-07-17
 
 `raw-videos-eu` and `outputs-eu`, both `europe-central2`, uniform bucket-level access
@@ -152,8 +173,8 @@ All parameterized via `PROJECT`/`RUN_REGION`/`DATA_REGION`/… env vars with the
 Not provisioned — follow-up work, deliberately excluded from the 2026-07-17 deploy-path proof:
 runtime service-account IAM for Vertex + GCS (least-privilege, not the default compute SA),
 `PipelineModel__Mode=live`, Stripe secrets in Secret Manager, Cloud Tasks
-(`cloudtasks.googleapis.com`), Umami on the shared Postgres (rule 10), and a dedicated
-`vectorreel-eu` project (open flag 1 below).
+(`cloudtasks.googleapis.com`), and a dedicated `vectorreel-eu` project (open flag 1 below).
+(Umami analytics on the shared Postgres — rule 10 — is now provisioned; see `mdreel-umami` above.)
 
 ### `vectorreel-web` — frontend (Cloud Run)
 | Item | Value |
