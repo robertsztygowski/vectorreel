@@ -78,3 +78,26 @@ export function postCheckout(args: { plan: PlanId; tenant_id: string }): Promise
     headers: { Authorization: `Bearer ${args.tenant_id}` },
   });
 }
+
+// Same-origin checkout (relative /api/v1/*, proxied to the API by web/middleware.ts) — the pattern
+// that works on the deployed site, where NEXT_PUBLIC_API_BASE is empty. The Identity cookie
+// (credentials:'include') authenticates a signed-in caller; the tenant id doubles as the bearer
+// credential for the pre-Identity checkout path (ARCHITECTURE §5). Degrades cleanly: when Stripe is
+// unconfigured the API answers 503 and this returns null so the UI shows a note instead of
+// pretending a payment succeeded.
+export async function requestCheckout(args: { plan: PlanId; tenantId: string }): Promise<CheckoutResponse | null> {
+  try {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (args.tenantId) headers.Authorization = `Bearer ${args.tenantId}`;
+    const res = await fetch('/api/v1/checkout', {
+      method: 'POST',
+      credentials: 'include',
+      headers,
+      body: JSON.stringify({ plan: args.plan, tenant_id: args.tenantId }),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as CheckoutResponse;
+  } catch {
+    return null;
+  }
+}

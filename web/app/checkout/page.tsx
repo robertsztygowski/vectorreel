@@ -4,8 +4,8 @@ import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getPlan, PLANS } from '@/lib/pricing';
-import { canCallApi, postCheckout } from '@/lib/api';
-import { trackCheckoutAbandoned, trackCheckoutClicked, trackPaymentSucceeded } from '@/lib/events';
+import { requestCheckout } from '@/lib/api';
+import { trackCheckoutAbandoned, trackCheckoutClicked } from '@/lib/events';
 import { getTenantId } from '@/lib/session';
 
 function CheckoutInner() {
@@ -21,19 +21,15 @@ function CheckoutInner() {
     setError(null);
     trackCheckoutClicked(plan.id);
 
-    if (!canCallApi()) {
-      trackPaymentSucceeded({ amount_cents: plan.priceEur * 100 });
-      setResult('succeeded');
-      return;
-    }
-
     try {
-      const checkout = await postCheckout({ plan: plan.id, tenant_id: getTenantId() ?? '' });
+      const checkout = await requestCheckout({ plan: plan.id, tenantId: getTenantId() ?? '' });
       if (checkout?.url) {
         window.location.assign(checkout.url);
         return;
       }
-      setError('Checkout is unavailable. Please try again.');
+      // The API is reachable but payments are not configured yet (503) — degrade cleanly instead
+      // of pretending a charge went through.
+      setError('Payments are not available yet — nothing was charged. Please check back soon.');
     } catch {
       setError('Checkout is unavailable. Please try again.');
     }

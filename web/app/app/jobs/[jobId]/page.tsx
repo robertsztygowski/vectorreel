@@ -61,7 +61,7 @@ export default function JobStatusPage() {
   useEffect(() => {
     let cancelled = false;
     async function poll() {
-      const res = await fetch(`/api/jobs/${jobId}`);
+      const res = await fetch(`/api/v1/jobs/${jobId}`, { credentials: 'include' });
       if (cancelled) return;
       if (!res.ok) {
         setNotFound(true);
@@ -94,8 +94,8 @@ export default function JobStatusPage() {
 
     (async () => {
       const [jsonRes, mdRes] = await Promise.all([
-        fetch(`/api/jobs/${jobId}/output.json`),
-        fetch(`/api/jobs/${jobId}/output.md`),
+        fetch(`/api/v1/jobs/${jobId}/output.json`, { credentials: 'include' }),
+        fetch(`/api/v1/jobs/${jobId}/output.md`, { credentials: 'include' }),
       ]);
       if (!jsonRes.ok || !mdRes.ok) return;
       const document = (await jsonRes.json()) as OutputDocument;
@@ -138,7 +138,10 @@ export default function JobStatusPage() {
   const done = status?.status === 'done';
   const failed = status?.status === 'failed';
   const sourceFilename = jobSummary.filename ?? (done && output ? output.document.frontmatter.source : 'Processing your recording');
-  const outputFilename = `${(jobSummary.filename ?? 'output.mp4').replace(/\.[^./]+$/, '')}.md`;
+  // Real job ids are opaque (no embedded token), so fall back to the source recorded in the
+  // finished document's frontmatter for the download name.
+  const outputBaseName = (jobSummary.filename ?? output?.document.frontmatter.source ?? 'output.mp4').replace(/\.[^./]+$/, '');
+  const outputFilename = `${outputBaseName}.md`;
 
   return (
     <div className="app-page">
@@ -151,7 +154,7 @@ export default function JobStatusPage() {
                 ? 'Done — download it below, or find it any time in your library.'
                 : failed
                   ? 'Simulated failure for QA — nothing was charged.'
-                  : 'This mirrors the real pipeline stages, but every step here is simulated.'}
+                  : 'Your recording is running through the real pipeline stages, in the EU.'}
             </p>
           </div>
           {status && <span className={`badge badge-${status.status}`}>{status.status}</span>}

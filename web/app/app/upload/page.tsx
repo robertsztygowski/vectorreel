@@ -60,26 +60,39 @@ function UploadInner() {
   }
 
   async function handleStart() {
-    if (!file && forcedState !== 'selected') return;
+    if (!file) return;
     setStarting(true);
     try {
-      trackUploadStarted({ duration_sec: Math.round(durationSec ?? (47 * 60 + 12)) });
+      const jobDurationSec = Math.round(durationSec ?? (47 * 60 + 12));
+      trackUploadStarted({ duration_sec: jobDurationSec });
 
-      const uploadRes = await fetch('/api/uploads', { method: 'POST' });
-      const { uploadId } = (await uploadRes.json()) as { uploadId: string };
+      // Real API funnel (ARCHITECTURE §5), same-origin via web/middleware.ts so the Identity
+      // cookie authenticates the caller: create upload → PUT the bytes to the signed URL →
+      // create the job. The pipeline runs in fake mode server-side (no Vertex spend).
+      const uploadRes = await fetch('/api/v1/uploads', { method: 'POST', credentials: 'include' });
+      if (!uploadRes.ok) throw new Error(`create upload failed: ${uploadRes.status}`);
+      const { uploadId, uploadUrl } = (await uploadRes.json()) as { uploadId: string; uploadUrl: string };
 
-      const jobRes = await fetch('/api/jobs', {
+      // uploadUrl is an absolute API URL; PUT to its same-origin path so the proxy forwards it
+      // (the signed PUT is an unauthenticated exception, so no credentials are required).
+      const putTarget = new URL(uploadUrl);
+      const putRes = await fetch(putTarget.pathname + putTarget.search, { method: 'PUT', body: file });
+      if (putRes.status !== 204) throw new Error(`upload bytes failed: ${putRes.status}`);
+
+      const jobRes = await fetch('/api/v1/jobs', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           uploadId,
           options: {
             fail: simulateFail,
-            filename: file?.name ?? 'demo-billing.mp4',
-            durationSec: Math.round(durationSec ?? (47 * 60 + 12)),
+            filename: file.name,
+            durationSec: jobDurationSec,
           },
         }),
       });
+      if (jobRes.status !== 202) throw new Error(`create job failed: ${jobRes.status}`);
       const { jobId } = (await jobRes.json()) as { jobId: string };
       router.push(`/app/jobs/${jobId}`);
     } finally {
@@ -205,7 +218,7 @@ function UploadInner() {
             </label>
 
             <div className="upload-actions">
-              <button className="btn btn-primary btn-sm" type="button" onClick={handleStart} disabled={(!file && !selectedMock) || starting}>
+              <button className="btn btn-primary btn-sm" type="button" onClick={handleStart} disabled={!file || starting}>
                 {starting ? 'starting…' : 'start processing'}
               </button>
               <Link className="btn btn-ghost btn-sm" href="/app">

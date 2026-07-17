@@ -116,7 +116,37 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   auth gate — must be IAM/OIDC-secured on the Cloud Tasks flip). InProcessQueue stays wired, so
 >   **no runtime change and no deploy** — the flip is founder-gated (NEEDS-FOUNDER). Unit + Integration
 >   green.
-> - **Next:** M6 website wire-up. See the NEEDS-FOUNDER checklist below.
+> - **M6 website wire-up ✅ built** — the money path now runs against the **real API** through the
+>   same-origin proxy (`web/middleware.ts`), not the web app's mock routes: the panel upload page
+>   creates the upload, PUTs the file bytes to the signed URL, and creates the job via `/api/v1/*`
+>   (Identity cookie authenticates); the job page polls `/api/v1/jobs/{id}` and downloads
+>   `output.md`/`output.json` from the real fake-mode pipeline (deriving the download name from the
+>   finished document's frontmatter). Checkout was rewired to a same-origin `requestCheckout` — the
+>   deployed keyless api (`PAYMENTS_MODE=disabled`) now returns 503 and the page shows a clean
+>   "payments not available yet" note instead of faking a success. `smoke-remote.sh` extended with
+>   auth (login rejects bad creds → 401) and Umami (run.app 200 + Ready) checks. The E2E funnel
+>   spec now exercises the real API end-to-end unchanged (its Phase-3 promise), full suite green
+>   (Unit 59, Integration 65, web 42, E2E 8), web redeployed (rev 00007-l2g), `smoke-remote.sh`
+>   **17/0**. The mock `/api/*` routes stay in place (they back `contracts.test.ts`); the corpus
+>   library table (`/app`) still renders the mock "sample library" — wiring it to the real
+>   `/api/v1/jobs` list needs a real-jobs table redesign (the API list carries no category/title),
+>   left as next-run backlog.
+> - **Next:** run complete. See the final report + NEEDS-FOUNDER checklist below.
+>
+> #### 🏁 Final report — 2026-07-17 marathon run
+> - **Shipped & deployed:** M0 guardrails (`ae8bee8`), M1 auth (`05f262e`,`2c69d50`), M2
+>   api.mdreel.com mapping (`5680c9e`), M3 Umami (`1f0b245`), M4 Stripe test-mode (`a9d75be`),
+>   M5 task-queue seam + webhook delivery (`cd1707a`), M6 real-API wire-up. Deployed revisions:
+>   api `vectorreel-api-00004-frf` (M4 Stripe secrets + `PAYMENTS_MODE=disabled`), web
+>   `vectorreel-web-00007-l2g` (M6), `mdreel-umami` (M3). `smoke-remote.sh` 17/0 green at close.
+> - **What failed / deferred:** nothing failed. Deferred to next run: the `/app` library table on
+>   the real `/api/v1/jobs` list (needs a real-jobs UI model); the Cloud Tasks binding flip (M5,
+>   founder-gated); every NEEDS-FOUNDER item below.
+> - **Cost delta:** no new fixed base cost this run — Umami is min-instances=0 on the **shared**
+>   `mdreel-db` (METRICS.md N2), every Cloud Run service scales to zero, Vertex stays fake (no
+>   inference spend), Stripe is test-mode/keyless. The only standing recurring bill remains the
+>   Cloud SQL instance (METRICS.md N2), unchanged from before the run.
+
 >
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Brevo API key** — transactional email is a no-op logging sender until set:

@@ -72,6 +72,24 @@ assert_http_200() {
   fi
 }
 
+assert_auth_wired() {
+  local api_url="$1"
+  local code
+
+  # Non-mutating: a bad-credential login proves the Identity API is mounted and rejecting, without
+  # creating a throwaway tenant. MapIdentityApi answers 401 (some builds 400) for unknown users.
+  code="$(curl -s -o /dev/null -w '%{http_code}' \
+    -X POST "$api_url/api/v1/auth/login?useCookies=true" \
+    -H 'Content-Type: application/json' \
+    -d '{"email":"smoke-nobody@example.invalid","password":"wrong-Password-1!"}' 2>/dev/null || true)"
+
+  if [[ "$code" == "401" || "$code" == "400" ]]; then
+    pass "Auth API mounted (login rejects bad creds)" "HTTP $code"
+  else
+    fail "Auth API mounted (login rejects bad creds)" "HTTP ${code:-000} (expected 400/401)"
+  fi
+}
+
 assert_db_roundtrip() {
   local api_url="$1"
   local session_id="smoke-$(date +%s)"
@@ -206,9 +224,11 @@ fi
 if [[ -n "$api_url" ]]; then
   assert_http_200 "API /health HTTP 200" "$api_url/health"
   assert_db_roundtrip "$api_url"
+  assert_auth_wired "$api_url"
 else
   fail "API /health HTTP 200" "API URL unavailable"
   fail "API DB round-trip" "API URL unavailable"
+  fail "Auth API mounted (login rejects bad creds)" "API URL unavailable"
 fi
 
 if [[ -n "$web_url" ]]; then
@@ -218,6 +238,16 @@ else
 fi
 assert_http_200 "Web mdreel.com HTTP 200" "https://mdreel.com"
 
+# Umami analytics (M3, rule 10) — self-hosted, EU-only, min-instances=0 (may cold-start).
+umami_url="$(service_url "mdreel-umami")"
+if [[ -n "$umami_url" ]]; then
+  pass "Resolve mdreel-umami URL" "$umami_url"
+  assert_http_200 "Umami analytics HTTP 200" "$umami_url"
+else
+  fail "Resolve mdreel-umami URL" "not found in $RUN_REGION"
+  fail "Umami analytics HTTP 200" "umami URL unavailable"
+fi
+
 if assert_cloudsql_tables; then
   pass "Cloud SQL required tables exist" "events, tenants, payments, usage_ledger"
 else
@@ -225,7 +255,7 @@ else
 fi
 cleanup_sql_proxy
 
-for service in vectorreel-web vectorreel-api vectorreel-worker; do
+for service in vectorreel-web vectorreel-api vectorreel-worker mdreel-umami; do
   assert_run_service_ready "$service"
 done
 
