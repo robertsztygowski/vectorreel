@@ -60,12 +60,28 @@ require_api_infra() {
 
 deploy_web() {
   echo "Deploying vectorreel-web to $RUN_REGION..."
+  # Same-origin auth proxy target (web/middleware.ts): the api service URL, so the Identity cookie
+  # is first-party. Stable across api revisions; empty if the api is not deployed yet (web then
+  # falls back to its mock /api routes).
+  local api_url
+  api_url="$(gcloud run services describe vectorreel-api \
+    --region "$RUN_REGION" --project "$PROJECT" \
+    --format='value(status.url)' 2>/dev/null || true)"
+
+  local env_args=()
+  if [[ -n "$api_url" ]]; then
+    env_args=(--set-env-vars "API_ORIGIN=$api_url")
+    echo "  API_ORIGIN=$api_url"
+  fi
+
   gcloud run deploy vectorreel-web \
     --source web \
     --region "$RUN_REGION" \
     --project "$PROJECT" \
     --allow-unauthenticated \
     --min-instances=0 \
+    --max-instances=3 \
+    "${env_args[@]}" \
     --quiet
   describe_deploy "vectorreel-web"
 }
@@ -85,6 +101,7 @@ deploy_api() {
     --project "$PROJECT" \
     --allow-unauthenticated \
     --min-instances=0 \
+    --max-instances=2 \
     --set-env-vars 'PipelineModel__Mode=fake' \
     --add-cloudsql-instances "$conn_name" \
     --set-secrets "POSTGRES_CONNECTION=$SECRET_NAME:latest" \
@@ -104,6 +121,7 @@ deploy_worker() {
     --project "$PROJECT" \
     --allow-unauthenticated \
     --min-instances=0 \
+    --max-instances=1 \
     --set-env-vars 'PipelineModel__Mode=fake' \
     --quiet
   describe_deploy "vectorreel-worker"
