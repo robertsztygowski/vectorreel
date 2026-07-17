@@ -368,7 +368,7 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
   own stack, or the differentiator is a lie a competent DPO will catch.**
 - **Tenant isolation:** row-level tenancy in DB; per-tenant GCS prefixes; signed URLs scoped and short-lived.
 - **Encryption:** GCP default at-rest + TLS in transit; CMEK on roadmap.
-- **Provider abstraction:** `IVideoAnalyzer` / `ITextFuser` interfaces; Vertex implementation now, Mistral (EU) implementation planned — this is also the seam for the future self-hosted edition.
+- **Provider abstraction:** `IVideoAnalyzer` / `ITextFuser` interfaces; Vertex implementation now, Mistral (EU) implementation planned — this is also the seam for the future self-hosted edition. The concrete Vertex + GCS implementations live in `src/Infrastructure` (referenced by Api + Worker; `src/Core` stays cloud-SDK-free per DEVELOPMENT.md §2), selected at DI time by `PipelineModel:Mode` (`fake` deterministic-offline / `live` Vertex / `replay` committed `tests/fixtures/llm/` / `record` Vertex+write-fixtures). Default is `fake`, so the E2E stack and host-side dev spend nothing; prod, the gallery worker, and `tests/Live/` run `live`.
 
 ## 8. Cost engineering (the mechanisms — **not** the numbers)
 

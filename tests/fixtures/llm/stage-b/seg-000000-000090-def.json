@@ -1,0 +1,51 @@
+{
+  "finishReason": "Stop",
+  "output": {
+    "segmentStart": "00:00:00",
+    "language": "en",
+    "blocks": [
+      {
+        "timestamp": "00:00:00",
+        "spoken": "Placeholder narration for segment 0, part 1.",
+        "speaker": "Presenter",
+        "onScreenText": "Segment 0",
+        "visual": "Placeholder description of what is shown at part 1.",
+        "kind": "other"
+      },
+      {
+        "timestamp": "00:00:22",
+        "spoken": "Placeholder narration for segment 0, part 2.",
+        "speaker": "Presenter",
+        "onScreenText": null,
+        "visual": "Placeholder description of what is shown at part 2.",
+        "kind": "other"
+      },
+      {
+        "timestamp": "00:00:45",
+        "spoken": "Placeholder narration for segment 0, part 3.",
+        "speaker": "Presenter",
+        "onScreenText": null,
+        "visual": "Placeholder description of what is shown at part 3.",
+        "kind": "other"
+      },
+      {
+        "timestamp": "00:01:07",
+        "spoken": "Placeholder narration for segment 0, part 4.",
+        "speaker": "Presenter",
+        "onScreenText": null,
+        "visual": "Placeholder description of what is shown at part 4.",
+        "kind": "other"
+      },
+      {
+        "timestamp": "00:01:22",
+        "spoken": "Placeholder narration for segment 0, part 5.",
+        "speaker": "Presenter",
+        "onScreenText": null,
+        "visual": "Placeholder description of what is shown at part 5.",
+        "kind": "other"
+      }
+    ],
+    "summary": "Placeholder summary of segment 0."
+  },
+  "fetchedDuration": "00:01:30"
+}

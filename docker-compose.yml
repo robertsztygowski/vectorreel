@@ -29,10 +29,12 @@ services:
       retries: 10
 
   # GCS emulation. The real buckets are raw-videos-eu / outputs-eu (ARCHITECTURE.md §2);
-  # -scheme http keeps the emulator plain-HTTP so no local certificate is needed.
+  # -scheme http keeps the emulator plain-HTTP so no local certificate is needed. -external-url is
+  # the in-network hostname so the resumable-upload session URL resolves from the api container
+  # (the only GCS writer). Host-run dev overrides Gcs__EmulatorHost/this to localhost if needed.
   fake-gcs-server:
     image: fsouza/fake-gcs-server:1.52
-    command: ["-scheme", "http", "-port", "4443", "-external-url", "http://localhost:4443"]
+    command: ["-scheme", "http", "-port", "4443", "-external-url", "http://fake-gcs-server:4443"]
     ports:
       - "4443:4443"
     volumes:
@@ -52,9 +54,17 @@ services:
       APP_BASE_URL: "http://localhost:3000"
       # Browser origin of the web container as seen from the host.
       CORS_ALLOWED_ORIGINS: "http://localhost:3000"
+      # Stage B/C run against the deterministic offline stand-in — Vertex cannot reach the local
+      # emulator and the E2E suite must stay free and reproducible (CLAUDE.md rule 4 tier). Stage D
+      # persists to the fake-gcs-server emulator, exercising the real GCS code path.
+      PipelineModel__Mode: "fake"
+      Gcs__EmulatorHost: "http://fake-gcs-server:4443"
+      Gcs__Project: "vectorreel-e2e"
     depends_on:
       postgres:
         condition: service_healthy
+      fake-gcs-server:
+        condition: service_started
       aspire-dashboard:
         condition: service_started
 

@@ -36,7 +36,24 @@ Umami in Phase 5 shares this same Postgres instance and must not create a second
 (METRICS.md §6.2). Stripe API keys and the Stripe webhook signing secret live in Secret Manager;
 never put them in repo files or Cloud Run plaintext env vars.
 
-### APIs NOT yet enabled (needed later — enable when we reach them)
+## Pipeline storage & model config — Phase 3
+
+The pipeline (`src/Infrastructure`, wired via `AddPipelineInfrastructure`) is configured entirely
+from env/config, EU-pinned per CLAUDE.md rule 2:
+
+- **Object storage (`IObjectStorage`)** — GCS via `Google.Cloud.Storage.V1`, ADC only (no JSON
+  keys, rule 1). Two buckets, both `europe-central2`: `raw-videos-eu` (uploaded source, deleted
+  after Stage D) and `outputs-eu` (`output.md` + `output.json`). Set `Gcs__EmulatorHost` to use
+  fake-gcs-server locally (buckets auto-created in emulator mode); unset in prod → real GCS.
+- **Vertex (`IVideoAnalyzer` / `ITextFuser`)** — `gemini-2.5-flash` @ `europe-central2`, fallback
+  `europe-west3` (`VertexOptions__FallbackRegion`); Stage B→C back-to-back can trip
+  `429 RESOURCE_EXHAUSTED` on the primary region.
+- **`PipelineModel__Mode`** selects the seam implementations: `fake` (deterministic offline
+  stand-in — the default, used by the E2E stack and host-side dev, zero spend), `live` (real
+  Vertex — prod, the gallery worker, `tests/Live/`), `replay` (committed `tests/fixtures/llm/`
+  fixtures), `record` (real Vertex + writes fixtures). LLM metering is gated on `Mode != fake`.
+
+## APIs NOT yet enabled (needed later — enable when we reach them)
 - `cloudtasks.googleapis.com` — stage queues (Stage A→B→C→D)
 - `cloudbuild.googleapis.com` — CI container builds (if used)
 - `secretmanager.googleapis.com` — API-key secrets, Stripe keys, webhook secrets

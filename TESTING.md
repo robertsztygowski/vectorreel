@@ -15,10 +15,10 @@ zero Stripe calls (FakePaymentGateway), nothing leaves the machine.
 |---|---|---|---|
 | **smoke** | `scripts/e2e.sh up && scripts/e2e.sh smoke` | Stack boots; health + the full API job funnel (upload → real ffmpeg Stage A → output contracts → Postgres ledger → erasure) | up 10 s + smoke 17 s |
 | **full** (default) | `scripts/e2e.sh full` | Everything below | ~3.5 min total |
-| ├─ .NET | `dotnet test --filter Category!=Live` | 105 unit+integration tests, incl. the Postgres-backed store tests (`Category=RequiresDocker` — needs compose postgres) | 154 s |
+| ├─ .NET | `dotnet test --filter Category!=Live` | 107 unit+integration tests, incl. the Postgres-backed store tests (`Category=RequiresDocker` — needs compose postgres) and the replay-harness fidelity tests | 154 s |
 | ├─ web unit | `cd web && npm test` | 33 tests: contracts, corpus, attribution, output document | 26 s |
 | └─ E2E | `scripts/e2e.sh test` | 7 Playwright tests: browser funnel, API funnel + frozen contracts, payments + webhook + attribution | 30 s |
-| **live** | `dotnet test tests/Live` | **TODO — does not exist yet.** Real-Vertex pre-deploy smoke lands with Phase 3 (see §5). Never part of the default loop (CLAUDE.md rule 5). | — |
+| **live** | `dotnet test tests/Live` | Real-Vertex Stage B+C smoke on a CC-BY YouTube `fileData.fileUri` (`Category=Live`; ADC + real spend). Run before deploys / when prompts or schemas change (CLAUDE.md rule 5). Never part of the default loop. | ~20 s |
 
 First-ever run adds one-time costs: docker image builds (~4–6 min for api+web),
 `npm install` + chromium download in `tests/E2E` (auto-run by `scripts/e2e.sh`).
@@ -29,10 +29,10 @@ First-ever run adds one-time costs: docker image builds (~4–6 min for api+web)
 
 | Service | Host address | Notes |
 |---|---|---|
-| api | http://localhost:8080 | real ffmpeg Stage A; Stages B–D deterministic stubs; Postgres stores |
+| api | http://localhost:8080 | real ffmpeg Stage A; Stage B/C run the deterministic offline stand-in (`PipelineModel__Mode=fake`); Stage D persists to fake-gcs; Postgres stores |
 | web | http://localhost:3000 | production Next.js build, `NEXT_PUBLIC_API_BASE` baked to :8080 |
 | postgres | localhost:5432 (dev/dev, db `vectorreel`) | the METRICS.md §6.2 source of truth |
-| fake-gcs-server | http://localhost:4443 | GCS emulation (Phase 3 consumer) |
+| fake-gcs-server | http://localhost:4443 | GCS emulation; Stage D writes `output.md`/`output.json` here in E2E (`-external-url` is the in-network hostname so resumable uploads resolve from the api container) |
 | aspire-dashboard | **http://localhost:19888** | logs + traces UI; OTLP in-network on `aspire-dashboard:18889` |
 
 Default profile (`docker compose up -d`, no `--profile`) still starts only postgres + fake-gcs
@@ -87,10 +87,14 @@ scripts/e2e.sh db "select email, plan, trial_credit_hours, archive_hours from te
   product wires today (Phase 2R). The identical journey against the real API is covered
   request-level in `api-funnel.spec.ts`. When Phase 3 points the panel at the real API, the
   browser spec starts covering it with no changes.
-- **`tests/Live/` and `tests/fixtures/llm/` do not exist yet** (DEVELOPMENT.md §5 describes the
-  target). Stages B–D are deterministic stubs; there is nothing real to record. Phase 3 drops its
-  stages into this same harness: fake-gcs is already up, `PipelineDiagnostics` spans are the
-  tracing seam, and replayed fixtures keep the default loop at zero Vertex spend.
+- **`tests/Live/` and `tests/fixtures/llm/` now exist.** Stage B/C run behind a
+  `PipelineModel:Mode` switch (`fake` | `live` | `replay` | `record`). The default suite and E2E
+  use `fake` — a deterministic offline stand-in that synthesizes a valid document from the real
+  Stage A segments, so there is zero Vertex spend and no network. `replay` reads committed fixtures
+  under `tests/fixtures/llm/` through the *real* Stage B guards + fuser + renderer (the
+  `PipelineReplayHarnessTests` fidelity tests). `record` wraps real Vertex and refreshes those
+  fixtures; `live` is the real path used by prod, the gallery worker, and `tests/Live/`. Refresh
+  fixtures with `PipelineModel__Mode=Record` + `PipelineModel__FixturesDirectory=tests/fixtures/llm`.
 - **Settings "erase" button is UI-only** (no API call yet) — deliberately untested until wired.
 
 ## 6. Harness invariants

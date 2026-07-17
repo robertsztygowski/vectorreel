@@ -6,7 +6,9 @@ using MdReel.Core;
 using MdReel.Core.Domain;
 using MdReel.Core.Media;
 using MdReel.Core.Pipeline.StageA;
+using MdReel.Core.Pipeline.StageB;
 using MdReel.Core.Providers;
+using MdReel.Infrastructure;
 using Microsoft.AspNetCore.WebUtilities;
 using Npgsql;
 using OpenTelemetry.Logs;
@@ -20,7 +22,7 @@ public partial class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        ConfigureServices(builder.Services, builder.Configuration);
+        ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
         ConfigureTelemetry(builder);
 
         var app = builder.Build();
@@ -51,7 +53,7 @@ public partial class Program
             .WithLogging(static logging => logging.AddOtlpExporter());
     }
 
-    private static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
+    private static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration, IWebHostEnvironment environment)
     {
         services.AddProblemDetails();
 
@@ -105,6 +107,10 @@ public partial class Program
         }
 
         services.AddSingleton<StageARunner>();
+        services.AddSingleton<StageBRunner>();
+        services.AddPipelineInfrastructure(
+            configuration,
+            Path.Combine(environment.ContentRootPath, ".local-state", "object-storage"));
         services.AddSingleton<PrivatePipelineService>();
     }
 

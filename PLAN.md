@@ -66,6 +66,11 @@ N33 trial credit; payments copy attribution for the CAC join; ad spend has a led
 hour-decay has a derived query; the web client posts real events and checkout. Deliberate cuts are
 listed in Phase 4. **Next: founder sign-off on the built funnel and deferred cuts, then Phase 3/5
 work as sequencing requires.**
+**Phase 3 ✅ DONE 2026-07-17** — the real pipeline. Stage B (Vertex, structured output, cue
+injection, guards) + Stage C (fusion → frozen `OutputDocument`) + Stage D (render + persist to
+`outputs-eu` + source delete) run on both paths; a `PipelineModel:Mode` switch keeps the default
+suite and E2E free/offline (fake + committed replay fixtures) while prod/gallery/`tests/Live` use
+real Vertex. Full definition of done passed, including a live Vertex smoke. See the Phase 3 block.
 **Phase 2R scope — *encode the competitor findings*
 (experiments/002-competitor-analysis).** The positioning was reset 2026-07-15 by that analysis
 (BUSINESS_MODEL §2/§4/§6/§8): anchor on **asset video, never meetings** (the bundled recap is the
@@ -418,7 +423,28 @@ Both contracts already exist as drafts — the work is **ratification, not inven
 > Markdown output contract and the MVP API subset, commit schema + fixtures, re-point the Phase 2
 > mocks at them, and update ARCHITECTURE §4/§5 in the same commit.
 
-## Phase 3 — Simplest working pipeline (merges old "Stages B/C/D" + the thin trial slice)
+## Phase 3 — Simplest working pipeline (merges old "Stages B/C/D" + the thin trial slice) ✅ DONE 2026-07-17
+
+> **✅ COMPLETE 2026-07-17.** Real Stage B→C→D runs on both paths. Definition of done passed:
+> build clean (warnings-as-errors), 55 unit + 52 integration green, **E2E 7/7 green**, a **real
+> Vertex Stage B+C smoke** (`tests/Live/`) passed against a CC-BY YouTube source, `dotnet format`
+> clean, no secrets, `scripts/check-docs.sh` green.
+>
+> **What landed:** the model seams are wired behind a mode switch (`PipelineModel:Mode` =
+> `fake`/`live`/`replay`/`record`) so the default suite and E2E stay free and offline while
+> production/gallery/`tests/Live` use real Vertex. `src/Infrastructure` now also holds the GCS
+> `IObjectStorage` (fake-gcs-server locally, ADC in prod — no JSON keys) and the record/replay
+> harness (committed fixtures under `tests/fixtures/llm/`, replayed through the real guards +
+> renderer). `PrivatePipelineService` runs real Stage A→B→C→D: Stage D renders `output.md` +
+> `output.json` via the Core renderer, persists to `outputs-eu`, deletes the source. Every LLM
+> call is metered in the ledger (rule 6; Fake mode makes none, so the E2E ledger stays exactly
+> Stage A's two compute steps). The internal YouTube gallery runner (no public endpoint) is wired
+> B→C→D→storage and driven by `PipelineWorker` config; the live smoke proves one CC talk end-to-end.
+>
+> **Deferred to hardening (not blocking):** the `429 RESOURCE_EXHAUSTED` fallback to
+> `europe-west3` under back-to-back load; staging private raw bytes into GCS so the private path can
+> run in `live` mode (today `live` private uploads pass the local path as the source URI); the full
+> 25-talk gallery run (a deliberate manual op — real spend, curated CC list).
 
 **The product is the validation instrument. Build only the instrument** — Stage B against Vertex
 with structured output; record/replay fixtures + `tests/Live/`; Stage C fusion; Stage D persist +

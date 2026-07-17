@@ -1,17 +1,22 @@
 using MdReel.Core.Providers;
 
-namespace MdReel.Worker;
+namespace MdReel.Infrastructure.Storage;
 
-internal sealed class LocalFileObjectStorage(IHostEnvironment environment) : IObjectStorage
+/// <summary>
+/// Local-filesystem <see cref="IObjectStorage"/> for local dev and the e2e compose profile, where
+/// Vertex never reads the bytes (the pipeline runs in replay/fake mode). Buckets map to directories
+/// under <see cref="RootPath"/>.
+/// </summary>
+public sealed class LocalDirectoryObjectStorage(string rootPath) : IObjectStorage
 {
-    private readonly string _root = Path.Combine(environment.ContentRootPath, ".local-state", "internal-object-storage");
+    public string RootPath { get; } = rootPath;
 
     public async Task<Stream> OpenReadAsync(string bucket, string objectName, CancellationToken cancellationToken)
     {
-        var path = ResolvePath(bucket, objectName);
-        var stream = File.OpenRead(path);
-        await Task.CompletedTask;
         cancellationToken.ThrowIfCancellationRequested();
+        var path = ResolvePath(bucket, objectName);
+        Stream stream = File.OpenRead(path);
+        await Task.CompletedTask;
         return stream;
     }
 
@@ -31,19 +36,19 @@ internal sealed class LocalFileObjectStorage(IHostEnvironment environment) : IOb
 
     public Task DeleteAsync(string bucket, string objectName, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var path = ResolvePath(bucket, objectName);
         if (File.Exists(path))
         {
             File.Delete(path);
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
         return Task.CompletedTask;
     }
 
     private string ResolvePath(string bucket, string objectName)
     {
         var sanitizedObject = objectName.Replace('/', Path.DirectorySeparatorChar);
-        return Path.Combine(_root, bucket, sanitizedObject);
+        return Path.Combine(RootPath, bucket, sanitizedObject);
     }
 }
