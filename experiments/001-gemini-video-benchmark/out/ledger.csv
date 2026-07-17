@@ -101,3 +101,5 @@ fuse_5si4zkAngpA,gemini-2.5-flash,europe-central2,corpus_fusion,37.5,4853,0,0,37
 fuse_KL7WBjAuTMg,gemini-2.5-flash,europe-central2,corpus_fusion,49.8,4030,0,0,2718,4097,0.0182,6.4448
 fuse_gRFaow12xo0,gemini-2.5-flash,europe-central2,corpus_fusion,34.5,4694,0,0,3468,4094,0.0203,6.4651
 fuse_rAl-9HwD858,gemini-2.5-flash,europe-central2,corpus_fusion,34.8,3828,0,0,3181,4072,0.0193,6.4844
+gate_baseline,gemini-2.5-flash,europe-central2,gate,65.8,374,50820,19250,3959,4095,0.0547,6.5391
+gate_guided,gemini-2.5-flash,europe-central2,gate,81.0,693,50820,19250,7891,4093,0.0647,6.6038

@@ -425,11 +425,15 @@ with structured output; record/replay fixtures + `tests/Live/`; Stage C fusion; 
 output renderer; source deletion. Both ingestion paths, wired to the Phase 2 frontend, in the
 simplest form that honours the guards below.
 
-🚨 **First job of the phase, before any of the below: does Stage B actually honour Stage A's block
-boundaries?** Phase 1 can prove they are *emitted* (METRICS.md N7c); only a Vertex call proves they are
-*obeyed*. Put the boundaries in the prompt, run the window that failed, and count the blocks. **If the
-model ignores them, the fallback is to cut real segments at the boundaries** — which forces the issue
-at the price of more calls. Everything else in this phase is cheaper than this question.
+🚨 **First job of the phase — ✅ DONE 2026-07-17: Stage B obeys Stage A's block boundaries.** Phase 1
+proved they are *emitted* (METRICS.md N7c); a single Vertex call on the window that failed proved they
+are *obeyed* — with the cues listed as mandatory block starts, the model placed its block starts on
+every one of them to the second (21/22, the 22nd lost only to output truncation), versus arbitrary
+placement unguided (`experiments/001-*/out/GATE.md`). **The fallback (cutting real segments at the
+boundaries) is not needed.** The one lesson for the build: the production Stage B prompt **must** list
+the segment's cues as mandatory block starts, and a dense guided call overflows the output cap — which
+is exactly the `MAX_TOKENS`→split case below. Everything else in this phase is cheaper than this
+question was.
 
 **Build order inside the phase: YouTube path first — it is the smaller half.** No Stage A, no
 upload, no GCS round-trip: Stage B directly on `fileData.fileUri` + offset segmentation → C → D.

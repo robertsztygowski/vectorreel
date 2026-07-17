@@ -106,9 +106,11 @@ Org policy: `constraints/gcp.resourceLocations` restricted to EU. All service ac
 > correct for slide talks and it switches the fix off precisely where the ICP lives, leaving 160-second
 > blocks — *worse* than the status quo. Tried, measured, rejected (METRICS.md N7c).
 >
-> ⚠️ **Phase 1 proves what Stage A *emits*, not what Stage B *obeys*.** That verdict needs a Vertex call
-> and is the first thing Phase 3 must check. If the model ignores the cues, the fallback is cutting real
-> segment boundaries at them — which forces the issue, at the price of more calls.
+> ✅ **Phase 1 proves what Stage A *emits*; the Phase 3 gate proved Stage B *obeys*.** A single Vertex
+> call on the N7b failing window (`seg2_720p.mp4`, the frozen-IDE clip) confirmed it: given Stage A's
+> boundaries in the prompt, the model placed its block starts on **every one of them, to the second**
+> (21/22, the 22nd lost only to output truncation), versus 5/22 unguided. The fallback (cutting real
+> segment boundaries at the cues) is therefore not needed. See `experiments/001-*/out/GATE.md`.
 
 ### Stage B — Segment analysis (Vertex Gemini, native video)
 For each segment (parallel, bounded concurrency per tenant):
@@ -411,7 +413,10 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
   also be the cure. Stage A forces boundaries on **elapsed narration** and suppresses them on
   **silence** — a signal that needs the *audio*, which needs the bytes, which is why the public path can
   never do it (§3).
-  ⚠️ Still unproven: whether Stage B *honours* the boundaries. Phase 3's first job.
+  ✅ **Confirmed in the Phase 3 gate: Stage B honours the boundaries** — block starts landed on the
+  forced cues to the second (`experiments/001-*/out/GATE.md`). The only side effect is that a dense
+  guided call overflows the output cap, which is exactly the `MAX_TOKENS`→split case §3 already
+  specifies.
 
 ## 9. Build order
 
