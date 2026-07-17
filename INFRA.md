@@ -120,7 +120,7 @@ All parameterized via `PROJECT`/`RUN_REGION`/`DATA_REGION`/… env vars with the
 | **Connection name** | `tensile-runway-442915-j6:europe-central2:mdreel-db` |
 | **Database / user** | `vectorreel` / `mdreel_app` |
 | **Credential** | Full Npgsql connection string in Secret Manager secret `mdreel-postgres-connection` (user-managed replication, `europe-central2`). Never in git, never a plaintext env var (rule 1). |
-| **Schema** | Self-created by the API on first DB use (`PostgresSchema.EnsureAsync`) — verified live 2026-07-17: `tenants`, `users`, `events`, `usage_ledger`, `ad_spend`, `payments`, `subscriptions`. |
+| **Schema** | Self-created by the API on first DB use (`PostgresSchema.EnsureAsync`) — verified live 2026-07-17: `tenants`, `users`, `events`, `usage_ledger`, `ad_spend`, `payments`, `subscriptions`, `webhook_deliveries` (M5). |
 | **⚠️ Cost** | **A real recurring bill** — the fixed-base tax METRICS.md N2 warns about, though this tier sits well below the range N2 prices in. **Teardown: `scripts/teardown-cloudsql.sh`** (deletes instance + secret). |
 
 ### `vectorreel-api` — backend API (Cloud Run)  ✅ deployed 2026-07-17
@@ -132,6 +132,7 @@ All parameterized via `PROJECT`/`RUN_REGION`/`DATA_REGION`/… env vars with the
 | **Container** | `src/Api/Dockerfile` (repo-root build context) |
 | **Config** | `PipelineModel__Mode=fake` (no Vertex spend; Stages B–D stubbed), `PAYMENTS_MODE=disabled` (M4: no Stripe keys yet → checkout/portal degrade to 503, not the deterministic `FakePaymentGateway` used in local/CI/E2E), `--add-cloudsql-instances` + `POSTGRES_CONNECTION` from Secret Manager (unix-socket `Host=/cloudsql/…`), Stripe secrets `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` wired from empty Secret Manager versions (see below), `--min-instances=0`, `--allow-unauthenticated` |
 | **Stripe secrets (M4)** | `mdreel-stripe-secret-key` + `mdreel-stripe-webhook-secret` (Secret Manager, `europe-central2`, user-managed replication) created **empty** (whitespace placeholder) by `deploy.sh` and wired via `--set-secrets`; the runtime SA gets `secretAccessor`. A whitespace value reads as "unset", so with `PAYMENTS_MODE=disabled` payments stay off until the founder adds a real **test-mode** key version and redeploys (PLAN.md NEEDS-FOUNDER). A `sk_live_…` key is a hard stop. |
+| **Task queue / webhooks (M5)** | `ITaskQueue` is wired to **`InProcessQueue`** (a dispatch delegate runs the `webhook-deliveries` handler in-process) — **no Cloud Tasks, no new API/cost, no runtime change from M5**. `CloudTasksQueue` is code-complete but unwired (depends on an injectable `ICloudTasksTransport`). Webhook delivery: `webhook_deliveries` table, HMAC-SHA256 signature (`X-Mdreel-Signature: sha256=…`, ARCHITECTURE §6), backoff `10·2^(n-1)`s capped 1h, push target `POST /internal/webhook-deliveries/{id}/attempt`. **Flip procedure (founder-gated):** enable `cloudtasks.googleapis.com`, create a queue in `europe-west1`, supply a `Google.Cloud.Tasks.V2` `ICloudTasksTransport`, register `CloudTasksQueue` as `ITaskQueue`, and **secure the push endpoint** with Cloud Run invoker IAM + an OIDC token on the task (it sits outside the `/api/v1` auth gate). |
 | **Verified** | `/health` 200; `POST /api/v1/events` 202 with Postgres persistence (schema auto-created) |
 
 ### `vectorreel-worker` — gallery worker (Cloud Run)  ✅ deployed 2026-07-17

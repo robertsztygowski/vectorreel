@@ -110,8 +110,38 @@ public static class PostgresSchema
                     updated_at timestamptz not null default now()
                 );
 
+                create table if not exists webhook_deliveries (
+                    id text primary key,
+                    tenant_id text not null,
+                    event_type text not null,
+                    target_url text not null,
+                    payload text not null,
+                    secret text not null,
+                    status text not null,
+                    attempts integer not null default 0,
+                    max_attempts integer not null default 5,
+                    next_attempt_at timestamptz not null default now(),
+                    last_error text null,
+                    response_status integer null,
+                    created_at timestamptz not null default now(),
+                    updated_at timestamptz not null default now()
+                );
+
                 alter table subscriptions add column if not exists stripe_customer_id text null;
                 alter table subscriptions add column if not exists updated_at timestamptz not null default now();
+                alter table webhook_deliveries add column if not exists tenant_id text not null;
+                alter table webhook_deliveries add column if not exists event_type text not null;
+                alter table webhook_deliveries add column if not exists target_url text not null;
+                alter table webhook_deliveries add column if not exists payload text not null;
+                alter table webhook_deliveries add column if not exists secret text not null;
+                alter table webhook_deliveries add column if not exists status text not null;
+                alter table webhook_deliveries add column if not exists attempts integer not null default 0;
+                alter table webhook_deliveries add column if not exists max_attempts integer not null default 5;
+                alter table webhook_deliveries add column if not exists next_attempt_at timestamptz not null default now();
+                alter table webhook_deliveries add column if not exists last_error text null;
+                alter table webhook_deliveries add column if not exists response_status integer null;
+                alter table webhook_deliveries add column if not exists created_at timestamptz not null default now();
+                alter table webhook_deliveries add column if not exists updated_at timestamptz not null default now();
                 """);
             await command.ExecuteNonQueryAsync(cancellationToken);
             _ensured = true;

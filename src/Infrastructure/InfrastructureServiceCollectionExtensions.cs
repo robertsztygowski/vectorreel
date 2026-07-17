@@ -1,5 +1,6 @@
 using MdReel.Core.Providers;
 using MdReel.Infrastructure.Pipeline;
+using MdReel.Infrastructure.Queue;
 using MdReel.Infrastructure.Storage;
 using MdReel.Infrastructure.Vertex;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +34,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddOptions<VertexOptions>().Bind(configuration.GetSection(VertexOptions.SectionName));
         services.AddOptions<GcsOptions>().Bind(configuration.GetSection(GcsOptions.SectionName));
         services.AddOptions<PipelineModelOptions>().Bind(configuration.GetSection(PipelineModelOptions.SectionName));
+        services.AddOptions<CloudTasksOptions>().Bind(configuration.GetSection(CloudTasksOptions.SectionName));
 
         AddObjectStorage(services, configuration, defaultLocalStorageRoot);
         AddModel(services, configuration);

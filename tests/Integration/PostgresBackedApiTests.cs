@@ -6,6 +6,7 @@ using System.Text.Json;
 using MdReel.Api.Features.Auth;
 using MdReel.Api.Features.Instrumentation;
 using MdReel.Api.Features.Payments;
+using MdReel.Api.Features.Webhooks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -132,6 +133,30 @@ public sealed class PostgresBackedApiTests : IClassFixture<PostgresBackedApiTest
             await cohorts.GetTenantHoursByWeekAsync(CancellationToken.None), x => x.TenantId == signup.TenantId);
         Assert.Equal(0, row.WeekIndex);
         Assert.Equal(1.5, row.Hours);
+    }
+
+    [Fact]
+    public async Task Webhook_deliveries_round_trip_through_postgres()
+    {
+        await using var factory = _fixture.CreateFactory();
+
+        var store = factory.Services.GetRequiredService<IWebhookDeliveryStore>();
+        Assert.IsType<PostgresWebhookDeliveryStore>(store);
+        var created = await store.EnqueueAsync(new WebhookDeliveryRecord(
+            string.Empty,
+            "tenant_arbitrary",
+            "job.completed",
+            "https://customer.example/webhook",
+            "{\"jobId\":\"job_1\"}",
+            "secret"), CancellationToken.None);
+
+        var loaded = await store.GetAsync(created.Id, CancellationToken.None);
+
+        Assert.NotNull(loaded);
+        Assert.Equal("pending", loaded.Status);
+        Assert.Equal(0, loaded.Attempts);
+        Assert.Equal("tenant_arbitrary", loaded.TenantId);
+        Assert.Equal("job.completed", loaded.EventType);
     }
 
     [Fact]

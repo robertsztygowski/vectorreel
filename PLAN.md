@@ -105,15 +105,32 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   + a "manage billing" button on the settings billing screen that degrades to a note. Integration
 >   + web unit + E2E all green. Secrets `mdreel-stripe-secret-key` / `mdreel-stripe-webhook-secret`
 >   created empty and wired at deploy — real values in NEEDS-FOUNDER.
-> - **Next:** M5 Cloud Tasks seam, M6 website wire-up. See the NEEDS-FOUNDER
->   checklist below.
+> - **M5 jobs & webhooks ✅ built** — the `ITaskQueue` seam now has two implementations:
+>   `InProcessQueue` (the wired/live one — a dispatch delegate runs the handler in-process) and
+>   `CloudTasksQueue` (flip-ready, depends on an injectable `ICloudTasksTransport` port so no new
+>   NuGet, network, or creds at test time). A `webhook_deliveries` table (PostgresSchema pattern) +
+>   full delivery path: `WebhookDeliveryService.AttemptAsync` (single-attempt, idempotent-friendly —
+>   one Cloud Tasks push per invocation), HMAC-SHA256 signature (`X-Mdreel-Signature: sha256=…`,
+>   ARCHITECTURE §6), exponential backoff (`10·2^(n-1)`s capped at 1h), and a push-target endpoint
+>   `POST /internal/webhook-deliveries/{id}/attempt` (outside `/api/v1`, so it bypasses the product
+>   auth gate — must be IAM/OIDC-secured on the Cloud Tasks flip). InProcessQueue stays wired, so
+>   **no runtime change and no deploy** — the flip is founder-gated (NEEDS-FOUNDER). Unit + Integration
+>   green.
+> - **Next:** M6 website wire-up. See the NEEDS-FOUNDER checklist below.
 >
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Brevo API key** — transactional email is a no-op logging sender until set:
 >   `gcloud secrets versions add mdreel-brevo-api-key --data-file=- --project tensile-runway-442915-j6`
 >   (create the secret first if absent, region europe-central2), then set `BREVO_API_KEY` on the api
 >   service. `RequireConfirmedEmail=false`, so auth works without it.
-> - *(accumulates as later milestones land: Cloud Tasks binding flip (M5).)*
+> - *(accumulates as later milestones land.)*
+> - **Cloud Tasks binding flip (M5 ✅ code complete, seam only)** — the live queue is
+>   `InProcessQueue`; `CloudTasksQueue` is implemented and tested against its `ICloudTasksTransport`
+>   port but not wired. To flip: enable `cloudtasks.googleapis.com`, create a queue in
+>   `europe-west1`, provide a `Google.Cloud.Tasks.V2`-backed `ICloudTasksTransport`, register
+>   `CloudTasksQueue` as `ITaskQueue`, and **secure the push target**
+>   `POST /internal/webhook-deliveries/{id}/attempt` (Cloud Run invoker IAM + OIDC token on the
+>   Cloud Tasks task) since it sits outside the `/api/v1` auth gate. Details in INFRA.md.
 > - **api.mdreel.com CNAME (M2 ✅ mapping created)** — Cloudflare zone `mdreel.com`, **DNS-only
 >   (grey cloud)**: add `api` `CNAME` → `ghs.googlehosted.com`. The mapping is live and waiting on
 >   this record for its cert; until then the middleware proxy (`mdreel.com/api/v1/*`) already

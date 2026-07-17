@@ -3,6 +3,7 @@ using MdReel.Api.Features.Auth;
 using MdReel.Api.Features.Instrumentation;
 using MdReel.Api.Features.Payments;
 using MdReel.Api.Features.PrivateProcessing;
+using MdReel.Api.Features.Webhooks;
 using MdReel.Core;
 using MdReel.Core.Domain;
 using MdReel.Core.Media;
@@ -10,6 +11,7 @@ using MdReel.Core.Pipeline.StageA;
 using MdReel.Core.Pipeline.StageB;
 using MdReel.Core.Providers;
 using MdReel.Infrastructure;
+using MdReel.Infrastructure.Queue;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
@@ -87,6 +89,7 @@ public partial class Program
         services.AddSingleton<ITenantStore, InMemoryTenantStore>();
         services.AddSingleton<IPaymentStore, InMemoryPaymentStore>();
         services.AddSingleton<ISubscriptionStore, InMemorySubscriptionStore>();
+        services.AddSingleton<IWebhookDeliveryStore, InMemoryWebhookDeliveryStore>();
         services.AddSingleton<IAdSpendLedger, InMemoryAdSpendLedger>();
         services.AddSingleton<ICohortAnalytics, InMemoryCohortAnalytics>();
         services.AddSingleton<IPaymentGateway>(sp =>
@@ -114,9 +117,24 @@ public partial class Program
             services.AddSingleton<ITenantStore, PostgresTenantStore>();
             services.AddSingleton<IPaymentStore, PostgresPaymentStore>();
             services.AddSingleton<ISubscriptionStore, PostgresSubscriptionStore>();
+            services.AddSingleton<IWebhookDeliveryStore, PostgresWebhookDeliveryStore>();
             services.AddSingleton<IAdSpendLedger, PostgresAdSpendLedger>();
             services.AddSingleton<ICohortAnalytics, PostgresCohortAnalytics>();
         }
+
+        services.AddHttpClient<HttpWebhookSender>();
+        services.AddSingleton<IWebhookSender>(sp => sp.GetRequiredService<HttpWebhookSender>());
+        services.AddSingleton<WebhookDeliveryService>();
+        services.AddSingleton<WebhookDeliveryDispatcher>();
+        services.AddSingleton<ITaskQueue>(sp => new InProcessQueue(async (queue, payload, cancellationToken) =>
+        {
+            if (!string.Equals(queue, "webhook-deliveries", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException($"No in-process handler is registered for queue '{queue}'.");
+            }
+
+            await sp.GetRequiredService<WebhookDeliveryService>().AttemptAsync(payload, cancellationToken);
+        }));
 
         services.AddSingleton<StageARunner>();
         services.AddSingleton<StageBRunner>();
@@ -296,6 +314,7 @@ public partial class Program
         });
 
         app.MapAuth();
+        app.MapWebhookDeliveryAttempt();
 
         var api = app.MapGroup("/api/v1");
 
