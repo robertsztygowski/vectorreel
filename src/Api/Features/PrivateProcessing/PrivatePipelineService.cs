@@ -45,7 +45,13 @@ public sealed partial class PrivatePipelineService(
     private static readonly JsonSerializerOptions DocumentJson = new() { WriteIndented = true };
 
     private readonly string _outputBucket = gcsOptions.Value.OutputBucket;
-    private readonly bool _meterModelCalls = modelOptions.Value.Mode != PipelineModelMode.Fake;
+    private readonly string _rawBucket = gcsOptions.Value.RawBucket;
+
+    // Live/Record must hand Vertex a gs:// URI it can fetch, so the raw upload is staged into
+    // raw-videos-eu and deleted after Stage D (ARCHITECTURE §3/§7). Fake ignores the URI. Null in
+    // config ⇒ derive from mode; an explicit value lets tests exercise the write-then-erase offline.
+    private readonly bool _stageRawUploads = modelOptions.Value.StageRawUploadsToObjectStorage
+        ?? modelOptions.Value.Mode != PipelineModelMode.Fake;
 
     private readonly ConcurrentDictionary<string, UploadState> _uploads = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<string, JobState> _jobs = new(StringComparer.Ordinal);
@@ -177,6 +183,9 @@ public sealed partial class PrivatePipelineService(
             TryDeleteFile(upload.Path);
         }
 
+        // Erasure cascades to the staged raw object if the pipeline left one behind (ARCHITECTURE §7).
+        _ = DeleteRawUploadAsync(job);
+
         _erasureAudit.Enqueue(new ErasureAuditEntry(id, DateTimeOffset.UtcNow));
         return true;
     }
@@ -216,10 +225,11 @@ public sealed partial class PrivatePipelineService(
             }
 
             SetProcessing(job, "B", 45);
+            var sourceUri = await StageRawUploadAsync(job, upload);
             List<SegmentAnalysis> analyses;
             using (StartStage(job, "B"))
             {
-                analyses = await ExecuteStageBAsync(job, upload, prepared);
+                analyses = await ExecuteStageBAsync(job, sourceUri, prepared);
             }
 
             SetProcessing(job, "C", 75);
@@ -246,7 +256,10 @@ public sealed partial class PrivatePipelineService(
             job.DurationSec ??= prepared.Probe.Duration.TotalSeconds;
             job.Output = BuildOutput(job.Source, document, markdown);
 
+            // Auto-deletion by default (ARCHITECTURE §3/§7): the local temp AND the staged raw
+            // gs:// object are erased once the output exists.
             TryDeleteFile(upload.Path);
+            await DeleteRawUploadAsync(job);
             jobActivity?.SetTag("mdreel.cost_cents", job.CostCents);
             LogJobDone(job.Id, job.WallClockSec.Value, job.CostCents ?? 0);
         }
@@ -255,6 +268,7 @@ public sealed partial class PrivatePipelineService(
             logger.LogError(ex, "Private pipeline failed for job {JobId}", job.Id);
             jobActivity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             SetFailed(job);
+            await DeleteRawUploadAsync(job);
         }
     }
 
@@ -285,12 +299,65 @@ public sealed partial class PrivatePipelineService(
         return prepared;
     }
 
-    private async Task<List<SegmentAnalysis>> ExecuteStageBAsync(JobState job, UploadState upload, PreparedVideo prepared)
+    // Vertex can only fetch a gs:// URI, so on the Live/Record path the raw upload is staged into
+    // raw-videos-eu under a per-job prefix (tenant-isolated by job ownership — ARCHITECTURE §7) and
+    // that gs:// URI is what Stage B sees. Fake/dev skip staging: the stand-in ignores the URI, so
+    // the local path is a fine identifier and nothing needs to touch object storage.
+    private async Task<string> StageRawUploadAsync(JobState job, UploadState upload)
     {
-        // Fake mode ignores the URI; Live/Record need a source the model can fetch. Until the private
-        // path stages raw bytes into GCS for Vertex, the local path is the source identifier.
-        var sourceUri = upload.Path;
+        if (!_stageRawUploads)
+        {
+            return upload.Path;
+        }
 
+        if (!upload.Stored || !File.Exists(upload.Path))
+        {
+            throw new InvalidOperationException($"Upload {job.UploadId} has no stored bytes to stage.");
+        }
+
+        var extension = Path.GetExtension(job.Source);
+        if (string.IsNullOrWhiteSpace(extension))
+        {
+            extension = ".mp4";
+        }
+
+        var objectName = $"private/{job.Id}/source{extension}";
+        await using (var read = File.OpenRead(upload.Path))
+        {
+            await objectStorage.WriteAsync(_rawBucket, objectName, read, CancellationToken.None);
+        }
+
+        job.RawObjectName = objectName;
+        return $"gs://{_rawBucket}/{objectName}";
+    }
+
+    private async Task DeleteRawUploadAsync(JobState job)
+    {
+        var objectName = job.RawObjectName;
+        if (string.IsNullOrEmpty(objectName))
+        {
+            return;
+        }
+
+        try
+        {
+            await objectStorage.DeleteAsync(_rawBucket, objectName, CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            // The bucket lifecycle rule is the safety net (ARCHITECTURE §3); a failed delete must not
+            // fail the job, but it must be visible.
+            logger.LogWarning(ex, "Failed to delete staged raw object gs://{Bucket}/{Object} for job {JobId}",
+                _rawBucket, objectName, job.Id);
+        }
+        finally
+        {
+            job.RawObjectName = null;
+        }
+    }
+
+    private async Task<List<SegmentAnalysis>> ExecuteStageBAsync(JobState job, string sourceUri, PreparedVideo prepared)
+    {
         List<SegmentAnalysis> analyses = [];
         foreach (var segment in prepared.Segments)
         {
@@ -299,9 +366,9 @@ public sealed partial class PrivatePipelineService(
                 segment,
                 StageAOptions.Default,
                 PrivateStageBOptions,
-                CancellationToken.None);
+                CancellationToken.None,
+                job.Id);
             analyses.AddRange(analyzed);
-            MeterModelCall(job.Id, "stage_b.analyze");
         }
 
         return [.. analyses.OrderBy(static x => x.SegmentStart).ThenBy(static x => x.SegmentIndex)];
@@ -313,11 +380,10 @@ public sealed partial class PrivatePipelineService(
             Source: job.Source,
             Duration: prepared.Probe.Duration,
             Provenance: PrivateProvenance,
-            Generator: GeneratorId);
+            Generator: GeneratorId,
+            JobId: job.Id);
 
-        var document = await fuser.FuseAsync(analyses, request, CancellationToken.None);
-        MeterModelCall(job.Id, "stage_c.fuse");
-        return document;
+        return await fuser.FuseAsync(analyses, request, CancellationToken.None);
     }
 
     private async Task<string> ExecuteStageDAsync(JobState job, OutputDocument document)
@@ -341,26 +407,10 @@ public sealed partial class PrivatePipelineService(
         await objectStorage.WriteAsync(bucket, objectName, stream, cancellationToken);
     }
 
-    // Every LLM call is recorded in the ledger (CLAUDE.md rule 6). Fake mode makes no model call, so
-    // nothing is recorded — the E2E ledger stays exactly Stage A's two compute steps. Cents are left
-    // null: a laptop cannot know the Vertex rate, and a fabricated price is worse than an honest gap
-    // (mirrors Stage A — StageARunner.Meter).
-    private void MeterModelCall(string jobId, string step)
-    {
-        if (!_meterModelCalls)
-        {
-            return;
-        }
-
-        ledger.Record(new CostEntry(
-            JobId: jobId,
-            Kind: CostKind.Llm,
-            Step: step,
-            Quantity: 1,
-            Unit: "calls",
-            Cents: null));
-    }
-
+    // Every LLM call is recorded in the ledger (CLAUDE.md rule 6) — but the metering now lives where
+    // the region is known: StageBRunner records each Stage B call, VertexTextFuser records the Stage C
+    // call, both tagged with the EU region that served it after any 429 fallback. Fake/replay make no
+    // real call and record nothing, so the E2E ledger stays exactly Stage A's two compute steps.
     private int? SumPricedCents(string jobId)
     {
         if (ledger is not InMemoryCostLedger inMemory)
@@ -479,6 +529,9 @@ internal sealed class JobState
     public DateTimeOffset? FinishedAt { get; set; }
 
     public bool ShouldFail { get; set; }
+
+    /// <summary>Object name of the staged raw upload in the raw bucket, while it exists (else null).</summary>
+    public string? RawObjectName { get; set; }
 
     public JobOutputResponse? Output { get; set; }
 }

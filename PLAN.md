@@ -441,10 +441,25 @@ Both contracts already exist as drafts — the work is **ratification, not inven
 > Stage A's two compute steps). The internal YouTube gallery runner (no public endpoint) is wired
 > B→C→D→storage and driven by `PipelineWorker` config; the live smoke proves one CC talk end-to-end.
 >
-> **Deferred to hardening (not blocking):** the `429 RESOURCE_EXHAUSTED` fallback to
-> `europe-west3` under back-to-back load; staging private raw bytes into GCS so the private path can
-> run in `live` mode (today `live` private uploads pass the local path as the source URI); the full
-> 25-talk gallery run (a deliberate manual op — real spend, curated CC list).
+> **Deferred to hardening — ✅ code landed (offline-verified); live runs remain manual:**
+> - **429 region fallback (done).** The Vertex analyzer and fuser now share a region-fallback HTTP
+>   path (`VertexRegionInvoker`): try `europe-central2`, retry on `429 RESOURCE_EXHAUSTED`, then fall
+>   back to `VertexOptions.FallbackRegion` (`europe-west3`) — EU-only (rule 2), targeting the only
+>   model served in both regions (`gemini-2.5-flash`). The region that actually served the call is
+>   recorded in the ledger (`CostEntry.Region`); Stage B is metered by `StageBRunner`, Stage C by the
+>   fuser itself. Covered by offline integration tests (simulated 429 → asserts `europe-west3` +
+>   `gemini-2.5-flash` used and metered).
+> - **Private path staging (done).** `PrivatePipelineService` stages the uploaded raw bytes into
+>   `raw-videos-eu` via `IObjectStorage`, hands Stage B the resulting `gs://` URI, and erases the
+>   object after Stage D (ARCHITECTURE §3/§7). Gated by `PipelineModel:StageRawUploadsToObjectStorage`
+>   (null ⇒ stage iff mode ≠ fake). Covered by an offline integration test (spy storage asserts the
+>   raw object is written then erased). **Manual founder step remains:** one real `live` end-to-end
+>   run with a short clip (real Vertex spend — record it in the ledger).
+> - **Gallery metering + attribution (done).** The internal YouTube gallery runner now records its
+>   LLM calls in the ledger (rule 6) and threads per-video attribution (title/author/licence/source)
+>   into the output's "## Source & licence" section. **Manual founder step remains:** the deliberate
+>   25-talk `live` shakedown over the curated CC list (real spend), confirming every run emits a valid
+>   frozen-contract `output.md`/`.json` with ledger + attribution.
 
 **The product is the validation instrument. Build only the instrument** — Stage B against Vertex
 with structured output; record/replay fixtures + `tests/Live/`; Stage C fusion; Stage D persist +

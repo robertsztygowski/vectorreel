@@ -16,7 +16,7 @@ public sealed class YouTubeInternalGalleryRunnerTests
         var stageB = new StageBRunner(analyzer);
         var storage = new InMemoryStorage();
         var fuser = new FakeFuser();
-        var runner = new YouTubeInternalGalleryRunner(stageB, fuser, storage, NullLogger<YouTubeInternalGalleryRunner>.Instance);
+        var runner = new YouTubeInternalGalleryRunner(stageB, fuser, storage, new InMemoryCostLedger(), NullLogger<YouTubeInternalGalleryRunner>.Instance);
 
         var request = new YouTubeInternalGalleryRunRequest(
             JobId: "job-gallery-1",
@@ -60,6 +60,7 @@ public sealed class YouTubeInternalGalleryRunnerTests
             new StageBRunner(new RecordingAnalyzer()),
             new FakeFuser(),
             new InMemoryStorage(),
+            new InMemoryCostLedger(),
             NullLogger<YouTubeInternalGalleryRunner>.Instance);
 
         var request = new YouTubeInternalGalleryRunRequest(

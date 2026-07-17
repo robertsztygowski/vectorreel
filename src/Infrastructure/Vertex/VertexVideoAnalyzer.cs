@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Net.Http.Json;
 using System.Text.Json;
 using MdReel.Core.Domain;
 using MdReel.Core.Providers;
@@ -49,9 +48,12 @@ public sealed class VertexVideoAnalyzer(
         var request = BuildRequest(sourceUri, segment, callOptions, mediaResolution);
 
         GenerateContentResponse? response;
+        string region;
         try
         {
-            response = await PostAsync(request, cancellationToken);
+            var result = await PostAsync(request, cancellationToken);
+            response = result.Body;
+            region = result.Region;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -65,7 +67,7 @@ public sealed class VertexVideoAnalyzer(
             return new StageBModelResponse(StageBFinishReason.Error, null, null);
         }
 
-        return Interpret(response, mediaResolution, segment);
+        return Interpret(response, mediaResolution, segment, region);
     }
 
     private GenerateContentRequest BuildRequest(
@@ -105,7 +107,8 @@ public sealed class VertexVideoAnalyzer(
     private StageBModelResponse Interpret(
         GenerateContentResponse? response,
         string? mediaResolution,
-        Segment segment)
+        Segment segment,
+        string region)
     {
         var candidate = response?.Candidates is { Count: > 0 } candidates ? candidates[0] : null;
         var finish = candidate?.FinishReason;
@@ -114,14 +117,14 @@ public sealed class VertexVideoAnalyzer(
         // the segment rather than parsing truncated JSON as an "invalid" failure and retrying.
         if (string.Equals(finish, "MAX_TOKENS", StringComparison.OrdinalIgnoreCase))
         {
-            return new StageBModelResponse(StageBFinishReason.MaxTokens, null, null);
+            return new StageBModelResponse(StageBFinishReason.MaxTokens, null, null, region);
         }
 
         var text = ExtractText(candidate);
         if (string.IsNullOrWhiteSpace(text))
         {
             logger.LogWarning("Stage B segment {Index} returned no text (finish={Finish})", segment.Index, finish);
-            return new StageBModelResponse(StageBFinishReason.Error, null, null);
+            return new StageBModelResponse(StageBFinishReason.Error, null, null, region);
         }
 
         VertexStageBPayload? payload;
@@ -132,12 +135,12 @@ public sealed class VertexVideoAnalyzer(
         catch (JsonException ex)
         {
             logger.LogWarning(ex, "Stage B segment {Index} returned invalid JSON (finish={Finish})", segment.Index, finish);
-            return new StageBModelResponse(StageBFinishReason.InvalidJson, null, null);
+            return new StageBModelResponse(StageBFinishReason.InvalidJson, null, null, region);
         }
 
         if (payload?.Blocks is null)
         {
-            return new StageBModelResponse(StageBFinishReason.InvalidJson, null, null);
+            return new StageBModelResponse(StageBFinishReason.InvalidJson, null, null, region);
         }
 
         var output = new StageBModelOutput(
@@ -147,32 +150,20 @@ public sealed class VertexVideoAnalyzer(
             Summary: payload.SegmentSummary);
 
         var fetched = FetchedDuration(response?.UsageMetadata, mediaResolution);
-        return new StageBModelResponse(StageBFinishReason.Stop, output, fetched);
+        return new StageBModelResponse(StageBFinishReason.Stop, output, fetched, region);
     }
 
-    private async Task<GenerateContentResponse?> PostAsync(
+    private async Task<VertexRegionResponse> PostAsync(
         GenerateContentRequest request,
-        CancellationToken cancellationToken)
-    {
-        var token = await tokenProvider.GetTokenAsync(cancellationToken);
-        var url = BuildUrl(_options.Region);
-
-        using var message = new HttpRequestMessage(HttpMethod.Post, url)
-        {
-            Content = JsonContent.Create(request),
-        };
-        message.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-        using var httpResponse = await httpClient.SendAsync(message, cancellationToken);
-        if (!httpResponse.IsSuccessStatusCode)
-        {
-            var body = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-            throw new HttpRequestException(
-                $"Vertex generateContent returned {(int)httpResponse.StatusCode}: {Truncate(body, 800)}");
-        }
-
-        return await httpResponse.Content.ReadFromJsonAsync<GenerateContentResponse>(cancellationToken);
-    }
+        CancellationToken cancellationToken) =>
+        await VertexRegionInvoker.SendAsync(
+            httpClient,
+            _options,
+            tokenProvider,
+            BuildUrl,
+            request,
+            logger,
+            cancellationToken);
 
     private string BuildUrl(string region) =>
         $"https://{region}-aiplatform.googleapis.com/{_options.ApiVersion}/projects/{_options.Project}"
@@ -224,7 +215,4 @@ public sealed class VertexVideoAnalyzer(
         var seconds = Math.Max(0, (int)Math.Round(value.TotalSeconds, MidpointRounding.AwayFromZero));
         return string.Create(CultureInfo.InvariantCulture, $"{seconds}s");
     }
-
-    private static string Truncate(string value, int max) =>
-        value.Length <= max ? value : value[..max];
 }

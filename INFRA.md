@@ -47,11 +47,17 @@ from env/config, EU-pinned per CLAUDE.md rule 2:
   fake-gcs-server locally (buckets auto-created in emulator mode); unset in prod → real GCS.
 - **Vertex (`IVideoAnalyzer` / `ITextFuser`)** — `gemini-2.5-flash` @ `europe-central2`, fallback
   `europe-west3` (`VertexOptions__FallbackRegion`); Stage B→C back-to-back can trip
-  `429 RESOURCE_EXHAUSTED` on the primary region.
+  `429 RESOURCE_EXHAUSTED` on the primary region. **Implemented (hardening):** the analyzer/fuser
+  retry the primary region then fall back to `europe-west3` on 429 (`VertexOptions__MaxRetriesPerRegion`,
+  `VertexOptions__RetryDelay`), EU-only; the region that served the call is recorded in the ledger
+  (`CostEntry.Region`).
 - **`PipelineModel__Mode`** selects the seam implementations: `fake` (deterministic offline
   stand-in — the default, used by the E2E stack and host-side dev, zero spend), `live` (real
   Vertex — prod, the gallery worker, `tests/Live/`), `replay` (committed `tests/fixtures/llm/`
-  fixtures), `record` (real Vertex + writes fixtures). LLM metering is gated on `Mode != fake`.
+  fixtures), `record` (real Vertex + writes fixtures). LLM metering fires whenever a real Vertex
+  call is made (the region-aware analyzer/fuser stamp `CostEntry.Region`; fake/replay leave it null,
+  so they meter nothing). `PipelineModel__StageRawUploadsToObjectStorage` gates whether the private
+  path stages raw bytes into `raw-videos-eu` (null ⇒ stage iff `Mode != fake`).
 
 ## APIs NOT yet enabled (needed later — enable when we reach them)
 - `cloudtasks.googleapis.com` — stage queues (Stage A→B→C→D)

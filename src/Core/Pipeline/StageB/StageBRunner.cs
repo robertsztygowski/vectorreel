@@ -5,14 +5,15 @@ using MdReel.Core.Providers;
 namespace MdReel.Core.Pipeline.StageB;
 
 /// <summary>Stage B orchestration with mandatory guards and deterministic overflow splitting.</summary>
-public sealed class StageBRunner(IVideoAnalyzer analyzer)
+public sealed class StageBRunner(IVideoAnalyzer analyzer, ICostLedger? ledger = null)
 {
     public async Task<IReadOnlyList<SegmentAnalysis>> AnalyzeAsync(
         string sourceUri,
         Segment segment,
         StageAOptions stageAOptions,
         StageBOptions options,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string jobId = "")
     {
         var planned = PreSize(segment, stageAOptions, options);
         List<SegmentAnalysis> analyses = [];
@@ -24,7 +25,8 @@ public sealed class StageBRunner(IVideoAnalyzer analyzer)
                 stageAOptions,
                 options,
                 attempt: 0,
-                cancellationToken);
+                cancellationToken,
+                jobId);
 
             analyses.AddRange(analyzed);
         }
@@ -38,16 +40,17 @@ public sealed class StageBRunner(IVideoAnalyzer analyzer)
         StageAOptions stageAOptions,
         StageBOptions options,
         int attempt,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string jobId = "")
     {
         var callOptions = attempt == 0 ? options.CallOptions : options.RetryCallOptions;
-        var response = await CallModelAsync(sourceUri, segment, callOptions, cancellationToken);
+        var response = await CallModelAsync(sourceUri, segment, callOptions, cancellationToken, jobId);
 
         if (response.FinishReason == StageBFinishReason.MaxTokens)
         {
             var split = SegmentSplitPolicy.Halve(segment, stageAOptions);
-            var first = await AnalyzeSegmentAsync(sourceUri, split.First, stageAOptions, options, attempt: 0, cancellationToken);
-            var second = await AnalyzeSegmentAsync(sourceUri, split.Second, stageAOptions, options, attempt: 0, cancellationToken);
+            var first = await AnalyzeSegmentAsync(sourceUri, split.First, stageAOptions, options, attempt: 0, cancellationToken, jobId);
+            var second = await AnalyzeSegmentAsync(sourceUri, split.Second, stageAOptions, options, attempt: 0, cancellationToken, jobId);
             return [.. first, .. second];
         }
 
@@ -59,7 +62,7 @@ public sealed class StageBRunner(IVideoAnalyzer analyzer)
 
         if (attempt < options.MaxRetries)
         {
-            return await AnalyzeSegmentAsync(sourceUri, segment, stageAOptions, options, attempt + 1, cancellationToken);
+            return await AnalyzeSegmentAsync(sourceUri, segment, stageAOptions, options, attempt + 1, cancellationToken, jobId);
         }
 
         throw new InvalidOperationException(
@@ -70,7 +73,8 @@ public sealed class StageBRunner(IVideoAnalyzer analyzer)
         string sourceUri,
         Segment segment,
         StageBCallOptions callOptions,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string jobId = "")
     {
         if (callOptions.MaxOutputTokens <= 0 || callOptions.ThinkingBudget < 0 || callOptions.Timeout <= TimeSpan.Zero)
         {
@@ -79,7 +83,24 @@ public sealed class StageBRunner(IVideoAnalyzer analyzer)
 
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeout.CancelAfter(callOptions.Timeout);
-        return await analyzer.AnalyzeAsync(sourceUri, segment, callOptions, timeout.Token);
+        var response = await analyzer.AnalyzeAsync(sourceUri, segment, callOptions, timeout.Token);
+
+        // Every real model call is recorded — including the failed/overflow ones, which still bill
+        // (CLAUDE.md rule 6). A non-null Region means a real Vertex call happened (fake/replay leave
+        // it null), and it carries which EU region served it after any 429 fallback (INFRA.md).
+        if (ledger is not null && response.Region is not null)
+        {
+            ledger.Record(new CostEntry(
+                JobId: jobId,
+                Kind: CostKind.Llm,
+                Step: "stage_b.analyze",
+                Quantity: 1,
+                Unit: "calls",
+                Cents: null,
+                Region: response.Region));
+        }
+
+        return response;
     }
 
     private static List<Segment> PreSize(

@@ -1,3 +1,4 @@
+using MdReel.Core.Domain;
 using MdReel.Core.Pipeline.StageB;
 using MdReel.Infrastructure;
 using MdReel.Worker;
@@ -5,6 +6,7 @@ using MdReel.Worker;
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.Configure<YouTubeGalleryRunnerOptions>(builder.Configuration.GetSection("YouTubeGalleryRunner"));
+builder.Services.AddSingleton<ICostLedger, InMemoryCostLedger>();
 builder.Services.AddSingleton<StageBRunner>();
 builder.Services.AddSingleton<YouTubeInternalGalleryRunner>();
 builder.Services.AddPipelineInfrastructure(

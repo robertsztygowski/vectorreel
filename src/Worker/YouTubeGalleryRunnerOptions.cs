@@ -33,4 +33,23 @@ public sealed record YouTubeGalleryVideoOptions
     public string SourceUri { get; init; } = string.Empty;
 
     public double DurationSeconds { get; init; }
+
+    // Attribution for the "## Source & licence" section (CLAUDE.md rule 8). Curated + CC-licensed +
+    // attributed is non-negotiable for gallery output.
+    public string Title { get; init; } = string.Empty;
+
+    public string Author { get; init; } = string.Empty;
+
+    public string Licence { get; init; } = string.Empty;
+
+    public string SourceUrl { get; init; } = string.Empty;
+
+    public MdReel.Core.Pipeline.StageB.GalleryAttribution? ToAttribution() =>
+        string.IsNullOrWhiteSpace(Title) || string.IsNullOrWhiteSpace(Licence)
+            ? null
+            : new MdReel.Core.Pipeline.StageB.GalleryAttribution(
+                Title,
+                Author,
+                Licence,
+                string.IsNullOrWhiteSpace(SourceUrl) ? SourceUri : SourceUrl);
 }

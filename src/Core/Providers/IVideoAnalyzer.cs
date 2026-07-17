@@ -62,10 +62,19 @@ public sealed record StageBModelOutput(
     string? Summary);
 
 /// <summary>Model response plus execution metadata needed by Stage B guards.</summary>
+/// <param name="FinishReason">How the model ended the call.</param>
+/// <param name="Output">The parsed structured output, or <c>null</c> on a non-Stop finish.</param>
+/// <param name="FetchedDuration">Fetched video duration recovered from the bill, when available.</param>
+/// <param name="Region">
+/// Vertex region the call actually ran in (after any <c>429</c> fallback), or <c>null</c> when no
+/// real model call was made (fake/replay) or the call never reached the model (transport/timeout).
+/// The Stage B runner meters an LLM ledger entry iff this is non-null.
+/// </param>
 public sealed record StageBModelResponse(
     StageBFinishReason FinishReason,
     StageBModelOutput? Output,
-    TimeSpan? FetchedDuration);
+    TimeSpan? FetchedDuration,
+    string? Region = null);
 
 /// <summary>Stage B's validated output for one segment.</summary>
 public sealed record SegmentAnalysis(

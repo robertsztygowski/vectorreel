@@ -45,7 +45,8 @@ public sealed class PipelineWorker(
                 OutputBucket: cfg.OutputBucket,
                 OutputPrefix: cfg.OutputPrefix,
                 SegmentLength: cfg.SegmentLength,
-                SegmentOverlap: cfg.SegmentOverlap);
+                SegmentOverlap: cfg.SegmentOverlap,
+                Attribution: video.ToAttribution());
 
             await runner.RunAsync(request, stageBOptions, stoppingToken);
         }

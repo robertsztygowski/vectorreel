@@ -20,6 +20,19 @@ public sealed class VertexOptions
     /// <summary>API version segment of the generateContent URL.</summary>
     public string ApiVersion { get; set; } = "v1";
 
+    /// <summary>
+    /// How many times to retry the <b>same</b> region on <c>429 RESOURCE_EXHAUSTED</c> before
+    /// falling back to <see cref="FallbackRegion"/>. Stage B→C back-to-back trips 429 on the primary
+    /// region under load (INFRA.md); one retry, then fall back, keeps the pipeline moving. EU-only.
+    /// </summary>
+    public int MaxRetriesPerRegion { get; set; } = 1;
+
+    /// <summary>
+    /// Back-off before retrying the same region on 429 (the server's <c>Retry-After</c> header wins
+    /// when present). Tests set this to zero.
+    /// </summary>
+    public TimeSpan RetryDelay { get; set; } = TimeSpan.FromSeconds(2);
+
     /// <summary>Sampling temperature. Extraction wants determinism, not creativity.</summary>
     public double Temperature { get; set; } = 0.2;
 

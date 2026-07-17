@@ -1,9 +1,9 @@
 using System.Globalization;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using MdReel.Core.Domain;
 using MdReel.Core.Output;
 using MdReel.Core.Providers;
 using Microsoft.Extensions.Logging;
@@ -21,6 +21,7 @@ public sealed partial class VertexTextFuser(
     HttpClient httpClient,
     IAccessTokenProvider tokenProvider,
     IOptions<VertexOptions> options,
+    ICostLedger ledger,
     ILogger<VertexTextFuser> logger) : ITextFuser
 {
     private static readonly JsonSerializerOptions PayloadJson = new() { PropertyNameCaseInsensitive = true };
@@ -40,12 +41,24 @@ public sealed partial class VertexTextFuser(
             throw new InvalidOperationException("Stage C cannot fuse zero segments.");
         }
 
-        var payload = await CallModelAsync(segments, cancellationToken);
+        var (payload, region) = await CallModelAsync(segments, cancellationToken);
+
+        // The fusion call bills too (CLAUDE.md rule 6); record which EU region served it after any
+        // 429 fallback (INFRA.md). Stage B is metered by the runner; this is the Stage C counterpart.
+        ledger.Record(new CostEntry(
+            JobId: request.JobId,
+            Kind: CostKind.Llm,
+            Step: "stage_c.fuse",
+            Quantity: 1,
+            Unit: "calls",
+            Cents: null,
+            Region: region));
+
         var language = ResolveLanguage(payload.Language, segments);
         return Assemble(payload, request, language);
     }
 
-    private async Task<FusionPayload> CallModelAsync(
+    private async Task<(FusionPayload Payload, string Region)> CallModelAsync(
         IReadOnlyList<SegmentAnalysis> segments,
         CancellationToken cancellationToken)
     {
@@ -61,26 +74,13 @@ public sealed partial class VertexTextFuser(
                 ResponseSchema = FusionResponseSchema,
             });
 
-        var token = await tokenProvider.GetTokenAsync(cancellationToken);
-        var url = $"https://{_options.Region}-aiplatform.googleapis.com/{_options.ApiVersion}/projects/{_options.Project}"
-                  + $"/locations/{_options.Region}/publishers/google/models/{_options.Model}:generateContent";
-
-        using var message = new HttpRequestMessage(HttpMethod.Post, url) { Content = JsonContent.Create(body) };
-        message.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeout.CancelAfter(_options.FusionTimeout);
 
-        using var response = await httpClient.SendAsync(message, timeout.Token);
-        if (!response.IsSuccessStatusCode)
-        {
-            var errorBody = await response.Content.ReadAsStringAsync(timeout.Token);
-            throw new HttpRequestException(
-                $"Stage C fusion returned {(int)response.StatusCode}: {errorBody[..Math.Min(errorBody.Length, 800)]}");
-        }
+        var result = await VertexRegionInvoker.SendAsync(
+            httpClient, _options, tokenProvider, BuildUrl, body, logger, timeout.Token);
 
-        var parsed = await response.Content.ReadFromJsonAsync<GenerateContentResponse>(timeout.Token);
-        var candidate = parsed?.Candidates is { Count: > 0 } c ? c[0] : null;
+        var candidate = result.Body?.Candidates is { Count: > 0 } c ? c[0] : null;
         var text = candidate?.Content?.Parts is { Count: > 0 } parts
             ? string.Concat(parts.Select(p => p.Text ?? string.Empty))
             : null;
@@ -99,8 +99,12 @@ public sealed partial class VertexTextFuser(
             throw new InvalidOperationException("Stage C fusion returned no sections.");
         }
 
-        return payload;
+        return (payload, result.Region);
     }
+
+    private string BuildUrl(string region) =>
+        $"https://{region}-aiplatform.googleapis.com/{_options.ApiVersion}/projects/{_options.Project}"
+        + $"/locations/{region}/publishers/google/models/{_options.Model}:generateContent";
 
     private static OutputDocument Assemble(FusionPayload payload, FusionRequest request, string language)
     {

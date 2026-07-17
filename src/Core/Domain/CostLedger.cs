@@ -29,13 +29,19 @@ public enum CostKind
 /// locally, and a fabricated rate is worse than an honest gap — the whole point of the ledger is
 /// that the numbers in it are real. Phase 2 prices these entries; Phase 1 only counts them truthfully.
 /// </param>
+/// <param name="Region">
+/// For LLM entries, the Vertex region the call actually ran in. Non-null only when a real model
+/// call was made, so it doubles as the record that the <c>429 RESOURCE_EXHAUSTED</c> fallback to
+/// <c>europe-west3</c> fired (INFRA.md). EU regions only (CLAUDE.md rule 2); <c>null</c> for compute.
+/// </param>
 public sealed record CostEntry(
     string JobId,
     CostKind Kind,
     string Step,
     double Quantity,
     string Unit,
-    int? Cents = null);
+    int? Cents = null,
+    string? Region = null);
 
 /// <summary>
 /// Where metered steps go. Persistence is Phase 2 (ARCHITECTURE.md §6, <c>job_segments</c> /

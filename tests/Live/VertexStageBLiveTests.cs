@@ -57,7 +57,7 @@ public sealed class VertexStageBLiveTests
 
         using var fuserHttp = new HttpClient();
         var fuser = new VertexTextFuser(
-            fuserHttp, tokenProvider, options, NullLogger<VertexTextFuser>.Instance);
+            fuserHttp, tokenProvider, options, new MdReel.Core.Domain.InMemoryCostLedger(), NullLogger<VertexTextFuser>.Instance);
         var request = new FusionRequest(
             Source: "big_buck_bunny.mp4",
             Duration: TimeSpan.FromSeconds(WindowSeconds),

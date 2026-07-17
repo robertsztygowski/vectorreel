@@ -135,6 +135,12 @@ For each segment (parallel, bounded concurrency per tenant):
 }
 ```
 - Retries with exponential backoff; a failed segment fails only itself (job resumes, never restarts from zero — idempotency key = jobId+segmentIndex).
+- **429 EU region fallback (built in hardening).** Stage B→C back-to-back trips
+  `429 RESOURCE_EXHAUSTED` on `europe-central2` under load; the analyzer and fuser share a
+  region-fallback HTTP path that retries the primary region then falls back to
+  `VertexOptions.FallbackRegion` (`europe-west3` — the only EU region that also serves the model,
+  §2). EU-only (rule 2). The region that actually served the call is recorded in the ledger
+  (`CostEntry.Region`), so the fallback is auditable and metered (rule 6).
 
 **🚨 Runaway-generation guards (mandatory — not optional hardening).** The Phase-0 benchmark
 showed **~8% of calls degenerate**: `seg4_configA` produced 61k output tokens in 474 s;
@@ -356,6 +362,12 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
 
 - **Region pinning:** all compute, storage, and Vertex endpoints in EU; enforced by org policy + Terraform.
 - **Retention by design:** source video deleted post-processing by default; configurable; documented data-flow diagram on /gdpr page.
+  - **Private-path staging (built in hardening):** because Vertex can only fetch a `gs://` URI, the
+    private path stages the uploaded raw bytes into `raw-videos-eu` under a per-job prefix
+    (`private/{jobId}/…`, tenant-isolated by job ownership), hands Stage B that `gs://` URI, and
+    **erases the object after Stage D** (and on failure). Gated by
+    `PipelineModel:StageRawUploadsToObjectStorage` (null ⇒ stage iff mode ≠ fake). The bucket
+    lifecycle rule remains the safety net.
 - **Erasure:** `DELETE /jobs/{id}` cascades storage + DB; audit-logged.
 - **No training on customer data:** Vertex AI standard terms + contractual clause in our DPA; stated publicly.
 - **Subprocessor list (short, published):** Google Cloud (EU regions), Stripe, email provider.
