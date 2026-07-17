@@ -59,6 +59,13 @@ public sealed class PostgresBackedApiTests : IClassFixture<PostgresBackedApiTest
         Assert.NotNull(tenant);
         Assert.Equal("pro", tenant.Plan);
         Assert.Equal("google", tenant.FirstUtmSource);
+
+        var subscriptionStore = factory.Services.GetRequiredService<ISubscriptionStore>();
+        Assert.IsType<PostgresSubscriptionStore>(subscriptionStore);
+        var subscription = await subscriptionStore.GetByTenantAsync(signup.TenantId, CancellationToken.None);
+        Assert.NotNull(subscription);
+        Assert.Equal("pro", subscription.Plan);
+        Assert.Equal("active", subscription.Status);
     }
 
     [Fact]

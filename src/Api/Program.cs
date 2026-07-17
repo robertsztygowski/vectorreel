@@ -86,14 +86,20 @@ public partial class Program
         services.AddSingleton<IEventStore, InMemoryEventStore>();
         services.AddSingleton<ITenantStore, InMemoryTenantStore>();
         services.AddSingleton<IPaymentStore, InMemoryPaymentStore>();
+        services.AddSingleton<ISubscriptionStore, InMemorySubscriptionStore>();
         services.AddSingleton<IAdSpendLedger, InMemoryAdSpendLedger>();
         services.AddSingleton<ICohortAnalytics, InMemoryCohortAnalytics>();
         services.AddSingleton<IPaymentGateway>(sp =>
         {
             var options = sp.GetRequiredService<PaymentOptions>();
-            return string.IsNullOrWhiteSpace(options.StripeSecretKey)
-                ? new FakePaymentGateway()
-                : new StripePaymentGateway(options);
+            if (!string.IsNullOrWhiteSpace(options.StripeSecretKey))
+            {
+                return new StripePaymentGateway(options);
+            }
+
+            return string.Equals(options.Mode, "disabled", StringComparison.OrdinalIgnoreCase)
+                ? new DisabledPaymentGateway()
+                : new FakePaymentGateway();
         });
         services.AddSingleton<ICostLedger, InMemoryCostLedger>();
 
@@ -107,6 +113,7 @@ public partial class Program
             services.AddSingleton<IEventStore, PostgresEventStore>();
             services.AddSingleton<ITenantStore, PostgresTenantStore>();
             services.AddSingleton<IPaymentStore, PostgresPaymentStore>();
+            services.AddSingleton<ISubscriptionStore, PostgresSubscriptionStore>();
             services.AddSingleton<IAdSpendLedger, PostgresAdSpendLedger>();
             services.AddSingleton<ICohortAnalytics, PostgresCohortAnalytics>();
         }
@@ -202,6 +209,7 @@ public partial class Program
         StarterPriceId = configuration["STRIPE_PRICE_STARTER"],
         AppBaseUrl = configuration["APP_BASE_URL"] ?? "http://localhost",
         ShowStarterPlan = string.Equals(configuration["SHOW_STARTER_PLAN"], "true", StringComparison.OrdinalIgnoreCase),
+        Mode = configuration["PAYMENTS_MODE"] ?? "fake",
     };
 
     private static void ConfigurePipeline(WebApplication app)
@@ -357,6 +365,7 @@ public partial class Program
         MapFrozenJobSubset(api);
         api.MapEvents();
         api.MapCheckout();
+        api.MapBillingPortal();
         api.MapStripeWebhooks();
 
         api.MapGet("/jobs/{id}", (string id, PrivatePipelineService pipeline) =>

@@ -103,10 +103,15 @@ public static class PostgresSchema
                     id text primary key,
                     tenant_id text not null references tenants(id),
                     stripe_subscription_id text null,
+                    stripe_customer_id text null,
                     plan text not null,
                     status text not null,
-                    created_at timestamptz not null default now()
+                    created_at timestamptz not null default now(),
+                    updated_at timestamptz not null default now()
                 );
+
+                alter table subscriptions add column if not exists stripe_customer_id text null;
+                alter table subscriptions add column if not exists updated_at timestamptz not null default now();
                 """);
             await command.ExecuteNonQueryAsync(cancellationToken);
             _ensured = true;

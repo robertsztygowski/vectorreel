@@ -58,6 +58,31 @@ require_api_infra() {
     --format='value(connectionName)'
 }
 
+# Stripe secrets are created EMPTY (a whitespace placeholder) so the api can wire them at deploy
+# time without holding real keys. Whitespace reads as "unset" (IsNullOrWhiteSpace) so — combined
+# with PAYMENTS_MODE=disabled — checkout/portal cleanly return 503 until the founder adds a real
+# test-mode key version (see PLAN.md NEEDS-FOUNDER) and redeploys.
+ensure_stripe_secrets() {
+  local project_number compute_sa secret
+  project_number="$(gcloud projects describe "$PROJECT" --format='value(projectNumber)')"
+  compute_sa="$project_number-compute@developer.gserviceaccount.com"
+
+  for secret in mdreel-stripe-secret-key mdreel-stripe-webhook-secret; do
+    if ! gcloud secrets describe "$secret" --project "$PROJECT" >/dev/null 2>&1; then
+      echo "Creating empty secret $secret in $DATA_REGION..."
+      gcloud secrets create "$secret" \
+        --replication-policy=user-managed \
+        --locations="$DATA_REGION" \
+        --project "$PROJECT" --quiet
+      printf '\n' | gcloud secrets versions add "$secret" --data-file=- --project "$PROJECT" --quiet >/dev/null
+    fi
+    gcloud secrets add-iam-policy-binding "$secret" \
+      --member="serviceAccount:$compute_sa" \
+      --role="roles/secretmanager.secretAccessor" \
+      --project "$PROJECT" --quiet >/dev/null
+  done
+}
+
 deploy_web() {
   echo "Deploying vectorreel-web to $RUN_REGION..."
   # Same-origin auth proxy target (web/middleware.ts): the api service URL, so the Identity cookie
@@ -90,6 +115,7 @@ deploy_api() {
   local conn_name
 
   conn_name="$(require_api_infra)"
+  ensure_stripe_secrets
   echo "Building vectorreel-api:$TAG..."
   docker build -f src/Api/Dockerfile -t "$AR/vectorreel-api:$TAG" .
   docker push "$AR/vectorreel-api:$TAG"
@@ -102,9 +128,9 @@ deploy_api() {
     --allow-unauthenticated \
     --min-instances=0 \
     --max-instances=2 \
-    --set-env-vars 'PipelineModel__Mode=fake' \
+    --set-env-vars 'PipelineModel__Mode=fake,PAYMENTS_MODE=disabled' \
     --add-cloudsql-instances "$conn_name" \
-    --set-secrets "POSTGRES_CONNECTION=$SECRET_NAME:latest" \
+    --set-secrets "POSTGRES_CONNECTION=$SECRET_NAME:latest,STRIPE_SECRET_KEY=mdreel-stripe-secret-key:latest,STRIPE_WEBHOOK_SECRET=mdreel-stripe-webhook-secret:latest" \
     --quiet
   describe_deploy "vectorreel-api"
 }

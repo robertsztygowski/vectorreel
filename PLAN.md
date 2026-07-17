@@ -95,7 +95,17 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   secrets via Secret Manager; tracking script wired into the web layout (`NEXT_PUBLIC_UMAMI_*`);
 >   default admin password rotated into Secret Manager. Verified: a page_view reached the dashboard.
 >   No new fixed base cost (METRICS.md N2). `stats.mdreel.com` mapping created (CNAME in NEEDS-FOUNDER).
-> - **Next:** M4 Stripe test-mode, M5 Cloud Tasks seam, M6 website wire-up. See the NEEDS-FOUNDER
+> - **M4 Stripe test-mode ✅ built** — checkout session endpoint, `/webhooks/stripe` (signature
+>   verified), **subscription lifecycle** (`checkout.session.completed` + `customer.subscription.
+>   updated/deleted` → `subscriptions`/`payments` tables + ledger `payment_succeeded` event + tenant
+>   plan sync), and a **customer portal** endpoint (`/billing/portal`), all on the official
+>   `Stripe.net` SDK. Keyless by default: `FakePaymentGateway` (deterministic) drives local/CI/E2E;
+>   on the deployed api `PAYMENTS_MODE=disabled` + empty Stripe secrets make checkout/portal degrade
+>   cleanly to **503** until a real test-mode key is added. Web: same-origin `requestBillingPortal`
+>   + a "manage billing" button on the settings billing screen that degrades to a note. Integration
+>   + web unit + E2E all green. Secrets `mdreel-stripe-secret-key` / `mdreel-stripe-webhook-secret`
+>   created empty and wired at deploy — real values in NEEDS-FOUNDER.
+> - **Next:** M5 Cloud Tasks seam, M6 website wire-up. See the NEEDS-FOUNDER
 >   checklist below.
 >
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
@@ -103,17 +113,28 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   `gcloud secrets versions add mdreel-brevo-api-key --data-file=- --project tensile-runway-442915-j6`
 >   (create the secret first if absent, region europe-central2), then set `BREVO_API_KEY` on the api
 >   service. `RequireConfirmedEmail=false`, so auth works without it.
-> - *(accumulates as later milestones land: api.mdreel.com CNAME (M2), stats.mdreel.com DNS (M3),
->   Stripe test keys/price IDs (M4), Cloud Tasks binding flip (M5).)***Phase 2R scope — *encode the competitor findings*
+> - *(accumulates as later milestones land: Cloud Tasks binding flip (M5).)*
 > - **api.mdreel.com CNAME (M2 ✅ mapping created)** — Cloudflare zone `mdreel.com`, **DNS-only
 >   (grey cloud)**: add `api` `CNAME` → `ghs.googlehosted.com`. The mapping is live and waiting on
 >   this record for its cert; until then the middleware proxy (`mdreel.com/api/v1/*`) already
->   serves the api same-origin, so nothing is blocked. Details in INFRA.md.**Phase 2R scope — *encode the competitor findings*
+>   serves the api same-origin, so nothing is blocked. Details in INFRA.md.
 > - **stats.mdreel.com CNAME (M3 ✅ mapping created)** — Cloudflare zone `mdreel.com`, **DNS-only
 >   (grey cloud)**: add `stats` `CNAME` → `ghs.googlehosted.com`. Umami serves from its run.app URL
 >   until then; the switch is one build-arg change (`NEXT_PUBLIC_UMAMI_SCRIPT_URL`). The Umami admin
 >   password is in Secret Manager `mdreel-umami-admin-password` (not an action — just where to find
->   it). Details in INFRA.md.**Phase 2R scope — *encode the competitor findings*
+>   it). Details in INFRA.md.
+> - **Stripe test-mode keys (M4 ✅ code complete, keyless)** — the api reads two empty Secret
+>   Manager secrets and stays in `PAYMENTS_MODE=disabled` (checkout/portal → 503) until real
+>   **test-mode** values land. From the Stripe test dashboard, add the secret key and the webhook
+>   signing secret, then redeploy the api:
+>   `printf '%s' 'sk_test_…' | gcloud secrets versions add mdreel-stripe-secret-key --data-file=- --project tensile-runway-442915-j6`
+>   `printf '%s' 'whsec_…' | gcloud secrets versions add mdreel-stripe-webhook-secret --data-file=- --project tensile-runway-442915-j6`
+>   then set the price IDs and drop the disabled flag on redeploy:
+>   `gcloud run services update vectorreel-api --region europe-west1 --project tensile-runway-442915-j6 --remove-env-vars PAYMENTS_MODE --set-env-vars 'STRIPE_PRICE_PRO=price_…,STRIPE_PRICE_BUSINESS=price_…'`.
+>   A **live** `sk_live_…` key anywhere is a hard stop — test mode only. Point the Stripe webhook at
+>   `https://<api-url>/api/v1/webhooks/stripe`.
+
+**Phase 2R scope — *encode the competitor findings*
 (experiments/002-competitor-analysis).** The positioning was reset 2026-07-15 by that analysis
 (BUSINESS_MODEL §2/§4/§6/§8): anchor on **asset video, never meetings** (the bundled recap is the
 #1 competitor); sell the **portable Markdown artifact, not the OCR** (OCR is table-stakes); lead the

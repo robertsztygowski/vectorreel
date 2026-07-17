@@ -36,10 +36,56 @@ public static class PaymentEndpoints
                 return Results.Problem(title: "Tenant not found", detail: "Unknown tenant_id.", statusCode: StatusCodes.Status404NotFound, type: "about:blank");
             }
 
-            var checkout = await gateway.CreateCheckoutSessionAsync(request.Plan, request.TenantId, cancellationToken);
+            CheckoutSessionResult checkout;
+            try
+            {
+                checkout = await gateway.CreateCheckoutSessionAsync(request.Plan, request.TenantId, cancellationToken);
+            }
+            catch (PaymentsUnavailableException)
+            {
+                return Results.Problem(title: "Payments unavailable", detail: "Billing is not configured yet.", statusCode: StatusCodes.Status503ServiceUnavailable, type: "about:blank");
+            }
+
             var payload = JsonSerializer.SerializeToElement(new { plan = request.Plan, sessionId = checkout.SessionId });
             await events.RecordAsync(new EventDraft("checkout_clicked", null, request.TenantId, null, DateTimeOffset.UtcNow, null, null, payload.GetRawText()), cancellationToken);
             return Results.Json(new { url = checkout.Url, sessionId = checkout.SessionId }, statusCode: StatusCodes.Status201Created);
+        });
+    }
+
+    public static void MapBillingPortal(this IEndpointRouteBuilder routes)
+    {
+        routes.MapPost("/billing/portal", async (
+            CheckoutRequest request,
+            IPaymentGateway gateway,
+            ISubscriptionStore subscriptions,
+            ITenantStore tenants,
+            CancellationToken cancellationToken) =>
+        {
+            if (string.IsNullOrWhiteSpace(request.TenantId))
+            {
+                return Results.Problem(title: "Missing tenant", detail: "tenant_id is required.", statusCode: StatusCodes.Status400BadRequest, type: "about:blank");
+            }
+
+            var tenant = await tenants.GetAsync(request.TenantId, cancellationToken);
+            if (tenant is null)
+            {
+                return Results.Problem(title: "Tenant not found", detail: "Unknown tenant_id.", statusCode: StatusCodes.Status404NotFound, type: "about:blank");
+            }
+
+            var subscription = await subscriptions.GetByTenantAsync(request.TenantId, cancellationToken);
+            try
+            {
+                var url = await gateway.CreatePortalSessionAsync(request.TenantId, subscription?.StripeCustomerId, cancellationToken);
+                return Results.Json(new { url }, statusCode: StatusCodes.Status201Created);
+            }
+            catch (PaymentsUnavailableException)
+            {
+                return Results.Problem(title: "Payments unavailable", detail: "Billing is not configured yet.", statusCode: StatusCodes.Status503ServiceUnavailable, type: "about:blank");
+            }
+            catch (PaymentCustomerNotFoundException ex)
+            {
+                return Results.Problem(title: "No billing account", detail: ex.Message, statusCode: StatusCodes.Status409Conflict, type: "about:blank");
+            }
         });
     }
 
@@ -49,6 +95,7 @@ public static class PaymentEndpoints
             HttpRequest request,
             IPaymentGateway gateway,
             IPaymentStore payments,
+            ISubscriptionStore subscriptions,
             ITenantStore tenants,
             IEventStore events,
             CancellationToken cancellationToken) =>
@@ -64,9 +111,43 @@ public static class PaymentEndpoints
             {
                 return Results.Problem(title: "Invalid Stripe signature", detail: ex.Message, statusCode: StatusCodes.Status400BadRequest, type: "about:blank");
             }
+            catch (PaymentsUnavailableException)
+            {
+                return Results.Problem(title: "Payments unavailable", detail: "Billing is not configured yet.", statusCode: StatusCodes.Status503ServiceUnavailable, type: "about:blank");
+            }
             catch (Stripe.StripeException ex)
             {
                 return Results.Problem(title: "Invalid Stripe signature", detail: ex.Message, statusCode: StatusCodes.Status400BadRequest, type: "about:blank");
+            }
+
+            // Subscription lifecycle: keep the subscriptions row (and tenant plan) in sync.
+            if (webhook.Type is "customer.subscription.updated" or "customer.subscription.deleted")
+            {
+                if (string.IsNullOrWhiteSpace(webhook.TenantId))
+                {
+                    return Results.Ok(new { received = true });
+                }
+
+                var lifecycleTenant = await tenants.GetAsync(webhook.TenantId, cancellationToken);
+                if (lifecycleTenant is null)
+                {
+                    return Results.Ok(new { received = true });
+                }
+
+                var status = webhook.Type == "customer.subscription.deleted" ? "canceled" : webhook.Status ?? "active";
+                await subscriptions.UpsertAsync(new SubscriptionRecord(
+                    webhook.SubscriptionId ?? $"sub_{lifecycleTenant.Id}",
+                    lifecycleTenant.Id,
+                    webhook.SubscriptionId,
+                    webhook.CustomerId,
+                    webhook.Plan,
+                    status), cancellationToken);
+                if (status == "canceled")
+                {
+                    await tenants.SetPlanAsync(lifecycleTenant.Id, "free", cancellationToken);
+                }
+
+                return Results.Ok(new { received = true });
             }
 
             if (webhook.Type != "checkout.session.completed" && webhook.Type != "payment_intent.succeeded")
@@ -93,6 +174,14 @@ public static class PaymentEndpoints
                 tenant.FirstUtmTerm,
                 tenant.FirstReferrer,
                 tenant.AbArm), cancellationToken);
+
+            await subscriptions.UpsertAsync(new SubscriptionRecord(
+                webhook.SubscriptionId ?? $"sub_{tenant.Id}",
+                tenant.Id,
+                webhook.SubscriptionId,
+                webhook.CustomerId,
+                webhook.Plan,
+                webhook.Status ?? "active"), cancellationToken);
 
             var eventPayload = JsonSerializer.SerializeToElement(new
             {

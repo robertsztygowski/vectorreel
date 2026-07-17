@@ -3,6 +3,8 @@
 import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { requestBillingPortal } from '@/lib/billing';
+import { getTenantId } from '@/lib/session';
 
 type SettingsScreen = 'keys' | 'webhooks' | 'usage' | 'account';
 
@@ -26,6 +28,23 @@ function SettingsInner() {
   const screen = (searchParams.get('screen') as SettingsScreen) ?? 'keys';
   const [keyRevealed, setKeyRevealed] = useState(false);
   const [confirmErase, setConfirmErase] = useState(false);
+  const [billingNote, setBillingNote] = useState<string | null>(null);
+  const [billingBusy, setBillingBusy] = useState(false);
+
+  async function openBillingPortal() {
+    setBillingNote(null);
+    setBillingBusy(true);
+    try {
+      const portal = await requestBillingPortal(getTenantId() ?? '');
+      if (portal?.url) {
+        window.location.assign(portal.url);
+        return;
+      }
+      setBillingNote('The billing portal is not available yet — contact support to manage your plan.');
+    } finally {
+      setBillingBusy(false);
+    }
+  }
 
   return (
     <div className="app-page">
@@ -186,9 +205,19 @@ function SettingsInner() {
                 </span>
               </div>
               <p className="cap-note">Hard cap: processing pauses at the limit. No overage will be billed.</p>
-              <Link className="btn btn-ghost btn-sm" href="/pricing">
-                change plan
-              </Link>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                <Link className="btn btn-ghost btn-sm" href="/pricing">
+                  change plan
+                </Link>
+                <button className="btn btn-ghost btn-sm" type="button" disabled={billingBusy} onClick={() => void openBillingPortal()}>
+                  manage billing
+                </button>
+              </div>
+              {billingNote && (
+                <p className="micro" style={{ marginTop: 12 }}>
+                  {billingNote}
+                </p>
+              )}
             </div>
 
             <div className="data-table">

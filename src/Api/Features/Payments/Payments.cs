@@ -27,7 +27,16 @@ public sealed record CheckoutRequest(
 
 public sealed record CheckoutSessionResult(string Url, string SessionId);
 
-public sealed record PaymentWebhookEvent(string Type, string TenantId, string Plan, string SessionId, int AmountCents, string Currency);
+public sealed record PaymentWebhookEvent(
+    string Type,
+    string TenantId,
+    string Plan,
+    string SessionId,
+    int AmountCents,
+    string Currency,
+    string? SubscriptionId = null,
+    string? CustomerId = null,
+    string? Status = null);
 
 public interface IPaymentStore
 {
@@ -39,6 +48,8 @@ public interface IPaymentStore
 public interface IPaymentGateway
 {
     Task<CheckoutSessionResult> CreateCheckoutSessionAsync(string plan, string tenantId, CancellationToken cancellationToken);
+
+    Task<string> CreatePortalSessionAsync(string tenantId, string? customerId, CancellationToken cancellationToken);
 
     PaymentWebhookEvent ConstructWebhookEvent(string payload, string? signature);
 }
@@ -58,6 +69,9 @@ public sealed class PaymentOptions
     public string AppBaseUrl { get; init; } = "http://localhost";
 
     public bool ShowStarterPlan { get; init; }
+
+    // fake (deterministic, local/CI) | stripe (auto when a secret key is present) | disabled (503).
+    public string Mode { get; init; } = "fake";
 }
 
 public sealed class InMemoryPaymentStore : IPaymentStore
@@ -162,6 +176,12 @@ public sealed class FakePaymentGateway : IPaymentGateway
         return Task.FromResult(new CheckoutSessionResult($"https://checkout.test/{sessionId}", sessionId));
     }
 
+    public Task<string> CreatePortalSessionAsync(string tenantId, string? customerId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult($"https://billing.test/portal/{tenantId}");
+    }
+
     public PaymentWebhookEvent ConstructWebhookEvent(string payload, string? signature)
     {
         if (!string.Equals(signature, ValidSignature, StringComparison.Ordinal))
@@ -177,7 +197,10 @@ public sealed class FakePaymentGateway : IPaymentGateway
         var sessionId = GetString(root, "sessionId") ?? GetString(root, "session_id") ?? $"cs_test_{tenantId}_{plan}";
         var amount = GetInt(root, "amount_cents") ?? 0;
         var currency = GetString(root, "currency") ?? "eur";
-        return new PaymentWebhookEvent(type, tenantId, plan, sessionId, amount, currency);
+        var subscriptionId = GetString(root, "subscription_id") ?? $"sub_test_{tenantId}";
+        var customerId = GetString(root, "customer_id") ?? $"cus_test_{tenantId}";
+        var status = GetString(root, "status");
+        return new PaymentWebhookEvent(type, tenantId, plan, sessionId, amount, currency, subscriptionId, customerId, status);
     }
 
     public static object CreateWebhookPayload(string tenantId, string plan, int amountCents = 2900) => new
@@ -219,6 +242,14 @@ public sealed class StripePaymentGateway(PaymentOptions options) : IPaymentGatew
                 ["tenant_id"] = tenantId,
                 ["plan"] = plan,
             },
+            SubscriptionData = new SessionSubscriptionDataOptions
+            {
+                Metadata = new Dictionary<string, string>
+                {
+                    ["tenant_id"] = tenantId,
+                    ["plan"] = plan,
+                },
+            },
             LineItems =
             [
                 new SessionLineItemOptions
@@ -232,6 +263,27 @@ public sealed class StripePaymentGateway(PaymentOptions options) : IPaymentGatew
         return new CheckoutSessionResult(session.Url, session.Id);
     }
 
+    public async Task<string> CreatePortalSessionAsync(string tenantId, string? customerId, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(options.StripeSecretKey))
+        {
+            throw new InvalidOperationException("Stripe portal is not configured.");
+        }
+
+        if (string.IsNullOrWhiteSpace(customerId))
+        {
+            throw new PaymentCustomerNotFoundException("No Stripe customer is on file for this tenant.");
+        }
+
+        var service = new Stripe.BillingPortal.SessionService(new StripeClient(options.StripeSecretKey));
+        var session = await service.CreateAsync(new Stripe.BillingPortal.SessionCreateOptions
+        {
+            Customer = customerId,
+            ReturnUrl = $"{options.AppBaseUrl.TrimEnd('/')}/app",
+        }, cancellationToken: cancellationToken);
+        return session.Url;
+    }
+
     public PaymentWebhookEvent ConstructWebhookEvent(string payload, string? signature)
     {
         if (string.IsNullOrWhiteSpace(options.StripeWebhookSecret))
@@ -240,6 +292,13 @@ public sealed class StripePaymentGateway(PaymentOptions options) : IPaymentGatew
         }
 
         var stripeEvent = EventUtility.ConstructEvent(payload, signature, options.StripeWebhookSecret);
+        if (stripeEvent.Data.Object is Subscription subscription)
+        {
+            var subTenant = subscription.Metadata.TryGetValue("tenant_id", out var metadataSubTenant) ? metadataSubTenant : string.Empty;
+            var subPlan = subscription.Metadata.TryGetValue("plan", out var metadataSubPlan) ? metadataSubPlan : "pro";
+            return new PaymentWebhookEvent(stripeEvent.Type, subTenant, subPlan, subscription.Id, 0, subscription.Currency ?? "eur", subscription.Id, subscription.CustomerId, subscription.Status);
+        }
+
         if (stripeEvent.Data.Object is not Session session)
         {
             return new PaymentWebhookEvent(stripeEvent.Type, string.Empty, string.Empty, string.Empty, 0, "eur");
@@ -248,7 +307,7 @@ public sealed class StripePaymentGateway(PaymentOptions options) : IPaymentGatew
         var tenantId = session.Metadata.TryGetValue("tenant_id", out var metadataTenant) ? metadataTenant : session.ClientReferenceId;
         var plan = session.Metadata.TryGetValue("plan", out var metadataPlan) ? metadataPlan : "pro";
         var amount = checked((int)(session.AmountTotal ?? 0));
-        return new PaymentWebhookEvent(stripeEvent.Type, tenantId, plan, session.Id, amount, session.Currency ?? "eur");
+        return new PaymentWebhookEvent(stripeEvent.Type, tenantId, plan, session.Id, amount, session.Currency ?? "eur", session.SubscriptionId, session.CustomerId, "active");
     }
 
     private string? PriceIdFor(string plan) => plan switch
@@ -260,4 +319,20 @@ public sealed class StripePaymentGateway(PaymentOptions options) : IPaymentGatew
     };
 }
 
+public sealed class DisabledPaymentGateway : IPaymentGateway
+{
+    public Task<CheckoutSessionResult> CreateCheckoutSessionAsync(string plan, string tenantId, CancellationToken cancellationToken) =>
+        throw new PaymentsUnavailableException();
+
+    public Task<string> CreatePortalSessionAsync(string tenantId, string? customerId, CancellationToken cancellationToken) =>
+        throw new PaymentsUnavailableException();
+
+    public PaymentWebhookEvent ConstructWebhookEvent(string payload, string? signature) =>
+        throw new PaymentsUnavailableException();
+}
+
 public sealed class PaymentWebhookSignatureException(string message) : Exception(message);
+
+public sealed class PaymentCustomerNotFoundException(string message) : Exception(message);
+
+public sealed class PaymentsUnavailableException() : Exception("Payments are not configured.");

@@ -181,6 +181,77 @@ public sealed class Phase4BackendTests
         Assert.Equal(345, roundTrip.Impressions);
     }
 
+    [Fact]
+    public async Task Webhook_upserts_subscription_and_enables_customer_portal()
+    {
+        await using var factory = new ApiFactory();
+        using var client = CreateAuthedClient(factory);
+        var signup = await SignupAsync(client, "portal@example.test", "google", "https://first.example", "A");
+
+        using var webhook = await PostWebhookAsync(client, signup.TenantId, "pro");
+        Assert.Equal(HttpStatusCode.OK, webhook.StatusCode);
+
+        var subscription = await factory.Services.GetRequiredService<ISubscriptionStore>().GetByTenantAsync(signup.TenantId, CancellationToken.None);
+        Assert.NotNull(subscription);
+        Assert.Equal("pro", subscription.Plan);
+        Assert.Equal("active", subscription.Status);
+        Assert.False(string.IsNullOrWhiteSpace(subscription.StripeCustomerId));
+
+        using var portal = await client.PostAsJsonAsync("/api/v1/billing/portal", new { tenant_id = signup.TenantId });
+        Assert.Equal(HttpStatusCode.Created, portal.StatusCode);
+        using var portalJson = await portal.Content.ReadFromJsonAsync<JsonDocument>();
+        Assert.NotNull(portalJson);
+        Assert.StartsWith("https://billing.test/portal/", portalJson.RootElement.GetProperty("url").GetString(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Subscription_deleted_webhook_cancels_subscription_and_resets_plan()
+    {
+        await using var factory = new ApiFactory();
+        using var client = CreateAuthedClient(factory);
+        var signup = await SignupAsync(client, "cancel@example.test", "google", "https://first.example", "A");
+
+        using var activate = await PostWebhookAsync(client, signup.TenantId, "pro");
+        Assert.Equal(HttpStatusCode.OK, activate.StatusCode);
+
+        var deletePayload = new
+        {
+            type = "customer.subscription.deleted",
+            tenant_id = signup.TenantId,
+            plan = "pro",
+            subscription_id = $"sub_test_{signup.TenantId}",
+            customer_id = $"cus_test_{signup.TenantId}",
+        };
+        using var deleteRequest = new HttpRequestMessage(HttpMethod.Post, "/api/v1/webhooks/stripe")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(deletePayload), Encoding.UTF8, "application/json"),
+        };
+        deleteRequest.Headers.Add("Stripe-Signature", FakePaymentGateway.ValidSignature);
+        using var deleted = await client.SendAsync(deleteRequest);
+        Assert.Equal(HttpStatusCode.OK, deleted.StatusCode);
+
+        var subscription = await factory.Services.GetRequiredService<ISubscriptionStore>().GetByTenantAsync(signup.TenantId, CancellationToken.None);
+        Assert.NotNull(subscription);
+        Assert.Equal("canceled", subscription.Status);
+        var tenant = await factory.Services.GetRequiredService<ITenantStore>().GetAsync(signup.TenantId, CancellationToken.None);
+        Assert.NotNull(tenant);
+        Assert.Equal("free", tenant.Plan);
+    }
+
+    [Fact]
+    public async Task Payments_disabled_mode_degrades_checkout_and_portal_to_503()
+    {
+        await using var factory = new ApiFactory(builder => builder.UseSetting("PAYMENTS_MODE", "disabled"));
+        using var client = CreateAuthedClient(factory);
+        var signup = await SignupAsync(client, "disabled@example.test", "google", "https://first.example", "A");
+
+        using var checkout = await client.PostAsJsonAsync("/api/v1/checkout", new { plan = "pro", tenant_id = signup.TenantId });
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, checkout.StatusCode);
+
+        using var portal = await client.PostAsJsonAsync("/api/v1/billing/portal", new { tenant_id = signup.TenantId });
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, portal.StatusCode);
+    }
+
     private static HttpClient CreateAuthedClient(ApiFactory factory)
     {
         var client = factory.CreateClient();
