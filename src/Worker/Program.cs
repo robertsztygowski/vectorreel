@@ -12,6 +12,7 @@ builder.Services.AddSingleton<YouTubeInternalGalleryRunner>();
 builder.Services.AddPipelineInfrastructure(
     builder.Configuration,
     Path.Combine(builder.Environment.ContentRootPath, ".local-state", "internal-object-storage"));
+builder.Services.AddHostedService<HealthListener>();
 builder.Services.AddHostedService<PipelineWorker>();
 
 var host = builder.Build();
