@@ -20,13 +20,16 @@ test('funnel: landing → signup (N20 fields) → upload → progress → output
   const sessionId = await page.evaluate(() => window.sessionStorage.getItem('mdreel_session_id'));
   expect(sessionId).toBeTruthy();
 
-  // Signup with the volume questions answered (METRICS.md N20).
+  // Signup with the volume questions answered (METRICS.md N20). Email + password (Identity).
   await page.goto('/signup');
   await page.fill('#email', email);
+  await page.fill('#password', 'Sup3rSecret!pw');
   await page.getByPlaceholder('~ h in the archive').fill('12');
   await page.getByPlaceholder('~ h added per month').fill('4');
-  await page.getByRole('button', { name: 'send magic link' }).click();
-  await expect(page.getByRole('heading', { name: 'Check your inbox.' })).toBeVisible();
+  await page.getByRole('button', { name: 'create account' }).click();
+
+  // Registration provisions the tenant and drops the browser straight into the workspace.
+  await page.waitForURL(/\/app/);
 
   // The signup response handed the browser its tenant — first-touch attribution is now in Postgres.
   await expect
@@ -47,7 +50,6 @@ test('funnel: landing → signup (N20 fields) → upload → progress → output
   expect(tenantRows[0]?.monthly_hours).toBe(4);
 
   // Into the workspace: upload the committed CC clip.
-  await page.getByRole('link', { name: 'open your workspace' }).click();
   await page.goto('/app/upload');
   await page.setInputFiles('input[type="file"]', SAMPLE_VIDEO);
   await expect(page.locator('.file-row')).toContainText('talking_head_nasa_bolten.mp4');

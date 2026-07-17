@@ -1,10 +1,12 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { BrandMark } from '../BrandMark';
-import { signOut } from '@/lib/session';
+import { getEmail, signOut } from '@/lib/session';
+import { logout } from '@/lib/auth';
 
 const NAV_LINKS = [
   { href: '/#features', label: 'product' },
@@ -17,6 +19,17 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const inApp = pathname.startsWith('/app');
+  const [email, setEmailState] = useState<string | null>(null);
+
+  useEffect(() => {
+    setEmailState(getEmail());
+  }, [pathname]);
+
+  async function handleSignOut() {
+    await logout();
+    signOut();
+    router.push('/');
+  }
 
   if (inApp) {
     return (
@@ -27,14 +40,11 @@ export function Header() {
           </Link>
           <nav className="app-shell-nav" aria-label="Primary">
             <Link href="/docs">docs</Link>
-            <span className="app-email">jonas@acme.eu</span>
+            <span className="app-email">{email ?? 'your workspace'}</span>
             <button
               type="button"
               className="btn btn-ghost btn-sm app-shell-signout"
-              onClick={() => {
-                signOut();
-                router.push('/');
-              }}
+              onClick={() => void handleSignOut()}
             >
               sign out
             </button>

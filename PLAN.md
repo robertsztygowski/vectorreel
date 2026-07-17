@@ -71,7 +71,30 @@ injection, guards) + Stage C (fusion → frozen `OutputDocument`) + Stage D (ren
 `outputs-eu` + source delete) run on both paths; a `PipelineModel:Mode` switch keeps the default
 suite and E2E free/offline (fake + committed replay fixtures) while prod/gallery/`tests/Live` use
 real Vertex. Full definition of done passed, including a live Vertex smoke. See the Phase 3 block.
-**Phase 2R scope — *encode the competitor findings*
+
+> ### 🏃 Autonomous build run — 2026-07-17 (founder away, rule-5 deploy override in force)
+> A marathon coordinator run is building the pre-launch product surface. Progress:
+> - **M0 guardrails ✅** (`ae8bee8`) — GCP budget alert (billing currency is **PLN**; set at the
+>   METRICS.md N-budget equivalent), all three Cloud Run services capped (`--max-instances`
+>   web/api/worker) with `--min-instances=0`, `scripts/preflight.sh` asserts the caps, INFRA.md
+>   records the override + guardrails.
+> - **M1 auth ✅ built** — email+password via ASP.NET Core Identity (`MapIdentityApi<AppUser>`,
+>   cookie mode), custom `/api/v1/auth/signup` converges on the same `ITenantStore.UpsertSignupAsync`
+>   as the analytics signup event (one source of truth; grants the N33 trial credit), `/logout`,
+>   `/me`, rate-limited group, Brevo `IEmailSender` (no-op until key). Web signin/signup rewritten to
+>   real forms, session-aware nav + real logout, same-origin auth via a **runtime middleware proxy**
+>   (`web/middleware.ts`, `API_ORIGIN`) — not `next.config` rewrites, which bake at build time.
+>   Integration + web unit + an E2E auth-funnel spec are green; full DoD gate passed.
+> - **Next:** M2 api.mdreel.com domain mapping, M3 Umami, M4 Stripe test-mode, M5 Cloud Tasks seam,
+>   M6 website wire-up. See the NEEDS-FOUNDER checklist below.
+>
+> #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
+> - **Brevo API key** — transactional email is a no-op logging sender until set:
+>   `gcloud secrets versions add mdreel-brevo-api-key --data-file=- --project tensile-runway-442915-j6`
+>   (create the secret first if absent, region europe-central2), then set `BREVO_API_KEY` on the api
+>   service. `RequireConfirmedEmail=false`, so auth works without it.
+> - *(accumulates as later milestones land: api.mdreel.com CNAME (M2), stats.mdreel.com DNS (M3),
+>   Stripe test keys/price IDs (M4), Cloud Tasks binding flip (M5).)***Phase 2R scope — *encode the competitor findings*
 (experiments/002-competitor-analysis).** The positioning was reset 2026-07-15 by that analysis
 (BUSINESS_MODEL §2/§4/§6/§8): anchor on **asset video, never meetings** (the bundled recap is the
 #1 competitor); sell the **portable Markdown artifact, not the OCR** (OCR is table-stakes); lead the

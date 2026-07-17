@@ -1,4 +1,5 @@
 using System.Text;
+using MdReel.Api.Features.Auth;
 using MdReel.Api.Features.Instrumentation;
 using MdReel.Api.Features.Payments;
 using MdReel.Api.Features.PrivateProcessing;
@@ -9,7 +10,11 @@ using MdReel.Core.Pipeline.StageA;
 using MdReel.Core.Pipeline.StageB;
 using MdReel.Core.Providers;
 using MdReel.Infrastructure;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
@@ -112,6 +117,80 @@ public partial class Program
             configuration,
             Path.Combine(environment.ContentRootPath, ".local-state", "object-storage"));
         services.AddSingleton<PrivatePipelineService>();
+
+        ConfigureAuth(services, configuration, postgresConnection);
+    }
+
+    /// <summary>
+    /// ASP.NET Core Identity (email + password, cookie mode). EF Core is scoped to the identity
+    /// tables only — Npgsql against the shared product database when configured, otherwise an
+    /// isolated EF InMemory store (no-Postgres dev/test). Registration and the tenant hook flow
+    /// through <c>AuthEndpoints.MapAuth</c>; the built-in PBKDF2 hasher is used.
+    /// </summary>
+    private static void ConfigureAuth(IServiceCollection services, ConfigurationManager configuration, string? postgresConnection)
+    {
+        var identityInMemoryName = "mdreel-identity-" + Guid.NewGuid().ToString("N");
+        services.AddDbContext<AppIdentityDbContext>(options =>
+        {
+            if (!string.IsNullOrWhiteSpace(postgresConnection))
+            {
+                options.UseNpgsql(postgresConnection);
+            }
+            else
+            {
+                options.UseInMemoryDatabase(identityInMemoryName);
+            }
+        });
+
+        services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
+        services.AddAuthorization();
+
+        // This is an API, not an MVC app: an unauthenticated/forbidden request must get 401/403,
+        // never a 302 redirect to a (nonexistent) login page.
+        services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            };
+            options.Events.OnRedirectToAccessDenied = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return Task.CompletedTask;
+            };
+        });
+
+        services.AddIdentityCore<AppUser>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = false;
+            })
+            .AddEntityFrameworkStores<AppIdentityDbContext>()
+            .AddApiEndpoints()
+            .AddSignInManager()
+            .AddDefaultTokenProviders();
+
+        services.AddScoped<IUserClaimsPrincipalFactory<AppUser>, AppUserClaimsPrincipalFactory>();
+
+        services.AddSingleton(new BrevoOptions
+        {
+            ApiKey = configuration["BREVO_API_KEY"],
+            SenderEmail = configuration["BREVO_SENDER_EMAIL"] ?? "no-reply@mdreel.com",
+            SenderName = configuration["BREVO_SENDER_NAME"] ?? "mdreel",
+        });
+        services.AddHttpClient<IEmailSender<AppUser>, BrevoEmailSender>();
+
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            options.AddFixedWindowLimiter(AuthEndpoints.RateLimitPolicy, limiter =>
+            {
+                limiter.Window = TimeSpan.FromMinutes(1);
+                limiter.PermitLimit = 20;
+                limiter.QueueLimit = 0;
+            });
+        });
     }
 
     private static PaymentOptions CreatePaymentOptions(ConfigurationManager configuration) => new()
@@ -156,9 +235,21 @@ public partial class Program
             app.UseCors();
         }
 
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseRateLimiter();
+
         app.Use(async (context, next) =>
         {
             if (!context.Request.Path.StartsWithSegments("/api/v1"))
+            {
+                await next(context);
+                return;
+            }
+
+            // Auth endpoints (login/signup/logout/refresh/manage/password) run their own
+            // authorization; the coarse gate must not block anonymous login/signup.
+            if (context.Request.Path.StartsWithSegments("/api/v1/auth"))
             {
                 await next(context);
                 return;
@@ -179,6 +270,14 @@ public partial class Program
                 return;
             }
 
+            // A signed-in cookie principal satisfies the gate; the legacy bearer header remains
+            // accepted so the frozen API contract and its tests are unaffected.
+            if (context.User.Identity?.IsAuthenticated == true)
+            {
+                await next(context);
+                return;
+            }
+
             if (!context.Request.Headers.TryGetValue("Authorization", out var authHeader) || string.IsNullOrWhiteSpace(authHeader))
             {
                 await context.WriteProblemAsync(401, "Unauthorized", "Missing Authorization header.");
@@ -187,6 +286,8 @@ public partial class Program
 
             await next(context);
         });
+
+        app.MapAuth();
 
         var api = app.MapGroup("/api/v1");
 

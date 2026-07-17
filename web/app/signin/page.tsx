@@ -1,49 +1,30 @@
 'use client';
 
-import { Suspense, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { login } from '@/lib/auth';
 import { markSignedIn } from '@/lib/session';
 import { Field } from '@/components/Field/Field';
 
-// useSearchParams() forces a CSR bailout during prerender; the Suspense wrapper is required
-// for `next build` — same pattern as checkout/page.tsx.
 export default function SignInPage() {
-  return (
-    <Suspense fallback={null}>
-      <SignInInner />
-    </Suspense>
-  );
-}
-
-function SignInInner() {
-  const searchParams = useSearchParams();
+  const router = useRouter();
   const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function submit() {
-    // Magic-link sign-in (mock — no email sent, no backend this phase).
-    markSignedIn(email);
-    setSubmitted(true);
-  }
-
-  const showSent = submitted || searchParams.get('state') === 'sent';
-
-  if (showSent) {
-    return (
-      <div className="wrap">
-        <div className="auth-col">
-          <p className="sent-line">link expires in 15 minutes</p>
-          <h1>Check your inbox.</h1>
-          <p className="lead">
-            We sent a magic link to {email || 'jonas@acme.eu'} — it signs you straight into your workspace.
-          </p>
-          <Link className="btn btn-primary" href="/app">
-            open your workspace
-          </Link>
-        </div>
-      </div>
-    );
+  async function submit() {
+    setSubmitting(true);
+    setError(null);
+    try {
+      await login(email, password);
+      markSignedIn(email);
+      router.push('/app');
+    } catch {
+      setError('Wrong email or password.');
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -53,7 +34,7 @@ function SignInInner() {
           <div style={{ maxWidth: '52ch' }}>
             <p className="kicker"># sign in</p>
             <h1>Sign in.</h1>
-            <p className="lead">No password — we email you a magic link.</p>
+            <p className="lead">Email and password — your workspace opens straight away.</p>
           </div>
         </div>
       </div>
@@ -62,10 +43,10 @@ function SignInInner() {
           <form
             onSubmit={(e: FormEvent) => {
               e.preventDefault();
-              submit();
+              void submit();
             }}
           >
-            <Field label="work email" htmlFor="email" style={{ marginBottom: 26 }}>
+            <Field label="work email" htmlFor="email" style={{ marginBottom: 22 }}>
               <input
                 id="email"
                 type="email"
@@ -75,9 +56,25 @@ function SignInInner() {
                 placeholder="you@company.com"
               />
             </Field>
+            <Field label="password" htmlFor="password" style={{ marginBottom: 26 }}>
+              <input
+                id="password"
+                type="password"
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="your password"
+              />
+            </Field>
+            {error ? (
+              <p className="auth-error" role="alert" style={{ color: 'var(--danger, #b00020)', marginBottom: 16 }}>
+                {error}
+              </p>
+            ) : null}
             <div className="auth-actions" style={{ marginBottom: 20 }}>
-              <button className="btn btn-primary" type="submit">
-                send magic link
+              <button className="btn btn-primary" type="submit" disabled={submitting}>
+                {submitting ? 'signing in…' : 'sign in'}
               </button>
             </div>
           </form>
@@ -89,3 +86,4 @@ function SignInInner() {
     </>
   );
 }
+

@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using MdReel.Api.Features.Auth;
 using MdReel.Api.Features.Instrumentation;
 using MdReel.Api.Features.Payments;
 using Microsoft.AspNetCore.Hosting;
@@ -124,6 +125,116 @@ public sealed class PostgresBackedApiTests : IClassFixture<PostgresBackedApiTest
             await cohorts.GetTenantHoursByWeekAsync(CancellationToken.None), x => x.TenantId == signup.TenantId);
         Assert.Equal(0, row.WeekIndex);
         Assert.Equal(1.5, row.Hours);
+    }
+
+    [Fact]
+    public async Task Register_provisions_tenant_and_trial_credit_then_me_returns_session()
+    {
+        IdentitySchema.ResetForTests();
+        await using var factory = _fixture.CreateFactory();
+        using var client = factory.CreateClient();
+
+        var email = UniqueEmail("member");
+        using var register = await client.PostAsJsonAsync("/api/v1/auth/signup", new
+        {
+            email,
+            password = "Str0ng-Passw0rd!",
+            archiveHours = 12,
+            monthlyHours = 4,
+            utmSource = "google",
+            firstReferrer = "https://first.example",
+            abArm = "A",
+        });
+        Assert.Equal(HttpStatusCode.OK, register.StatusCode);
+        using var registerBody = await register.Content.ReadFromJsonAsync<JsonDocument>();
+        Assert.NotNull(registerBody);
+        var tenantId = registerBody.RootElement.GetProperty("tenant_id").GetString()!;
+        Assert.Equal(1, registerBody.RootElement.GetProperty("trial_credit_hours").GetDouble());
+
+        // The auth cookie set by /signup authorizes /me (no bearer header).
+        using var me = await client.GetAsync("/api/v1/auth/me");
+        Assert.Equal(HttpStatusCode.OK, me.StatusCode);
+        using var meBody = await me.Content.ReadFromJsonAsync<JsonDocument>();
+        Assert.NotNull(meBody);
+        Assert.Equal(email, meBody.RootElement.GetProperty("email").GetString());
+        Assert.Equal(tenantId, meBody.RootElement.GetProperty("tenant_id").GetString());
+
+        // Tenant creation flowed through ITenantStore — the single source of truth — so the tenant,
+        // its N33 trial credit, and the identity user all land in Postgres.
+        await using var dataSource = NpgsqlDataSource.Create(_fixture.ConnectionString);
+        await using (var command = dataSource.CreateCommand("select \"UserName\", \"TenantId\" from \"AspNetUsers\" where \"Email\" = @e"))
+        {
+            command.Parameters.AddWithValue("e", email);
+            await using var reader = await command.ExecuteReaderAsync();
+            Assert.True(await reader.ReadAsync());
+            Assert.Equal(email, reader.GetString(0));
+            Assert.Equal(tenantId, reader.GetString(1));
+        }
+
+        await using (var command = dataSource.CreateCommand("select trial_credit_hours, first_utm_source from tenants where id = @id"))
+        {
+            command.Parameters.AddWithValue("id", tenantId);
+            await using var reader = await command.ExecuteReaderAsync();
+            Assert.True(await reader.ReadAsync());
+            Assert.Equal(1d, reader.GetDouble(0));
+            Assert.Equal("google", reader.GetString(1));
+        }
+
+        await using (var command = dataSource.CreateCommand("select count(*) from usage_ledger where tenant_id = @id and step = 'trial_credit'"))
+        {
+            command.Parameters.AddWithValue("id", tenantId);
+            Assert.Equal(1L, (long)(await command.ExecuteScalarAsync())!);
+        }
+    }
+
+    [Fact]
+    public async Task Login_after_logout_restores_the_session_cookie()
+    {
+        IdentitySchema.ResetForTests();
+        await using var factory = _fixture.CreateFactory();
+        using var client = factory.CreateClient();
+
+        var email = UniqueEmail("returning");
+        const string password = "Str0ng-Passw0rd!";
+        using (var register = await client.PostAsJsonAsync("/api/v1/auth/signup", new { email, password }))
+        {
+            Assert.Equal(HttpStatusCode.OK, register.StatusCode);
+        }
+
+        using (var logout = await client.PostAsync("/api/v1/auth/logout", content: null))
+        {
+            Assert.Equal(HttpStatusCode.OK, logout.StatusCode);
+        }
+
+        using (var meAfterLogout = await client.GetAsync("/api/v1/auth/me"))
+        {
+            Assert.Equal(HttpStatusCode.Unauthorized, meAfterLogout.StatusCode);
+        }
+
+        using (var login = await client.PostAsJsonAsync("/api/v1/auth/login?useCookies=true", new { email, password }))
+        {
+            Assert.Equal(HttpStatusCode.OK, login.StatusCode);
+        }
+
+        using var me = await client.GetAsync("/api/v1/auth/me");
+        Assert.Equal(HttpStatusCode.OK, me.StatusCode);
+    }
+
+    [Fact]
+    public async Task Duplicate_registration_is_rejected()
+    {
+        IdentitySchema.ResetForTests();
+        await using var factory = _fixture.CreateFactory();
+        using var client = factory.CreateClient();
+
+        var email = UniqueEmail("dupe");
+        using (var first = await client.PostAsJsonAsync("/api/v1/auth/signup", new { email, password = "Str0ng-Passw0rd!" }))
+        {
+            Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        }
+
+        using var second = await client.PostAsJsonAsync("/api/v1/auth/signup", new { email, password = "An0ther-Passw0rd!" });
+        Assert.Equal(HttpStatusCode.BadRequest, second.StatusCode);
     }
 
     private static string UniqueEmail(string prefix) => $"{prefix}+{Guid.NewGuid():N}@example.test";
