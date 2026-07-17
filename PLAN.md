@@ -435,6 +435,17 @@ the segment's cues as mandatory block starts, and a dense guided call overflows 
 is exactly the `MAX_TOKENS`→split case below. Everything else in this phase is cheaper than this
 question was.
 
+🆕 **Core slice — ✅ DONE 2026-07-17: Stage B and Stage C are real.** A shared `src/Infrastructure`
+project (keeps `src/Core` cloud-free) now holds the Vertex `IVideoAnalyzer` (structured output, cue
+injection per the gate, guard options, finish-reason→split mapping, fetched-duration off the bill)
+and the Vertex `ITextFuser` (text-only fusion → the frozen `OutputDocument`; the seam now returns the
+document, not a string, so Stage D renders both `output.md` and `output.json`). Validated with a live
+Vertex call end-to-end on the gate asset. **Carried requirement surfaced by that run: Stage B then
+Stage C back-to-back trips `429 RESOURCE_EXHAUSTED` on `europe-central2`; the `europe-west3` fallback
+succeeds — the analyzer/fuser must consume `VertexOptions.FallbackRegion` and back off on 429 before
+the pipeline runs under load.** Still to build: GCS `IObjectStorage`, Stage D persist+delete, private
+path wiring, record/replay + `tests/Live/`, compute cost ledger, gallery shakedown.
+
 **Build order inside the phase: YouTube path first — it is the smaller half.** No Stage A, no
 upload, no GCS round-trip: Stage B directly on `fileData.fileUri` + offset segmentation → C → D.
 🚨 **Internal-only since the 2026-07-15 review: the free tool is dropped, so this path has NO

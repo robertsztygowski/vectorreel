@@ -1,5 +1,6 @@
 using System.Text;
 using MdReel.Core.Domain;
+using MdReel.Core.Output;
 using MdReel.Core.Pipeline.StageB;
 using MdReel.Core.Providers;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -105,10 +106,31 @@ public sealed class YouTubeInternalGalleryRunnerTests
 
     private sealed class FakeFuser : ITextFuser
     {
-        public Task<string> FuseAsync(IReadOnlyList<SegmentAnalysis> segments, CancellationToken cancellationToken)
+        public Task<OutputDocument> FuseAsync(
+            IReadOnlyList<SegmentAnalysis> segments,
+            FusionRequest request,
+            CancellationToken cancellationToken)
         {
-            var text = $"# Fused\n\nSegments: {segments.Count}\n";
-            return Task.FromResult(text);
+            var document = new OutputDocument(
+                Frontmatter: new OutputFrontmatter(
+                    Title: "Fused",
+                    Source: request.Source,
+                    Duration: "00:25:00",
+                    Language: "en",
+                    ProcessedAt: "2026-01-01T00:00:00Z",
+                    Generator: request.Generator,
+                    Summary: $"Segments: {segments.Count}",
+                    Tags: ["demo"]),
+                Sections:
+                [
+                    new OutputSection(
+                        Timestamp: "00:00:00",
+                        Heading: "Intro",
+                        Blocks: [new OutputBlock(OutputBlockLabel.Spoken, "Fused body.")]),
+                ],
+                Provenance: request.Provenance);
+
+            return Task.FromResult(document);
         }
     }
 

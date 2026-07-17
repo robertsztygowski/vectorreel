@@ -1,0 +1,23 @@
+<!-- Concrete providers behind the Core seams: Vertex (IVideoAnalyzer, ITextFuser) today,
+     GCS (IObjectStorage) next. Kept OUT of src/Core on purpose (DEVELOPMENT.md §2): Core
+     must run unchanged in a future self-hosted edition, so every cloud SDK lives here.
+     Referenced by src/Api and src/Worker. -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MdReel.Infrastructure</RootNamespace>
+    <AssemblyName>MdReel.Infrastructure</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
+</Project>

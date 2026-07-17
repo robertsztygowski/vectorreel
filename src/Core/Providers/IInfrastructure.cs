@@ -1,15 +1,37 @@
+using MdReel.Core.Output;
+
 namespace MdReel.Core.Providers;
 
 /// <summary>
 /// Stage C — fusion of the ordered segment analyses into one document (text-only model call).
-///
-/// 🚧 <b>Not implemented in Phase 1.</b> Phase 2 owns it.
+/// Produces the structured <see cref="OutputDocument"/>; Stage D renders it to Markdown + JSON and
+/// persists it (ARCHITECTURE.md §3–§4).
 /// </summary>
 public interface ITextFuser
 {
     /// <summary>Merge overlap duplicates, find topic boundaries, and produce the final document.</summary>
-    Task<string> FuseAsync(IReadOnlyList<SegmentAnalysis> segments, CancellationToken cancellationToken);
+    Task<OutputDocument> FuseAsync(
+        IReadOnlyList<SegmentAnalysis> segments,
+        FusionRequest request,
+        CancellationToken cancellationToken);
 }
+
+/// <summary>
+/// The pipeline-supplied facts Stage C must not invent — the model decides title/summary/tags/
+/// sections; the pipeline owns provenance and identity.
+/// </summary>
+/// <param name="Source">Upload filename (private path) or canonical source URL (internal ingest).</param>
+/// <param name="Duration">Source duration, from Stage A / the ingest window.</param>
+/// <param name="Provenance">
+/// Markdown body of the final "## Source &amp; licence" section: attribution + licence for gallery
+/// outputs, the source-deletion/retention statement for private uploads.
+/// </param>
+/// <param name="Generator">mdreel@&lt;version&gt; string stamped into the frontmatter.</param>
+public sealed record FusionRequest(
+    string Source,
+    TimeSpan Duration,
+    string Provenance,
+    string Generator);
 
 /// <summary>
 /// Object storage. GCS today (<c>raw-videos-eu</c>, <c>outputs-eu</c>); the interface exists because

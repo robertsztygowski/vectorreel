@@ -1,0 +1,385 @@
+using System.Globalization;
+using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using MdReel.Core.Output;
+using MdReel.Core.Providers;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+namespace MdReel.Infrastructure.Vertex;
+
+/// <summary>
+/// Stage C — fusion of the ordered Stage B segment analyses into one <see cref="OutputDocument"/>
+/// via a text-only Vertex call. The model chooses topic boundaries, headings, title, summary and
+/// tags; this class then <b>sanitizes</b> the result so it satisfies the frozen output contract
+/// (<c>tests/fixtures/contracts/output.schema.json</c>) regardless of model sloppiness.
+/// </summary>
+public sealed partial class VertexTextFuser(
+    HttpClient httpClient,
+    IAccessTokenProvider tokenProvider,
+    IOptions<VertexOptions> options,
+    ILogger<VertexTextFuser> logger) : ITextFuser
+{
+    private static readonly JsonSerializerOptions PayloadJson = new() { PropertyNameCaseInsensitive = true };
+
+    private readonly VertexOptions _options = options.Value;
+
+    public async Task<OutputDocument> FuseAsync(
+        IReadOnlyList<SegmentAnalysis> segments,
+        FusionRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(segments);
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (segments.Count == 0)
+        {
+            throw new InvalidOperationException("Stage C cannot fuse zero segments.");
+        }
+
+        var payload = await CallModelAsync(segments, cancellationToken);
+        var language = ResolveLanguage(payload.Language, segments);
+        return Assemble(payload, request, language);
+    }
+
+    private async Task<FusionPayload> CallModelAsync(
+        IReadOnlyList<SegmentAnalysis> segments,
+        CancellationToken cancellationToken)
+    {
+        var prompt = BuildPrompt(segments);
+        var body = new GenerateContentRequest(
+            [new VertexContent("user", [new VertexPart { Text = prompt }])],
+            new VertexGenerationConfig
+            {
+                Temperature = _options.Temperature,
+                MaxOutputTokens = _options.FusionMaxOutputTokens,
+                ThinkingConfig = new VertexThinkingConfig { ThinkingBudget = _options.FusionThinkingBudget },
+                ResponseMimeType = "application/json",
+                ResponseSchema = FusionResponseSchema,
+            });
+
+        var token = await tokenProvider.GetTokenAsync(cancellationToken);
+        var url = $"https://{_options.Region}-aiplatform.googleapis.com/{_options.ApiVersion}/projects/{_options.Project}"
+                  + $"/locations/{_options.Region}/publishers/google/models/{_options.Model}:generateContent";
+
+        using var message = new HttpRequestMessage(HttpMethod.Post, url) { Content = JsonContent.Create(body) };
+        message.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeout.CancelAfter(_options.FusionTimeout);
+
+        using var response = await httpClient.SendAsync(message, timeout.Token);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorBody = await response.Content.ReadAsStringAsync(timeout.Token);
+            throw new HttpRequestException(
+                $"Stage C fusion returned {(int)response.StatusCode}: {errorBody[..Math.Min(errorBody.Length, 800)]}");
+        }
+
+        var parsed = await response.Content.ReadFromJsonAsync<GenerateContentResponse>(timeout.Token);
+        var candidate = parsed?.Candidates is { Count: > 0 } c ? c[0] : null;
+        var text = candidate?.Content?.Parts is { Count: > 0 } parts
+            ? string.Concat(parts.Select(p => p.Text ?? string.Empty))
+            : null;
+
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            throw new InvalidOperationException(
+                $"Stage C fusion produced no text (finish={candidate?.FinishReason}).");
+        }
+
+        var payload = JsonSerializer.Deserialize<FusionPayload>(text, PayloadJson)
+            ?? throw new InvalidOperationException("Stage C fusion returned unparseable JSON.");
+
+        if (payload.Sections is not { Count: > 0 })
+        {
+            throw new InvalidOperationException("Stage C fusion returned no sections.");
+        }
+
+        return payload;
+    }
+
+    private static OutputDocument Assemble(FusionPayload payload, FusionRequest request, string language)
+    {
+        var frontmatter = new OutputFrontmatter(
+            Title: Fallback(payload.Title, request.Source),
+            Source: request.Source,
+            Duration: VertexStageBPrompt.FormatHhmmss(request.Duration),
+            Language: language,
+            ProcessedAt: DateTimeOffset.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture),
+            Generator: request.Generator,
+            Summary: Fallback(payload.Summary, "Automatically generated summary."),
+            Tags: SanitizeTags(payload.Tags));
+
+        var sections = new List<OutputSection>(payload.Sections!.Count);
+        foreach (var section in payload.Sections!)
+        {
+            var blocks = SanitizeBlocks(section.Blocks);
+            if (blocks.Count == 0)
+            {
+                continue;
+            }
+
+            sections.Add(new OutputSection(
+                Timestamp: NormalizeTimestamp(section.Timestamp),
+                Heading: Fallback(section.Heading, "Section"),
+                Blocks: blocks));
+        }
+
+        if (sections.Count == 0)
+        {
+            throw new InvalidOperationException("Stage C fusion yielded no usable sections after sanitization.");
+        }
+
+        return new OutputDocument(frontmatter, sections, Fallback(request.Provenance, "Generated by mdreel."));
+    }
+
+    private static List<OutputBlock> SanitizeBlocks(IReadOnlyList<FusionBlock>? blocks)
+    {
+        if (blocks is null)
+        {
+            return [];
+        }
+
+        // The contract allows each label at most once, in the order spoken, on_screen, visual.
+        var byLabel = new Dictionary<OutputBlockLabel, string>();
+        foreach (var block in blocks)
+        {
+            if (!TryParseLabel(block.Label, out var label))
+            {
+                continue;
+            }
+
+            var text = NormalizeText(block.Text);
+            if (text.Length == 0 || byLabel.ContainsKey(label))
+            {
+                continue;
+            }
+
+            byLabel[label] = text;
+        }
+
+        var ordered = new List<OutputBlock>(3);
+        foreach (var label in new[] { OutputBlockLabel.Spoken, OutputBlockLabel.OnScreen, OutputBlockLabel.Visual })
+        {
+            if (byLabel.TryGetValue(label, out var text))
+            {
+                ordered.Add(new OutputBlock(label, text));
+            }
+        }
+
+        return ordered;
+    }
+
+    private static bool TryParseLabel(string? raw, out OutputBlockLabel label)
+    {
+        switch (raw?.Trim().ToLowerInvariant())
+        {
+            case "spoken":
+                label = OutputBlockLabel.Spoken;
+                return true;
+            case "on_screen":
+            case "on screen":
+            case "onscreen":
+                label = OutputBlockLabel.OnScreen;
+                return true;
+            case "visual":
+                label = OutputBlockLabel.Visual;
+                return true;
+            default:
+                label = OutputBlockLabel.Spoken;
+                return false;
+        }
+    }
+
+    private static string NormalizeText(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return string.Empty;
+        }
+
+        // The contract forbids carriage returns and blank lines; multi-line uses \n.
+        var lines = text.Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace('\r', '\n')
+            .Split('\n')
+            .Select(l => l.TrimEnd())
+            .Where(l => l.Length > 0);
+
+        return string.Join('\n', lines).Trim();
+    }
+
+    private static List<string> SanitizeTags(IReadOnlyList<string>? tags)
+    {
+        var cleaned = new List<string>();
+        foreach (var raw in tags ?? [])
+        {
+            var tag = TagInvalidChars().Replace(raw.Trim().ToLowerInvariant(), "-").Trim('-', ' ');
+            tag = MultiDash().Replace(tag, "-");
+            if (tag.Length > 0 && !cleaned.Contains(tag))
+            {
+                cleaned.Add(tag);
+            }
+        }
+
+        return cleaned.Count > 0 ? cleaned : ["video"];
+    }
+
+    private string ResolveLanguage(string? modelLanguage, IReadOnlyList<SegmentAnalysis> segments)
+    {
+        foreach (var candidate in new[] { modelLanguage }.Concat(segments.Select(s => s.Language)))
+        {
+            if (candidate is not null && LanguageTag().IsMatch(candidate.Trim()))
+            {
+                return candidate.Trim();
+            }
+        }
+
+        logger.LogDebug("Stage C could not resolve a valid language tag; defaulting to 'en'.");
+        return "en";
+    }
+
+    private static string NormalizeTimestamp(string? raw)
+    {
+        if (raw is not null && TimestampTag().IsMatch(raw.Trim()))
+        {
+            return raw.Trim();
+        }
+
+        var parts = (raw ?? string.Empty).Split(':');
+        var seconds = 0;
+        foreach (var part in parts)
+        {
+            seconds = seconds * 60 + (int.TryParse(part, NumberStyles.Integer, CultureInfo.InvariantCulture, out var v) ? v : 0);
+        }
+
+        return VertexStageBPrompt.FormatHhmmss(TimeSpan.FromSeconds(seconds));
+    }
+
+    private static string Fallback(string? value, string fallback) =>
+        string.IsNullOrWhiteSpace(value) ? fallback : value.Trim();
+
+    private static string BuildPrompt(IReadOnlyList<SegmentAnalysis> segments)
+    {
+        var builder = new StringBuilder();
+        builder.Append("""
+            You are fusing the per-segment analysis of a video into one clean, structured document
+            for a searchable knowledge base. Merge duplicate content that repeats across overlapping
+            segments. Group the blocks into topic sections (NOT one section per segment): a section
+            begins where the subject genuinely changes.
+
+            For each section produce:
+            - "timestamp": start of the section as hh:mm:ss (from the block times below).
+            - "heading": a short, specific title for the section.
+            - "blocks": 1-3 blocks, each with "label" in {spoken, on_screen, visual} used at most once,
+              in that order. "spoken" = the cleaned narration; "on_screen" = verbatim on-screen text;
+              "visual" = what is shown. Omit a label if there is nothing for it.
+
+            Also produce: "title" (document title), "summary" (2-4 sentences), "language" (BCP-47 code
+            like "en"), and "tags" (3-8 short lowercase keywords).
+
+            Here are the ordered segment analyses (timestamps are global video time):
+
+            """);
+
+        foreach (var segment in segments)
+        {
+            foreach (var block in segment.Blocks)
+            {
+                builder.Append('[').Append(VertexStageBPrompt.FormatHhmmss(block.At)).Append("] ")
+                    .Append(block.Kind);
+                if (!string.IsNullOrWhiteSpace(block.Speaker))
+                {
+                    builder.Append(" (").Append(block.Speaker).Append(')');
+                }
+
+                builder.Append('\n');
+                Append(builder, "spoken", block.Spoken);
+                Append(builder, "on_screen", block.OnScreenText);
+                Append(builder, "visual", block.Visual);
+            }
+        }
+
+        return builder.ToString();
+
+        static void Append(StringBuilder builder, string label, string? value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                builder.Append("  ").Append(label).Append(": ").Append(value.Trim()).Append('\n');
+            }
+        }
+    }
+
+    private static object FusionResponseSchema { get; } = new
+    {
+        type = "OBJECT",
+        properties = new
+        {
+            title = new { type = "STRING" },
+            summary = new { type = "STRING" },
+            language = new { type = "STRING" },
+            tags = new { type = "ARRAY", items = new { type = "STRING" } },
+            sections = new
+            {
+                type = "ARRAY",
+                items = new
+                {
+                    type = "OBJECT",
+                    properties = new
+                    {
+                        timestamp = new { type = "STRING" },
+                        heading = new { type = "STRING" },
+                        blocks = new
+                        {
+                            type = "ARRAY",
+                            items = new
+                            {
+                                type = "OBJECT",
+                                properties = new
+                                {
+                                    label = new { type = "STRING", @enum = new[] { "spoken", "on_screen", "visual" } },
+                                    text = new { type = "STRING" },
+                                },
+                                required = new[] { "label", "text" },
+                            },
+                        },
+                    },
+                    required = new[] { "timestamp", "heading", "blocks" },
+                },
+            },
+        },
+        required = new[] { "title", "summary", "language", "tags", "sections" },
+    };
+
+    [GeneratedRegex("^[a-z]{2}(-[A-Za-z]{2,4})?$")]
+    private static partial Regex LanguageTag();
+
+    [GeneratedRegex("^[0-9]{2}:[0-5][0-9]:[0-5][0-9]$")]
+    private static partial Regex TimestampTag();
+
+    [GeneratedRegex("[^a-z0-9 -]")]
+    private static partial Regex TagInvalidChars();
+
+    [GeneratedRegex("-{2,}")]
+    private static partial Regex MultiDash();
+}
+
+internal sealed record FusionPayload(
+    [property: JsonPropertyName("title")] string? Title,
+    [property: JsonPropertyName("summary")] string? Summary,
+    [property: JsonPropertyName("language")] string? Language,
+    [property: JsonPropertyName("tags")] IReadOnlyList<string>? Tags,
+    [property: JsonPropertyName("sections")] IReadOnlyList<FusionSection>? Sections);
+
+internal sealed record FusionSection(
+    [property: JsonPropertyName("timestamp")] string? Timestamp,
+    [property: JsonPropertyName("heading")] string? Heading,
+    [property: JsonPropertyName("blocks")] IReadOnlyList<FusionBlock>? Blocks);
+
+internal sealed record FusionBlock(
+    [property: JsonPropertyName("label")] string? Label,
+    [property: JsonPropertyName("text")] string? Text);

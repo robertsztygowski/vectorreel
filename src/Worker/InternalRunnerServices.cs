@@ -1,4 +1,3 @@
-using MdReel.Core.Domain;
 using MdReel.Core.Providers;
 
 namespace MdReel.Worker;
@@ -46,27 +45,5 @@ internal sealed class LocalFileObjectStorage(IHostEnvironment environment) : IOb
     {
         var sanitizedObject = objectName.Replace('/', Path.DirectorySeparatorChar);
         return Path.Combine(_root, bucket, sanitizedObject);
-    }
-}
-
-internal sealed class UnconfiguredVideoAnalyzer : IVideoAnalyzer
-{
-    public Task<StageBModelResponse> AnalyzeAsync(
-        string sourceUri,
-        Segment segment,
-        StageBCallOptions callOptions,
-        CancellationToken cancellationToken)
-    {
-        throw new InvalidOperationException(
-            "No IVideoAnalyzer implementation is configured. Wire a Vertex-backed analyzer before enabling YouTubeGalleryRunner.");
-    }
-}
-
-internal sealed class UnconfiguredTextFuser : ITextFuser
-{
-    public Task<string> FuseAsync(IReadOnlyList<SegmentAnalysis> segments, CancellationToken cancellationToken)
-    {
-        throw new InvalidOperationException(
-            "No ITextFuser implementation is configured. Wire a Stage-C text fuser before enabling YouTubeGalleryRunner.");
     }
 }
