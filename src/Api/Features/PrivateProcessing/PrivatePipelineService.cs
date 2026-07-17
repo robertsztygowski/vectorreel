@@ -1,13 +1,15 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
+using MdReel.Core;
 using MdReel.Core.Pipeline.StageA;
 
 namespace MdReel.Api.Features.PrivateProcessing;
 
-public sealed class PrivatePipelineService(
+public sealed partial class PrivatePipelineService(
     StageARunner stageA,
     IWebHostEnvironment environment,
     ILogger<PrivatePipelineService> logger)
@@ -154,25 +156,47 @@ public sealed class PrivatePipelineService(
     {
         var started = DateTimeOffset.UtcNow;
 
+        // Root span per job (no parent: the HTTP request span ends at 202). jobId is the tag the
+        // agent runbook searches on (TESTING.md) — one query from a red test to this trace.
+        using var jobActivity = PipelineDiagnostics.Source.StartActivity(
+            "pipeline.job", ActivityKind.Internal, parentContext: default);
+        jobActivity?.SetTag("mdreel.job_id", job.Id);
+        jobActivity?.SetTag("mdreel.upload_id", job.UploadId);
+        jobActivity?.SetTag("mdreel.source", job.Source);
+
         try
         {
             SetProcessing(job, "A", 15);
-            await ExecuteStageAAsync(job, upload);
+            using (StartStage(job, "A"))
+            {
+                await ExecuteStageAAsync(job, upload);
+            }
 
             if (job.ShouldFail)
             {
                 SetFailed(job);
+                jobActivity?.SetStatus(ActivityStatusCode.Error, "simulated failure requested");
+                logger.LogWarning("Job {JobId} failed (simulated failure requested)", job.Id);
                 return;
             }
 
             SetProcessing(job, "B", 45);
-            await Task.Delay(StageBDelay);
+            using (StartStage(job, "B"))
+            {
+                await Task.Delay(StageBDelay);
+            }
 
             SetProcessing(job, "C", 75);
-            await Task.Delay(StageCDelay);
+            using (StartStage(job, "C"))
+            {
+                await Task.Delay(StageCDelay);
+            }
 
             SetProcessing(job, "D", 92);
-            await Task.Delay(StageDDelay);
+            using (StartStage(job, "D"))
+            {
+                await Task.Delay(StageDDelay);
+            }
 
             var finishedAt = DateTimeOffset.UtcNow;
             job.Status = "done";
@@ -185,13 +209,31 @@ public sealed class PrivatePipelineService(
             job.Output = SampleOutputBuilder.Build(job.Source, job.DurationSec.Value, finishedAt);
 
             TryDeleteFile(upload.Path);
+            jobActivity?.SetTag("mdreel.cost_cents", job.CostCents);
+            LogJobDone(job.Id, job.WallClockSec.Value, job.CostCents.Value);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Private pipeline failed for job {JobId}", job.Id);
+            jobActivity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             SetFailed(job);
         }
     }
+
+    private Activity? StartStage(JobState job, string stage)
+    {
+        LogStageEnter(job.Id, stage);
+        var activity = PipelineDiagnostics.Source.StartActivity($"pipeline.stage.{stage}");
+        activity?.SetTag("mdreel.job_id", job.Id);
+        activity?.SetTag("mdreel.stage", stage);
+        return activity;
+    }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Job {JobId} entering stage {Stage}")]
+    private partial void LogStageEnter(string jobId, string stage);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Job {JobId} done in {WallClockSec}s (cost {CostCents}c)")]
+    private partial void LogJobDone(string jobId, double wallClockSec, int costCents);
 
     private async Task ExecuteStageAAsync(JobState job, UploadState upload)
     {
@@ -239,20 +281,20 @@ public sealed record JobCreatedResponse(
 public sealed record JobListItemResponse(
     [property: JsonPropertyName("jobId")] string JobId,
     [property: JsonPropertyName("status")] string Status,
-    [property: JsonPropertyName("stage")] string? Stage,
+    [property: JsonPropertyName("stage"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? Stage,
     [property: JsonPropertyName("progress")] double Progress,
     [property: JsonPropertyName("source")] string Source,
-    [property: JsonPropertyName("duration_sec")] double? DurationSec,
+    [property: JsonPropertyName("duration_sec"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] double? DurationSec,
     [property: JsonPropertyName("created_at")] string CreatedAt,
-    [property: JsonPropertyName("finished_at")] string? FinishedAt);
+    [property: JsonPropertyName("finished_at"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? FinishedAt);
 
 public sealed record JobStatusResponse(
     [property: JsonPropertyName("status")] string Status,
-    [property: JsonPropertyName("stage")] string? Stage,
+    [property: JsonPropertyName("stage"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? Stage,
     [property: JsonPropertyName("progress")] double Progress,
-    [property: JsonPropertyName("cost_cents")] int? CostCents,
-    [property: JsonPropertyName("duration_sec")] double? DurationSec,
-    [property: JsonPropertyName("wall_clock_sec")] double? WallClockSec);
+    [property: JsonPropertyName("cost_cents"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] int? CostCents,
+    [property: JsonPropertyName("duration_sec"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] double? DurationSec,
+    [property: JsonPropertyName("wall_clock_sec"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] double? WallClockSec);
 
 public sealed record CreateJobRequest(
     [property: JsonPropertyName("uploadId")] string? UploadId,

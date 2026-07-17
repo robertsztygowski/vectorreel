@@ -35,9 +35,9 @@ async function postJson<T>(path: string, body: unknown, init: RequestInit = {}):
 
   const res = await fetch(url, {
     method: 'POST',
+    ...init,
     headers: { 'Content-Type': 'application/json', ...(init.headers ?? {}) },
     body: JSON.stringify(body),
-    ...init,
   });
   if (!res.ok) throw new Error(`POST ${path} failed: ${res.status}`);
   return (await res.json()) as T;
@@ -72,5 +72,9 @@ export function postEvent<T extends EventPostResponse = EventPostResponse>(
 }
 
 export function postCheckout(args: { plan: PlanId; tenant_id: string }): Promise<CheckoutResponse | null> {
-  return postJson<CheckoutResponse>('/checkout', args);
+  // Checkout requires an authenticated caller (ARCHITECTURE §5). Until magic-link auth issues real
+  // session tokens, the tenant id doubles as the bearer credential.
+  return postJson<CheckoutResponse>('/checkout', args, {
+    headers: { Authorization: `Bearer ${args.tenant_id}` },
+  });
 }

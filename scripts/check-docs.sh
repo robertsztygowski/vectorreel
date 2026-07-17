@@ -15,7 +15,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 2
 
 OWNER="METRICS.md"
-DOCS=(PLAN.md ARCHITECTURE.md BUSINESS_MODEL.md DISTRIBUTION.md CLAUDE.md DEVELOPMENT.md INFRA.md)
+DOCS=(PLAN.md ARCHITECTURE.md BUSINESS_MODEL.md DISTRIBUTION.md CLAUDE.md DEVELOPMENT.md INFRA.md TESTING.md)
 
 # Canonical values owned by METRICS.md. Extend this list whenever a new number becomes load-bearing.
 #

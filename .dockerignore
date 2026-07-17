@@ -1,0 +1,12 @@
+# Keeps the api image build context small and host build artifacts out of the image.
+**/bin/
+**/obj/
+**/node_modules/
+**/.next/
+.git/
+.calibration/
+.playwright-mcp/
+experiments/
+tests/E2E/node_modules/
+tests/E2E/test-results/
+web/

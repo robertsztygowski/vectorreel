@@ -13,6 +13,10 @@ dist/
 # Playwright MCP scratch (console logs + page snapshots — tooling artifacts, never committed)
 .playwright-mcp/
 
+# Playwright E2E artifacts (tests/E2E — traces, screenshots, videos on failure)
+test-results/
+playwright-report/
+
 # .NET
 bin/
 obj/

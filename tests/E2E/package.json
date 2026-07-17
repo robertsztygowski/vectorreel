@@ -1,0 +1,17 @@
+{
+  "name": "mdreel-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "smoke": "playwright test --grep @smoke",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.0",
+    "@types/pg": "^8.11.0",
+    "ajv": "^8.17.0",
+    "ajv-formats": "^3.0.1",
+    "pg": "^8.13.0"
+  }
+}

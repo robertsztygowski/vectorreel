@@ -79,7 +79,8 @@ Rules:
 
 ## 4. Testing strategy
 
-Shape: **integration-first, TDD where it pays.**
+Shape: **integration-first, TDD where it pays.** The runnable verify loop — tiers, exact
+commands, measured runtimes, agent runbook — lives in **TESTING.md** (sole authority).
 
 | Layer | What | When to write |
 |---|---|---|
@@ -113,6 +114,8 @@ Real GCP from the local machine (via gcloud ADC):
   Never download service-account JSON key files.
 - One command to a running system: `docker compose up -d && dotnet run --project src/Api`
   (plus Worker). Keep it that simple; if setup grows, script it in `scripts/`.
+- The full containerized stack (api + web + observability) is the compose `e2e` profile —
+  commands and runbook in TESTING.md.
 
 ### LLM record/replay
 

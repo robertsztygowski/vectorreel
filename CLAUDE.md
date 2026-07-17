@@ -26,6 +26,7 @@ Read PLAN.md's STATUS block first.
 | **BUSINESS_MODEL.md** | Problem, solution, positioning, ICP, pricing, non-goals. |
 | **DISTRIBUTION.md** | How customers are reached. Owns **A5**. |
 | **INFRA.md** | Current GCP state. |
+| **TESTING.md** | The verify loop — test tiers, exact commands, measured runtimes, agent runbook. |
 | **DEVELOPMENT.md** | Full guidelines (this file is the summary). |
 
 ### 🚨 One fact, one home
@@ -50,7 +51,8 @@ status banner before quoting it.
 2. **EU regions only**, declared explicitly on every resource (`europe-central2` / `europe-west3`).
 3. **Strict build:** `TreatWarningsAsErrors` + `Nullable` on; `dotnet format` before commit.
 4. **Definition of done** (before any commit to main): build clean → integration tests green
-   (docker compose) → affected flow exercised e2e locally (real Vertex if pipeline/prompts touched)
+   (docker compose) → **E2E suite green (`scripts/e2e.sh test` — TESTING.md)** → affected flow
+   exercised e2e locally (real Vertex if pipeline/prompts touched)
    → no secrets in diff → impacted living doc updated in the same commit →
    **`scripts/check-docs.sh` passes** (no number restated outside METRICS.md).
 5. **Deploy is deliberate**, from local, after `tests/Live/` passes. Never auto-deploy.
@@ -89,6 +91,8 @@ status banner before quoting it.
 
 ## Testing
 
+- **Whole-solution verify loop: `scripts/e2e.sh up` then `scripts/e2e.sh full`** — tiers,
+  runtimes and the agent runbook live in TESTING.md.
 - Integration-first: docker compose (postgres, fake-gcs-server) + `InProcessQueue`;
   LLM calls replayed from `tests/fixtures/llm/`. TDD for pipeline/algorithmic logic.
 - LLM assertions check structure/invariants, never exact prose.
@@ -101,6 +105,7 @@ status banner before quoting it.
 docker compose up -d                      # local deps
 dotnet run --project src/Api              # + src/Worker
 dotnet test --filter Category!=Live       # default suite
+scripts/e2e.sh up && scripts/e2e.sh test  # full-stack E2E (TESTING.md)
 dotnet test tests/Live                    # real Vertex smoke (pre-deploy)
 dotnet format                             # before commit
 # deploy (see INFRA.md for full commands):

@@ -2,12 +2,16 @@ using System.Text;
 using MdReel.Api.Features.Instrumentation;
 using MdReel.Api.Features.Payments;
 using MdReel.Api.Features.PrivateProcessing;
+using MdReel.Core;
 using MdReel.Core.Domain;
 using MdReel.Core.Media;
 using MdReel.Core.Pipeline.StageA;
 using MdReel.Core.Providers;
 using Microsoft.AspNetCore.WebUtilities;
 using Npgsql;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace MdReel.Api;
 
@@ -17,15 +21,52 @@ public partial class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         ConfigureServices(builder.Services, builder.Configuration);
+        ConfigureTelemetry(builder);
 
         var app = builder.Build();
         ConfigurePipeline(app);
         app.Run();
     }
 
+    /// <summary>
+    /// OTel traces + logs, exported over OTLP only when OTEL_EXPORTER_OTLP_ENDPOINT is set
+    /// (docker compose e2e profile points it at the local Aspire dashboard — TESTING.md).
+    /// Unset ⇒ zero overhead beyond no-op sources; nothing ever phones home (CLAUDE.md rule 10).
+    /// </summary>
+    private static void ConfigureTelemetry(WebApplicationBuilder builder)
+    {
+        if (string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]))
+        {
+            return;
+        }
+
+        builder.Services.AddOpenTelemetry()
+            .ConfigureResource(static resource => resource.AddService("mdreel-api"))
+            .WithTracing(static tracing => tracing
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddNpgsql()
+                .AddSource(PipelineDiagnostics.SourceName)
+                .AddOtlpExporter())
+            .WithLogging(static logging => logging.AddOtlpExporter());
+    }
+
     private static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
     {
         services.AddProblemDetails();
+
+        // Browser origin of the web panel (e.g. http://localhost:3000 in the compose e2e profile).
+        // Unset ⇒ no CORS headers, cross-origin browser calls stay blocked.
+        var corsOrigins = (configuration["CORS_ALLOWED_ORIGINS"] ?? string.Empty)
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (corsOrigins.Length > 0)
+        {
+            services.AddCors(options => options.AddDefaultPolicy(policy => policy
+                .WithOrigins(corsOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials())); // sendBeacon (first-party events) always sends credentials mode "include"
+        }
 
         services.AddSingleton(new MediaToolOptions
         {
@@ -103,6 +144,11 @@ public partial class Program
         });
 
         app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
+
+        if (app.Services.GetService<Microsoft.AspNetCore.Cors.Infrastructure.ICorsService>() is not null)
+        {
+            app.UseCors();
+        }
 
         app.Use(async (context, next) =>
         {
