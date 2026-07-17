@@ -95,6 +95,10 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   service. `RequireConfirmedEmail=false`, so auth works without it.
 > - *(accumulates as later milestones land: api.mdreel.com CNAME (M2), stats.mdreel.com DNS (M3),
 >   Stripe test keys/price IDs (M4), Cloud Tasks binding flip (M5).)***Phase 2R scope — *encode the competitor findings*
+> - **api.mdreel.com CNAME (M2 ✅ mapping created)** — Cloudflare zone `mdreel.com`, **DNS-only
+>   (grey cloud)**: add `api` `CNAME` → `ghs.googlehosted.com`. The mapping is live and waiting on
+>   this record for its cert; until then the middleware proxy (`mdreel.com/api/v1/*`) already
+>   serves the api same-origin, so nothing is blocked. Details in INFRA.md.**Phase 2R scope — *encode the competitor findings*
 (experiments/002-competitor-analysis).** The positioning was reset 2026-07-15 by that analysis
 (BUSINESS_MODEL §2/§4/§6/§8): anchor on **asset video, never meetings** (the bundled recap is the
 #1 competitor); sell the **portable Markdown artifact, not the OCR** (OCR is table-stakes); lead the

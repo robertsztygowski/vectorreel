@@ -212,6 +212,30 @@ page and the TLS. **This clears the domain gate for launch — PLAN.md Phase 5, 
 > namespaces, assembly names, service name) is **deferred to a dedicated refactor**. Domain and
 > service name are independent; the mapping works regardless of the service's internal name.
 
+### Custom domain — `api.mdreel.com`  ⏳ MAPPING CREATED 2026-07-17, DNS PENDING (NEEDS-FOUNDER)
+
+The api service is reachable in production today via the Next.js middleware auth proxy
+(same-origin `mdreel.com/api/v1/*` → `vectorreel-api`, wired by `API_ORIGIN` in `deploy.sh`), so
+nothing blocks on this record — it is a direct-access convenience for the api.
+
+- Cloud Run domain mapping `api.mdreel.com` → `vectorreel-api` @ `europe-west1` created via the
+  **Cloud Run Admin REST API** (`domains.cloudrun.com/v1` domainmappings) — the dev SDK lacks
+  `gcloud beta` *and* its GA `run domain-mappings` is the namespace/GKE variant, so the REST call
+  with an access token is the reproducible path:
+  ```
+  curl -X POST -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+    -H 'Content-Type: application/json' \
+    https://europe-west1-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/tensile-runway-442915-j6/domainmappings \
+    -d '{"apiVersion":"domains.cloudrun.com/v1","kind":"DomainMapping","metadata":{"name":"api.mdreel.com"},"spec":{"routeName":"vectorreel-api"}}'
+  ```
+- Status: `DomainRoutable=True`, `Ready=Unknown` / `CertificatePending` — Google will issue the
+  cert once the DNS record exists. **NEEDS-FOUNDER**: add in Cloudflare (zone `mdreel.com`,
+  **DNS-only / grey cloud**, same rule as `www`):
+
+  | Name | Type | Value |
+  |---|---|---|
+  | `api` | CNAME | `ghs.googlehosted.com` |
+
 ## Open flags to revisit before / at production
 
 1. **Shared project, not dedicated.** `tensile-runway-442915-j6` is the "Propspire" project and
