@@ -93,6 +93,17 @@ status banner before quoting it.
 
 - **Whole-solution verify loop: `scripts/e2e.sh up` then `scripts/e2e.sh full`** — tiers,
   runtimes and the agent runbook live in TESTING.md.
+- **While developing, run the tier that matches what you changed** (containers do NOT
+  hot-reload — `scripts/e2e.sh up` rebuilds changed images):
+  - `src/**` → `dotnet test --filter Category!=Live` (needs `docker compose up -d` for the
+    `RequiresDocker` tests), then `scripts/e2e.sh up && scripts/e2e.sh smoke` — escalate to
+    `scripts/e2e.sh test` if the change touches API contracts, auth, CORS, or payments.
+  - `web/**` → `cd web && npm test`, then `scripts/e2e.sh up && scripts/e2e.sh test`.
+  - `tests/E2E/**` → `scripts/e2e.sh test specs/<file>.spec.ts` (no rebuild needed).
+  - Red test → TESTING.md §3 runbook: `scripts/e2e.sh logs api`, trace by jobId at
+    http://localhost:19888, `scripts/e2e.sh db "<sql>"`, Playwright artifacts in
+    `tests/E2E/test-results/` (read `error-context.md` first).
+- The full suite (`scripts/e2e.sh full`) is required before every commit to main — rule 4.
 - Integration-first: docker compose (postgres, fake-gcs-server) + `InProcessQueue`;
   LLM calls replayed from `tests/fixtures/llm/`. TDD for pipeline/algorithmic logic.
 - LLM assertions check structure/invariants, never exact prose.
