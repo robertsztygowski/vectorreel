@@ -90,6 +90,31 @@ assert_auth_wired() {
   fi
 }
 
+assert_cloud_tasks() {
+  local api_url="$1"
+  local state code
+
+  # M5 flip: the live webhook-delivery queue must exist and be RUNNING in the run region.
+  state="$(gcloud tasks queues describe webhook-deliveries \
+    --location "$RUN_REGION" --project "$PROJECT" \
+    --format='value(state)' 2>/dev/null || true)"
+  if [[ "$state" == "RUNNING" ]]; then
+    pass "Cloud Tasks webhook-deliveries queue RUNNING" "$RUN_REGION"
+  else
+    fail "Cloud Tasks webhook-deliveries queue RUNNING" "state=${state:-missing}"
+  fi
+
+  # The push target sits outside the /api/v1 gate and self-validates the Cloud Tasks OIDC token; a
+  # bare POST must be 401 (200/404 would mean the endpoint is unprotected).
+  code="$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Length: 0' \
+    "$api_url/internal/webhook-deliveries/smoke-probe/attempt" 2>/dev/null || true)"
+  if [[ "$code" == "401" ]]; then
+    pass "Cloud Tasks push endpoint enforces OIDC" "HTTP 401 unauthenticated"
+  else
+    fail "Cloud Tasks push endpoint enforces OIDC" "HTTP ${code:-000} (expected 401)"
+  fi
+}
+
 assert_db_roundtrip() {
   local api_url="$1"
   local session_id="smoke-$(date +%s)"
@@ -225,10 +250,13 @@ if [[ -n "$api_url" ]]; then
   assert_http_200 "API /health HTTP 200" "$api_url/health"
   assert_db_roundtrip "$api_url"
   assert_auth_wired "$api_url"
+  assert_cloud_tasks "$api_url"
 else
   fail "API /health HTTP 200" "API URL unavailable"
   fail "API DB round-trip" "API URL unavailable"
   fail "Auth API mounted (login rejects bad creds)" "API URL unavailable"
+  fail "Cloud Tasks webhook-deliveries queue RUNNING" "API URL unavailable"
+  fail "Cloud Tasks push endpoint enforces OIDC" "API URL unavailable"
 fi
 
 if [[ -n "$web_url" ]]; then

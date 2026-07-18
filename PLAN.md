@@ -189,6 +189,11 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   `CloudTasks__*` env on the api.
 > - **DoD gate ✅** — build clean, .NET 59+65, web 48, E2E 16, `dotnet format`, no secrets,
 >   check-docs ✓.
+> - **Deployed + verified ✅** — api revision `vectorreel-api-00005-ft4` (`5c7fdec`). Live proof:
+>   unauthenticated `POST /internal/webhook-deliveries/{id}/attempt` → **401**; a seeded delivery
+>   pushed through the `webhook-deliveries` queue with an OIDC token → endpoint authorized it, ran
+>   the attempt, and the row flipped to **delivered (HTTP 202)**. `smoke-remote.sh` gained a queue
+>   RUNNING + OIDC-enforced check and stays green (**25 passed / 0 failed**).
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)

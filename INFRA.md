@@ -136,7 +136,7 @@ All parameterized via `PROJECT`/`RUN_REGION`/`DATA_REGION`/… env vars with the
 | Item | Value |
 |---|---|
 | **Region** | `europe-west1` · **URL** https://vectorreel-api-92936629017.europe-west1.run.app |
-| **Revision** | `vectorreel-api-00001-r8n` (image `cloud-run-source-deploy/vectorreel-api:7ebcfbe`) |
+| **Revision** | `vectorreel-api-00005-ft4` (image `cloud-run-source-deploy/vectorreel-api:5c7fdec`) — M5 Cloud Tasks flip (`CloudTasks__*` env, see the task-queue row) |
 | **Container** | `src/Api/Dockerfile` (repo-root build context) |
 | **Config** | `PipelineModel__Mode=fake` (no Vertex spend; Stages B–D stubbed), `PAYMENTS_MODE=disabled` (M4: no Stripe keys yet → checkout/portal degrade to 503, not the deterministic `FakePaymentGateway` used in local/CI/E2E), `--add-cloudsql-instances` + `POSTGRES_CONNECTION` from Secret Manager (unix-socket `Host=/cloudsql/…`), Stripe secrets `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` wired from empty Secret Manager versions (see below), `--min-instances=0`, `--allow-unauthenticated` |
 | **Stripe secrets (M4)** | `mdreel-stripe-secret-key` + `mdreel-stripe-webhook-secret` (Secret Manager, `europe-central2`, user-managed replication) created **empty** (whitespace placeholder) by `deploy.sh` and wired via `--set-secrets`; the runtime SA gets `secretAccessor`. A whitespace value reads as "unset", so with `PAYMENTS_MODE=disabled` payments stay off until the founder adds a real **test-mode** key version and redeploys (PLAN.md NEEDS-FOUNDER). A `sk_live_…` key is a hard stop. |
