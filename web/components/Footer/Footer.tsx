@@ -16,6 +16,11 @@ export function Footer() {
       <footer className="site-footer footer-split-default">
         <div className="wrap footer-bottom footer-bottom-only">
           <span>© 2026 mdreel. Built in the EU.</span>
+          <nav className="footer-legal-inline" aria-label="Legal">
+            <Link href="/legal/terms">Terms</Link>
+            <Link href="/legal/privacy">Privacy</Link>
+            <Link href="/legal/imprint">Imprint</Link>
+          </nav>
           <span>EU data residency on Google Cloud · sovereignty roadmap published</span>
         </div>
       </footer>
@@ -46,9 +51,11 @@ export function Footer() {
           </nav>
           <nav className="footer-col" aria-label="Trust">
             <h4>trust</h4>
-            <Link href="/#eu">GDPR</Link>
-            <Link href="/#eu">Security</Link>
-            <Link href="/#eu">Subprocessors</Link>
+            <Link href="/legal/terms">Terms of Service</Link>
+            <Link href="/legal/privacy">Privacy Policy</Link>
+            <Link href="/legal/imprint">Imprint</Link>
+            <Link href="/legal/dpa">DPA</Link>
+            <Link href="/legal/subprocessors">Subprocessors</Link>
           </nav>
         </div>
         <div className="footer-bottom">

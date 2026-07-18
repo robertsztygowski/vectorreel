@@ -148,7 +148,37 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   Cloud SQL instance (METRICS.md N2), unchanged from before the run.
 
 >
+> ### 🏃 Autonomous build run — 2026-07-18 (legal pack; founder away, rule-5 deploy override)
+> Shipped the full B2B legal pack — mdreel previously had **zero legal pages** (the footer trust
+> column linked to `/#eu` anchors), a launch blocker for a product that sells EU residency to DPOs.
+> - **M0 guardrails ✅ re-verified** — budget alert `mdreel-monthly-1000usd-equiv` (4000 PLN) present;
+>   all four Cloud Run services in `europe-west1` with caps (web 3 / api 2 / worker 1 / umami 1) and
+>   scale-to-zero. No drift, no changes, no new GCP resources (rule-2 hard).
+> - **M1 research ✅** (`39eed52`) — `experiments/legal/2026-07-18-legal-pack-research.md`: Polish
+>   imprint/regulamin (UŚUDE Art. 5/8), B2B-only enforceability (KC Art. 385⁵), GDPR Art. 13/14 +
+>   Art. 28(3) DPA clauses, controller/processor split, EU B2B SaaS references. Memo only (never
+>   authoritative).
+> - **M2 pages + wiring ✅** — six TSX pages under `web/app/legal/` (terms, privacy, imprint, dpa,
+>   subprocessors, acceptable-use) on a shared `LegalLayout` with ToC + effective date + version,
+>   driven by a single `web/lib/legal.ts` source of truth. Footer trust column rewired to real links
+>   (both variants); signup + checkout carry the B2B agree-notice. Subprocessor list is INFRA.md
+>   truth (Google Cloud, Stripe test-mode, Brevo planned) — **Umami stated as first-party, not a
+>   subprocessor**. Intra-EEA ⇒ no SCC. Web unit test (`legal.test.ts`) + E2E (`legal.spec.ts`, 8
+>   cases) green; full DoD gate passed (build clean, .NET 59+65, web 48, E2E 16, check-docs ✓).
+> - **M3 deploy + assert** — see the M3 report line below once deployed.
+
+
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
+> - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages
+>   were AI-drafted from primary sources (memo `experiments/legal/2026-07-18-legal-pack-research.md`)
+>   and published without a "draft" banner. Have a Polish lawyer review the whole pack (Terms/
+>   regulamin, Privacy, Imprint, DPA, Subprocessors, Acceptable Use) and confirm the open questions
+>   in the memo: REGON display, sole-trader withdrawal (Art. 38a status), whether the passive B2B
+>   notice should become an **affirmative checkbox** (KC Art. 385⁵ §11), DPO not-required, and the
+>   Google Cloud Standard DPA SCC wording.
+> - **`hello@mdreel.com` must actually receive mail** — it is the sole imprint / privacy / DPO-ish /
+>   abuse / complaints contact on every legal page. Verify the mailbox is provisioned and delivers
+>   (agent cannot test this).
 > - **Brevo API key** — transactional email is a no-op logging sender until set:
 >   `gcloud secrets versions add mdreel-brevo-api-key --data-file=- --project tensile-runway-442915-j6`
 >   (create the secret first if absent, region europe-central2), then set `BREVO_API_KEY` on the api

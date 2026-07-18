@@ -130,6 +130,11 @@ function CheckoutInner() {
           </div>
           {error && <p className="pay-note error-text">{error}</p>}
           <p className="pay-note">payments by Stripe — card details never touch mdreel servers</p>
+          <p className="auth-agree">
+            By continuing you agree to the <Link href="/legal/terms">Terms of Service</Link>,{' '}
+            <Link href="/legal/privacy">Privacy Policy</Link> and, for content you upload, the{' '}
+            <Link href="/legal/dpa">Data Processing Agreement</Link>.
+          </p>
         </div>
       </div>
     </>

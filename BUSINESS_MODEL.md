@@ -62,6 +62,13 @@ Direct competitor: **Cloudglue** (US, launched 2025; multimodal transcripts, ext
 | Source retention | Stores video library | **Source video deleted after processing by default** (configurable) |
 | Buyer message | Developer platform | "Feed your videos to your agents without leaving the EU" |
 
+> **Trust/compliance surface is live (2026-07-18):** the "EU-focused DPA, short subprocessor list,
+> honest sovereignty roadmap" row above is shipped as the public legal pack at `mdreel.com/legal/*`
+> — Terms, Privacy, Imprint, DPA (GDPR Art. 28, incorporated by reference), Subprocessors,
+> Acceptable Use. Source in `web/app/legal/`; research trail in
+> `experiments/legal/2026-07-18-legal-pack-research.md`; Polish-lawyer review is a PLAN.md
+> NEEDS-FOUNDER item.
+
 **What is and isn't the wedge (competitor-informed 2026-07-15 — experiments/002-competitor-analysis):**
 
 - ❌ **On-screen-text OCR is table-stakes, not a differentiator.** Cloudglue (Scene Text
@@ -270,10 +277,13 @@ inputs to A5 and A2, and METRICS.md §6 lists them as anti-metrics for a reason.
   tool?"* is a worse question than *"is this a transcription tool?"*
 - No self-hosted edition (documented as roadmap; architecture must not preclude it).
 - No connectors (upload + API only).
-- **No Terraform, no Cloud Tasks, no connectors, no DPA self-service** until there is a paying
+- **No Terraform, no Cloud Tasks, no connectors** until there is a paying
   customer (PLAN.md "Deferred"). *(Revised 2026-07-15: the two-plan checkout — one hard-capped, one
   with overage — the authenticated panel, and the MCP server moved INTO the MVP; §6 and PLAN.md
-  Phases 2R/4 own the details.)* Cloud SQL still enters only when the events store demands it —
+  Phases 2R/4 own the details.)* *(Revised 2026-07-18: the launch legal pack ships a **self-serve
+  DPA incorporated by reference** into the ToS — see the trust/compliance surface below and PLAN.md.
+  A negotiated **click-to-sign / enterprise DPA signature flow** remains deferred until a customer
+  demands it.)* Cloud SQL still enters only when the events store demands it —
   it idles at ~€25–50/mo against a ~€300/mo fixed base.
 - No built-in chat/RAG/search over processed videos — we produce files, we do not compete with the customer's retrieval stack.
 - No fine-tuning, no training on customer data — ever, contractually.

@@ -124,6 +124,12 @@ function SignupInner() {
                   {submitting ? 'creating…' : 'create account'}
                 </button>
               </div>
+              <p className="auth-agree">
+                By creating an account you agree to the{' '}
+                <Link href="/legal/terms">Terms of Service</Link> and{' '}
+                <Link href="/legal/privacy">Privacy Policy</Link>. mdreel is a business-only
+                service — you confirm you are acting in the course of business.
+              </p>
             </form>
             <p className="auth-alt">
               already have an account? <Link href="/signin">sign in</Link>
