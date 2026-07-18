@@ -228,16 +228,14 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   until then; the switch is one build-arg change (`NEXT_PUBLIC_UMAMI_SCRIPT_URL`). The Umami admin
 >   password is in Secret Manager `mdreel-umami-admin-password` (not an action — just where to find
 >   it). Details in INFRA.md.
-> - **Stripe test-mode keys (M4 ✅ code complete, keyless)** — the api reads two empty Secret
->   Manager secrets and stays in `PAYMENTS_MODE=disabled` (checkout/portal → 503) until real
->   **test-mode** values land. From the Stripe test dashboard, add the secret key and the webhook
->   signing secret, then redeploy the api:
->   `printf '%s' 'sk_test_…' | gcloud secrets versions add mdreel-stripe-secret-key --data-file=- --project tensile-runway-442915-j6`
->   `printf '%s' 'whsec_…' | gcloud secrets versions add mdreel-stripe-webhook-secret --data-file=- --project tensile-runway-442915-j6`
->   then set the price IDs and drop the disabled flag on redeploy:
->   `gcloud run services update vectorreel-api --region europe-west1 --project tensile-runway-442915-j6 --remove-env-vars PAYMENTS_MODE --set-env-vars 'STRIPE_PRICE_PRO=price_…,STRIPE_PRICE_BUSINESS=price_…'`.
->   A **live** `sk_live_…` key anywhere is a hard stop — test mode only. Point the Stripe webhook at
->   `https://<api-url>/api/v1/webhooks/stripe`.
+> - **Stripe test-mode keys (M4) ✅ DONE 2026-07-18** — founder created the Stripe sandbox
+>   (JDG entity, EUR payout account, Pro/Business/Starter monthly prices); keys landed in Secret
+>   Manager, price IDs + `APP_BASE_URL` set on the api, `PAYMENTS_MODE` removed. The webhook
+>   endpoint had to be **pinned to Stripe API version `2025-09-30.clover`** (Stripe.net 49.0.0's
+>   pin — the sandbox default broke signature construction with 400s) and
+>   `payment_intent.succeeded` was dropped as undeliverable. Verified e2e in prod with the `4242…`
+>   test card: payment → webhook 200 → subscription row + billing portal live. Test mode only —
+>   a `sk_live_…` key anywhere remains a hard stop. Details in INFRA.md.
 
 **Phase 2R scope — *encode the competitor findings*
 (experiments/002-competitor-analysis).** The positioning was reset 2026-07-15 by that analysis
