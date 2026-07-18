@@ -76,10 +76,12 @@ from env/config, EU-pinned per CLAUDE.md rule 2:
   so they meter nothing). `PipelineModel__StageRawUploadsToObjectStorage` gates whether the private
   path stages raw bytes into `raw-videos-eu` (null ⇒ stage iff `Mode != fake`).
 
-## APIs NOT yet enabled (needed later — enable when we reach them)
-- `cloudtasks.googleapis.com` — stage queues (Stage A→B→C→D)
+## APIs enabled for the queue flip (M5, 2026-07-17)
+- `cloudtasks.googleapis.com` — **enabled**; backs the live `webhook-deliveries` queue (see the
+  `vectorreel-api` “Task queue / webhooks” row below). Founder-approved this continuously-billing
+  resource on 2026-07-17; `scripts/deploy.sh api` enables it idempotently.
 
-Enable with:
+Enable manually (normally handled by `scripts/deploy.sh api`) with:
 ```bash
 gcloud services enable cloudtasks.googleapis.com --project tensile-runway-442915-j6
 ```
@@ -138,7 +140,7 @@ All parameterized via `PROJECT`/`RUN_REGION`/`DATA_REGION`/… env vars with the
 | **Container** | `src/Api/Dockerfile` (repo-root build context) |
 | **Config** | `PipelineModel__Mode=fake` (no Vertex spend; Stages B–D stubbed), `PAYMENTS_MODE=disabled` (M4: no Stripe keys yet → checkout/portal degrade to 503, not the deterministic `FakePaymentGateway` used in local/CI/E2E), `--add-cloudsql-instances` + `POSTGRES_CONNECTION` from Secret Manager (unix-socket `Host=/cloudsql/…`), Stripe secrets `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` wired from empty Secret Manager versions (see below), `--min-instances=0`, `--allow-unauthenticated` |
 | **Stripe secrets (M4)** | `mdreel-stripe-secret-key` + `mdreel-stripe-webhook-secret` (Secret Manager, `europe-central2`, user-managed replication) created **empty** (whitespace placeholder) by `deploy.sh` and wired via `--set-secrets`; the runtime SA gets `secretAccessor`. A whitespace value reads as "unset", so with `PAYMENTS_MODE=disabled` payments stay off until the founder adds a real **test-mode** key version and redeploys (PLAN.md NEEDS-FOUNDER). A `sk_live_…` key is a hard stop. |
-| **Task queue / webhooks (M5)** | `ITaskQueue` is wired to **`InProcessQueue`** (a dispatch delegate runs the `webhook-deliveries` handler in-process) — **no Cloud Tasks, no new API/cost, no runtime change from M5**. `CloudTasksQueue` is code-complete but unwired (depends on an injectable `ICloudTasksTransport`). Webhook delivery: `webhook_deliveries` table, HMAC-SHA256 signature (`X-Mdreel-Signature: sha256=…`, ARCHITECTURE §6), backoff `10·2^(n-1)`s capped 1h, push target `POST /internal/webhook-deliveries/{id}/attempt`. **Flip procedure (founder-gated):** enable `cloudtasks.googleapis.com`, create a queue in `europe-west1`, supply a `Google.Cloud.Tasks.V2` `ICloudTasksTransport`, register `CloudTasksQueue` as `ITaskQueue`, and **secure the push endpoint** with Cloud Run invoker IAM + an OIDC token on the task (it sits outside the `/api/v1` auth gate). |
+| **Task queue / webhooks (M5, flipped to Cloud Tasks 2026-07-17)** | `ITaskQueue` binds to **`CloudTasksQueue`** whenever `CloudTasks__ProjectId`/`QueueName`/`TargetBaseUrl` are set (the deployed api) — else `InProcessQueue` (local/CI/E2E, so tests stay hermetic: no ADC, no cloud). Deliveries enqueue to the **`webhook-deliveries`** queue in `europe-west1`; Cloud Tasks pushes `POST /internal/webhook-deliveries/{id}/attempt` carrying an **OIDC token** minted as the api runtime SA. That endpoint sits outside the `/api/v1` gate and self-validates the token (Google-signed, `email` = the SA, `aud` = the api URL) — unauthenticated calls get 401. `GoogleCloudTasksTransport` (`Google.Cloud.Tasks.V2`) is the real `ICloudTasksTransport`. Webhook delivery unchanged: `webhook_deliveries` table, HMAC-SHA256 signature (`X-Mdreel-Signature: sha256=…`, ARCHITECTURE §6), backoff `10·2^(n-1)`s capped 1h. **IAM** (set idempotently by `deploy.sh`): api SA gets `cloudtasks.enqueuer` on the queue + `iam.serviceAccountUser` on itself (actAs for the OIDC token); the Cloud Tasks service agent gets `iam.serviceAccountTokenCreator` on the api SA. **Cost:** the queue is pay-per-operation with a generous free tier and scales to zero — no new fixed base (METRICS.md **N2**). |
 | **Verified** | `/health` 200; `POST /api/v1/events` 202 with Postgres persistence (schema auto-created) |
 
 ### `vectorreel-worker` — gallery worker (Cloud Run)  ✅ deployed 2026-07-17
@@ -180,9 +182,11 @@ resolves, switching the tracker to the custom origin is a single build-arg chang
 
 Not provisioned — follow-up work, deliberately excluded from the 2026-07-17 deploy-path proof:
 runtime service-account IAM for Vertex + GCS (least-privilege, not the default compute SA),
-`PipelineModel__Mode=live`, Stripe secrets in Secret Manager, Cloud Tasks
-(`cloudtasks.googleapis.com`), and a dedicated `vectorreel-eu` project (open flag 1 below).
-(Umami analytics on the shared Postgres — rule 10 — is now provisioned; see `mdreel-umami` above.)
+`PipelineModel__Mode=live`, Stripe secrets in Secret Manager, and a dedicated `vectorreel-eu`
+project (open flag 1 below).
+(Umami analytics on the shared Postgres — rule 10 — is now provisioned; see `mdreel-umami` above.
+Cloud Tasks — `cloudtasks.googleapis.com` — is now enabled and live; see the `vectorreel-api`
+task-queue row above.)
 
 ### `vectorreel-web` — frontend (Cloud Run)
 | Item | Value |

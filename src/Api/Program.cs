@@ -126,15 +126,37 @@ public partial class Program
         services.AddSingleton<IWebhookSender>(sp => sp.GetRequiredService<HttpWebhookSender>());
         services.AddSingleton<WebhookDeliveryService>();
         services.AddSingleton<WebhookDeliveryDispatcher>();
-        services.AddSingleton<ITaskQueue>(sp => new InProcessQueue(async (queue, payload, cancellationToken) =>
-        {
-            if (!string.Equals(queue, "webhook-deliveries", StringComparison.Ordinal))
-            {
-                throw new InvalidOperationException($"No in-process handler is registered for queue '{queue}'.");
-            }
 
-            await sp.GetRequiredService<WebhookDeliveryService>().AttemptAsync(payload, cancellationToken);
-        }));
+        // Queue flip: when CloudTasks is fully configured (deployed) route webhook deliveries
+        // through Google Cloud Tasks — durable retries + OIDC push back to the /internal endpoint.
+        // Unset (local/CI/E2E) keeps the in-process handler so tests stay hermetic (no ADC, no cloud).
+        var cloudTasksOptions = configuration.GetSection(CloudTasksOptions.SectionName).Get<CloudTasksOptions>()
+            ?? new CloudTasksOptions();
+        var cloudTasksEnabled = !string.IsNullOrWhiteSpace(cloudTasksOptions.ProjectId)
+            && !string.IsNullOrWhiteSpace(cloudTasksOptions.QueueName)
+            && !string.IsNullOrWhiteSpace(cloudTasksOptions.TargetBaseUrl);
+
+        services.AddSingleton(cloudTasksEnabled && !string.IsNullOrWhiteSpace(cloudTasksOptions.ServiceAccountEmail)
+            ? new WebhookPushAuthOptions(true, cloudTasksOptions.ServiceAccountEmail, cloudTasksOptions.Audience)
+            : WebhookPushAuthOptions.Disabled);
+
+        if (cloudTasksEnabled)
+        {
+            services.AddSingleton<ICloudTasksTransport, GoogleCloudTasksTransport>();
+            services.AddSingleton<ITaskQueue, CloudTasksQueue>();
+        }
+        else
+        {
+            services.AddSingleton<ITaskQueue>(sp => new InProcessQueue(async (queue, payload, cancellationToken) =>
+            {
+                if (!string.Equals(queue, "webhook-deliveries", StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException($"No in-process handler is registered for queue '{queue}'.");
+                }
+
+                await sp.GetRequiredService<WebhookDeliveryService>().AttemptAsync(payload, cancellationToken);
+            }));
+        }
 
         services.AddSingleton<StageARunner>();
         services.AddSingleton<StageBRunner>();

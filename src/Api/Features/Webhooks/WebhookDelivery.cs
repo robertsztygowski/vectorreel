@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
+using Google.Apis.Auth;
 using MdReel.Api.Features.Instrumentation;
 using MdReel.Core.Providers;
 using Npgsql;
@@ -385,13 +386,83 @@ public static class WebhookEndpoints
     {
         routes.MapPost("/internal/webhook-deliveries/{id}/attempt", async (
             string id,
+            HttpContext httpContext,
+            WebhookPushAuthOptions pushAuth,
             WebhookDeliveryService service,
+            ILoggerFactory loggerFactory,
             CancellationToken cancellationToken) =>
         {
+            // In the deployed configuration this endpoint is the Cloud Tasks push target and sits
+            // OUTSIDE the /api/v1 gate, so it enforces its own OIDC check: only Cloud Tasks acting
+            // as the configured service account may drive an attempt. When CloudTasks is unset
+            // (local/CI/E2E) the queue runs InProcessQueue and this HTTP path is exercised only by
+            // in-process tests, so the check is disabled.
+            if (pushAuth.RequireOidc
+                && !await WebhookPushAuthenticator.IsAuthorizedAsync(httpContext, pushAuth, cancellationToken))
+            {
+                loggerFactory.CreateLogger("WebhookPush")
+                    .LogWarning("Rejected unauthenticated webhook-delivery push for {DeliveryId}.", id);
+                return Results.Json(new { status = "unauthorized" }, statusCode: StatusCodes.Status401Unauthorized);
+            }
+
             var delivery = await service.AttemptAsync(id, cancellationToken);
             return delivery is null
                 ? Results.NotFound(new { status = "not_found" })
                 : Results.Ok(new { id = delivery.Id, status = delivery.Status, attempts = delivery.Attempts });
         });
+    }
+}
+
+/// <summary>
+/// Guards the Cloud Tasks push target. <see cref="RequireOidc"/> is true only when CloudTasks is
+/// configured (Program.cs); then the incoming <c>Authorization: Bearer</c> token must be a Google
+/// OIDC token signed for <see cref="ServiceAccountEmail"/> with audience <see cref="Audience"/>.
+/// </summary>
+public sealed record WebhookPushAuthOptions(bool RequireOidc, string ServiceAccountEmail, string Audience)
+{
+    public static readonly WebhookPushAuthOptions Disabled = new(false, string.Empty, string.Empty);
+}
+
+public static class WebhookPushAuthenticator
+{
+    private const string BearerPrefix = "Bearer ";
+
+    public static async Task<bool> IsAuthorizedAsync(
+        HttpContext httpContext,
+        WebhookPushAuthOptions options,
+        CancellationToken cancellationToken)
+    {
+        if (!httpContext.Request.Headers.TryGetValue("Authorization", out var authHeader))
+        {
+            return false;
+        }
+
+        var raw = authHeader.ToString();
+        if (string.IsNullOrWhiteSpace(raw) || !raw.StartsWith(BearerPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        var token = raw[BearerPrefix.Length..].Trim();
+        if (token.Length == 0)
+        {
+            return false;
+        }
+
+        try
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = [options.Audience],
+            });
+
+            cancellationToken.ThrowIfCancellationRequested();
+            return payload.EmailVerified
+                && string.Equals(payload.Email, options.ServiceAccountEmail, StringComparison.OrdinalIgnoreCase);
+        }
+        catch (InvalidJwtException)
+        {
+            return false;
+        }
     }
 }

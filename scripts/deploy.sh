@@ -19,6 +19,7 @@ SQL_INSTANCE="${SQL_INSTANCE:-mdreel-db}"
 SQL_DATABASE="${SQL_DATABASE:-vectorreel}"
 SQL_USER="${SQL_USER:-mdreel_app}"
 SECRET_NAME="${SECRET_NAME:-mdreel-postgres-connection}"
+CLOUDTASKS_QUEUE="${CLOUDTASKS_QUEUE:-webhook-deliveries}"
 
 cmd="${1:-}"
 shift || true
@@ -83,6 +84,50 @@ ensure_stripe_secrets() {
   done
 }
 
+# Cloud Tasks is the live webhook-delivery queue (M5 flip, founder-approved 2026-07-17 — see
+# INFRA.md). Idempotent: enables the API, creates the EU queue, and grants the api runtime SA
+# (default compute SA) the roles it needs to (a) enqueue tasks and (b) have Cloud Tasks mint an
+# OIDC push token as itself, which the /internal endpoint validates. Prints the SA on stdout;
+# all progress goes to stderr so the caller can capture only the email.
+ensure_cloud_tasks() {
+  local project_number compute_sa tasks_agent
+  project_number="$(gcloud projects describe "$PROJECT" --format='value(projectNumber)')"
+  compute_sa="$project_number-compute@developer.gserviceaccount.com"
+
+  echo "Ensuring Cloud Tasks API + queue $CLOUDTASKS_QUEUE in $RUN_REGION..." >&2
+  gcloud services enable cloudtasks.googleapis.com --project "$PROJECT" --quiet >&2
+
+  # Provision (and get) the Cloud Tasks service agent so the token-creator grant below has a
+  # principal to bind; falls back to the well-known name if the identity call is unavailable.
+  tasks_agent="$(gcloud beta services identity create --service=cloudtasks.googleapis.com \
+    --project "$PROJECT" --format='value(email)' 2>/dev/null || true)"
+  if [[ -z "$tasks_agent" ]]; then
+    tasks_agent="service-$project_number@gcp-sa-cloudtasks.iam.gserviceaccount.com"
+  fi
+
+  if ! gcloud tasks queues describe "$CLOUDTASKS_QUEUE" \
+      --location "$RUN_REGION" --project "$PROJECT" >/dev/null 2>&1; then
+    echo "Creating Cloud Tasks queue $CLOUDTASKS_QUEUE..." >&2
+    gcloud tasks queues create "$CLOUDTASKS_QUEUE" \
+      --location "$RUN_REGION" --project "$PROJECT" --quiet >&2
+  fi
+
+  gcloud tasks queues add-iam-policy-binding "$CLOUDTASKS_QUEUE" \
+    --location "$RUN_REGION" --project "$PROJECT" \
+    --member="serviceAccount:$compute_sa" \
+    --role="roles/cloudtasks.enqueuer" --quiet >&2
+  gcloud iam service-accounts add-iam-policy-binding "$compute_sa" \
+    --member="serviceAccount:$compute_sa" \
+    --role="roles/iam.serviceAccountUser" \
+    --project "$PROJECT" --quiet >&2
+  gcloud iam service-accounts add-iam-policy-binding "$compute_sa" \
+    --member="serviceAccount:$tasks_agent" \
+    --role="roles/iam.serviceAccountTokenCreator" \
+    --project "$PROJECT" --quiet >&2
+
+  echo "$compute_sa"
+}
+
 deploy_web() {
   echo "Deploying vectorreel-web to $RUN_REGION..."
   # Same-origin auth proxy target (web/middleware.ts): the api service URL, so the Identity cookie
@@ -112,10 +157,27 @@ deploy_web() {
 }
 
 deploy_api() {
-  local conn_name
+  local conn_name compute_sa api_url env_vars
 
   conn_name="$(require_api_infra)"
   ensure_stripe_secrets
+  compute_sa="$(ensure_cloud_tasks)"
+
+  # Cloud Tasks pushes back to the api's own URL; resolve it before deploy. Present on every
+  # redeploy (the service already exists); if somehow empty (first-ever create) we deploy with
+  # InProcessQueue and a follow-up 'deploy api' flips it — the queue binding is config-gated.
+  api_url="$(gcloud run services describe vectorreel-api \
+    --region "$RUN_REGION" --project "$PROJECT" \
+    --format='value(status.url)' 2>/dev/null || true)"
+
+  env_vars='PipelineModel__Mode=fake,PAYMENTS_MODE=disabled'
+  if [[ -n "$api_url" ]]; then
+    env_vars="$env_vars,CloudTasks__ProjectId=$PROJECT,CloudTasks__Location=$RUN_REGION,CloudTasks__QueueName=$CLOUDTASKS_QUEUE,CloudTasks__TargetBaseUrl=$api_url,CloudTasks__ServiceAccountEmail=$compute_sa"
+    echo "  Cloud Tasks push target $api_url (OIDC SA $compute_sa)"
+  else
+    echo "  vectorreel-api URL not resolvable yet — deploying with InProcessQueue; re-run 'deploy api' to flip to Cloud Tasks."
+  fi
+
   echo "Building vectorreel-api:$TAG..."
   docker build -f src/Api/Dockerfile -t "$AR/vectorreel-api:$TAG" .
   docker push "$AR/vectorreel-api:$TAG"
@@ -128,7 +190,7 @@ deploy_api() {
     --allow-unauthenticated \
     --min-instances=0 \
     --max-instances=2 \
-    --set-env-vars 'PipelineModel__Mode=fake,PAYMENTS_MODE=disabled' \
+    --set-env-vars "$env_vars" \
     --add-cloudsql-instances "$conn_name" \
     --set-secrets "POSTGRES_CONNECTION=$SECRET_NAME:latest,STRIPE_SECRET_KEY=mdreel-stripe-secret-key:latest,STRIPE_WEBHOOK_SECRET=mdreel-stripe-webhook-secret:latest" \
     --quiet

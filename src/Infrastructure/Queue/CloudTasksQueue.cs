@@ -14,6 +14,17 @@ public sealed record CloudTasksOptions
     public string QueueName { get; init; } = string.Empty;
 
     public string TargetBaseUrl { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Service account Cloud Tasks mints the OIDC push token as. The receiving
+    /// <c>/internal/webhook-deliveries/{id}/attempt</c> endpoint validates that the incoming token
+    /// is signed by Google, carries this email, and targets <see cref="Audience"/>. Empty ⇒ no OIDC
+    /// token attached (local/emulator only — never the deployed configuration).
+    /// </summary>
+    public string ServiceAccountEmail { get; init; } = string.Empty;
+
+    /// <summary>OIDC token audience; defaults to <see cref="TargetBaseUrl"/> (without trailing slash).</summary>
+    public string Audience => string.IsNullOrWhiteSpace(TargetBaseUrl) ? string.Empty : TargetBaseUrl.TrimEnd('/');
 }
 
 public sealed record CloudTaskRequest(

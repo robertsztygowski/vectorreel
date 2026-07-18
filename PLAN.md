@@ -140,8 +140,9 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   api `vectorreel-api-00004-frf` (M4 Stripe secrets + `PAYMENTS_MODE=disabled`), web
 >   `vectorreel-web-00007-l2g` (M6), `mdreel-umami` (M3). `smoke-remote.sh` 17/0 green at close.
 > - **What failed / deferred:** nothing failed. Deferred to next run: the `/app` library table on
->   the real `/api/v1/jobs` list (needs a real-jobs UI model); the Cloud Tasks binding flip (M5,
->   founder-gated); every NEEDS-FOUNDER item below.
+>   the real `/api/v1/jobs` list (needs a real-jobs UI model); every NEEDS-FOUNDER item below.
+>   *(The Cloud Tasks binding flip — deferred here as founder-gated — was later approved and shipped;
+>   see the 2026-07-18 Cloud Tasks flip run below.)*
 > - **Cost delta:** no new fixed base cost this run — Umami is min-instances=0 on the **shared**
 >   `mdreel-db` (METRICS.md N2), every Cloud Run service scales to zero, Vertex stays fake (no
 >   inference spend), Stripe is test-mode/keyless. The only standing recurring bill remains the
@@ -172,6 +173,23 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   (web revision + rule-5 override note). Live URLs:
 >   `mdreel.com/legal/{terms,privacy,imprint,dpa,subprocessors,acceptable-use}`.
 
+> ### 🏃 Autonomous build run — 2026-07-18 (Cloud Tasks flip; founder-approved billing surface)
+> The founder lifted the launch-prompt gate and **approved Cloud Tasks as a continuously-billing
+> resource**, so the M5 queue flip — previously NEEDS-FOUNDER — shipped end-to-end.
+> - **Code ✅** — `GoogleCloudTasksTransport` (`Google.Cloud.Tasks.V2`) is the real
+>   `ICloudTasksTransport`: maps a `CloudTaskRequest` to an HTTP-target task with an **OIDC push
+>   token** minted as the api runtime SA. `ITaskQueue` binds to `CloudTasksQueue` when
+>   `CloudTasks__ProjectId`/`QueueName`/`TargetBaseUrl` are set (the deployed api) and stays on
+>   `InProcessQueue` otherwise (local/CI/E2E — hermetic, no ADC). The push target
+>   `POST /internal/webhook-deliveries/{id}/attempt` now **self-validates** the OIDC bearer
+>   (Google-signed, `email` = the SA, `aud` = the api URL) and 401s anything else.
+> - **Infra ✅ (idempotent in `deploy.sh`)** — enabled `cloudtasks.googleapis.com`, created the
+>   `webhook-deliveries` queue in `europe-west1`, granted the api SA `cloudtasks.enqueuer` + actAs on
+>   itself, and the Cloud Tasks service agent `serviceAccountTokenCreator` on the api SA; set
+>   `CloudTasks__*` env on the api.
+> - **DoD gate ✅** — build clean, .NET 59+65, web 48, E2E 16, `dotnet format`, no secrets,
+>   check-docs ✓.
+
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages
@@ -189,13 +207,13 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   (create the secret first if absent, region europe-central2), then set `BREVO_API_KEY` on the api
 >   service. `RequireConfirmedEmail=false`, so auth works without it.
 > - *(accumulates as later milestones land.)*
-> - **Cloud Tasks binding flip (M5 ✅ code complete, seam only)** — the live queue is
->   `InProcessQueue`; `CloudTasksQueue` is implemented and tested against its `ICloudTasksTransport`
->   port but not wired. To flip: enable `cloudtasks.googleapis.com`, create a queue in
->   `europe-west1`, provide a `Google.Cloud.Tasks.V2`-backed `ICloudTasksTransport`, register
->   `CloudTasksQueue` as `ITaskQueue`, and **secure the push target**
->   `POST /internal/webhook-deliveries/{id}/attempt` (Cloud Run invoker IAM + OIDC token on the
->   Cloud Tasks task) since it sits outside the `/api/v1` auth gate. Details in INFRA.md.
+> - **Cloud Tasks binding flip (M5) ✅ DONE 2026-07-18** — founder approved the continuously-billing
+>   resource; the flip shipped. `cloudtasks.googleapis.com` enabled, `webhook-deliveries` queue live
+>   in `europe-west1`, `GoogleCloudTasksTransport` (`Google.Cloud.Tasks.V2`) wired as the real
+>   `ICloudTasksTransport`, `ITaskQueue` binds to `CloudTasksQueue` on the deployed api (config-gated;
+>   `InProcessQueue` remains the local/CI/E2E default), and the push target
+>   `POST /internal/webhook-deliveries/{id}/attempt` now self-validates the Cloud Tasks OIDC token
+>   (401 otherwise). No founder action remains. Details in INFRA.md.
 > - **api.mdreel.com CNAME (M2 ✅ mapping created)** — Cloudflare zone `mdreel.com`, **DNS-only
 >   (grey cloud)**: add `api` `CNAME` → `ghs.googlehosted.com`. The mapping is live and waiting on
 >   this record for its cert; until then the middleware proxy (`mdreel.com/api/v1/*`) already
