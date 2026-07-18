@@ -165,7 +165,12 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   truth (Google Cloud, Stripe test-mode, Brevo planned) — **Umami stated as first-party, not a
 >   subprocessor**. Intra-EEA ⇒ no SCC. Web unit test (`legal.test.ts`) + E2E (`legal.spec.ts`, 8
 >   cases) green; full DoD gate passed (build clean, .NET 59+65, web 48, E2E 16, check-docs ✓).
-> - **M3 deploy + assert** — see the M3 report line below once deployed.
+> - **M3 deploy + assert ✅** (`80d745a` feat + this `docs:`/`infra:` commit) — `scripts/deploy.sh web`
+>   shipped revision `vectorreel-web-00008-d5k` (europe-west1, no new GCP resources). All six
+>   `mdreel.com/legal/*` URLs return **200 with the entity string present**; `scripts/smoke-remote.sh`
+>   extended with a six-URL legal check and stays green (**23 passed / 0 failed**). INFRA.md updated
+>   (web revision + rule-5 override note). Live URLs:
+>   `mdreel.com/legal/{terms,privacy,imprint,dpa,subprocessors,acceptable-use}`.
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)

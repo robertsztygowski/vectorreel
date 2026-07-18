@@ -238,6 +238,11 @@ else
 fi
 assert_http_200 "Web mdreel.com HTTP 200" "https://mdreel.com"
 
+# Legal pack (M3, 2026-07-18) — six B2B legal pages must stay live on the apex domain.
+for page in terms privacy imprint dpa subprocessors acceptable-use; do
+  assert_http_200 "Legal /legal/$page HTTP 200" "https://mdreel.com/legal/$page"
+done
+
 # Umami analytics (M3, rule 10) — self-hosted, EU-only, min-instances=0 (may cold-start).
 umami_url="$(service_url "mdreel-umami")"
 if [[ -n "$umami_url" ]]; then
