@@ -2,6 +2,7 @@
 // is SAME-ORIGIN (relative /api/v1/auth/*, proxied to the API by next.config.mjs) with
 // credentials:'include' so the Identity application cookie is set and sent first-party.
 import { getAbArm, getFirstTouch } from './attribution';
+import { withMdreelSessionHeader } from './apiHeaders';
 
 export interface AuthSession {
   email: string;
@@ -58,7 +59,7 @@ export async function registerAccount(input: RegisterInput): Promise<RegisterRes
   const res = await fetch(authUrl('/signup'), {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: withMdreelSessionHeader({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(buildRegisterBody(input)),
   });
   if (!res.ok) throw new Error(await readProblem(res));
@@ -69,7 +70,7 @@ export async function login(email: string, password: string): Promise<void> {
   const res = await fetch(authUrl('/login?useCookies=true'), {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: withMdreelSessionHeader({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ email, password }),
   });
   if (!res.ok) throw new Error(await readProblem(res));
@@ -77,7 +78,7 @@ export async function login(email: string, password: string): Promise<void> {
 
 export async function logout(): Promise<void> {
   try {
-    await fetch(authUrl('/logout'), { method: 'POST', credentials: 'include' });
+    await fetch(authUrl('/logout'), { method: 'POST', credentials: 'include', headers: withMdreelSessionHeader() });
   } catch {
     // Sign-out must never leave the UI stuck; local session is cleared regardless.
   }
@@ -85,7 +86,7 @@ export async function logout(): Promise<void> {
 
 export async function fetchSession(): Promise<AuthSession | null> {
   try {
-    const res = await fetch(authUrl('/me'), { credentials: 'include' });
+    const res = await fetch(authUrl('/me'), { credentials: 'include', headers: withMdreelSessionHeader() });
     if (!res.ok) return null;
     return (await res.json()) as AuthSession;
   } catch {

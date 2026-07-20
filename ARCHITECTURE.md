@@ -349,6 +349,13 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
 
 **Two things here exist for reasons that are not obvious from the schema:**
 
+- 🔗 **`events.session_id` is a per-visit correlation key, not an identity.** The web app creates a
+  UUID in `sessionStorage` (`mdreel_session_id`) and never promotes it to a cookie or
+  `localStorage`, keeping analytics first-party and cookieless. Browser calls to `/api/v1/*` carry
+  the same value in `X-Mdreel-Session`; the API sanitizes it, attaches it to the current trace span
+  as `mdreel.session_id`, and uses it as a fallback when an event payload omits `session_id`.
+  After auth, `tenant_id` is the durable account identifier. Cross-visit attribution is carried only
+  by the first-touch `tenants.first_utm_*` / `first_referrer` / `ab_arm` fields below.
 - 🔑 **`tenants.first_utm_*` / `first_referrer` / `ab_arm`.** Attribution must be **first-party** and
   must **survive from first touch all the way to `payment_succeeded`.** Ad platforms report their
   own conversions and are marking their own homework; **the only trustworthy CAC is our spend ÷ our

@@ -2,6 +2,7 @@
 // web/middleware.ts) with credentials:'include' so the Identity cookie authenticates the caller.
 // Degrades cleanly: when Stripe is not configured the API answers 503 and this returns null so the
 // UI can show an unobtrusive note instead of breaking.
+import { withMdreelSessionHeader } from './apiHeaders';
 
 export interface BillingPortalResult {
   url: string;
@@ -12,7 +13,7 @@ export async function requestBillingPortal(tenantId: string): Promise<BillingPor
     const res = await fetch('/api/v1/billing/portal', {
       method: 'POST',
       credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      headers: withMdreelSessionHeader({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ tenant_id: tenantId }),
     });
     if (!res.ok) return null;

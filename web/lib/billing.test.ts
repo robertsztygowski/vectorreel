@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { requestBillingPortal } from './billing';
+import { MDREEL_SESSION_HEADER } from './apiHeaders';
 
 interface FetchCall {
   url: string;
@@ -8,6 +9,26 @@ interface FetchCall {
 }
 
 let calls: FetchCall[] = [];
+
+class MemoryStorage {
+  private values = new Map<string, string>();
+  getItem(key: string): string | null {
+    return this.values.get(key) ?? null;
+  }
+  setItem(key: string, value: string): void {
+    this.values.set(key, value);
+  }
+}
+
+function installBrowser(): void {
+  const sessionStorage = new MemoryStorage();
+  sessionStorage.setItem('mdreel_session_id', 'sid_billing');
+  Object.defineProperty(globalThis, 'window', {
+    value: { sessionStorage },
+    configurable: true,
+    writable: true,
+  });
+}
 
 function stubFetch(response: { ok: boolean; status?: number; json?: unknown }): void {
   calls = [];
@@ -27,6 +48,7 @@ afterEach(() => {
 
 beforeEach(() => {
   calls = [];
+  installBrowser();
 });
 
 test('requestBillingPortal posts same-origin with credentials and the tenant id', async () => {
@@ -38,6 +60,7 @@ test('requestBillingPortal posts same-origin with credentials and the tenant id'
   assert.equal(calls[0].url, '/api/v1/billing/portal');
   assert.equal(calls[0].init.method, 'POST');
   assert.equal(calls[0].init.credentials, 'include');
+  assert.equal(new Headers(calls[0].init.headers).get(MDREEL_SESSION_HEADER), 'sid_billing');
   assert.equal(JSON.parse(calls[0].init.body as string).tenant_id, 'ten_1');
 });
 

@@ -39,7 +39,9 @@ public static class InstrumentationEndpoints
                     GetString(root, "first_referrer"),
                     GetString(root, "ab_arm")), cancellationToken);
 
-                var stored = await events.RecordAsync(BuildEventDraft(root, name, signup.Tenant.Id, signup.User.Id), cancellationToken);
+                var stored = await events.RecordAsync(
+                    BuildEventDraft(root, name, signup.Tenant.Id, signup.User.Id, request.HeaderSessionId()),
+                    cancellationToken);
                 return Results.Json(new
                 {
                     eventId = stored.Id,
@@ -49,7 +51,9 @@ public static class InstrumentationEndpoints
                 }, statusCode: StatusCodes.Status202Accepted);
             }
 
-            var ev = await events.RecordAsync(BuildEventDraft(root, name, GetString(root, "tenant_id"), GetString(root, "user_id")), cancellationToken);
+            var ev = await events.RecordAsync(
+                BuildEventDraft(root, name, GetString(root, "tenant_id"), GetString(root, "user_id"), request.HeaderSessionId()),
+                cancellationToken);
             return Results.Json(new { eventId = ev.Id }, statusCode: StatusCodes.Status202Accepted);
         });
 
@@ -57,12 +61,12 @@ public static class InstrumentationEndpoints
             Results.Json(new { cohorts = await cohorts.GetTenantHoursByWeekAsync(cancellationToken) }));
     }
 
-    public static EventDraft BuildEventDraft(JsonElement root, string name, string? tenantId, string? userId)
+    public static EventDraft BuildEventDraft(JsonElement root, string name, string? tenantId, string? userId, string? fallbackSessionId = null)
     {
         var occurredAt = GetDate(root, "occurred_at") ?? DateTimeOffset.UtcNow;
         return new EventDraft(
             name,
-            GetString(root, "session_id"),
+            GetString(root, "session_id") ?? fallbackSessionId,
             tenantId,
             userId,
             occurredAt,
@@ -109,4 +113,7 @@ public static class InstrumentationEndpoints
 
     private static DateTimeOffset? GetDate(JsonElement root, string name) =>
         root.TryGetProperty(name, out var property) && property.ValueKind == JsonValueKind.String && DateTimeOffset.TryParse(property.GetString(), out var value) ? value.ToUniversalTime() : null;
+
+    private static string? HeaderSessionId(this HttpRequest request) =>
+        MdreelSessionCorrelation.GetValidSessionId(request.Headers);
 }

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildRegisterBody, fetchSession, login, logout, registerAccount } from './auth';
+import { MDREEL_SESSION_HEADER } from './apiHeaders';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -25,6 +26,7 @@ let calls: FetchCall[] = [];
 function installBrowser(): void {
   const localStorage = new MemoryStorage();
   const sessionStorage = new MemoryStorage();
+  sessionStorage.setItem('mdreel_session_id', 'sid_auth');
   Object.defineProperty(globalThis, 'window', {
     value: { localStorage, sessionStorage, location: { search: '' } },
     configurable: true,
@@ -63,6 +65,7 @@ test('registerAccount posts same-origin with credentials and attribution', async
   assert.equal(calls[0].url, '/api/v1/auth/signup');
   assert.equal(calls[0].init.method, 'POST');
   assert.equal(calls[0].init.credentials, 'include');
+  assert.equal(new Headers(calls[0].init.headers).get(MDREEL_SESSION_HEADER), 'sid_auth');
   const body = JSON.parse(calls[0].init.body as string);
   assert.equal(body.email, 'a@b.eu');
   assert.equal(body.password, 'Str0ng-Passw0rd!');
@@ -83,12 +86,14 @@ test('login targets the cookie login endpoint', async () => {
   await login('a@b.eu', 'Str0ng-Passw0rd!');
   assert.equal(calls[0].url, '/api/v1/auth/login?useCookies=true');
   assert.equal(calls[0].init.credentials, 'include');
+  assert.equal(new Headers(calls[0].init.headers).get(MDREEL_SESSION_HEADER), 'sid_auth');
 });
 
 test('logout never throws', async () => {
   stubFetch({ ok: true });
   await logout();
   assert.equal(calls[0].url, '/api/v1/auth/logout');
+  assert.equal(new Headers(calls[0].init.headers).get(MDREEL_SESSION_HEADER), 'sid_auth');
 });
 
 test('fetchSession returns null on 401', async () => {

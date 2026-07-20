@@ -1,4 +1,5 @@
 import type { PlanId } from './pricing';
+import { withMdreelSessionHeader } from './apiHeaders';
 
 export interface EventPostResponse {
   eventId: string;
@@ -29,6 +30,12 @@ function endpoint(path: string): string | null {
   return base ? `${base}/api/v1${path}` : null;
 }
 
+function jsonHeaders(headers?: HeadersInit): Headers {
+  const next = withMdreelSessionHeader(headers);
+  if (!next.has('Content-Type')) next.set('Content-Type', 'application/json');
+  return next;
+}
+
 async function postJson<T>(path: string, body: unknown, init: RequestInit = {}): Promise<T | null> {
   const url = endpoint(path);
   if (!url || typeof window === 'undefined') return null;
@@ -36,7 +43,7 @@ async function postJson<T>(path: string, body: unknown, init: RequestInit = {}):
   const res = await fetch(url, {
     method: 'POST',
     ...init,
-    headers: { 'Content-Type': 'application/json', ...(init.headers ?? {}) },
+    headers: jsonHeaders(init.headers),
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`POST ${path} failed: ${res.status}`);
@@ -51,12 +58,13 @@ export function sendEvent(event: Record<string, unknown>): void {
   try {
     if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
       const blob = new Blob([body], { type: 'application/json' });
+      // sendBeacon cannot set custom headers; the event schema already carries session_id.
       if (navigator.sendBeacon(url, blob)) return;
     }
 
     void fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: jsonHeaders(),
       body,
       keepalive: true,
     }).catch(() => undefined);
@@ -87,12 +95,12 @@ export function postCheckout(args: { plan: PlanId; tenant_id: string }): Promise
 // pretending a payment succeeded.
 export async function requestCheckout(args: { plan: PlanId; tenantId: string }): Promise<CheckoutResponse | null> {
   try {
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    const headers: Record<string, string> = {};
     if (args.tenantId) headers.Authorization = `Bearer ${args.tenantId}`;
     const res = await fetch('/api/v1/checkout', {
       method: 'POST',
       credentials: 'include',
-      headers,
+      headers: jsonHeaders(headers),
       body: JSON.stringify({ plan: args.plan, tenant_id: args.tenantId }),
     });
     if (!res.ok) return null;

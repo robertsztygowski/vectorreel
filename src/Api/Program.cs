@@ -274,6 +274,8 @@ public partial class Program
             app.UseCors();
         }
 
+        app.UseMdreelSessionCorrelation();
+
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseRateLimiter();

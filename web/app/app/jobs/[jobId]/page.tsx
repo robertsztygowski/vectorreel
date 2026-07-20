@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { JobStepper, type JobStageKey, type JobStatusState } from '@/components/JobStepper/JobStepper';
 import { MarkdownOutputCard } from '@/components/MarkdownOutputCard/MarkdownOutputCard';
+import { withMdreelSessionHeader } from '@/lib/apiHeaders';
 import { trackJobCompleted, trackOutputDownloaded, trackUploadRepeat } from '@/lib/events';
 import type { OutputDocument } from '@/lib/outputDocument';
 
@@ -61,7 +62,7 @@ export default function JobStatusPage() {
   useEffect(() => {
     let cancelled = false;
     async function poll() {
-      const res = await fetch(`/api/v1/jobs/${jobId}`, { credentials: 'include' });
+      const res = await fetch(`/api/v1/jobs/${jobId}`, { credentials: 'include', headers: withMdreelSessionHeader() });
       if (cancelled) return;
       if (!res.ok) {
         setNotFound(true);
@@ -94,8 +95,8 @@ export default function JobStatusPage() {
 
     (async () => {
       const [jsonRes, mdRes] = await Promise.all([
-        fetch(`/api/v1/jobs/${jobId}/output.json`, { credentials: 'include' }),
-        fetch(`/api/v1/jobs/${jobId}/output.md`, { credentials: 'include' }),
+        fetch(`/api/v1/jobs/${jobId}/output.json`, { credentials: 'include', headers: withMdreelSessionHeader() }),
+        fetch(`/api/v1/jobs/${jobId}/output.md`, { credentials: 'include', headers: withMdreelSessionHeader() }),
       ]);
       if (!jsonRes.ok || !mdRes.ok) return;
       const document = (await jsonRes.json()) as OutputDocument;

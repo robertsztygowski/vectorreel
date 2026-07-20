@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -5,7 +6,9 @@ using System.Text;
 using System.Text.Json;
 using MdReel.Api.Features.Instrumentation;
 using MdReel.Api.Features.Payments;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -47,6 +50,75 @@ public sealed class Phase4BackendTests
         var events = await factory.Services.GetRequiredService<IEventStore>().ListAsync(CancellationToken.None);
         Assert.Contains(events, x => x.Name == "page_view");
         Assert.Equal(2, events.Count(x => x.Name == "signup"));
+    }
+
+    [Fact]
+    public async Task Events_fall_back_to_valid_session_header_without_overwriting_payload()
+    {
+        await using var factory = new ApiFactory();
+        using var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Add(MdreelSessionCorrelation.HeaderName, "sid_header-1");
+
+        using var missingPayloadSession = await client.PostAsJsonAsync("/api/v1/events", new
+        {
+            name = "page_view",
+            path = "/pricing",
+        });
+        Assert.Equal(HttpStatusCode.Accepted, missingPayloadSession.StatusCode);
+
+        using var explicitPayloadSession = await client.PostAsJsonAsync("/api/v1/events", new
+        {
+            name = "page_view",
+            session_id = "sid_payload",
+            path = "/docs",
+        });
+        Assert.Equal(HttpStatusCode.Accepted, explicitPayloadSession.StatusCode);
+
+        var events = await factory.Services.GetRequiredService<IEventStore>().ListAsync(CancellationToken.None);
+        Assert.Contains(events, x => x.SessionId == "sid_header-1" && x.PayloadJson.Contains("\"path\":\"/pricing\"", StringComparison.Ordinal));
+        Assert.Contains(events, x => x.SessionId == "sid_payload" && x.PayloadJson.Contains("\"path\":\"/docs\"", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Session_correlation_middleware_sets_activity_tag_for_valid_header_only()
+    {
+        var app = new ApplicationBuilder(new ServiceCollection().BuildServiceProvider());
+        string? observedValid = null;
+        string? observedInvalid = "unchanged";
+        app.UseMdreelSessionCorrelation();
+        app.Run(context =>
+        {
+            if (context.Request.Path == "/valid")
+            {
+                observedValid = Activity.Current?.GetTagItem(MdreelSessionCorrelation.ActivityAttributeName)?.ToString();
+            }
+            else
+            {
+                observedInvalid = Activity.Current?.GetTagItem(MdreelSessionCorrelation.ActivityAttributeName)?.ToString();
+            }
+
+            return Task.CompletedTask;
+        });
+        var pipeline = app.Build();
+
+        using (var activity = new Activity("valid").Start())
+        {
+            var context = new DefaultHttpContext();
+            context.Request.Path = "/valid";
+            context.Request.Headers[MdreelSessionCorrelation.HeaderName] = "sid_ABC-123";
+            await pipeline(context);
+        }
+
+        using (var activity = new Activity("invalid").Start())
+        {
+            var context = new DefaultHttpContext();
+            context.Request.Path = "/invalid";
+            context.Request.Headers[MdreelSessionCorrelation.HeaderName] = "bad value";
+            await pipeline(context);
+        }
+
+        Assert.Equal("sid_ABC-123", observedValid);
+        Assert.Null(observedInvalid);
     }
 
     [Fact]

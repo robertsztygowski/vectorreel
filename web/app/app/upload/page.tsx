@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { withMdreelSessionHeader, MDREEL_SESSION_HEADER } from '@/lib/apiHeaders';
 import { trackUploadStarted } from '@/lib/events';
 import { TRIAL_CREDIT_HOURS } from '@/lib/pricing';
 import {
@@ -136,8 +137,12 @@ function UploadInner() {
     return new Promise<void>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhrRef.current = xhr;
-      xhr.open('PUT', getUploadPutTarget(upload));
+      const target = getUploadPutTarget(upload);
+      xhr.open('PUT', target);
       xhr.setRequestHeader('Content-Type', contentType);
+      if (target.startsWith('/api/v1/')) {
+        xhr.setRequestHeader(MDREEL_SESSION_HEADER, withMdreelSessionHeader().get(MDREEL_SESSION_HEADER) ?? '');
+      }
       xhr.upload.onprogress = (event) => {
         if (token !== uploadTokenRef.current || !event.lengthComputable) return;
         setUploadProgress(Math.max(1, Math.min(99, Math.round((event.loaded / event.total) * 100))));
@@ -173,7 +178,7 @@ function UploadInner() {
       const jobRes = await fetch('/api/v1/jobs', {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: withMdreelSessionHeader({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           uploadId,
           options: buildJobOptions({
@@ -224,7 +229,7 @@ function UploadInner() {
       const uploadRes = await fetch('/api/v1/uploads', {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: withMdreelSessionHeader({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ contentType }),
         signal: controller.signal,
       });

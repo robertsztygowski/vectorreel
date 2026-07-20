@@ -18,8 +18,38 @@ test('funnel: landing → signup (N20 fields) → upload → progress → output
   await expect(page.locator('body')).toContainText(/markdown/i);
   const sessionId = await page.evaluate(() => window.sessionStorage.getItem('mdreel_session_id'));
   expect(sessionId).toBeTruthy();
+  if (!sessionId) throw new Error('missing mdreel_session_id');
+  await expect(page.evaluate(() => typeof window.umami)).resolves.toBe('undefined');
+
+  const fallbackPath = `/header-fallback-${Date.now()}`;
+  const fallbackStatus = await page.evaluate(
+    async ({ path, sid }) => {
+      const response = await fetch('/api/v1/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Mdreel-Session': sid },
+        body: JSON.stringify({ name: 'page_view', path }),
+      });
+      return response.status;
+    },
+    { path: fallbackPath, sid: sessionId },
+  );
+  expect(fallbackStatus).toBe(202);
+  await expect
+    .poll(async () => {
+      const rows = await pgQuery<{ session_id: string }>(
+        "select session_id from events where payload_json->>'path' = $1",
+        [fallbackPath],
+      );
+      return rows[0]?.session_id ?? null;
+    })
+    .toBe(sessionId);
 
   // Signup with the volume questions answered (METRICS.md N20). Email + password (Identity).
+  let signupSessionHeader: string | undefined;
+  await page.route('**/api/v1/auth/signup', async (route) => {
+    signupSessionHeader = route.request().headers()['x-mdreel-session'];
+    await route.continue();
+  });
   await page.goto('/signup');
   await page.fill('#email', email);
   await page.fill('#password', 'Sup3rSecret!pw');
@@ -29,6 +59,7 @@ test('funnel: landing → signup (N20 fields) → upload → progress → output
 
   // Registration provisions the tenant and drops the browser straight into the workspace.
   await page.waitForURL(/\/app/);
+  expect(signupSessionHeader).toBe(sessionId);
 
   // The signup response handed the browser its tenant — first-touch attribution is now in Postgres.
   await expect
