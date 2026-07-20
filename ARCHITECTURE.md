@@ -300,6 +300,8 @@ truth (METRICS.md §6.2). The events table ingests the stable METRICS.md §3 eve
 | `POST /events` | First-party event ingestion for the METRICS.md §3 schema; also upserts signup tenants, first-touch attribution, and trial-credit state. |
 | `POST /checkout` | Creates Stripe Checkout sessions for the live plans; the dark Starter path stays flag-gated. |
 | `POST /webhooks/stripe` | Stripe-signed payment webhook; records payments, copies first-touch attribution to payment rows, and updates tenant plan state. |
+| `GET /admin/overview` | Founder-only Postgres overview for the METRICS.md §6 funnel/retention/source-conversion questions. Hidden unless the authenticated tenant email is in `Admin__Emails`. |
+| `POST /admin/ad-spend` | Founder-only write into the existing `ad_spend` ledger seam (METRICS.md N29), so CAC joins use our own spend and payments. |
 | `POST /uploads` | Optional body `{ contentType }`. `201 { uploadId, uploadUrl, storage: "gcs"\|"api" }`. `storage:"gcs"` (deployed): `uploadUrl` is a **GCS V4 signed PUT URL** (2 h expiry, signed via IAM signBlob as the runtime SA, Content-Type-bound) — the browser PUTs straight to `raw-videos-eu/uploads/{uploadId}`, bypassing Cloud Run's 32 MiB request cap. `storage:"api"` (local/CI/E2E): the api-proxied PUT path. |
 | `POST /jobs` | Body: `{ uploadId, options { language_hint, retention_days, webhook_url, quality: standard\|high } }` → `202 { jobId }`. |
 | `GET /jobs` | The authenticated panel's job list: `{ jobs: [ { jobId, status, stage?, progress, source, duration_sec?, created_at, finished_at? } ] }`, newest first. Pagination is Phase 3, additive. |
@@ -315,6 +317,8 @@ pre-rendered; the internal YouTube path is a runner we invoke, not an API surfac
 
 Auth applies to the API except for two explicit Phase 4 exceptions: `POST /events` fires before a
 client has a product token, and `POST /webhooks/stripe` is authenticated by Stripe signature.
+The founder admin surface is additionally fail-closed: missing or empty `Admin__Emails` returns 404,
+and non-allowlisted authenticated tenants also get 404 so the route is not advertised.
 
 Errors: RFC 7807 problem+json (`problem.schema.json`), on every non-2xx response, including the
 Phase 4 endpoints above. Rate limits per key. OpenAPI spec publication is deferred from Phase 4;

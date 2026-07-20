@@ -305,6 +305,84 @@ public sealed class PostgresBackedApiTests : IClassFixture<PostgresBackedApiTest
         Assert.Equal(HttpStatusCode.BadRequest, second.StatusCode);
     }
 
+    [Fact]
+    public async Task Admin_overview_fails_closed_without_allowlisted_email()
+    {
+        await using var factory = _fixture.CreateFactory();
+        using var client = factory.CreateClient();
+        var signup = await SignupAsync(client, UniqueEmail("admin-closed"), "google", "https://first.example", "A");
+
+        using var noAllowlist = CreateTenantBearerClient(factory, signup.TenantId);
+        Assert.Equal(HttpStatusCode.NotFound, (await noAllowlist.GetAsync("/api/v1/admin/overview")).StatusCode);
+
+        await using var wrongFactory = _fixture.CreateFactory(builder => builder.UseSetting("Admin:Emails", "other@example.test"));
+        using var wrong = CreateTenantBearerClient(wrongFactory, signup.TenantId);
+        Assert.Equal(HttpStatusCode.NotFound, (await wrong.GetAsync("/api/v1/admin/overview")).StatusCode);
+    }
+
+    [Fact]
+    public async Task Admin_overview_reports_funnel_retention_sources_and_ad_spend_cac()
+    {
+        var adminEmail = UniqueEmail("admin");
+        var campaign = $"launch-{Guid.NewGuid():N}";
+        await using var factory = _fixture.CreateFactory(builder => builder.UseSetting("Admin:Emails", adminEmail.ToUpperInvariant()));
+        using var anonymous = factory.CreateClient();
+        var signup = await SignupAsync(anonymous, adminEmail, "google", "https://first.example", "A", DateTimeOffset.UtcNow.AddDays(-10).ToString("O"), campaign);
+        using var admin = CreateTenantBearerClient(factory, signup.TenantId);
+
+        await anonymous.PostAsJsonAsync("/api/v1/events", new { name = "page_view", session_id = "sess_admin", occurred_at = DateTimeOffset.UtcNow.ToString("O"), path = "/" });
+        await anonymous.PostAsJsonAsync("/api/v1/events", new { name = "signup_view", session_id = "sess_admin", occurred_at = DateTimeOffset.UtcNow.ToString("O"), path = "/signup" });
+        await anonymous.PostAsJsonAsync("/api/v1/events", new { name = "upload_started", tenant_id = signup.TenantId, session_id = "sess_admin", occurred_at = DateTimeOffset.UtcNow.ToString("O"), duration_sec = 600 });
+        await anonymous.PostAsJsonAsync("/api/v1/events", new { name = "job_completed", tenant_id = signup.TenantId, session_id = "sess_admin", occurred_at = DateTimeOffset.UtcNow.ToString("O"), duration_sec = 600 });
+
+        using (var checkout = await admin.PostAsJsonAsync("/api/v1/checkout", new { plan = "pro", tenant_id = signup.TenantId }))
+        {
+            Assert.Equal(HttpStatusCode.Created, checkout.StatusCode);
+        }
+
+        using (var webhook = await PostWebhookAsync(anonymous, signup.TenantId, "pro"))
+        {
+            Assert.Equal(HttpStatusCode.OK, webhook.StatusCode);
+        }
+
+        using (var postSpend = await admin.PostAsJsonAsync("/api/v1/admin/ad-spend", new
+        {
+            source = "google_ads",
+            campaign,
+            amount_cents = 3000,
+            currency = "EUR",
+            spent_on = DateOnly.FromDateTime(DateTime.UtcNow),
+        }))
+        {
+            Assert.Equal(HttpStatusCode.Created, postSpend.StatusCode);
+        }
+
+        await using (var dataSource = NpgsqlDataSource.Create(_fixture.ConnectionString))
+        await using (var command = dataSource.CreateCommand("update tenants set created_at = now() - interval '10 days' where id = @id"))
+        {
+            command.Parameters.AddWithValue("id", signup.TenantId);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        using var overviewResponse = await admin.GetAsync("/api/v1/admin/overview");
+        Assert.Equal(HttpStatusCode.OK, overviewResponse.StatusCode);
+        using var overview = await overviewResponse.Content.ReadFromJsonAsync<JsonDocument>();
+        Assert.NotNull(overview);
+
+        var today = overview.RootElement.GetProperty("funnel").EnumerateArray().Single(x => x.GetProperty("window").GetString() == "today");
+        Assert.True(today.GetProperty("pageView").GetInt32() >= 1);
+        Assert.True(today.GetProperty("signupView").GetInt32() >= 1);
+        Assert.True(today.GetProperty("jobCompleted").GetInt32() >= 1);
+        Assert.True(overview.RootElement.GetProperty("usage").GetProperty("today").GetProperty("videosProcessed").GetInt32() >= 1);
+        Assert.True(overview.RootElement.GetProperty("retention").GetProperty("returningThisWeek").GetInt32() >= 1);
+
+        var source = overview.RootElement.GetProperty("sources").EnumerateArray().Single(x => x.GetProperty("firstUtmCampaign").GetString() == campaign);
+        Assert.Equal(1, source.GetProperty("payingTenantCount").GetInt32());
+        Assert.True(source.GetProperty("revenueCents").GetInt32() > 0);
+        Assert.Equal(3000, source.GetProperty("adSpendCents").GetInt32());
+        Assert.Equal(3000, source.GetProperty("cacCents").GetDouble());
+    }
+
     private static string UniqueEmail(string prefix) => $"{prefix}+{Guid.NewGuid():N}@example.test";
 
     private static HttpClient CreateAuthedClient(WebApplicationFactory<MdReel.Api.Program> factory)
@@ -314,7 +392,14 @@ public sealed class PostgresBackedApiTests : IClassFixture<PostgresBackedApiTest
         return client;
     }
 
-    private static async Task<SignupResponse> SignupAsync(HttpClient client, string email, string utmSource, string referrer, string abArm, string occurredAt = "2026-07-01T00:00:00Z")
+    private static HttpClient CreateTenantBearerClient(WebApplicationFactory<MdReel.Api.Program> factory, string tenantId)
+    {
+        var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tenantId);
+        return client;
+    }
+
+    private static async Task<SignupResponse> SignupAsync(HttpClient client, string email, string utmSource, string referrer, string abArm, string occurredAt = "2026-07-01T00:00:00Z", string campaign = "launch")
     {
         using var response = await client.PostAsJsonAsync("/api/v1/events", new
         {
@@ -326,7 +411,7 @@ public sealed class PostgresBackedApiTests : IClassFixture<PostgresBackedApiTest
             monthly_hours = 4,
             utm_source = utmSource,
             utm_medium = "cpc",
-            utm_campaign = "launch",
+            utm_campaign = campaign,
             utm_term = "video to markdown",
             first_referrer = referrer,
             ab_arm = abArm,
@@ -367,8 +452,8 @@ public sealed class PostgresBackedApiTests : IClassFixture<PostgresBackedApiTest
         public string ConnectionString =>
             $"Host=localhost;Port=5432;Database={_databaseName};Username=dev;Password=dev";
 
-        public WebApplicationFactory<MdReel.Api.Program> CreateFactory() =>
-            new PostgresApiFactory(ConnectionString);
+        public WebApplicationFactory<MdReel.Api.Program> CreateFactory(Action<IWebHostBuilder>? configure = null) =>
+            new PostgresApiFactory(ConnectionString, configure);
 
         public async Task InitializeAsync()
         {
@@ -392,11 +477,12 @@ public sealed class PostgresBackedApiTests : IClassFixture<PostgresBackedApiTest
             await command.ExecuteNonQueryAsync();
         }
 
-        private sealed class PostgresApiFactory(string connectionString) : WebApplicationFactory<MdReel.Api.Program>
+        private sealed class PostgresApiFactory(string connectionString, Action<IWebHostBuilder>? configure) : WebApplicationFactory<MdReel.Api.Program>
         {
             protected override void ConfigureWebHost(IWebHostBuilder builder)
             {
                 builder.UseSetting("POSTGRES_CONNECTION", connectionString);
+                configure?.Invoke(builder);
             }
         }
     }

@@ -834,6 +834,24 @@ a.ts-chip:hover, button.ts-chip:hover { background: var(--accent); color: var(--
 .hook-fail { font-family: var(--font-mono-stack); font-size: 11px; color: var(--err); }
 /* e.g. "last delivery 503 — retrying with backoff" stacked under the url */
 
+/* founder admin overview */
+.admin-section { margin-top: 34px; }
+.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 34px; align-items: start; }
+.admin-funnel-row { grid-template-columns: 0.7fr repeat(7, minmax(86px, 1fr)); }
+.admin-usage-row { grid-template-columns: 1fr 1fr 1fr; }
+.admin-week-row { grid-template-columns: 1fr 0.5fr; }
+.admin-source-row { grid-template-columns: 2fr 0.7fr 0.7fr 0.9fr 0.9fr 0.8fr; }
+.admin-card { border: 1px solid var(--hairline); border-radius: var(--radius); background: var(--surface); padding: 18px 20px; margin-bottom: 16px; }
+.admin-ad-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.admin-ad-form input {
+  height: 40px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--ink); padding: 0 10px;
+  font-family: var(--font-mono-stack); font-size: 12px;
+}
+.admin-ad-form input[aria-label="ad amount eur"] { width: 86px; }
+.admin-ad-form input[type="date"] { width: 142px; }
+.admin-message { margin: -8px 0 12px; }
+
 /* one-time key reveal — the only accent-wash panel in the app. Copy is
    load-bearing: "copy it now — we store only a hash; this is the only time
    you will see it". Dismiss removes it; there is no re-reveal. */

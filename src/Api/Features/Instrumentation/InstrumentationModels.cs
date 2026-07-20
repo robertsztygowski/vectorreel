@@ -7,6 +7,7 @@ public static class EventNames
     public static readonly ISet<string> Stable = new HashSet<string>(StringComparer.Ordinal)
     {
         "page_view",
+        "signup_view",
         "signup",
         "upload_started",
         "job_completed",

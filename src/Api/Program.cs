@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using MdReel.Api.Features.Admin;
 using MdReel.Api.Features.Auth;
 using MdReel.Api.Features.Instrumentation;
 using MdReel.Api.Features.Payments;
@@ -111,6 +112,7 @@ public partial class Program
             services.AddSingleton<IUploadStore, PostgresUploadStore>();
             services.AddSingleton<IAdSpendLedger, PostgresAdSpendLedger>();
             services.AddSingleton<ICohortAnalytics, PostgresCohortAnalytics>();
+            services.AddSingleton<IAdminOverviewStore, PostgresAdminOverviewStore>();
         }
 
         services.AddHttpClient<HttpWebhookSender>();
@@ -422,6 +424,7 @@ public partial class Program
 
         MapFrozenJobSubset(api);
         api.MapEvents();
+        api.MapAdmin();
         api.MapCheckout();
         api.MapBillingPortal();
         api.MapStripeWebhooks();

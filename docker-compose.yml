@@ -54,6 +54,7 @@ services:
       APP_BASE_URL: "http://localhost:3000"
       # Browser origin of the web container as seen from the host.
       CORS_ALLOWED_ORIGINS: "http://localhost:3000"
+      Admin__Emails: "e2e-admin@example.test"
       # Stage B/C run against the deterministic offline stand-in — Vertex cannot reach the local
       # emulator and the E2E suite must stay free and reproducible (CLAUDE.md rule 4 tier). Stage D
       # persists to the fake-gcs-server emulator, exercising the real GCS code path.
@@ -103,4 +104,3 @@ services:
 volumes:
   postgres-data:
   gcs-data:
-

@@ -1,5 +1,6 @@
 import type { PlanId } from './pricing';
 import { withMdreelSessionHeader } from './apiHeaders';
+import type { AdminAdSpendInput, AdminOverview } from './admin';
 
 export interface EventPostResponse {
   eventId: string;
@@ -107,5 +108,34 @@ export async function requestCheckout(args: { plan: PlanId; tenantId: string }):
     return (await res.json()) as CheckoutResponse;
   } catch {
     return null;
+  }
+}
+
+export async function getAdminOverview(): Promise<AdminOverview | 'not-authorized' | null> {
+  try {
+    const res = await fetch('/api/v1/admin/overview', {
+      method: 'GET',
+      credentials: 'include',
+      headers: withMdreelSessionHeader(),
+    });
+    if (res.status === 404) return 'not-authorized';
+    if (!res.ok) return null;
+    return (await res.json()) as AdminOverview;
+  } catch {
+    return null;
+  }
+}
+
+export async function postAdminAdSpend(input: AdminAdSpendInput): Promise<boolean> {
+  try {
+    const res = await fetch('/api/v1/admin/ad-spend', {
+      method: 'POST',
+      credentials: 'include',
+      headers: jsonHeaders(),
+      body: JSON.stringify(input),
+    });
+    return res.ok;
+  } catch {
+    return false;
   }
 }
