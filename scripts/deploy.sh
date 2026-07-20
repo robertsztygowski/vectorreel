@@ -239,6 +239,9 @@ deploy_api() {
 
   echo "Deploying vectorreel-api to $RUN_REGION..."
   # tmpfs counts against RAM; Stage A holds one full video on /tmp, so 512Mi OOMs on real recordings.
+  # --no-cpu-throttling: the private pipeline runs as an in-process background task; the default
+  # request-only CPU allocation starves ffmpeg (Stage A sat at 15% for 15+ min on a 360 MiB video).
+  # Cost stays bounded: min-instances=0 (scale to zero) + max-instances=2 caps.
   gcloud run deploy vectorreel-api \
     --image "$AR/vectorreel-api:$TAG" \
     --region "$RUN_REGION" \
@@ -247,6 +250,7 @@ deploy_api() {
     --min-instances=0 \
     --max-instances=2 \
     --memory=2Gi \
+    --no-cpu-throttling \
     --set-env-vars "$env_vars" \
     --add-cloudsql-instances "$conn_name" \
     --set-secrets "POSTGRES_CONNECTION=$SECRET_NAME:latest,STRIPE_SECRET_KEY=mdreel-stripe-secret-key:latest,STRIPE_WEBHOOK_SECRET=mdreel-stripe-webhook-secret:latest" \
