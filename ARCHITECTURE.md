@@ -300,7 +300,7 @@ truth (METRICS.md §6.2). The events table ingests the stable METRICS.md §3 eve
 | `POST /events` | First-party event ingestion for the METRICS.md §3 schema; also upserts signup tenants, first-touch attribution, and trial-credit state. |
 | `POST /checkout` | Creates Stripe Checkout sessions for the live plans; the dark Starter path stays flag-gated. |
 | `POST /webhooks/stripe` | Stripe-signed payment webhook; records payments, copies first-touch attribution to payment rows, and updates tenant plan state. |
-| `POST /uploads` | `201 { uploadId, uploadUrl }` — GCS signed URL (resumable upload; max size per plan). |
+| `POST /uploads` | Optional body `{ contentType }`. `201 { uploadId, uploadUrl, storage: "gcs"\|"api" }`. `storage:"gcs"` (deployed): `uploadUrl` is a **GCS V4 signed PUT URL** (2 h expiry, signed via IAM signBlob as the runtime SA, Content-Type-bound) — the browser PUTs straight to `raw-videos-eu/uploads/{uploadId}`, bypassing Cloud Run's 32 MiB request cap. `storage:"api"` (local/CI/E2E): the api-proxied PUT path. |
 | `POST /jobs` | Body: `{ uploadId, options { language_hint, retention_days, webhook_url, quality: standard\|high } }` → `202 { jobId }`. |
 | `GET /jobs` | The authenticated panel's job list: `{ jobs: [ { jobId, status, stage?, progress, source, duration_sec?, created_at, finished_at? } ] }`, newest first. Pagination is Phase 3, additive. |
 | `GET /jobs/{id}` | `{ status: queued\|processing\|done\|failed, stage?: A–D, progress: 0–100, cost_cents?, duration_sec?, wall_clock_sec? }` — `stage` only while processing; cost/duration when known. |
@@ -367,7 +367,11 @@ audit_log(id, tenant_id, actor, action, subject, at)   -- data access & deletion
     (`private/{jobId}/…`, tenant-isolated by job ownership), hands Stage B that `gs://` URI, and
     **erases the object after Stage D** (and on failure). Gated by
     `PipelineModel:StageRawUploadsToObjectStorage` (null ⇒ stage iff mode ≠ fake). The bucket
-    lifecycle rule remains the safety net.
+    lifecycle rule remains the safety net. **Direct-to-GCS uploads skip re-staging** — the signed-URL
+    object (`uploads/{uploadId}`) *is* the raw source: Stage B gets its `gs://` URI, Stage A pulls a
+    temp copy for probing, and the same after-Stage-D / on-failure / on-delete erasure applies. A
+    `uploads/` prefix lifecycle rule (1-day TTL, set by `deploy.sh`) reaps uploads never adopted by
+    a job.
 - **Erasure:** `DELETE /jobs/{id}` cascades storage + DB; audit-logged.
 - **No training on customer data:** Vertex AI standard terms + contractual clause in our DPA; stated publicly.
 - **Subprocessor list (short, published):** Google Cloud (EU regions), Stripe, email provider.

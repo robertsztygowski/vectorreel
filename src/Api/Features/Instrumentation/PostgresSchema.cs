@@ -127,6 +127,17 @@ public static class PostgresSchema
                     updated_at timestamptz not null default now()
                 );
 
+                create table if not exists private_uploads (
+                    id text primary key,
+                    storage_mode text not null,
+                    object_name text null,
+                    local_path text null,
+                    signature text null,
+                    content_type text not null,
+                    created_at timestamptz not null default now(),
+                    stored boolean not null default false
+                );
+
                 alter table subscriptions add column if not exists stripe_customer_id text null;
                 alter table subscriptions add column if not exists updated_at timestamptz not null default now();
                 alter table webhook_deliveries add column if not exists tenant_id text not null;
@@ -142,6 +153,13 @@ public static class PostgresSchema
                 alter table webhook_deliveries add column if not exists response_status integer null;
                 alter table webhook_deliveries add column if not exists created_at timestamptz not null default now();
                 alter table webhook_deliveries add column if not exists updated_at timestamptz not null default now();
+                alter table private_uploads add column if not exists storage_mode text not null default 'api';
+                alter table private_uploads add column if not exists object_name text null;
+                alter table private_uploads add column if not exists local_path text null;
+                alter table private_uploads add column if not exists signature text null;
+                alter table private_uploads add column if not exists content_type text not null default 'application/octet-stream';
+                alter table private_uploads add column if not exists created_at timestamptz not null default now();
+                alter table private_uploads add column if not exists stored boolean not null default false;
                 """);
             await command.ExecuteNonQueryAsync(cancellationToken);
             _ensured = true;

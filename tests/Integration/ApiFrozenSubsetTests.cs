@@ -11,6 +11,26 @@ namespace MdReel.Tests.Integration;
 public sealed class ApiFrozenSubsetTests
 {
     [Fact]
+    public async Task Post_uploads_defaults_to_api_storage_and_returns_frozen_contract_shape()
+    {
+        await using var factory = new ApiFactory();
+        using var client = CreateAuthedClient(factory);
+
+        using var response = await client.PostAsJsonAsync("/api/v1/uploads", new { contentType = "video/mp4" });
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        using var payload = await response.Content.ReadFromJsonAsync<JsonDocument>();
+        Assert.NotNull(payload);
+        var root = payload.RootElement;
+        Assert.StartsWith("up_", root.GetProperty("uploadId").GetString());
+        Assert.Equal("api", root.GetProperty("storage").GetString());
+        var uploadUrl = root.GetProperty("uploadUrl").GetString();
+        Assert.NotNull(uploadUrl);
+        Assert.StartsWith("http://localhost/api/v1/uploads/", uploadUrl);
+        Assert.Contains("/content?sig=", uploadUrl, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Get_jobs_returns_frozen_contract_shape_newest_first()
     {
         await using var factory = new ApiFactory();

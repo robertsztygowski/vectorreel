@@ -6,10 +6,9 @@ import { SAMPLE_VIDEO, pgQuery, uniqueEmail } from '../helpers';
 // API (NEXT_PUBLIC_API_BASE baked into the e2e image), so every step is asserted twice — once in
 // the UI and once as rows in Postgres, the METRICS.md §6.2 source of truth.
 //
-// Honest scope note: the panel's upload → progress → output path runs against the web app's own
-// mock /api/jobs routes (that is what is wired in the product today — Phase 2R). The same journey
-// against the real API is covered request-level in api-funnel.spec.ts; when Phase 3 wires the
-// panel to the real API this spec starts exercising it without changes.
+// The panel's upload → progress → output path now runs against the real API through the web
+// middleware proxy. This spec also observes the POST /jobs body so option wiring and the
+// double-submit guard stay covered at browser level.
 
 test('funnel: landing → signup (N20 fields) → upload → progress → output download', async ({ page }) => {
   const email = uniqueEmail('funnel');
@@ -49,14 +48,41 @@ test('funnel: landing → signup (N20 fields) → upload → progress → output
   expect(tenantRows[0]?.archive_hours).toBe(12);
   expect(tenantRows[0]?.monthly_hours).toBe(4);
 
-  // Into the workspace: upload the committed CC clip.
+  const jobPayloads: unknown[] = [];
+  await page.route('**/api/v1/jobs', async (route) => {
+    if (route.request().method() === 'POST') {
+      jobPayloads.push(route.request().postDataJSON());
+    }
+    await route.continue();
+  });
+
+  // Into the workspace: upload the committed CC clip. setInputFiles covers the same selected-file
+  // path as browse/drag-drop after the browser hands the File to the page.
   await page.goto('/app/upload');
   await page.setInputFiles('input[type="file"]', SAMPLE_VIDEO);
   await expect(page.locator('.file-row')).toContainText('talking_head_nasa_bolten.mp4');
-  await page.getByRole('button', { name: 'start processing', exact: true }).click();
+  await page.getByRole('button', { name: 'high', exact: true }).click();
+  await page.getByRole('button', { name: /30 · keep source 30 days/ }).click();
+  await page.getByPlaceholder('https://your.app/hooks/mdreel').fill('https://example.test/hooks/mdreel');
+
+  const startProcessing = page.getByRole('button', { name: 'start processing', exact: true });
+  await expect(startProcessing).toBeEnabled();
+  await startProcessing.evaluate((button) => {
+    (button as HTMLButtonElement).click();
+    (button as HTMLButtonElement).click();
+  });
 
   // Job progress page: stages advance to done.
   await page.waitForURL(/\/app\/jobs\//);
+  expect(jobPayloads).toHaveLength(1);
+  expect((jobPayloads[0] as { options: Record<string, unknown> }).options).toMatchObject({
+    language_hint: 'auto',
+    quality: 'high',
+    retention_days: 30,
+    webhook_url: 'https://example.test/hooks/mdreel',
+    fail: false,
+    filename: 'talking_head_nasa_bolten.mp4',
+  });
   await expect(page.locator('.badge-done')).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText('✓ source video deleted after processing')).toBeVisible();
 

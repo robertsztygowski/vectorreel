@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using MdReel.Api.Features.Auth;
 using MdReel.Api.Features.Instrumentation;
 using MdReel.Api.Features.Payments;
@@ -90,6 +91,7 @@ public partial class Program
         services.AddSingleton<IPaymentStore, InMemoryPaymentStore>();
         services.AddSingleton<ISubscriptionStore, InMemorySubscriptionStore>();
         services.AddSingleton<IWebhookDeliveryStore, InMemoryWebhookDeliveryStore>();
+        services.AddSingleton<IUploadStore, InMemoryUploadStore>();
         services.AddSingleton<IAdSpendLedger, InMemoryAdSpendLedger>();
         services.AddSingleton<ICohortAnalytics, InMemoryCohortAnalytics>();
         services.AddSingleton<IPaymentGateway>(sp =>
@@ -118,6 +120,7 @@ public partial class Program
             services.AddSingleton<IPaymentStore, PostgresPaymentStore>();
             services.AddSingleton<ISubscriptionStore, PostgresSubscriptionStore>();
             services.AddSingleton<IWebhookDeliveryStore, PostgresWebhookDeliveryStore>();
+            services.AddSingleton<IUploadStore, PostgresUploadStore>();
             services.AddSingleton<IAdSpendLedger, PostgresAdSpendLedger>();
             services.AddSingleton<ICohortAnalytics, PostgresCohortAnalytics>();
         }
@@ -340,9 +343,32 @@ public partial class Program
 
         var api = app.MapGroup("/api/v1");
 
-        api.MapPost("/uploads", (HttpContext httpContext, PrivatePipelineService pipeline) =>
+        api.MapPost("/uploads", async (
+            HttpContext httpContext,
+            PrivatePipelineService pipeline,
+            CancellationToken cancellationToken) =>
         {
-            var created = pipeline.CreateUpload(httpContext.Request);
+            CreateUploadRequest? request = null;
+            if (httpContext.Request.ContentLength is > 0)
+            {
+                try
+                {
+                    request = await httpContext.Request.ReadFromJsonAsync<CreateUploadRequest>(cancellationToken);
+                }
+                catch (JsonException)
+                {
+                    return Results.Problem(
+                        title: "Invalid request body",
+                        detail: "Expected a JSON object.",
+                        statusCode: StatusCodes.Status400BadRequest,
+                        type: "about:blank");
+                }
+            }
+
+            var created = await pipeline.CreateUploadAsync(
+                httpContext.Request,
+                request?.ContentType,
+                cancellationToken);
             return Results.Json(created, statusCode: StatusCodes.Status201Created);
         });
 
@@ -390,7 +416,7 @@ public partial class Program
                     type: "about:blank");
             }
 
-            var created = pipeline.CreateJob(request.UploadId, request.Options);
+            var created = await pipeline.CreateJobAsync(request.UploadId, request.Options, cancellationToken);
             if (created is null)
             {
                 return Results.Problem(
@@ -482,9 +508,12 @@ public partial class Program
             return Results.Json(new { jobs });
         });
 
-        routes.MapDelete("/jobs/{id}", (string id, PrivatePipelineService pipeline) =>
+        routes.MapDelete("/jobs/{id}", async (
+            string id,
+            PrivatePipelineService pipeline,
+            CancellationToken cancellationToken) =>
         {
-            var deleted = pipeline.DeleteJob(id);
+            var deleted = await pipeline.DeleteJobAsync(id, cancellationToken);
             if (!deleted)
             {
                 return Results.Problem(

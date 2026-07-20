@@ -768,16 +768,16 @@ starts on the day the first post ships. Record the date in METRICS.md §2.2.** I
 
 Work:
 
-0. 🚨 **Signed direct-to-GCS uploads — known limitation, must land before launch (found
-   2026-07-20).** A real upload through mdreel.com dies with **413**: the bytes are PUT through
-   the web proxy and the api, and Cloud Run caps HTTP/1 requests at 32 MiB (Kestrel's ~28 MB
-   default is right behind it) — so any real-length recording fails. ARCHITECTURE §5 already
-   prescribes the fix: `POST /uploads` returns a **GCS V4 signed URL** (IAM signBlob as the
-   runtime SA) and the browser PUTs straight to `raw-videos-eu`, bypassing Cloud Run; job
-   processing pulls from GCS for Stage A. Needs bucket CORS for `https://mdreel.com` and
-   `serviceAccountTokenCreator` on the runtime SA. The api-proxied path stays for local/E2E.
-   Bonus: fixes the other latent hole — upload state on instance-local disk breaks under
-   scale-to-zero restarts and >1 instance.
+0. ✅ **Signed direct-to-GCS uploads — DONE 2026-07-20.** The 413 (Cloud Run's 32 MiB HTTP/1 cap
+   on the api-proxied PUT) is fixed per ARCHITECTURE §5: `POST /uploads` returns a **GCS V4 signed
+   URL** (IAM signBlob as the runtime SA, no key files) plus a `storage: "gcs"|"api"` selector; the
+   browser PUTs straight to `raw-videos-eu/uploads/{uploadId}` and the pipeline consumes that
+   object directly (Stage A pulls a temp copy; Stage B gets the `gs://` URI; erasure after Stage D
+   unchanged). Upload records moved to Postgres (`private_uploads`) — the scale-to-zero/multi-
+   instance hole is closed. Bucket CORS, `tokenCreator` self-grant, and a 1-day `uploads/` TTL are
+   provisioned idempotently by `deploy.sh`/`preflight.sh`; local/CI/E2E stay on the api-proxied
+   path. Shipped with the upload-page UX rework (drag-and-drop, immediate background upload with
+   progress, options editable during upload, double-submit guards) — details in INFRA.md.
 1. **Measurement, before the first visitor** (METRICS.md §6):
    - **Umami, self-hosted in the EU, cookieless** — no consent banner, no funnel tax; shares the
      Phase 4 Postgres instance (METRICS.md §6.2). 🚨 **Never Google Analytics** (CLAUDE.md rule 10).

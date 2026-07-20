@@ -104,7 +104,9 @@ test('POST /uploads response matches upload-created', async () => {
   const { POST } = await import('../app/api/uploads/route');
   const res = await POST();
   assert.equal(res.status, 201);
-  assertValid(validateUploadCreated, await res.json(), 'upload-created');
+  const body = await res.json();
+  assert.equal(body.storage, 'api');
+  assertValid(validateUploadCreated, body, 'upload-created');
 });
 
 test('POST /jobs responses match job-created and problem', async () => {

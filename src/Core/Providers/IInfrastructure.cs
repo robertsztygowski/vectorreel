@@ -57,6 +57,27 @@ public interface IObjectStorage
 }
 
 /// <summary>
+/// Creates direct browser upload URLs for object storage. Implementations must not require JSON key
+/// files; production GCS signing uses ADC / the Cloud Run runtime service account.
+/// </summary>
+public interface IUploadUrlSigner
+{
+    /// <summary>
+    /// True only when direct browser uploads are available. Local/CI/emulator modes return false and
+    /// the API-proxied upload path remains in use.
+    /// </summary>
+    bool DirectUploadsEnabled { get; }
+
+    /// <summary>Create a signed PUT URL that binds the supplied content type.</summary>
+    Task<string> SignPutUrlAsync(
+        string bucket,
+        string objectName,
+        string contentType,
+        TimeSpan expiresAfter,
+        CancellationToken cancellationToken);
+}
+
+/// <summary>
 /// Work queue. <c>CloudTasksQueue</c> when deployed, <c>InProcessQueue</c> locally and in tests
 /// (DEVELOPMENT.md §5 — Cloud Tasks has no emulator).
 ///

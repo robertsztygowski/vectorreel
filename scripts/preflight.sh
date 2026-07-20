@@ -98,6 +98,67 @@ ensure_bucket() {
   fi
 }
 
+ensure_signed_uploads() {
+  local project_number compute_sa cors_file lifecycle_file
+  project_number="$(gcloud projects describe "$PROJECT" --format='value(projectNumber)' 2>/dev/null || true)"
+  if [[ -z "$project_number" ]]; then
+    fail "Signed upload IAM" "project number unavailable"
+    return
+  fi
+
+  compute_sa="$project_number-compute@developer.gserviceaccount.com"
+  if gcloud iam service-accounts add-iam-policy-binding "$compute_sa" \
+      --member="serviceAccount:$compute_sa" \
+      --role="roles/iam.serviceAccountTokenCreator" \
+      --project "$PROJECT" --quiet >/dev/null 2>&1; then
+    pass "Signed upload IAM" "TokenCreator granted on $compute_sa"
+  else
+    fail "Signed upload IAM" "failed to grant TokenCreator on $compute_sa"
+  fi
+
+  mkdir -p .local-state
+  cors_file=".local-state/raw-videos-cors.json"
+  cat > "$cors_file" <<'JSON'
+[
+  {
+    "origin": ["https://mdreel.com", "http://localhost:3000"],
+    "method": ["PUT", "GET"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+  }
+]
+JSON
+  if gcloud storage buckets update "gs://raw-videos-eu" \
+      --cors-file="$cors_file" \
+      --project "$PROJECT" --quiet >/dev/null 2>&1; then
+    pass "Bucket CORS raw-videos-eu" "mdreel.com + localhost PUT/GET"
+  else
+    fail "Bucket CORS raw-videos-eu" "update failed"
+  fi
+  rm -f "$cors_file"
+
+  # Abandoned-upload backstop: delete never-adopted uploads/ objects after 1 day (see deploy.sh).
+  lifecycle_file=".local-state/raw-videos-lifecycle.json"
+  cat > "$lifecycle_file" <<'JSON'
+{
+  "rule": [
+    {
+      "action": {"type": "Delete"},
+      "condition": {"age": 1, "matchesPrefix": ["uploads/"]}
+    }
+  ]
+}
+JSON
+  if gcloud storage buckets update "gs://raw-videos-eu" \
+      --lifecycle-file="$lifecycle_file" \
+      --project "$PROJECT" --quiet >/dev/null 2>&1; then
+    pass "Bucket lifecycle raw-videos-eu" "uploads/ TTL 1d"
+  else
+    fail "Bucket lifecycle raw-videos-eu" "update failed"
+  fi
+  rm -f "$lifecycle_file"
+}
+
 echo "mdreel preflight (project=$PROJECT, run=$RUN_REGION, data=$DATA_REGION)"
 printf '%-48s %-4s %s\n' "Check" "Result" "Details"
 printf '%-48s %-4s %s\n' "-----" "------" "-------"
@@ -133,6 +194,7 @@ check_api "storage.googleapis.com"
 check_api "artifactregistry.googleapis.com"
 check_api "secretmanager.googleapis.com" "1"
 check_api "cloudbuild.googleapis.com"
+check_api "iamcredentials.googleapis.com" "1"
 
 if command -v docker >/dev/null 2>&1; then
   pass "docker CLI" "$(command -v docker)"
@@ -148,6 +210,7 @@ fi
 
 ensure_bucket "raw-videos-eu"
 ensure_bucket "outputs-eu"
+ensure_signed_uploads
 
 # Spending guardrails (CLAUDE.md rule 4 / run guardrails): the real brake on runaway
 # cost is per-service --max-instances caps + --min-instances=0 (scale-to-zero), not the

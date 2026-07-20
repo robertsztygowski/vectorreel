@@ -22,6 +22,8 @@ public sealed partial class PrivatePipelineService(
     StageBRunner stageB,
     ITextFuser fuser,
     IObjectStorage objectStorage,
+    IUploadUrlSigner uploadUrlSigner,
+    IUploadStore uploadStore,
     ICostLedger ledger,
     IOptions<GcsOptions> gcsOptions,
     IOptions<PipelineModelOptions> modelOptions,
@@ -47,29 +49,66 @@ public sealed partial class PrivatePipelineService(
     private readonly string _outputBucket = gcsOptions.Value.OutputBucket;
     private readonly string _rawBucket = gcsOptions.Value.RawBucket;
 
-    // Live/Record must hand Vertex a gs:// URI it can fetch, so the raw upload is staged into
-    // raw-videos-eu and deleted after Stage D (ARCHITECTURE §3/§7). Fake ignores the URI. Null in
-    // config ⇒ derive from mode; an explicit value lets tests exercise the write-then-erase offline.
+    // API-proxied Live/Record uploads must hand Vertex a gs:// URI, so they are staged into
+    // raw-videos-eu and deleted after Stage D. Direct-GCS uploads are already there and skip this.
+    // Fake ignores the URI. Null in config ⇒ derive from mode; an explicit value lets tests
+    // exercise the write-then-erase offline.
     private readonly bool _stageRawUploads = modelOptions.Value.StageRawUploadsToObjectStorage
         ?? modelOptions.Value.Mode != PipelineModelMode.Fake;
 
-    private readonly ConcurrentDictionary<string, UploadState> _uploads = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<string, JobState> _jobs = new(StringComparer.Ordinal);
     private readonly ConcurrentQueue<ErasureAuditEntry> _erasureAudit = new();
     private readonly string _uploadRoot = Path.Combine(environment.ContentRootPath, ".local-state", "uploads");
 
-    public UploadCreatedResponse CreateUpload(HttpRequest request)
+    public async Task<UploadCreatedResponse> CreateUploadAsync(
+        HttpRequest request,
+        string? contentType,
+        CancellationToken cancellationToken)
     {
         Directory.CreateDirectory(_uploadRoot);
 
         var uploadId = $"up_{Guid.NewGuid():N}";
+        var normalizedContentType = NormalizeContentType(contentType);
+        var now = DateTimeOffset.UtcNow;
+
+        if (uploadUrlSigner.DirectUploadsEnabled)
+        {
+            var objectName = $"uploads/{uploadId}";
+            var uploadUrl = await uploadUrlSigner.SignPutUrlAsync(
+                _rawBucket,
+                objectName,
+                normalizedContentType,
+                TimeSpan.FromHours(2),
+                cancellationToken);
+
+            await uploadStore.SaveAsync(new UploadRecord(
+                uploadId,
+                UploadStorageModes.Gcs,
+                objectName,
+                null,
+                null,
+                normalizedContentType,
+                now,
+                Stored: false), cancellationToken);
+
+            return new UploadCreatedResponse(uploadId, uploadUrl, UploadStorageModes.Gcs);
+        }
+
         var signature = Convert.ToHexString(RandomNumberGenerator.GetBytes(16)).ToLowerInvariant();
         var targetPath = Path.Combine(_uploadRoot, $"{uploadId}.bin");
 
-        _uploads[uploadId] = new UploadState(uploadId, signature, targetPath);
+        await uploadStore.SaveAsync(new UploadRecord(
+            uploadId,
+            UploadStorageModes.Api,
+            null,
+            targetPath,
+            signature,
+            normalizedContentType,
+            now,
+            Stored: false), cancellationToken);
 
-        var uploadUrl = $"{request.Scheme}://{request.Host}/api/v1/uploads/{uploadId}/content?sig={signature}";
-        return new UploadCreatedResponse(uploadId, uploadUrl);
+        var proxiedUploadUrl = $"{request.Scheme}://{request.Host}/api/v1/uploads/{uploadId}/content?sig={signature}";
+        return new UploadCreatedResponse(uploadId, proxiedUploadUrl, UploadStorageModes.Api);
     }
 
     public async Task<bool> StoreUploadAsync(
@@ -78,7 +117,13 @@ public sealed partial class PrivatePipelineService(
         HttpRequest request,
         CancellationToken cancellationToken)
     {
-        if (!_uploads.TryGetValue(uploadId, out var upload))
+        var upload = await uploadStore.GetAsync(uploadId, cancellationToken);
+        if (upload is null)
+        {
+            return false;
+        }
+
+        if (!string.Equals(upload.StorageMode, UploadStorageModes.Api, StringComparison.Ordinal))
         {
             return false;
         }
@@ -89,16 +134,20 @@ public sealed partial class PrivatePipelineService(
         }
 
         Directory.CreateDirectory(_uploadRoot);
-        await using var write = File.Create(upload.Path);
+        await using var write = File.Create(ApiUploadPath(upload));
         await request.Body.CopyToAsync(write, cancellationToken);
         await write.FlushAsync(cancellationToken);
-        upload.Stored = true;
+        await uploadStore.MarkStoredAsync(uploadId, cancellationToken);
         return true;
     }
 
-    public JobCreatedResponse? CreateJob(string uploadId, CreateJobOptions? options)
+    public async Task<JobCreatedResponse?> CreateJobAsync(
+        string uploadId,
+        CreateJobOptions? options,
+        CancellationToken cancellationToken)
     {
-        if (!_uploads.TryGetValue(uploadId, out var upload))
+        var upload = await uploadStore.GetAsync(uploadId, cancellationToken);
+        if (upload is null)
         {
             return null;
         }
@@ -120,6 +169,9 @@ public sealed partial class PrivatePipelineService(
             CostCents = null,
             WallClockSec = null,
             ShouldFail = options?.Fail ?? false,
+            RawObjectName = string.Equals(upload.StorageMode, UploadStorageModes.Gcs, StringComparison.Ordinal)
+                ? upload.ObjectName
+                : null,
         };
 
         _jobs[jobId] = state;
@@ -170,7 +222,7 @@ public sealed partial class PrivatePipelineService(
         return job.Output;
     }
 
-    public bool DeleteJob(string id)
+    public async Task<bool> DeleteJobAsync(string id, CancellationToken cancellationToken)
     {
         var removed = _jobs.TryRemove(id, out var job);
         if (!removed || job is null)
@@ -178,19 +230,20 @@ public sealed partial class PrivatePipelineService(
             return false;
         }
 
-        if (_uploads.TryGetValue(job.UploadId, out var upload))
+        var upload = await uploadStore.GetAsync(job.UploadId, cancellationToken);
+        if (upload is not null && string.Equals(upload.StorageMode, UploadStorageModes.Api, StringComparison.Ordinal))
         {
-            TryDeleteFile(upload.Path);
+            TryDeleteFile(ApiUploadPath(upload));
         }
 
         // Erasure cascades to the staged raw object if the pipeline left one behind (ARCHITECTURE §7).
-        _ = DeleteRawUploadAsync(job);
+        await DeleteRawUploadAsync(job);
 
         _erasureAudit.Enqueue(new ErasureAuditEntry(id, DateTimeOffset.UtcNow));
         return true;
     }
 
-    private async Task ProcessJobAsync(JobState job, UploadState upload)
+    private async Task ProcessJobAsync(JobState job, UploadRecord upload)
     {
         var started = DateTimeOffset.UtcNow;
 
@@ -258,7 +311,11 @@ public sealed partial class PrivatePipelineService(
 
             // Auto-deletion by default (ARCHITECTURE §3/§7): the local temp AND the staged raw
             // gs:// object are erased once the output exists.
-            TryDeleteFile(upload.Path);
+            if (string.Equals(upload.StorageMode, UploadStorageModes.Api, StringComparison.Ordinal))
+            {
+                TryDeleteFile(ApiUploadPath(upload));
+            }
+
             await DeleteRawUploadAsync(job);
             jobActivity?.SetTag("mdreel.cost_cents", job.CostCents);
             LogJobDone(job.Id, job.WallClockSec.Value, job.CostCents ?? 0);
@@ -287,14 +344,45 @@ public sealed partial class PrivatePipelineService(
     [LoggerMessage(Level = LogLevel.Information, Message = "Job {JobId} done in {WallClockSec}s (cost {CostCents}c)")]
     private partial void LogJobDone(string jobId, double wallClockSec, int costCents);
 
-    private async Task<PreparedVideo> ExecuteStageAAsync(JobState job, UploadState upload)
+    private async Task<PreparedVideo> ExecuteStageAAsync(JobState job, UploadRecord upload)
     {
-        if (!upload.Stored || !File.Exists(upload.Path))
+        if (string.Equals(upload.StorageMode, UploadStorageModes.Gcs, StringComparison.Ordinal))
+        {
+            var objectName = GcsObjectName(upload);
+            var extension = Path.GetExtension(job.Source);
+            if (string.IsNullOrWhiteSpace(extension))
+            {
+                extension = ".mp4";
+            }
+
+            Directory.CreateDirectory(_uploadRoot);
+            var localCopy = Path.Combine(_uploadRoot, $"{upload.Id}-stage-a{extension}");
+            await using (var read = await objectStorage.OpenReadAsync(_rawBucket, objectName, CancellationToken.None))
+            await using (var write = File.Create(localCopy))
+            {
+                await read.CopyToAsync(write, CancellationToken.None);
+                await write.FlushAsync(CancellationToken.None);
+            }
+
+            try
+            {
+                var gcsPrepared = await stageA.PrepareAsync(job.Id, localCopy, StageAOptions.Default, CancellationToken.None);
+                job.DurationSec ??= gcsPrepared.Probe.Duration.TotalSeconds;
+                return gcsPrepared;
+            }
+            finally
+            {
+                TryDeleteFile(localCopy);
+            }
+        }
+
+        var path = ApiUploadPath(upload);
+        if (!upload.Stored || !File.Exists(path))
         {
             throw new InvalidOperationException($"Upload {job.UploadId} has no stored bytes to process.");
         }
 
-        var prepared = await stageA.PrepareAsync(job.Id, upload.Path, StageAOptions.Default, CancellationToken.None);
+        var prepared = await stageA.PrepareAsync(job.Id, path, StageAOptions.Default, CancellationToken.None);
         job.DurationSec ??= prepared.Probe.Duration.TotalSeconds;
         return prepared;
     }
@@ -303,14 +391,22 @@ public sealed partial class PrivatePipelineService(
     // raw-videos-eu under a per-job prefix (tenant-isolated by job ownership — ARCHITECTURE §7) and
     // that gs:// URI is what Stage B sees. Fake/dev skip staging: the stand-in ignores the URI, so
     // the local path is a fine identifier and nothing needs to touch object storage.
-    private async Task<string> StageRawUploadAsync(JobState job, UploadState upload)
+    private async Task<string> StageRawUploadAsync(JobState job, UploadRecord upload)
     {
-        if (!_stageRawUploads)
+        if (string.Equals(upload.StorageMode, UploadStorageModes.Gcs, StringComparison.Ordinal))
         {
-            return upload.Path;
+            var gcsObjectName = GcsObjectName(upload);
+            job.RawObjectName = gcsObjectName;
+            return $"gs://{_rawBucket}/{gcsObjectName}";
         }
 
-        if (!upload.Stored || !File.Exists(upload.Path))
+        var path = ApiUploadPath(upload);
+        if (!_stageRawUploads)
+        {
+            return path;
+        }
+
+        if (!upload.Stored || !File.Exists(path))
         {
             throw new InvalidOperationException($"Upload {job.UploadId} has no stored bytes to stage.");
         }
@@ -322,7 +418,7 @@ public sealed partial class PrivatePipelineService(
         }
 
         var objectName = $"private/{job.Id}/source{extension}";
-        await using (var read = File.OpenRead(upload.Path))
+        await using (var read = File.OpenRead(path))
         {
             await objectStorage.WriteAsync(_rawBucket, objectName, read, CancellationToken.None);
         }
@@ -430,6 +526,21 @@ public sealed partial class PrivatePipelineService(
         return new JobOutputResponse(outputFilename, markdown, document);
     }
 
+    private static string NormalizeContentType(string? contentType) =>
+        string.IsNullOrWhiteSpace(contentType)
+            ? "application/octet-stream"
+            : contentType.Trim();
+
+    private static string ApiUploadPath(UploadRecord upload) =>
+        string.IsNullOrWhiteSpace(upload.LocalPath)
+            ? throw new InvalidOperationException($"API upload {upload.Id} has no local path.")
+            : upload.LocalPath;
+
+    private static string GcsObjectName(UploadRecord upload) =>
+        string.IsNullOrWhiteSpace(upload.ObjectName)
+            ? throw new InvalidOperationException($"GCS upload {upload.Id} has no object name.")
+            : upload.ObjectName;
+
     private static void SetProcessing(JobState job, string stage, double progress)
     {
         job.Status = "processing";
@@ -456,7 +567,11 @@ public sealed partial class PrivatePipelineService(
 
 public sealed record UploadCreatedResponse(
     [property: JsonPropertyName("uploadId")] string UploadId,
-    [property: JsonPropertyName("uploadUrl")] string UploadUrl);
+    [property: JsonPropertyName("uploadUrl")] string UploadUrl,
+    [property: JsonPropertyName("storage")] string Storage);
+
+public sealed record CreateUploadRequest(
+    [property: JsonPropertyName("contentType")] string? ContentType);
 
 public sealed record JobCreatedResponse(
     [property: JsonPropertyName("jobId")] string JobId);
@@ -496,11 +611,6 @@ public sealed record JobOutputResponse(
     string Filename,
     string Markdown,
     OutputDocument Document);
-
-internal sealed record UploadState(string Id, string Signature, string Path)
-{
-    public bool Stored { get; set; }
-}
 
 internal sealed record ErasureAuditEntry(string JobId, DateTimeOffset ErasedAt);
 

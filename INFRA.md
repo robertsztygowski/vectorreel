@@ -179,6 +179,17 @@ pageview POSTed via `stats.mdreel.com/api/send` returned 200.
 `raw-videos-eu` and `outputs-eu`, both `europe-central2`, uniform bucket-level access
 (ARCHITECTURE.md §2 / “Pipeline storage & model config” above). Idle-empty in fake mode.
 
+**Signed direct-to-GCS uploads (Phase 5 item 0).** The deployed api runs `Storage__Mode=gcs`, so
+`POST /api/v1/uploads` returns a V4 signed PUT URL for `raw-videos-eu/uploads/{uploadId}` (signed
+via IAM signBlob as the runtime SA — no key files, rule 1) and the browser uploads directly,
+bypassing Cloud Run's 32 MiB request cap (the prod 413). Provisioned idempotently by
+`scripts/deploy.sh api` (also asserted by `scripts/preflight.sh`): `iamcredentials.googleapis.com`
+enabled, the compute SA granted `roles/iam.serviceAccountTokenCreator` on itself, bucket CORS on
+`raw-videos-eu` (`https://mdreel.com` + `http://localhost:3000`, PUT/GET, Content-Type), and a
+lifecycle rule deleting `uploads/`-prefixed objects after 1 day (abandoned-upload backstop —
+job-owned erasure still deletes the object after processing). Upload records live in the
+`private_uploads` Postgres table; local/CI/E2E stay on the api-proxied PUT path (`storage:"api"`).
+
 ### What a real (non-fake) production deploy still needs
 
 Not provisioned — follow-up work, deliberately excluded from the 2026-07-17 deploy-path proof:

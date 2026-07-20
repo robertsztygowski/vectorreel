@@ -20,12 +20,36 @@ const jobList = contractValidator('job-list.schema.json');
 const outputSchema = contractValidator('output.schema.json');
 const problemSchema = contractValidator('problem.schema.json');
 
+interface UploadCreated {
+  uploadId: string;
+  uploadUrl: string;
+  storage: 'gcs' | 'api';
+}
+
 async function apiContext(): Promise<APIRequestContext> {
   return playwrightRequest.newContext({
     baseURL: API_BASE,
     extraHTTPHeaders: { Authorization: 'Bearer e2e-test-token' },
   });
 }
+
+async function putUploadBytes(api: APIRequestContext, upload: UploadCreated) {
+  const data = readFileSync(SAMPLE_VIDEO);
+  const uploadUrl = new URL(upload.uploadUrl);
+  const target = upload.storage === 'gcs' ? upload.uploadUrl : `${uploadUrl.pathname}${uploadUrl.search}`;
+
+  if (upload.storage === 'gcs') {
+    const unsigned = await playwrightRequest.newContext();
+    try {
+      return await unsigned.put(target, { data, headers: { 'Content-Type': 'video/mp4' } });
+    } finally {
+      await unsigned.dispose();
+    }
+  }
+
+  return api.put(target, { data, headers: { 'Content-Type': 'video/mp4' } });
+}
+
 
 test('@smoke api health and web root respond', async ({ page }) => {
   const api = await apiContext();
@@ -42,16 +66,14 @@ test('@smoke full job funnel: upload → job → output contracts → erasure', 
   const api = await apiContext();
 
   // 1. Create upload (frozen upload-created contract).
-  const uploadRes = await api.post('/api/v1/uploads');
+  const uploadRes = await api.post('/api/v1/uploads', { data: { contentType: 'video/mp4' } });
   expect(uploadRes.status()).toBe(201);
-  const upload = await uploadRes.json();
+  const upload = (await uploadRes.json()) as UploadCreated;
   assertValid(uploadCreated, upload, 'POST /uploads response');
 
   // 2. PUT the committed 90-second CC clip — the container runs real ffmpeg Stage A on it.
-  const putRes = await api.put(new URL(upload.uploadUrl).pathname + new URL(upload.uploadUrl).search, {
-    data: readFileSync(SAMPLE_VIDEO),
-  });
-  expect(putRes.status()).toBe(204);
+  const putRes = await putUploadBytes(api, upload);
+  expect([200, 204]).toContain(putRes.status());
 
   // 3. Create the job (frozen job-created contract).
   const jobRes = await api.post('/api/v1/jobs', {
@@ -116,10 +138,8 @@ test('@smoke full job funnel: upload → job → output contracts → erasure', 
 test('failed jobs surface as failed, not fake-green', async () => {
   const api = await apiContext();
 
-  const upload = await (await api.post('/api/v1/uploads')).json();
-  await api.put(new URL(upload.uploadUrl).pathname + new URL(upload.uploadUrl).search, {
-    data: readFileSync(SAMPLE_VIDEO),
-  });
+  const upload = (await (await api.post('/api/v1/uploads', { data: { contentType: 'video/mp4' } })).json()) as UploadCreated;
+  await putUploadBytes(api, upload);
   const job = await (
     await api.post('/api/v1/jobs', {
       data: { uploadId: upload.uploadId, options: { filename: 'boom.mp4', fail: true } },

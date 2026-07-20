@@ -37,6 +37,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddOptions<CloudTasksOptions>().Bind(configuration.GetSection(CloudTasksOptions.SectionName));
 
         AddObjectStorage(services, configuration, defaultLocalStorageRoot);
+        AddUploadUrlSigner(services, configuration);
         AddModel(services, configuration);
 
         return services;
@@ -58,6 +59,16 @@ public static class InfrastructureServiceCollectionExtensions
 
         var root = configuration["Storage:LocalRoot"] ?? defaultLocalStorageRoot;
         services.AddSingleton<IObjectStorage>(new LocalDirectoryObjectStorage(root));
+    }
+
+    private static void AddUploadUrlSigner(IServiceCollection services, IConfiguration configuration)
+    {
+        var useRealGcs = string.Equals(configuration["Storage:Mode"], "gcs", StringComparison.OrdinalIgnoreCase)
+            && string.IsNullOrWhiteSpace(configuration[$"{GcsOptions.SectionName}:EmulatorHost"]);
+
+        services.AddSingleton<IUploadUrlSigner>(useRealGcs
+            ? new GcsV4UploadUrlSigner()
+            : new DisabledUploadUrlSigner());
     }
 
     private static void AddModel(IServiceCollection services, IConfiguration configuration)

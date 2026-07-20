@@ -128,6 +128,55 @@ ensure_cloud_tasks() {
   echo "$compute_sa"
 }
 
+ensure_signed_uploads() {
+  local compute_sa="$1"
+  local cors_file lifecycle_file
+
+  echo "Ensuring signed-upload IAM + raw bucket CORS..." >&2
+  gcloud services enable iamcredentials.googleapis.com --project "$PROJECT" --quiet >&2
+  gcloud iam service-accounts add-iam-policy-binding "$compute_sa" \
+    --member="serviceAccount:$compute_sa" \
+    --role="roles/iam.serviceAccountTokenCreator" \
+    --project "$PROJECT" --quiet >&2
+
+  mkdir -p .local-state
+  cors_file=".local-state/raw-videos-cors.json"
+  cat > "$cors_file" <<'JSON'
+[
+  {
+    "origin": ["https://mdreel.com", "http://localhost:3000"],
+    "method": ["PUT", "GET"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+  }
+]
+JSON
+  gcloud storage buckets update "gs://raw-videos-eu" \
+    --cors-file="$cors_file" \
+    --project "$PROJECT" --quiet >&2
+  rm -f "$cors_file"
+
+  # Abandoned-upload backstop (ARCHITECTURE §3/§7): direct-to-GCS objects live under uploads/
+  # until a job adopts them; if no job is ever created, nothing else deletes them. Scoped to the
+  # uploads/ prefix so job-staged private/<job>/ objects (and any future retention feature) are
+  # untouched. Signed URLs expire after 2h, so age 1d never races a legitimate upload.
+  lifecycle_file=".local-state/raw-videos-lifecycle.json"
+  cat > "$lifecycle_file" <<'JSON'
+{
+  "rule": [
+    {
+      "action": {"type": "Delete"},
+      "condition": {"age": 1, "matchesPrefix": ["uploads/"]}
+    }
+  ]
+}
+JSON
+  gcloud storage buckets update "gs://raw-videos-eu" \
+    --lifecycle-file="$lifecycle_file" \
+    --project "$PROJECT" --quiet >&2
+  rm -f "$lifecycle_file"
+}
+
 deploy_web() {
   echo "Deploying vectorreel-web to $RUN_REGION..."
   # Same-origin auth proxy target (web/middleware.ts): the api service URL, so the Identity cookie
@@ -162,6 +211,7 @@ deploy_api() {
   conn_name="$(require_api_infra)"
   ensure_stripe_secrets
   compute_sa="$(ensure_cloud_tasks)"
+  ensure_signed_uploads "$compute_sa"
 
   # Cloud Tasks pushes back to the api's own URL; resolve it before deploy. Present on every
   # redeploy (the service already exists); if somehow empty (first-ever create) we deploy with
@@ -172,7 +222,7 @@ deploy_api() {
 
   # Payments went live (test mode) 2026-07-18 — never reset PAYMENTS_MODE here. Price IDs and the
   # checkout redirect base are part of the deploy config (public, non-secret; INFRA.md).
-  env_vars='PipelineModel__Mode=fake,APP_BASE_URL=https://mdreel.com'
+  env_vars='PipelineModel__Mode=fake,APP_BASE_URL=https://mdreel.com,Storage__Mode=gcs,Gcs__RawBucket=raw-videos-eu,Gcs__OutputBucket=outputs-eu'
   env_vars="$env_vars,STRIPE_PRICE_PRO=price_1TueKDCibBXSEilRzfAaVoID"
   env_vars="$env_vars,STRIPE_PRICE_BUSINESS=price_1TueKYCibBXSEilRzQNH9IiB"
   env_vars="$env_vars,STRIPE_PRICE_STARTER=price_1TueKoCibBXSEilR6G3s5OOe"

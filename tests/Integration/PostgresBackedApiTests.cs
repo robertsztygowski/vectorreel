@@ -160,6 +160,42 @@ public sealed class PostgresBackedApiTests : IClassFixture<PostgresBackedApiTest
     }
 
     [Fact]
+    public async Task Upload_records_persist_and_mark_stored_in_postgres()
+    {
+        await using var factory = _fixture.CreateFactory();
+        using var client = CreateAuthedClient(factory);
+
+        using var create = await client.PostAsJsonAsync("/api/v1/uploads", new { contentType = "video/mp4" });
+        Assert.Equal(HttpStatusCode.Created, create.StatusCode);
+        using var createPayload = await create.Content.ReadFromJsonAsync<JsonDocument>();
+        Assert.NotNull(createPayload);
+        var uploadId = createPayload.RootElement.GetProperty("uploadId").GetString();
+        var uploadUrl = createPayload.RootElement.GetProperty("uploadUrl").GetString();
+        Assert.Equal("api", createPayload.RootElement.GetProperty("storage").GetString());
+        Assert.False(string.IsNullOrWhiteSpace(uploadId));
+        Assert.False(string.IsNullOrWhiteSpace(uploadUrl));
+
+        using var bytes = new ByteArrayContent(Encoding.UTF8.GetBytes("not a real video"));
+        using var put = await client.PutAsync(uploadUrl, bytes);
+        Assert.Equal(HttpStatusCode.NoContent, put.StatusCode);
+
+        await using var dataSource = NpgsqlDataSource.Create(_fixture.ConnectionString);
+        await using var command = dataSource.CreateCommand("""
+            select storage_mode, content_type, stored, signature is not null, local_path is not null
+            from private_uploads
+            where id = @id
+            """);
+        command.Parameters.AddWithValue("id", uploadId!);
+        await using var reader = await command.ExecuteReaderAsync();
+        Assert.True(await reader.ReadAsync());
+        Assert.Equal("api", reader.GetString(0));
+        Assert.Equal("video/mp4", reader.GetString(1));
+        Assert.True(reader.GetBoolean(2));
+        Assert.True(reader.GetBoolean(3));
+        Assert.True(reader.GetBoolean(4));
+    }
+
+    [Fact]
     public async Task Register_provisions_tenant_and_trial_credit_then_me_returns_session()
     {
         IdentitySchema.ResetForTests();

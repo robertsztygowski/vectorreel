@@ -4,14 +4,18 @@
   "title": "POST /uploads response (201)",
   "description": "Frozen 2026-07-16 (Phase 2.5). ARCHITECTURE.md §5.",
   "type": "object",
-  "required": ["uploadId", "uploadUrl"],
+  "required": ["uploadId", "uploadUrl", "storage"],
   "additionalProperties": false,
   "properties": {
     "uploadId": { "type": "string", "minLength": 1 },
     "uploadUrl": {
-      "description": "GCS signed resumable-upload URL; max size per plan.",
+      "description": "Direct GCS signed PUT URL or API-proxied PUT URL; max size per plan.",
       "type": "string",
       "format": "uri"
+    },
+    "storage": {
+      "type": "string",
+      "enum": ["gcs", "api"]
     }
   }
 }
