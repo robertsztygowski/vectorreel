@@ -234,6 +234,9 @@ public sealed class StripePaymentGateway(PaymentOptions options) : IPaymentGatew
         var session = await service.CreateAsync(new SessionCreateOptions
         {
             Mode = "subscription",
+            // Always bill in the price's currency (EUR); never let Stripe localise to the
+            // visitor's currency with its ~3.75% conversion fee.
+            AdaptivePricing = new SessionAdaptivePricingOptions { Enabled = false },
             SuccessUrl = $"{options.AppBaseUrl.TrimEnd('/')}/billing/success?session_id={{CHECKOUT_SESSION_ID}}",
             CancelUrl = $"{options.AppBaseUrl.TrimEnd('/')}/billing/cancelled",
             ClientReferenceId = tenantId,
