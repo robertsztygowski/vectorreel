@@ -42,7 +42,7 @@ public static class TelemetryServiceCollectionExtensions
 
         var googleCloudProjectId = GetGoogleCloudProjectId(configuration);
         services.AddOpenTelemetry()
-            .ConfigureResource(resource => ConfigureResource(resource, serviceName))
+            .ConfigureResource(resource => ConfigureResource(resource, serviceName, googleCloudProjectId))
             .WithTracing(tracing =>
             {
                 tracing
@@ -101,9 +101,16 @@ public static class TelemetryServiceCollectionExtensions
     public static string? GetGoogleCloudProjectId(IConfiguration configuration) =>
         configuration[GoogleCloudProjectIdConfigurationKey] ?? configuration[GoogleCloudProjectIdEnvironmentKey];
 
-    private static void ConfigureResource(ResourceBuilder resource, string serviceName)
+    private static void ConfigureResource(ResourceBuilder resource, string serviceName, string? googleCloudProjectId)
     {
         resource.AddService(serviceName);
+
+        if (!string.IsNullOrWhiteSpace(googleCloudProjectId))
+        {
+            // telemetry.googleapis.com OTLP ingest rejects payloads without this attribute
+            // ("Resource is missing required attribute \"gcp.project_id\"", HTTP 400).
+            resource.AddAttributes([new KeyValuePair<string, object>("gcp.project_id", googleCloudProjectId)]);
+        }
 
         var revision = Environment.GetEnvironmentVariable("K_REVISION");
         if (!string.IsNullOrWhiteSpace(revision))
