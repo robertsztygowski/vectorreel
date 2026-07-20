@@ -237,6 +237,25 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   `/app` library table to real `/api/v1/jobs` (carried over); Worker-side prod trace spot-check
 >   under real load; consider a log-based alert on ERROR rate in `mdreel-logs-eu`.
 
+> ### 🏃 Autonomous build run — 2026-07-20 (error-hardening; founder away, rule-5 deploy override)
+> Production hardening run for three error classes observed in logs; all five milestones shipped.
+> - **M0 preflight ✅** — clean-main baseline + remote smoke passed (**25/0**) before edits.
+> - **M1 `/events` malformed JSON ✅** — `InstrumentationEndpoints` now returns 400 Problem for
+>   malformed JSON (`JsonException`) and non-object JSON roots; integration tests cover the exact raw
+>   body `\`, scalar JSON, and array JSON.
+> - **M2 Umami memory ✅** — live service updated to `1Gi` (revision `mdreel-umami-00002-zc8`) and
+>   `scripts/provision-umami.sh` now idempotently enforces the same memory limit when the service exists.
+> - **M3 API OOM buffering fix ✅** — `ProcessRunner` gained `RunToFileAsync` (stdout streamed to a
+>   file), and Stage A scanner now reads ffmpeg frames from a temp file instead of buffering full
+>   stdout in memory; ffprobe keeps the byte-returning path.
+> - **M4 deploy + probes ✅** — deployed api `vectorreel-api-00020-5l6` and worker
+>   `vectorreel-worker-00007-c22`; `scripts/smoke-remote.sh` remained green (**25/0**); re-sending
+>   the exact malformed request body `\` to prod `/api/v1/events` now returns **400** with Problem
+>   JSON (`title: Invalid JSON`); Cloud Logging query for the last 30 minutes showed **no ERROR**
+>   entries for `vectorreel-api`, `vectorreel-worker`, or `mdreel-umami`.
+> - **Cost delta:** only the pre-approved Umami memory bump; no new continuously-billing resources
+>   were introduced (fixed-base reference remains METRICS.md **N2**).
+
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages

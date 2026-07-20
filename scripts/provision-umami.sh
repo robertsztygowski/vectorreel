@@ -18,12 +18,15 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 PROJECT="${PROJECT:-tensile-runway-442915-j6}"
+RUN_REGION="${RUN_REGION:-europe-west1}"
 DATA_REGION="${DATA_REGION:-europe-central2}"
 SQL_INSTANCE="${SQL_INSTANCE:-mdreel-db}"
 PRODUCT_DB="${SQL_DATABASE:-vectorreel}"
 PRODUCT_USER="${SQL_USER:-mdreel_app}"
 UMAMI_DB="${UMAMI_DB:-umami}"
 UMAMI_USER="${UMAMI_USER:-umami_app}"
+UMAMI_SERVICE="${UMAMI_SERVICE:-mdreel-umami}"
+UMAMI_MEMORY="${UMAMI_MEMORY:-1Gi}"
 DB_URL_SECRET="${DB_URL_SECRET:-mdreel-umami-database-url}"
 APP_SECRET_SECRET="${APP_SECRET_SECRET:-mdreel-umami-app-secret}"
 
@@ -130,5 +133,17 @@ for secret in "$DB_URL_SECRET" "$APP_SECRET_SECRET"; do
 done
 
 echo "Umami database provisioning complete."
+
+if gcloud run services describe "$UMAMI_SERVICE" --region "$RUN_REGION" --project "$PROJECT" >/dev/null 2>&1; then
+  echo "Ensuring $UMAMI_SERVICE runs with memory=$UMAMI_MEMORY in $RUN_REGION..."
+  gcloud run services update "$UMAMI_SERVICE" \
+    --memory "$UMAMI_MEMORY" \
+    --region "$RUN_REGION" \
+    --project "$PROJECT" \
+    --quiet >/dev/null
+else
+  echo "Cloud Run service $UMAMI_SERVICE not found in $RUN_REGION; skipped memory enforcement."
+fi
+
 echo "Cost note: no new instance — umami shares mdreel-db (CLAUDE.md rule 10); the only new fixed"
 echo "cost is the Cloud Run service, which runs at min-instances=0 (scales to zero)."

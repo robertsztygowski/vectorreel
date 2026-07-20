@@ -1,7 +1,7 @@
 # Infrastructure Notes — GCP Access & Decisions
 
 > Operational notes for mdreel infrastructure. Companion to ARCHITECTURE.md.
-> Last verified: 2026-07-17.
+> Last verified: 2026-07-20.
 
 ## Spending guardrails  ✅ 2026-07-17
 
@@ -178,6 +178,13 @@ gcloud services enable cloudtasks.googleapis.com --project tensile-runway-442915
 > Stripe stays test mode. No CI auto-deploy; standing rule 5 unchanged. Guardrails re-verified
 > 2026-07-20: preflight 21/21 PASS, budget alert present, Cloud Run caps hold (web 3 / api 2 /
 > worker 1, all `min=0`).
+>
+> **2026-07-20 — error-hardening run (rule 5 override).** The founder authorized, **for this run
+> only**, deploying `vectorreel-api`/`vectorreel-worker` from local and applying a direct Cloud Run
+> update on `mdreel-umami` after the DoD gate, to ship three production fixes: `/api/v1/events`
+> malformed-JSON handling (400 instead of 500), Stage-A ffmpeg stdout streaming to temp file
+> (removing `ProcessRunner` full-memory buffering), and Umami memory raised to `1Gi`. Billing
+> change scope for this run was limited to the Umami memory bump; no new resources were created.
 
 ### Deploy automation — `scripts/` (added 2026-07-17)
 
@@ -208,7 +215,7 @@ All parameterized via `PROJECT`/`RUN_REGION`/`DATA_REGION`/… env vars with the
 | Item | Value |
 |---|---|
 | **Region** | `europe-west1` · **URL** https://vectorreel-api-92936629017.europe-west1.run.app |
-| **Revision** | `vectorreel-api-00013-2lm` (signed uploads + streaming GCS reads + `--no-cpu-throttling`, 2026-07-20; 00010 was Adaptive Pricing forced off in code, 2026-07-20; revisions 00006–00009 were env/secret-only updates for the Stripe activation, 2026-07-18) |
+| **Revision** | `vectorreel-api-00020-5l6` (error-hardening run deploy, 2026-07-20: `/api/v1/events` malformed JSON → 400 + Stage-A ffmpeg stdout streaming to temp file via `ProcessRunner.RunToFileAsync`; earlier notes: 00013 signed uploads + streaming GCS reads + `--no-cpu-throttling`, 00010 Adaptive Pricing forced off in code, 00006–00009 env/secret-only Stripe activation) |
 | **Container** | `src/Api/Dockerfile` (repo-root build context) |
 | **Config** | `PipelineModel__Mode=fake` (no Vertex spend; Stages B–D stubbed), **`Storage__Mode=gcs`** (signed direct-to-GCS uploads — see the GCS buckets section), **payments LIVE in Stripe test mode** (2026-07-18: `PAYMENTS_MODE` removed, `STRIPE_PRICE_PRO`/`STRIPE_PRICE_BUSINESS`/`STRIPE_PRICE_STARTER` set, `APP_BASE_URL=https://mdreel.com` so Checkout redirects land on `/billing/success|cancelled` instead of the `http://localhost` default), `--add-cloudsql-instances` + `POSTGRES_CONNECTION` from Secret Manager (unix-socket `Host=/cloudsql/…`), Stripe secrets `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` from Secret Manager (see below), `--min-instances=0`, `--allow-unauthenticated`, **`--memory=2Gi`** (tmpfs counts against RAM — Stage A holds one full video on `/tmp`; the 512Mi default OOMed on a 360 MiB recording), **`--no-cpu-throttling`** (the private pipeline runs as an in-process background task; request-only CPU allocation starved ffmpeg — Stage A sat at 15% for 15+ min on a 360 MiB video, ~30 s once fixed. Instance-lifetime billing while an instance is warm, but scale-to-zero + max-instances=2 keep the cap) |
 | **Stripe secrets (M4, real test-mode values 2026-07-18)** | `mdreel-stripe-secret-key` (v2: `sk_test_…`) + `mdreel-stripe-webhook-secret` (v3: `whsec_…`) in Secret Manager (`europe-central2`, user-managed replication), wired via `--set-secrets` as `latest`; the runtime SA has `secretAccessor`. Test mode only — a `sk_live_…` key is a hard stop. ⚠️ **Webhook endpoint is pinned to Stripe API version `2025-09-30.clover`** to match the pin inside `Stripe.net 49.0.0`: the sandbox's default (`2026-06-24.dahlia`) makes `EventUtility.ConstructEvent` throw on every event → 400s. If the endpoint is ever recreated from the dashboard it inherits the account default again and webhooks silently break — recreate via API with `api_version=2025-09-30.clover` (and bump the pin when upgrading Stripe.net). Subscribed events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted` (`payment_intent.succeeded` was dropped 2026-07-18 — a `PaymentIntent` carries no `tenant_id` metadata, so the handler 404s and Stripe retries forever; `checkout.session.completed` already does all the work). Verified e2e in prod: signup → checkout 201 → `4242…` test card → webhook 200 → billing portal 201 with a real portal URL. **Adaptive Pricing is forced off per-session in code** (`SessionCreateOptions.AdaptivePricing.Enabled=false`, 2026-07-20) — the dashboard toggle did not propagate to new sessions, which kept showing Polish visitors `PLN` + Stripe's currency-conversion fee instead of the EUR price; the code flag is deterministic and survives account-setting drift. Verified: fresh session reports `adaptive_pricing.enabled=false` and Checkout renders `€149.00`. |
@@ -220,7 +227,7 @@ All parameterized via `PROJECT`/`RUN_REGION`/`DATA_REGION`/… env vars with the
 | Item | Value |
 |---|---|
 | **Region** | `europe-west1` · **URL** https://vectorreel-worker-92936629017.europe-west1.run.app |
-| **Revision** | `vectorreel-worker-00001-4g2` (image `cloud-run-source-deploy/vectorreel-worker:7ebcfbe`) |
+| **Revision** | `vectorreel-worker-00007-c22` (error-hardening run deploy, 2026-07-20; image tag `e9ab10e`) |
 | **Container** | `src/Worker/Dockerfile` (added 2026-07-17; repo-root context, `dotnet/runtime` + ffmpeg). Cloud Run services must listen on `$PORT`, so the Worker gained a minimal `HealthListener` (raw TCP 200-responder, active only when `PORT` is set — inert locally/in tests). |
 | **Config** | `PipelineModel__Mode=fake`, `YouTubeGalleryRunner` disabled (default), in-memory ledger, no DB, `--min-instances=0` |
 
@@ -234,6 +241,7 @@ Self-hosted, cookieless, **EU-only** analytics — the rule-10 replacement for U
 | **Service** | `mdreel-umami` · **Region** `europe-west1` · **URL** https://mdreel-umami-92936629017.europe-west1.run.app |
 | **Image** | `ghcr.io/umami-software/umami:postgresql-latest` (deployed straight from GHCR) |
 | **Scaling** | `--min-instances=0` (scale-to-zero) · `--max-instances=1` — no new fixed base cost (METRICS.md **N2**) |
+| **Memory** | `1Gi` (`gcloud run services update mdreel-umami --memory 1Gi ...`; `scripts/provision-umami.sh` now enforces the same value idempotently when the service exists) |
 | **Database** | own `umami` DB + least-privilege `umami_app` role on the **shared** `mdreel-db` instance (rule 10: never a second DB instance). `umami_app` owns only its DB/schema and has no privileges on product tables. |
 | **Secrets** | `DATABASE_URL=mdreel-umami-database-url:latest`, `APP_SECRET=mdreel-umami-app-secret:latest` (both Secret Manager, `europe-central2`); Cloud SQL via `--add-cloudsql-instances` unix socket |
 | **Website** | `mdreel.com`, id `d146675e-e289-439b-baba-901a21560db0` (not a secret). Tracking script wired into `web/app/layout.tsx` via `NEXT_PUBLIC_UMAMI_*` (Dockerfile ARG defaults); e2e build sets them empty so tests never hit the analytics origin. |
