@@ -49,3 +49,6 @@ appsettings.*.local.json
 *.tfstate.*
 *.tfvars
 !*.tfvars.example
+
+# per-instance runtime upload staging (never committed)
+.local-state/
