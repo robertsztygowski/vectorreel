@@ -60,13 +60,21 @@ Signal routing:
 - **Traces** → Cloud Trace via Google OTLP ingest, service name `mdreel-api` / `mdreel-worker`
   plus the Cloud Run revision (`K_REVISION`) as resource attributes.
 - **Metrics** → Cloud Monitoring via Google OTLP ingest, same resource attributes and the custom
-  `MdReel.Pipeline` meter.
+  `MdReel.Pipeline` meter. Ingested metrics surface as `prometheus.googleapis.com/<name>/<kind>`
+  metric types (e.g. `prometheus.googleapis.com/mdreel.job.duration/histogram`) on the
+  `prometheus_target` monitored resource — alert policies and dashboards must reference that form.
+  The ingest requires `gcp.project_id` and a resolvable `cloud.region` resource attribute
+  (`TELEMETRY_CLOUD_REGION`, set by `scripts/deploy.sh`); traces additionally need explicit
+  AlwaysOn sampling because Cloud Run's front-end injects an unsampled `traceparent`.
 - **Logs** → structured JSON on stdout with `Google.Cloud.Logging.Console`; Cloud Run ingests them
   into Cloud Logging automatically, and the formatter populates trace correlation fields from the
   current .NET `Activity` and the configured project id.
 
 The runtime service account needs `roles/cloudtrace.agent` and `roles/monitoring.metricWriter` for
-trace/metric export; the coordinator grants these roles. Cloud Trace and Cloud Monitoring storage
+trace/metric export; the coordinator grants these roles. App logs are EU-pinned: log bucket
+`mdreel-logs-eu` (`europe-central2`, 30-day retention) receives all `cloud_run_revision` entries
+via sink `mdreel-app-logs-eu`, and the same filter is excluded from the global `_Default` bucket
+(exclusion `mdreel-cloud-run-to-eu`). Cloud Trace and Cloud Monitoring storage
 is not EU-region-pinnable, so telemetry must remain operational metadata only: job, tenant,
 session, stage, duration, token, cost, outcome, and region values are allowed; emails, filenames,
 prompts, transcripts, rendered output, source URLs, or other customer content must never be placed
