@@ -59,10 +59,10 @@ require_api_infra() {
     --format='value(connectionName)'
 }
 
-# Stripe secrets are created EMPTY (a whitespace placeholder) so the api can wire them at deploy
-# time without holding real keys. Whitespace reads as "unset" (IsNullOrWhiteSpace) so — combined
-# with PAYMENTS_MODE=disabled — checkout/portal cleanly return 503 until the founder adds a real
-# test-mode key version (see PLAN.md NEEDS-FOUNDER) and redeploys.
+# Stripe secrets were created EMPTY (whitespace placeholder) pre-activation; since 2026-07-18 they
+# hold real test-mode values (INFRA.md). This stays idempotent: it only creates missing secrets and
+# (re)grants accessor — it never overwrites existing versions. Whitespace reads as "unset", so a
+# fresh environment cleanly returns 503 from checkout/portal until real keys land.
 ensure_stripe_secrets() {
   local project_number compute_sa secret
   project_number="$(gcloud projects describe "$PROJECT" --format='value(projectNumber)')"
@@ -170,7 +170,12 @@ deploy_api() {
     --region "$RUN_REGION" --project "$PROJECT" \
     --format='value(status.url)' 2>/dev/null || true)"
 
-  env_vars='PipelineModel__Mode=fake,PAYMENTS_MODE=disabled'
+  # Payments went live (test mode) 2026-07-18 — never reset PAYMENTS_MODE here. Price IDs and the
+  # checkout redirect base are part of the deploy config (public, non-secret; INFRA.md).
+  env_vars='PipelineModel__Mode=fake,APP_BASE_URL=https://mdreel.com'
+  env_vars="$env_vars,STRIPE_PRICE_PRO=price_1TueKDCibBXSEilRzfAaVoID"
+  env_vars="$env_vars,STRIPE_PRICE_BUSINESS=price_1TueKYCibBXSEilRzQNH9IiB"
+  env_vars="$env_vars,STRIPE_PRICE_STARTER=price_1TueKoCibBXSEilR6G3s5OOe"
   if [[ -n "$api_url" ]]; then
     env_vars="$env_vars,CloudTasks__ProjectId=$PROJECT,CloudTasks__Location=$RUN_REGION,CloudTasks__QueueName=$CLOUDTASKS_QUEUE,CloudTasks__TargetBaseUrl=$api_url,CloudTasks__ServiceAccountEmail=$compute_sa"
     echo "  Cloud Tasks push target $api_url (OIDC SA $compute_sa)"
