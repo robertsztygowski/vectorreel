@@ -82,8 +82,48 @@ A pivot that walks into **threat #1** (meetings) is dead on arrival — say so e
 ## 2. The ranked table
 *(filled at M4/M5)*
 
+## M2 — Per-candidate evidence (5 Haiku evidence passes; URLs in sources.md)
+
+Each candidate got one Haiku fetch/extract pass (demand / competition / buyer-channel / pipeline-delta).
+Load-bearing claims carried to M3 for adversarial verification are tagged **[→M3]**.
+
+### C1 — Regulatory-training audit-trail docs
+- **Demand:** Real regulatory pull — GDPR training records, EU AI Act (Aug-2026 high-risk logging), OSHA/EEOC/HHS inspectors increasingly ask "show the actual content, per-person per-date." Compliance-training market ~$5.63B, 8.6% CAGR. **[→M3: "regulators/buyers actually demand a *verbatim-content* audit record"]**
+- **Competition:** LMS incumbents (Docebo ~$25k/yr, Absorb, iSpring $2.29/user/mo, TalentLMS $69/mo, SkyPrep $319/mo) all log **who/when/score** via xAPI/SCORM — **none produce a verbatim spoken+on-screen content record.** Genuine feature gap.
+- **Buyer & channel:** ⛔ **Procurement-gated.** 60–120-day RFP cycle, weighted scorecards, multi-stakeholder, vendor-consolidation dynamic. **No self-serve inbound behaviour found.** **[→M3: "compliance officer reachable self-serve, no outreach"]**
+- **Pipeline delta:** A credible *audit* product likely needs tamper-evidence / signed records / retention export — **net-new build** not in the current pipeline.
+- **Verdict-hint (worker):** strong regulatory wallet, but incumbents own the buyer via procurement and **the verbatim-content gap is one no regulator is actually asking for.**
+
+### C2 — Conference/webinar → agent-citable knowledge base ⭐ contender
+- **Demand:** ✅ **Strongest of the five.** Active, current RAG-for-video deployment (Fortune-500 shift to unified video knowledge; Qdrant/AWS/Vimeo "video transcript → RAG" tutorials; arXiv 2602.15859 "From Transcripts to AI Agents"). GraphRAG indexing cost collapsed ~1000× (2024→2025), removing the cost barrier. **[→M3: "buyers will PAY for this vs build it themselves"]**
+- **Competition:** ScreenApp ($19/mo) exports Markdown but **no schema, no slide-vs-spoken separation**; Otter/Fireflies trap output in-platform, US-hosted (Otter zero EU residency). Twelve Labs = JSON API, no portable doc. **None ship schema-consistent, portable, slide-separated Markdown for RAG citation** — the wedge is unoccupied. Google **Open Knowledge Format** (Jun-2026: dir of `.md` + YAML frontmatter, no lock-in) legitimizes exactly mdreel's output shape.
+- **Buyer & channel:** ✅ Inbound/community fit (DEV.to tutorials, GitHub-repo proof, KM conferences, SEO). **mdreel's already-planned curated CC gallery of processed conference talks is a near-perfect channel match** (DISTRIBUTION.md). **[→M3: "buyer reachable self-serve/inbound"]**
+- **Pipeline delta:** ✅ **Essentially zero** — matches current output. Cross-video search index + cross-talk linking are *optional* net-new upsells, not required for launch.
+- **Verdict-hint (worker):** unoccupied portable-Markdown wedge + real tailwind; risk is **bottom-up DIY / unclear willingness-to-pay.**
+
+### C3 — Accessibility (EAA/WCAG) docs for internal video
+- **Demand/regulatory:** 🚨 **Scope kill:** the EAA (effective 28-Jun-2025) covers **external-facing** audiovisual media tied to covered products/services — **internal employee training video is NOT in scope.** The regulatory pull that made this candidate attractive does not reach the target content.
+- **Competition:** Rev ($1.99/min human ≈ $119/h; $0.25/min AI ≈ $15/h), 3Play (quote-based), Verbit. Captioning is perceived as a **high-touch premium OR commodity** service anchored to the transcription shelf — mdreel's richer output doesn't obviously command more.
+- **Buyer & channel:** procurement/vendor-list driven; limited self-serve signal.
+- **Pipeline delta:** 🚨 **Net-new build:** WCAG captions need **WebVTT/SRT/TTML**, not a Markdown document — a caption-format renderer mdreel does not have. Dents the SB gate.
+- **Verdict-hint (worker):** regulatory hook doesn't reach internal video + output-format mismatch. **Killed on evidence.**
+
+### C4 — Product/SDK docs from demo & talk videos (DevRel) ⭐ contender
+- **Demand:** Real (62% of devs prefer long-form video; DevRel teams seek video→docs efficiency; "YouTube tutorial → knowledge base" a stated 2026 pattern). **But the observed demand is for human-facing illustrated how-to (Docsie/Vidocu/Castify), not proven demand for *agent-citable* output.** **[→M3: "buyers value agent-citable Markdown over human how-to guides"]**
+- **Competition:** Docsie, Vidocu, Castify, ScreenApp = human-facing illustrated guides; Mintlify = text-first, video-supplementary. **None produce agent-citable spoken-vs-shown Markdown** — wedge is real but narrow. None mention EU residency.
+- **Buyer & channel:** ✅ Excellent inbound fit — MCP + llms.txt + technical blog + HN (mdreel already ships MCP/llms.txt). **But** 🚨 **DIY threat is HIGH:** Gemini natively does video→timestamped chapters; a devtool team can wire Gemini/Claude + MCP → Markdown in ~1 hour at ~$0. This buyer is the one *most* able to build it. **[→M3: "the DIY threat does not kill willingness to pay (A2)"]**
+- **Pipeline delta:** small (code-language detection, agent-native `llms-full.txt`/SKILL.md emit are optional polish).
+- **Verdict-hint (worker):** unoccupied agent-citable wedge + perfect channel, but **the sharpest A2/DIY exposure of any candidate** and no proven preference for agent-ready output.
+
+### C5 — White-label RAG-ingestion for AI consultancies
+- **Demand:** 🚨 **Thin/none found.** Consultancies (Keyhole, RaftLabs, N-iX…) **build** ingestion in-house, bundled into delivery; no public "we'd buy a video-ingestion API" signal. Enterprise-RAG tailwind exists but ingestion isn't shopped separately.
+- **Competition:** Twelve Labs (no EU clarity), Mixpeek (single-tenant + regional residency — already 2/3 of the EU/no-lock-in gap), Cloudglue (MCP). **None advertise resale/white-label terms** — a real gap, but an unproven-demand one.
+- **Buyer & channel:** 🚨 **No self-serve demand; a reseller/partnership motion is required — and outreach is ruled out (DISTRIBUTION.md).** Founder's audience exists but shows no inbound sourcing of white-label video APIs.
+- **Pipeline delta:** net-new white-label portal + wholesale licensing + multi-tenant sub-accounts.
+- **Verdict-hint (worker):** real EU/resale gap, but **zero inbound demand + needs a ruled-out sales motion.** Killed on A5.
+
 ## 3. Per-candidate one-pagers
-*(filled at M2–M5)*
+*(consolidated at M5 from M2 evidence + M3 verdicts + M4 scores)*
 
 ## M1 — Candidate generation (2 Haiku sweeps → long-list → shortlist)
 

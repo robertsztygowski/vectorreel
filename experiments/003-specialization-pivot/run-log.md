@@ -21,10 +21,17 @@
 | Milestone | Haiku calls | Sonnet calls | Coordinator (Fable) |
 |---|---|---|---|
 | M1 discovery | 2 | 0 | dedupe+shortlist |
-| M2 evidence | | | |
+| M2 evidence | 5 | 0 | 1 per candidate |
 | M3 verification | | | |
 | **total** | | | |
 
 ## Checkpoints
 - **M0** — frame + rubric — folder + memo skeleton + this log created. ✅
 - **M1** — 2 Haiku sweeps (pipeline-out + demand-in), 14 long-list → 5 shortlist (C1–C5), 8 killed. ✅
+- **M2** — 5 Haiku evidence passes (1/candidate), demand/competition/buyer-channel/pipeline-delta,
+  all URLs in sources.md. Read: C2 & C4 contenders; C1 (A5 procurement), C3 (EAA scope + caption
+  renderer), C5 (no self-serve demand) weak. ✅
+  - **Dropped coverage (logged):** C3 and C5 will get only light M3 verification, not the full ≤2
+    skeptics — their killing facts are already documented (EAA excludes internal video; zero
+    self-serve consultancy demand). Sonnet budget concentrated on the contenders C2/C4 and on C1's
+    reachability, per the cost cap. This is a deliberate cut, not silent truncation.
