@@ -219,15 +219,16 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   `InProcessQueue` remains the local/CI/E2E default), and the push target
 >   `POST /internal/webhook-deliveries/{id}/attempt` now self-validates the Cloud Tasks OIDC token
 >   (401 otherwise). No founder action remains. Details in INFRA.md.
-> - **api.mdreel.com CNAME (M2 ✅ mapping created)** — Cloudflare zone `mdreel.com`, **DNS-only
->   (grey cloud)**: add `api` `CNAME` → `ghs.googlehosted.com`. The mapping is live and waiting on
->   this record for its cert; until then the middleware proxy (`mdreel.com/api/v1/*`) already
->   serves the api same-origin, so nothing is blocked. Details in INFRA.md.
-> - **stats.mdreel.com CNAME (M3 ✅ mapping created)** — Cloudflare zone `mdreel.com`, **DNS-only
->   (grey cloud)**: add `stats` `CNAME` → `ghs.googlehosted.com`. Umami serves from its run.app URL
->   until then; the switch is one build-arg change (`NEXT_PUBLIC_UMAMI_SCRIPT_URL`). The Umami admin
->   password is in Secret Manager `mdreel-umami-admin-password` (not an action — just where to find
->   it). Details in INFRA.md.
+> - **api.mdreel.com CNAME (M2) ✅ DONE 2026-07-20** — founder added the Cloudflare record
+>   2026-07-18 (`api` CNAME → `ghs.googlehosted.com`, DNS-only); cert issued;
+>   `https://api.mdreel.com/health` returns 200. The same-origin middleware proxy
+>   (`mdreel.com/api/v1/*`) remains the web client's path; the custom domain is direct-access
+>   convenience. Details in INFRA.md.
+> - **stats.mdreel.com CNAME (M3) ✅ DONE 2026-07-20** — founder added the Cloudflare record
+>   2026-07-18 (`stats` CNAME → `ghs.googlehosted.com`, DNS-only); cert issued and the tracker
+>   was switched to the custom origin (web revision `vectorreel-web-00009-c8q`), verified with a
+>   live collect round-trip. The Umami admin password is in Secret Manager
+>   `mdreel-umami-admin-password`. Details in INFRA.md.
 > - **Stripe test-mode keys (M4) ✅ DONE 2026-07-18** — founder created the Stripe sandbox
 >   (JDG entity, EUR payout account, Pro/Business/Starter monthly prices); keys landed in Secret
 >   Manager, price IDs + `APP_BASE_URL` set on the api, `PAYMENTS_MODE` removed. The webhook

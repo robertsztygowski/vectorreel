@@ -168,10 +168,11 @@ Self-hosted, cookieless, **EU-only** analytics — the rule-10 replacement for U
 | **Admin login** | `admin`; the default `umami` password was **rotated 2026-07-17** to a strong value in Secret Manager `mdreel-umami-admin-password` (retrieve with `gcloud secrets versions access latest --secret mdreel-umami-admin-password`). |
 | **Verified** | page_view via the collect API → Cloud SQL → dashboard stats returned `pageviews:1, visitors:1`. |
 
-**stats.mdreel.com** domain mapping created (same REST path as api.mdreel.com); cert pending on
-DNS. **NEEDS-FOUNDER**: Cloudflare CNAME `stats` → `ghs.googlehosted.com` (DNS-only). Once it
-resolves, switching the tracker to the custom origin is a single build-arg change
-(`NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://stats.mdreel.com`) + `scripts/deploy.sh web`.
+**stats.mdreel.com** ✅ **LIVE 2026-07-20** — founder added the Cloudflare CNAME `stats` →
+`ghs.googlehosted.com` (DNS-only) 2026-07-18; cert issued; tracker switched to the custom origin
+(`NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://stats.mdreel.com`, web revision `vectorreel-web-00009-c8q`).
+Verified: `stats.mdreel.com/script.js` 200, live page references only the new origin, and a
+pageview POSTed via `stats.mdreel.com/api/send` returned 200.
 
 ### GCS buckets  ✅ created 2026-07-17
 
@@ -245,11 +246,11 @@ page and the TLS. **This clears the domain gate for launch — PLAN.md Phase 5, 
 > namespaces, assembly names, service name) is **deferred to a dedicated refactor**. Domain and
 > service name are independent; the mapping works regardless of the service's internal name.
 
-### Custom domain — `api.mdreel.com`  ⏳ MAPPING CREATED 2026-07-17, DNS PENDING (NEEDS-FOUNDER)
+### Custom domain — `api.mdreel.com`  ✅ LIVE 2026-07-20
 
-The api service is reachable in production today via the Next.js middleware auth proxy
-(same-origin `mdreel.com/api/v1/*` → `vectorreel-api`, wired by `API_ORIGIN` in `deploy.sh`), so
-nothing blocks on this record — it is a direct-access convenience for the api.
+The web client still uses the Next.js middleware auth proxy (same-origin `mdreel.com/api/v1/*` →
+`vectorreel-api`, wired by `API_ORIGIN` in `deploy.sh`); the custom domain is direct-access
+convenience for the api.
 
 - Cloud Run domain mapping `api.mdreel.com` → `vectorreel-api` @ `europe-west1` created via the
   **Cloud Run Admin REST API** (`domains.cloudrun.com/v1` domainmappings) — the dev SDK lacks
@@ -261,13 +262,14 @@ nothing blocks on this record — it is a direct-access convenience for the api.
     https://europe-west1-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/tensile-runway-442915-j6/domainmappings \
     -d '{"apiVersion":"domains.cloudrun.com/v1","kind":"DomainMapping","metadata":{"name":"api.mdreel.com"},"spec":{"routeName":"vectorreel-api"}}'
   ```
-- Status: `DomainRoutable=True`, `Ready=Unknown` / `CertificatePending` — Google will issue the
-  cert once the DNS record exists. **NEEDS-FOUNDER**: add in Cloudflare (zone `mdreel.com`,
-  **DNS-only / grey cloud**, same rule as `www`):
+- Status: **`Ready=True`** — founder added the Cloudflare record 2026-07-18 (zone `mdreel.com`,
+  **DNS-only / grey cloud**, same rule as `www`); cert issued and `https://api.mdreel.com/health`
+  returns 200:
 
   | Name | Type | Value |
   |---|---|---|
   | `api` | CNAME | `ghs.googlehosted.com` |
+  | `stats` | CNAME | `ghs.googlehosted.com` |
 
 ## Open flags to revisit before / at production
 
