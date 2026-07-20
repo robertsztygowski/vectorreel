@@ -1,11 +1,22 @@
-# Business Model — Video-to-Markdown for AI Knowledge Bases
+# Business Model — AI-Ready Knowledge Repositories from Video
 
-> Working name: TBD (referred to as "the Product" below)
-> Status: pre-MVP. This document captures validated decisions and assumptions to guide implementation.
+> Working name: mdreel
+> Status: pre-launch MVP. This document captures validated decisions and assumptions to guide implementation.
 
 ## 1. One-liner
 
-**Turn any company video into clean, structured, timestamped Markdown that AI agents can actually use — processed entirely in the EU.**
+**Turn your organization's video — demos, trainings, talks — into an AI-ready knowledge repository: hundreds of hours, organized and timestamped, that your AI assistant (and your team) can explore and cite. Processed entirely in the EU.**
+
+> 🔄 **Pivot 2026-07-20 (founder-directed): outcome-first.** mdreel is no longer pitched as a
+> *video → Markdown converter* — that sentence sells the mechanism. It is pitched as what the buyer
+> ends up **owning**: an **AI-ready repository** of their video knowledge — sessions, topics,
+> speakers, timeline, metadata — with **research-ready** navigation for humans and citable
+> structure for agents. **Markdown is the implementation detail; repository-level usability is the
+> product surface.** Nothing about the pipeline, ingestion model, or architecture changed
+> (ARCHITECTURE.md is untouched by this pivot); what changed is the packaging, the narrative, and
+> the demo (**public collections** — DISTRIBUTION.md). The per-file output contract (ARCHITECTURE
+> §4) remains frozen; the repository contract that organizes those files is additive
+> (ARCHITECTURE.md).
 
 ## 2. Problem
 
@@ -35,15 +46,26 @@ Output: one structured Markdown document per video, containing:
 - Clear separation of "spoken" vs "shown on screen" so downstream RAG can weight them
 - Consistent schema across all files — output is designed to be consumed by LLMs/RAG, not (only) humans
 
-Delivery: web UI for manual use + first-class REST API (and later an MCP server) for pipeline integration. Output is plain files — **no proprietary retrieval stack, no lock-in**. Customers own the Markdown and put it in their own repo, S3/GCS, Obsidian, SharePoint, or vector DB.
+**What the customer accumulates — and what we actually sell (pivot 2026-07-20) — is the
+repository those documents form:** an **AI-ready repository** with a stable, documented layout —
+sessions, topic and speaker indexes, a timeline, machine-readable metadata (the repository
+contract, ARCHITECTURE.md). One video gives you a document; a hundred give you a **research-ready
+library** your assistant can navigate and cite across sessions. The schema-consistency bullet
+above is what makes this possible: repository-level answers ("every time this API was demoed,
+across three years of recordings") only exist because every file is shaped the same.
+
+Delivery: web UI for manual use + first-class REST API (and later an MCP server) for pipeline integration. Output is plain files — **no proprietary retrieval stack, no lock-in**. Customers own the repository and put it in their own Git repo, S3/GCS, Obsidian, SharePoint, or vector DB.
 
 ## 4. Positioning & differentiation
 
 ### The positioning statement
 
 > **For EU engineering teams building an internal AI assistant, mdreel turns the recordings
-> your assistant can't see — demos, trainings, incident reviews — into timestamped Markdown it can
-> cite, without the footage ever leaving the EU.**
+> your assistant can't see — demos, trainings, incident reviews — into an AI-ready knowledge
+> repository it can explore and cite, without the footage ever leaving the EU.**
+>
+> *(Pivoted 2026-07-20 — outcome-first, §1. The pre-pivot form ended "…into timestamped Markdown
+> it can cite"; the mechanism now stays out of the headline.)*
 
 ⚠️ **Note where the EU clause sits: second, as a qualifier.** That is the honest reflection of A1's
 evidence level. **It gets promoted to the front of the sentence if and only if the EU arm wins the
@@ -58,7 +80,7 @@ Direct competitor: **Cloudglue** (US, launched 2025; multimodal transcripts, ext
 |---|---|---|
 | Data location | US cloud | EU regions only (GCP europe-*), EU data residency commitments |
 | Legal | US processor, CLOUD Act exposure | EU-focused DPA, short subprocessor list, honest sovereignty roadmap |
-| Output model | Collections + their retrieval/chat stack | Plain Markdown files, bring-your-own-RAG, zero lock-in |
+| Output model | Collections + their retrieval/chat stack | A portable repository of plain Markdown files (documented layout — ARCHITECTURE.md repository contract), bring-your-own-RAG, zero lock-in |
 | Source retention | Stores video library | **Source video deleted after processing by default** (configurable) |
 | Buyer message | Developer platform | "Feed your videos to your agents without leaving the EU" |
 
@@ -75,11 +97,14 @@ Direct competitor: **Cloudglue** (US, launched 2025; multimodal transcripts, ext
   Recognition), Twelve Labs, Mixpeek and Azure AI Video Indexer all read on-screen text — and
   Azure does it EU-hosted at no premium. *"We read your slides"* invites *"so does Cloudglue."*
   **Never lead with the OCR capability.**
-- ✅ **The wedge is the deliverable + the combination nobody else sells:** one portable, timestamped
-  Markdown file that separates *spoken* from *shown*, is schema-consistent across hundreds of files,
-  carries **zero retrieval lock-in**, and is processed entirely in the EU with no human-in-the-loop
-  and no non-EEA transfer. Every rival traps the same raw signals inside a proprietary
-  collections/search index — a platform with gravity, not a document you own. **Sell the artifact.**
+- ✅ **The wedge is the deliverable + the combination nobody else sells:** an **AI-ready
+  repository you own** — portable, timestamped Markdown that separates *spoken* from *shown*, is
+  schema-consistent across hundreds of files, organized by session/topic/speaker/timeline
+  (the repository contract, ARCHITECTURE.md), carries **zero retrieval lock-in**, and is processed
+  entirely in the EU with no human-in-the-loop and no non-EEA transfer. Every rival traps the same
+  raw signals inside a proprietary collections/search index — a platform with gravity, not a
+  repository you own. **Sell the repository** (pivot 2026-07-20, §1 — the pre-pivot form of this
+  rule was "sell the artifact"; the repository *is* the artifact at library scale).
 - 🛡️ **The one *durable* moat is no lock-in.** EU residency is perishable (a competitor is one
   `europe-west3` deploy from erasing it — §8) and, per the market, unpriceable (no one charges an EU
   premium; residency is a DPO *deal-unblocker*, not a markup). The portable-file / bring-your-own-RAG
@@ -97,9 +122,10 @@ a differentiator.
 launch page must use):**
 
 - **vs Cloudglue / Twelve Labs (structured-video, direct):** *"The same structured video
-  understanding — but as a portable Markdown file your agent owns, processed entirely in the EU, with
-  no retrieval stack to lock you in."* (Match their capability; beat their lock-in and their DPO story.)
-- **vs Amberscript / Happy Scribe (EU transcription):** *"Not a transcript — a knowledge-base document
+  understanding — but as an AI-ready repository your agent owns: portable Markdown, processed
+  entirely in the EU, with no retrieval stack to lock you in."* (Match their capability; beat their
+  lock-in and their DPO story.)
+- **vs Amberscript / Happy Scribe (EU transcription):** *"Not a transcript — a knowledge repository
   that also captures what's on screen, with a residency story that doesn't leak to a US LLM or an
   offshore transcriber."* (Never compete on €/hour here.)
 - **vs Gemini / Deepgram / AssemblyAI (infra / DIY):** *"You could wire this yourself; here's the
@@ -208,14 +234,19 @@ top risk (A5)** — every other question is only *reachable* through it. **Seque
 one-shot wave of posts lands on a live tool rather than an email box; the build is held to the
 hard ship-by gate (METRICS.md §2.2 SB). → DISTRIBUTION.md for the reasoning.
 
-1. **The gallery is the demo.** *(Revised 2026-07-15 — the free public YouTube tool was dropped:
-   an open compute endpoint is a bot/abuse surface a fixed base this small cannot carry.)* The
-   curated gallery does the tool's funnel job at zero compute per visitor: a skeptic verifies real
-   Markdown against talks they already know, no signup, no trust required — which still avoids
-   *"upload your confidential internal recording to a stranger's website"* as the first ask.
-   Then: *"try it on your own recording"* → trial credit (METRICS.md N33) → two-plan checkout (§6).
-2. **Curated public gallery** — 10–25 processed CC-licensed talks; a compounding SEO asset and a
-   permanent live demo. **Curated, attributed — never a scaled transcript farm** (CLAUDE.md r8).
+1. **Public collections are the demo.** *(Pivoted 2026-07-20 — the "curated gallery" grew into
+   **public collections**: the same curated, CC-licensed, attributed talks, now organized as
+   full AI-ready repositories — sessions, topics, speakers, timeline — instead of a flat list of
+   pages. A collection is the product surface itself, demonstrated in public.)* *(Earlier revision
+   2026-07-15 — the free public YouTube tool was dropped: an open compute endpoint is a bot/abuse
+   surface a fixed base this small cannot carry.)* Collections do the funnel job at zero compute
+   per visitor: a skeptic explores a real repository built from talks they already know, no
+   signup, no trust required — which still avoids *"upload your confidential internal recording
+   to a stranger's website"* as the first ask. Then: *"get this for your own recordings"* →
+   trial credit (METRICS.md N33) → two-plan checkout (§6).
+2. **Curated public collections** — 10–25 processed CC-licensed talks organized into 3+ themed
+   collections (DISTRIBUTION.md owns the list); a compounding SEO asset and a permanent live demo.
+   **Curated, attributed — never a scaled transcript farm** (CLAUDE.md r8).
 3. **Developer-led content:** honest technical blog (chunking, cost engineering, GDPR
    architecture — *sell the boring hard parts*), public API docs, llms.txt, MCP server later.
    Channels: **LinkedIn first** (founder's existing .NET/architecture audience — cheapest by an
@@ -267,8 +298,9 @@ inputs to A5 and A2, and METRICS.md §6 lists them as anti-metrics for a reason.
 ## 10. Explicit non-goals for MVP
 
 - **YouTube processing is never a paid feature — and since 2026-07-15 it has no public input box
-  either.** The free tool was dropped (abuse/cost surface); the **curated gallery**, produced by
-  us, is the only YouTube-facing surface and exists for *distribution only* (A5) — see real
+  either.** The free tool was dropped (abuse/cost surface); the **public collections** (the
+  curated gallery, evolved — §7), produced by us, are the only YouTube-facing surface and exist
+  for *distribution only* (A5) — see real
   output, zero friction, zero trust required. **The paid product is private recordings.** Two hard
   reasons this is not negotiable:
   (1) Vertex only ingests videos that are public or owned by **our** GCP account, so a customer's
@@ -285,6 +317,9 @@ inputs to A5 and A2, and METRICS.md §6 lists them as anti-metrics for a reason.
   A negotiated **click-to-sign / enterprise DPA signature flow** remains deferred until a customer
   demands it.)* Cloud SQL still enters only when the events store demands it —
   it idles at ~€25–50/mo against a ~€300/mo fixed base.
-- No built-in chat/RAG/search over processed videos — we produce files, we do not compete with the customer's retrieval stack.
+- No built-in chat/RAG/search over processed videos — we produce files, we do not compete with the
+  customer's retrieval stack. *(Clarified by the 2026-07-20 pivot: the repository's static indexes
+  — topics, speakers, timeline — are files inside the deliverable, not a hosted retrieval product.
+  A hosted chat/search surface remains a non-goal.)*
 - No fine-tuning, no training on customer data — ever, contractually.
 - No SOC 2 / ISO 27001 certification yet — design for auditability, certify when a customer demands it.

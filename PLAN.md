@@ -14,7 +14,9 @@
 figure (N1b) — is the near-term target. **Do not plan against N1b.**
 
 **The bet.** EU teams building internal AI assistants have recordings their assistant cannot see.
-We turn those into timestamped Markdown it can cite, without the footage leaving the EU.
+We turn those into an **AI-ready knowledge repository** it can explore and cite — organized
+sessions, topics, speakers, timeline; timestamped Markdown underneath — without the footage
+leaving the EU. *(Pivoted 2026-07-20 — outcome-first; BUSINESS_MODEL §1 owns the framing.)*
 
 **What is already settled.** Feasibility and margin. The pipeline works and COGS is measured at
 ~7× inside the cheapest price (METRICS.md §1.2, A8). **Further cost engineering is procrastination
@@ -263,7 +265,14 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 > - **M0 guardrails ✅** — preflight 21/21 PASS; budget alert `mdreel-monthly-1000usd-equiv`
 >   (4000 PLN) present; Cloud Run caps hold (web 3 / api 2 / worker 1, all `min=0`); rule-5
 >   override for this run recorded in INFRA.md. Milestone todo graph M1–M8 created.
-> - **Next:** M1 — pivot definition in the living docs.
+> - **M1 pivot definition ✅** — the living docs now carry the outcome-first framing:
+>   BUSINESS_MODEL §1 one-liner + pivot note, §3 (the repository is what the customer
+>   accumulates), §4 positioning statement + "sell the repository" wedge + per-ring copy,
+>   §7 (public collections are the demo), §10 clarifications; DISTRIBUTION.md core-insight
+>   section rewritten (collections = the demo, funnel updated, channel 2 = collections as
+>   SEO + GitHub asset); this STATUS "bet" paragraph pivoted. Architecture, pipeline, pricing,
+>   and every METRICS number untouched.
+> - **Next:** M2 — the AI-ready repository contract v1 (ARCHITECTURE.md product-surface addition).
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)

@@ -31,7 +31,7 @@ old target (N1b) implied an order of magnitude more traffic and made A5 look nea
 **That was an artifact of the salary line, not of the market.**
 
 **So the goal is a good-post-sized number, not a content-engine-sized number.** One HN front page,
-one LinkedIn post that lands, or a gallery that quietly ranks over two quarters.
+one LinkedIn post that lands, or a collection that quietly ranks over two quarters.
 
 ⚠️ **This does not make A5 easy — it changes its shape.** Content compounds only with *sustained*
 effort, and sustained effort is exactly what a founder with a day job does not reliably have.
@@ -47,38 +47,47 @@ everything launches at once — PLAN.md Phase 5.** The cost of the reversal is t
 now rot instead of the publishing; that risk is carried by the hard **ship-by gate (METRICS.md
 §2.2 SB)** — if the date arrives first, launch with whatever exists.
 
-## The core insight: the gallery is the demo
+## The core insight: public collections are the demo
 
-**Revised 2026-07-15 — the free YouTube tool was dropped.** An open compute endpoint is a bot and
-abuse surface, and an ops tax, that a fixed base this small cannot carry — even capped. The job the
-tool did in the funnel — *let a skeptic verify real output on a video they already know, before
-trusting us with anything* — moves to the **curated gallery**, which does it at **zero compute per
-visitor** (pre-rendered pages, produced by us; there is no public input box anywhere).
+**Pivoted 2026-07-20 — the curated gallery grew into *public collections*.** The 2026-07-15
+decision stands: the free YouTube tool stays dropped (an open compute endpoint is a bot and abuse
+surface, and an ops tax, that a fixed base this small cannot carry — even capped). What changed is
+the *shape of the proof*. A flat gallery of processed talks proves the **per-file output**; a
+**public collection** — the same curated, CC-licensed talks organized as a full AI-ready
+repository (sessions, topics, speakers, timeline — the repository contract, ARCHITECTURE.md) —
+proves the **product surface itself**: what a buyer's own archive would become. The job the tool
+did in the funnel — *let a skeptic verify real output on a video they already know, before
+trusting us with anything* — is still done at **zero compute per visitor** (pre-rendered pages,
+produced by us; there is no public input box anywhere), but the skeptic now also sees
+cross-session answers a single page can never show: "every talk where this topic came up",
+speaker histories, a timeline across a conference's years.
 
 **The funnel:**
 
 ```
-  browse the gallery      ──►  verify real Markdown on a  ──►  "try it on your own recording"
-  (10–25 processed talks,       talk you already know           (magic-link signup +
-   zero friction, zero cost)    — the wow, pre-rendered)         trial credit, METRICS.md N33)
-                                                                          │
-                                                                          ▼
+  explore a public collection ──►  verify real output on a    ──►  "get this for your own
+  (3+ themed repositories of        talk you already know —          recordings" (signup +
+   curated talks, zero friction,    then see the repository          trial credit, METRICS.md N33)
+   zero cost)                       answer across sessions                    │
+                                    — the wow, pre-rendered)                  ▼
                                                           two-plan checkout (BUSINESS_MODEL §6)
 ```
 
 Why this ordering matters: the original funnel opened with *"upload your confidential internal
 recording to a stranger's website."* That is a brutal first ask and was the biggest leak in the
-design. The gallery keeps the fix — **verification without trust** — while removing the endpoint
+design. Collections keep the fix — **verification without trust** — while removing the endpoint
 that had to be defended. The trade: the visitor verifies on *our* examples, not a video of their
 choosing; the trial credit is what closes that last gap, on their own footage.
 
-> **⚠️ The gallery must out-work a live Playground (competitor-informed 2026-07-15 —
+> **⚠️ A collection must out-work a live Playground (competitor-informed 2026-07-15 —
 > experiments/002-competitor-analysis).** Cloudglue's demo is an interactive Playground where a
 > skeptic pastes *their own* URL; ours is deliberately pre-rendered (no compute, no abuse surface —
-> METRICS.md N10). That means the gallery carries **more proof burden**, so **curate it around talks
-> the ICP already knows** (well-known conference talks in their domain) — the skeptic then verifies
-> the output against ground truth they already hold in their head, which is the only substitute for
-> "try it on your own video first."
+> METRICS.md N10). That means the collection carries **more proof burden**, so **curate it around
+> talks the ICP already knows** (well-known conference talks in their domain) — the skeptic then
+> verifies the output against ground truth they already hold in their head, which is the only
+> substitute for "try it on your own video first." The repository layer adds a second proof no
+> Playground has: **cross-session structure** — a single pasted URL can never show what a hundred
+> organized files look like.
 
 ## Channels, in priority order
 
@@ -88,10 +97,16 @@ audience is the single biggest asset a bootstrapper has. Broadcasting to it is *
 it requires zero 1:1 contact with anyone, so it does not violate the constraint that reshaped
 this plan.
 
-### 2. The curated gallery — a compounding SEO asset
-10–25 processed public talks, each a page of structured, timestamped Markdown, each with
-attribution and the original video embedded. Every page is (a) a working demo, (b) an SEO surface
-for that talk's subject matter, (c) proof the output is real.
+### 2. Public collections — a compounding SEO + GitHub asset
+10–25 processed public talks organized into **3+ themed collections** (the launch list and
+playbooks live in this doc's "First public collections" section), each collection a browsable
+AI-ready repository: session pages of structured, timestamped Markdown with attribution and the
+original video embedded, plus topic/speaker/timeline indexes. Every session page is (a) a working
+demo, (b) an SEO surface for that talk's subject matter, (c) proof the output is real — and every
+*collection* is proof the **repository** is real, which no single page can be. Collections are
+additionally distributed **as Git repositories on GitHub** (the operating model lives in this
+doc's "GitHub distribution" section) — the ICP is Markdown/Git/docs-as-code-native, and a repo
+they can clone is a demo that lives where they work.
 
 🚨 **Curated — never a scaled content farm.** Mass auto-generated transcript pages are precisely
 what Google's scaled-content-abuse policy targets, and republishing copyrighted transcripts at
@@ -112,7 +127,7 @@ The differentiation *is* the unglamorous engineering, so write about it (BUSINES
 Honesty is the sales asset here. Overclaiming EU sovereignty gets destroyed by any competent DPO.
 
 ### 4. Communities — HN, r/RAG, r/LocalLLaMA
-Launch surface for the artifact post and the gallery. **One-shot, non-compounding** — treat as
+Launch surface for the artifact post and the public collections. **One-shot, non-compounding** — treat as
 spikes, not a strategy. A launch post is not a distribution plan.
 
 ### 5. `llms.txt` + public API docs + MCP
@@ -202,12 +217,12 @@ anyone will buy it.
 | **LinkedIn (organic)** | 🐴 **The workhorse.** Owned audience, predictable, free. | Carries most of the volume toward N15. |
 | **Paid search** | 🔬 **The instrument.** Cold, clean, randomizable. | Settles A1 and measures N12. **Not a volume source.** |
 | **HN / Reddit** | 🎟️ **The lottery ticket.** | Could clear N15 in a day; ~5–10% chance per submission. **Buy the ticket; do not budget for it.** |
-| **Gallery + blog (SEO)** | 💰 **The annuity — which mostly matures *after* T.** | ⚠️ **Near-zero for the first 3–6 months; meaningful at 12–18.** The time-box is 9. |
+| **Collections + blog (SEO)** | 💰 **The annuity — which mostly matures *after* T.** | ⚠️ **Near-zero for the first 3–6 months; meaningful at 12–18.** The time-box is 9. |
 
 > ### ⚠️ The consequence, stated plainly: **inside the time-box, broadcast carries the load and the
 > compounding assets do not have time to compound.**
 >
-> **So during T, the gallery is not a traffic source — it is *proof*.** Its job is to make paid and
+> **So during T, the collections are not a traffic source — it is *proof*.** Its job is to make paid and
 > LinkedIn traffic **convert**, by letting a skeptic verify the output on a talk they already know.
 > Build it for that. Any SEO that arrives is a bonus that pays out only if the box is extended.
 
@@ -271,7 +286,7 @@ is the entire reason this document exists.
 ## Open questions
 
 - Real conversion rates (replace the assumed 2–5% / 5–15% as soon as METRICS.md has data).
-- Does the gallery actually rank, or does Google treat processed talks as derivative content?
+- Do the collections actually rank, or does Google treat processed talks as derivative content?
 - Is the .NET/architecture audience the *buyer* (dev teams building AI assistants), or just a
   friendly crowd that claps and doesn't convert? **This is the uncomfortable one — an owned
   audience that isn't the ICP is a vanity asset.** Watch trial-start rate by referrer.
