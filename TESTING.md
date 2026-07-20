@@ -15,7 +15,7 @@ zero Stripe calls (FakePaymentGateway), nothing leaves the machine.
 |---|---|---|---|
 | **smoke** | `scripts/e2e.sh up && scripts/e2e.sh smoke` | Stack boots; health + the full API job funnel (upload → real ffmpeg Stage A → output contracts → Postgres ledger → erasure) | up 10 s + smoke 17 s |
 | **full** (default) | `scripts/e2e.sh full` | Everything below | ~3.5 min total |
-| ├─ .NET | `dotnet test --filter Category!=Live` | 107 unit+integration tests, incl. the Postgres-backed store tests (`Category=RequiresDocker` — needs compose postgres) and the replay-harness fidelity tests | 154 s |
+| ├─ .NET | `dotnet test --filter Category!=Live` | 135 unit+integration tests, incl. the Postgres-backed store tests (`Category=RequiresDocker` — needs compose postgres) and the replay-harness fidelity tests | 40 s (2026-07-20 warm) |
 | ├─ web unit | `cd web && npm test` | 33 tests: contracts, corpus, attribution, output document | 26 s |
 | └─ E2E | `scripts/e2e.sh test` | 7 Playwright tests: browser funnel, API funnel + frozen contracts, payments + webhook + attribution | 30 s |
 | **live** | `dotnet test tests/Live` | Real-Vertex Stage B+C smoke on a CC-BY YouTube `fileData.fileUri` (`Category=Live`; ADC + real spend). Run before deploys / when prompts or schemas change (CLAUDE.md rule 5). Never part of the default loop. | ~20 s |
@@ -33,7 +33,7 @@ First-ever run adds one-time costs: docker image builds (~4–6 min for api+web)
 | web | http://localhost:3000 | production Next.js build, `NEXT_PUBLIC_API_BASE` baked to :8080 |
 | postgres | localhost:5432 (dev/dev, db `vectorreel`) | the METRICS.md §6.2 source of truth |
 | fake-gcs-server | http://localhost:4443 | GCS emulation; Stage D writes `output.md`/`output.json` here in E2E (`-external-url` is the in-network hostname so resumable uploads resolve from the api container) |
-| aspire-dashboard | **http://localhost:19888** | logs + traces UI; OTLP in-network on `aspire-dashboard:18889` |
+| aspire-dashboard | **http://localhost:19888** | logs + traces + metrics UI; OTLP in-network on `aspire-dashboard:18889` |
 
 Default profile (`docker compose up -d`, no `--profile`) still starts only postgres + fake-gcs
 for host-side `dotnet run` development — unchanged.
@@ -58,6 +58,10 @@ and `trace.zip` (`npx playwright show-trace <path>` for the full step-by-step ti
 `pipeline.job` root span with `mdreel.job_id`, `mdreel.upload_id`, `mdreel.source`,
 `mdreel.cost_cents` attributes and one child span per stage. Structured logs from the api land in
 the same UI (and in `scripts/e2e.sh logs api` — stage transitions log the jobId).
+Metrics from the API and worker land in the same local Aspire dashboard: job/stage duration,
+processed video minutes, Stage B runaway guard activations (METRICS.md N7), LLM tokens, runtime
+instrumentation, and webhook delivery failures. The cost ledger remains the source of truth for
+per-job product metering (METRICS.md N9).
 OTel is env-gated: no `OTEL_EXPORTER_OTLP_ENDPOINT` ⇒ no exporter, nothing phones home (rule 10).
 
 **Queryable checks** (what the E2E tests assert, runnable by hand):

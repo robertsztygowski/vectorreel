@@ -55,7 +55,7 @@ down for enterprise compliance, the public path dies. Keep it isolated from the 
 | Auth | API keys (hashed) for API; email magic link or Google OAuth for UI | Keep MVP simple; SSO/SAML is enterprise roadmap. |
 | Payments | Stripe (EU entity, EUR) | Subscriptions + metered overage. |
 | IaC | Terraform | Region pinning and org policy as code from day one. |
-| Observability | Cloud Logging + OpenTelemetry traces; per-job cost ledger in DB | Founder's standard; per-job token/cost tracking is a product feature (usage page), not just ops. |
+| Observability | Cloud Logging + OpenTelemetry traces/logs/metrics across API + Worker; per-job cost ledger in DB | Founder's standard; pipeline metrics cover durations, Stage B runaway guard activations (METRICS.md N7), and LLM token flow. Per-job token/cost tracking is a product feature (usage page), not just ops. |
 | **Analytics** | **Umami, self-hosted in the EU, cookieless** (decided 2026-07-15; was Plausible) — pre-signup only, shares the product's Postgres instance. Post-signup truth is our own `events` table. | **CLAUDE.md rule 10 — no US analytics, ever.** Cookieless ⇒ **no consent banner ⇒ no funnel tax**; self-hosted ⇒ analytics data never leaves our own EU infra and no subprocessor is added. METRICS.md §6. |
 
 Org policy: `constraints/gcp.resourceLocations` restricted to EU. All service accounts least-privilege. CMEK: not in MVP, keep design compatible.

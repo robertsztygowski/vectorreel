@@ -144,6 +144,7 @@ public sealed partial class PrivatePipelineService(
     public async Task<JobCreatedResponse?> CreateJobAsync(
         string uploadId,
         CreateJobOptions? options,
+        string? tenantId,
         CancellationToken cancellationToken)
     {
         var upload = await uploadStore.GetAsync(uploadId, cancellationToken);
@@ -159,6 +160,7 @@ public sealed partial class PrivatePipelineService(
         {
             Id = jobId,
             UploadId = uploadId,
+            TenantId = string.IsNullOrWhiteSpace(tenantId) ? null : tenantId,
             Status = "queued",
             Stage = null,
             Progress = 0,
@@ -246,18 +248,24 @@ public sealed partial class PrivatePipelineService(
     private async Task ProcessJobAsync(JobState job, UploadRecord upload)
     {
         var started = DateTimeOffset.UtcNow;
+        var outcome = "failed";
+        PreparedVideo? prepared = null;
 
         // Root span per job (no parent: the HTTP request span ends at 202). jobId is the tag the
         // agent runbook searches on (TESTING.md) — one query from a red test to this trace.
         using var jobActivity = PipelineDiagnostics.Source.StartActivity(
             "pipeline.job", ActivityKind.Internal, parentContext: default);
         jobActivity?.SetTag("mdreel.job_id", job.Id);
+        jobActivity?.SetTag("jobId", job.Id);
         jobActivity?.SetTag("mdreel.upload_id", job.UploadId);
         jobActivity?.SetTag("mdreel.source", job.Source);
+        if (!string.IsNullOrWhiteSpace(job.TenantId))
+        {
+            jobActivity?.SetTag("tenant_id", job.TenantId);
+        }
 
         try
         {
-            PreparedVideo? prepared = null;
             SetProcessing(job, "A", 15);
             using (StartStage(job, "A"))
             {
@@ -287,14 +295,14 @@ public sealed partial class PrivatePipelineService(
 
             SetProcessing(job, "C", 75);
             OutputDocument document;
-            using (StartStage(job, "C"))
+            using (StartStage(job, "C", recordMetric: true))
             {
                 document = await ExecuteStageCAsync(job, prepared, analyses);
             }
 
             SetProcessing(job, "D", 92);
             string markdown;
-            using (StartStage(job, "D"))
+            using (StartStage(job, "D", recordMetric: true))
             {
                 markdown = await ExecuteStageDAsync(job, document);
             }
@@ -308,6 +316,7 @@ public sealed partial class PrivatePipelineService(
             job.FinishedAt = finishedAt;
             job.DurationSec ??= prepared.Probe.Duration.TotalSeconds;
             job.Output = BuildOutput(job.Source, document, markdown);
+            outcome = "completed";
 
             // Auto-deletion by default (ARCHITECTURE §3/§7): the local temp AND the staged raw
             // gs:// object are erased once the output exists.
@@ -327,15 +336,30 @@ public sealed partial class PrivatePipelineService(
             SetFailed(job);
             await DeleteRawUploadAsync(job);
         }
+        finally
+        {
+            var duration = DateTimeOffset.UtcNow - started;
+            PipelineDiagnostics.RecordJobDuration(duration, outcome);
+            if (outcome == "completed" && prepared is not null)
+            {
+                PipelineDiagnostics.AddJobVideoMinutes(prepared.Probe.Duration);
+            }
+        }
     }
 
-    private Activity? StartStage(JobState job, string stage)
+    private StageActivityScope StartStage(JobState job, string stage, bool recordMetric = false)
     {
         LogStageEnter(job.Id, stage);
         var activity = PipelineDiagnostics.Source.StartActivity($"pipeline.stage.{stage}");
         activity?.SetTag("mdreel.job_id", job.Id);
+        activity?.SetTag("jobId", job.Id);
         activity?.SetTag("mdreel.stage", stage);
-        return activity;
+        if (!string.IsNullOrWhiteSpace(job.TenantId))
+        {
+            activity?.SetTag("tenant_id", job.TenantId);
+        }
+
+        return new StageActivityScope(activity, stage, recordMetric);
     }
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Job {JobId} entering stage {Stage}")]
@@ -614,6 +638,8 @@ internal sealed class JobState
 
     public required string UploadId { get; init; }
 
+    public string? TenantId { get; init; }
+
     public required string Source { get; init; }
 
     public required DateTimeOffset CreatedAt { get; init; }
@@ -638,6 +664,22 @@ internal sealed class JobState
     public string? RawObjectName { get; set; }
 
     public JobOutputResponse? Output { get; set; }
+}
+
+internal sealed class StageActivityScope(Activity? activity, string stage, bool recordMetric) : IDisposable
+{
+    private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
+
+    public void Dispose()
+    {
+        _stopwatch.Stop();
+        if (recordMetric)
+        {
+            PipelineDiagnostics.RecordStageDuration(stage, _stopwatch.Elapsed);
+        }
+
+        activity?.Dispose();
+    }
 }
 
 internal static class TimestampFormatter

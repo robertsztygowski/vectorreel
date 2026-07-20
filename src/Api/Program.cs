@@ -5,7 +5,6 @@ using MdReel.Api.Features.Instrumentation;
 using MdReel.Api.Features.Payments;
 using MdReel.Api.Features.PrivateProcessing;
 using MdReel.Api.Features.Webhooks;
-using MdReel.Core;
 using MdReel.Core.Domain;
 using MdReel.Core.Media;
 using MdReel.Core.Pipeline.StageA;
@@ -13,14 +12,14 @@ using MdReel.Core.Pipeline.StageB;
 using MdReel.Core.Providers;
 using MdReel.Infrastructure;
 using MdReel.Infrastructure.Queue;
+using MdReel.Infrastructure.Telemetry;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Resources;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
 namespace MdReel.Api;
@@ -38,27 +37,15 @@ public partial class Program
         app.Run();
     }
 
-    /// <summary>
-    /// OTel traces + logs, exported over OTLP only when OTEL_EXPORTER_OTLP_ENDPOINT is set
-    /// (docker compose e2e profile points it at the local Aspire dashboard — TESTING.md).
-    /// Unset ⇒ zero overhead beyond no-op sources; nothing ever phones home (CLAUDE.md rule 10).
-    /// </summary>
     private static void ConfigureTelemetry(WebApplicationBuilder builder)
     {
-        if (string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]))
-        {
-            return;
-        }
-
-        builder.Services.AddOpenTelemetry()
-            .ConfigureResource(static resource => resource.AddService("mdreel-api"))
-            .WithTracing(static tracing => tracing
+        builder.Services.AddMdreelOpenTelemetry(
+            builder.Configuration,
+            "mdreel-api",
+            static tracing => tracing
                 .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation()
-                .AddNpgsql()
-                .AddSource(PipelineDiagnostics.SourceName)
-                .AddOtlpExporter())
-            .WithLogging(static logging => logging.AddOtlpExporter());
+                .AddNpgsql(),
+            static metrics => metrics.AddAspNetCoreInstrumentation());
     }
 
     private static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration, IWebHostEnvironment environment)
@@ -416,7 +403,8 @@ public partial class Program
                     type: "about:blank");
             }
 
-            var created = await pipeline.CreateJobAsync(request.UploadId, request.Options, cancellationToken);
+            var tenantId = httpContext.User.FindFirst(AppUserClaimsPrincipalFactory.TenantClaimType)?.Value;
+            var created = await pipeline.CreateJobAsync(request.UploadId, request.Options, tenantId, cancellationToken);
             if (created is null)
             {
                 return Results.Problem(

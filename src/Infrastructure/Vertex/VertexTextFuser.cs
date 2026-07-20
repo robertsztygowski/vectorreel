@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using MdReel.Core;
 using MdReel.Core.Domain;
 using MdReel.Core.Output;
 using MdReel.Core.Providers;
@@ -41,7 +42,7 @@ public sealed partial class VertexTextFuser(
             throw new InvalidOperationException("Stage C cannot fuse zero segments.");
         }
 
-        var (payload, region) = await CallModelAsync(segments, cancellationToken);
+        var (payload, region, usage) = await CallModelAsync(segments, cancellationToken);
 
         // The fusion call bills too (CLAUDE.md rule 6); record which EU region served it after any
         // 429 fallback (INFRA.md). Stage B is metered by the runner; this is the Stage C counterpart.
@@ -53,12 +54,13 @@ public sealed partial class VertexTextFuser(
             Unit: "calls",
             Cents: null,
             Region: region));
+        RecordTokenMetrics(region, usage);
 
         var language = ResolveLanguage(payload.Language, segments);
         return Assemble(payload, request, language);
     }
 
-    private async Task<(FusionPayload Payload, string Region)> CallModelAsync(
+    private async Task<(FusionPayload Payload, string Region, VertexUsageMetadata? Usage)> CallModelAsync(
         IReadOnlyList<SegmentAnalysis> segments,
         CancellationToken cancellationToken)
     {
@@ -99,7 +101,19 @@ public sealed partial class VertexTextFuser(
             throw new InvalidOperationException("Stage C fusion returned no sections.");
         }
 
-        return (payload, result.Region);
+        return (payload, result.Region, result.Body?.UsageMetadata);
+    }
+
+    private static void RecordTokenMetrics(string region, VertexUsageMetadata? usage)
+    {
+        if (usage is null)
+        {
+            return;
+        }
+
+        PipelineDiagnostics.AddLlmTokens("input", region, usage.PromptTokenCount);
+        PipelineDiagnostics.AddLlmTokens("output", region, usage.CandidatesTokenCount);
+        PipelineDiagnostics.AddLlmTokens("thinking", region, usage.ThoughtsTokenCount);
     }
 
     private string BuildUrl(string region) =>

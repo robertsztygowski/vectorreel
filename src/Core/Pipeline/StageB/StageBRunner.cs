@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using MdReel.Core.Domain;
 using MdReel.Core.Pipeline.StageA;
 using MdReel.Core.Providers;
@@ -15,23 +16,32 @@ public sealed class StageBRunner(IVideoAnalyzer analyzer, ICostLedger? ledger = 
         CancellationToken cancellationToken,
         string jobId = "")
     {
-        var planned = PreSize(segment, stageAOptions, options);
-        List<SegmentAnalysis> analyses = [];
-        foreach (var plannedSegment in planned)
+        var stageStopwatch = Stopwatch.StartNew();
+        try
         {
-            var analyzed = await AnalyzeSegmentAsync(
-                sourceUri,
-                plannedSegment,
-                stageAOptions,
-                options,
-                attempt: 0,
-                cancellationToken,
-                jobId);
+            var planned = PreSize(segment, stageAOptions, options);
+            List<SegmentAnalysis> analyses = [];
+            foreach (var plannedSegment in planned)
+            {
+                var analyzed = await AnalyzeSegmentAsync(
+                    sourceUri,
+                    plannedSegment,
+                    stageAOptions,
+                    options,
+                    attempt: 0,
+                    cancellationToken,
+                    jobId);
 
-            analyses.AddRange(analyzed);
+                analyses.AddRange(analyzed);
+            }
+
+            return analyses;
         }
-
-        return analyses;
+        finally
+        {
+            stageStopwatch.Stop();
+            PipelineDiagnostics.RecordStageDuration("B", stageStopwatch.Elapsed);
+        }
     }
 
     private async Task<IReadOnlyList<SegmentAnalysis>> AnalyzeSegmentAsync(
@@ -48,6 +58,7 @@ public sealed class StageBRunner(IVideoAnalyzer analyzer, ICostLedger? ledger = 
 
         if (response.FinishReason == StageBFinishReason.MaxTokens)
         {
+            PipelineDiagnostics.AddStageBRunaway();
             var split = SegmentSplitPolicy.Halve(segment, stageAOptions);
             var first = await AnalyzeSegmentAsync(sourceUri, split.First, stageAOptions, options, attempt: 0, cancellationToken, jobId);
             var second = await AnalyzeSegmentAsync(sourceUri, split.Second, stageAOptions, options, attempt: 0, cancellationToken, jobId);
@@ -100,7 +111,32 @@ public sealed class StageBRunner(IVideoAnalyzer analyzer, ICostLedger? ledger = 
                 Region: response.Region));
         }
 
+        RecordTokenMetrics(response);
+
         return response;
+    }
+
+    private static void RecordTokenMetrics(StageBModelResponse response)
+    {
+        if (response.Region is null)
+        {
+            return;
+        }
+
+        if (response.InputTokens is { } inputTokens)
+        {
+            PipelineDiagnostics.AddLlmTokens("input", response.Region, inputTokens);
+        }
+
+        if (response.OutputTokens is { } outputTokens)
+        {
+            PipelineDiagnostics.AddLlmTokens("output", response.Region, outputTokens);
+        }
+
+        if (response.ThinkingTokens is { } thinkingTokens)
+        {
+            PipelineDiagnostics.AddLlmTokens("thinking", response.Region, thinkingTokens);
+        }
     }
 
     private static List<Segment> PreSize(

@@ -70,11 +70,17 @@ public sealed record StageBModelOutput(
 /// real model call was made (fake/replay) or the call never reached the model (transport/timeout).
 /// The Stage B runner meters an LLM ledger entry iff this is non-null.
 /// </param>
+/// <param name="InputTokens">Provider-reported prompt/input tokens, when available.</param>
+/// <param name="OutputTokens">Provider-reported candidate/output tokens, when available.</param>
+/// <param name="ThinkingTokens">Provider-reported thinking tokens, when available.</param>
 public sealed record StageBModelResponse(
     StageBFinishReason FinishReason,
     StageBModelOutput? Output,
     TimeSpan? FetchedDuration,
-    string? Region = null);
+    string? Region = null,
+    int? InputTokens = null,
+    int? OutputTokens = null,
+    int? ThinkingTokens = null);
 
 /// <summary>Stage B's validated output for one segment.</summary>
 public sealed record SegmentAnalysis(

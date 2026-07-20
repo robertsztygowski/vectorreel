@@ -117,14 +117,14 @@ public sealed class VertexVideoAnalyzer(
         // the segment rather than parsing truncated JSON as an "invalid" failure and retrying.
         if (string.Equals(finish, "MAX_TOKENS", StringComparison.OrdinalIgnoreCase))
         {
-            return new StageBModelResponse(StageBFinishReason.MaxTokens, null, null, region);
+            return ResponseWithUsage(StageBFinishReason.MaxTokens, null, null, region, response?.UsageMetadata);
         }
 
         var text = ExtractText(candidate);
         if (string.IsNullOrWhiteSpace(text))
         {
             logger.LogWarning("Stage B segment {Index} returned no text (finish={Finish})", segment.Index, finish);
-            return new StageBModelResponse(StageBFinishReason.Error, null, null, region);
+            return ResponseWithUsage(StageBFinishReason.Error, null, null, region, response?.UsageMetadata);
         }
 
         VertexStageBPayload? payload;
@@ -135,12 +135,12 @@ public sealed class VertexVideoAnalyzer(
         catch (JsonException ex)
         {
             logger.LogWarning(ex, "Stage B segment {Index} returned invalid JSON (finish={Finish})", segment.Index, finish);
-            return new StageBModelResponse(StageBFinishReason.InvalidJson, null, null, region);
+            return ResponseWithUsage(StageBFinishReason.InvalidJson, null, null, region, response?.UsageMetadata);
         }
 
         if (payload?.Blocks is null)
         {
-            return new StageBModelResponse(StageBFinishReason.InvalidJson, null, null, region);
+            return ResponseWithUsage(StageBFinishReason.InvalidJson, null, null, region, response?.UsageMetadata);
         }
 
         var output = new StageBModelOutput(
@@ -150,8 +150,23 @@ public sealed class VertexVideoAnalyzer(
             Summary: payload.SegmentSummary);
 
         var fetched = FetchedDuration(response?.UsageMetadata, mediaResolution);
-        return new StageBModelResponse(StageBFinishReason.Stop, output, fetched, region);
+        return ResponseWithUsage(StageBFinishReason.Stop, output, fetched, region, response?.UsageMetadata);
     }
+
+    private static StageBModelResponse ResponseWithUsage(
+        StageBFinishReason finishReason,
+        StageBModelOutput? output,
+        TimeSpan? fetchedDuration,
+        string region,
+        VertexUsageMetadata? usage) =>
+        new(
+            finishReason,
+            output,
+            fetchedDuration,
+            region,
+            usage?.PromptTokenCount,
+            usage?.CandidatesTokenCount,
+            usage?.ThoughtsTokenCount);
 
     private async Task<VertexRegionResponse> PostAsync(
         GenerateContentRequest request,

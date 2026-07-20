@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using MdReel.Core.Domain;
@@ -38,81 +39,124 @@ public sealed class YouTubeInternalGalleryRunner(
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(stageBOptions);
 
-        EnsureYouTubeUri(request.SourceUri);
+        var stopwatch = Stopwatch.StartNew();
+        var outcome = "failed";
+        using var jobActivity = PipelineDiagnostics.Source.StartActivity(
+            "pipeline.job", ActivityKind.Internal, parentContext: default);
+        jobActivity?.SetTag("mdreel.job_id", request.JobId);
+        jobActivity?.SetTag("jobId", request.JobId);
+        jobActivity?.SetTag("mdreel.source", request.SourceUri);
 
-        var segments = PlanSegments(
-            request.Duration,
-            request.SegmentLength,
-            request.SegmentOverlap);
-
-        List<SegmentAnalysis> analyses = [];
-        foreach (var segment in segments)
+        try
         {
-            var analyzed = await stageB.AnalyzeAsync(
-                request.SourceUri,
-                segment,
-                StageAOptions.Default,
-                stageBOptions,
-                cancellationToken,
-                request.JobId);
-            analyses.AddRange(analyzed);
-        }
+            EnsureYouTubeUri(request.SourceUri);
 
-        analyses = [.. analyses.OrderBy(static x => x.SegmentStart).ThenBy(static x => x.SegmentIndex)];
-        var fusionRequest = new FusionRequest(
-            Source: request.SourceUri,
-            Duration: request.Duration,
-            Provenance: BuildProvenance(request.Attribution),
-            Generator: GeneratorId,
-            JobId: request.JobId);
-        var document = await fuser.FuseAsync(analyses, fusionRequest, cancellationToken);
-        var markdown = OutputMarkdownRenderer.Render(document);
+            var segments = PlanSegments(
+                request.Duration,
+                request.SegmentLength,
+                request.SegmentOverlap);
 
-        var prefix = BuildPrefix(request.OutputPrefix, request.VideoId);
-        var stageBPath = $"{prefix}/stage-b.json";
-        var outputMarkdownPath = $"{prefix}/output.md";
-        var outputJsonPath = $"{prefix}/output.json";
-
-        await WriteUtf8Async(
-            request.OutputBucket,
-            stageBPath,
-            JsonSerializer.Serialize(new
+            List<SegmentAnalysis> analyses = [];
+            using (StartStage(request.JobId, "B"))
             {
-                job_id = request.JobId,
-                source_uri = request.SourceUri,
-                generated_at = DateTimeOffset.UtcNow,
-                segments = analyses,
-            }),
-            cancellationToken);
+                foreach (var segment in segments)
+                {
+                    var analyzed = await stageB.AnalyzeAsync(
+                        request.SourceUri,
+                        segment,
+                        StageAOptions.Default,
+                        stageBOptions,
+                        cancellationToken,
+                        request.JobId);
+                    analyses.AddRange(analyzed);
+                }
+            }
 
-        await WriteUtf8Async(
-            request.OutputBucket,
-            outputMarkdownPath,
-            markdown,
-            cancellationToken);
+            analyses = [.. analyses.OrderBy(static x => x.SegmentStart).ThenBy(static x => x.SegmentIndex)];
+            var fusionRequest = new FusionRequest(
+                Source: request.SourceUri,
+                Duration: request.Duration,
+                Provenance: BuildProvenance(request.Attribution),
+                Generator: GeneratorId,
+                JobId: request.JobId);
+            OutputDocument document;
+            using (StartStage(request.JobId, "C", recordMetric: true))
+            {
+                document = await fuser.FuseAsync(analyses, fusionRequest, cancellationToken);
+            }
 
-        await WriteUtf8Async(
-            request.OutputBucket,
-            outputJsonPath,
-            JsonSerializer.Serialize(document, DocumentJson),
-            cancellationToken);
+            var markdown = OutputMarkdownRenderer.Render(document);
 
-        if (logger.IsEnabled(LogLevel.Information))
-        {
-            logger.LogInformation(
-                "YouTube internal runner finished job {JobId} ({VideoId}) with {Segments} Stage-B segments; {LlmCalls} LLM calls metered",
+            var prefix = BuildPrefix(request.OutputPrefix, request.VideoId);
+            var stageBPath = $"{prefix}/stage-b.json";
+            var outputMarkdownPath = $"{prefix}/output.md";
+            var outputJsonPath = $"{prefix}/output.json";
+
+            using (StartStage(request.JobId, "D", recordMetric: true))
+            {
+                await WriteUtf8Async(
+                    request.OutputBucket,
+                    stageBPath,
+                    JsonSerializer.Serialize(new
+                    {
+                        job_id = request.JobId,
+                        source_uri = request.SourceUri,
+                        generated_at = DateTimeOffset.UtcNow,
+                        segments = analyses,
+                    }),
+                    cancellationToken);
+
+                await WriteUtf8Async(
+                    request.OutputBucket,
+                    outputMarkdownPath,
+                    markdown,
+                    cancellationToken);
+
+                await WriteUtf8Async(
+                    request.OutputBucket,
+                    outputJsonPath,
+                    JsonSerializer.Serialize(document, DocumentJson),
+                    cancellationToken);
+            }
+
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation(
+                    "YouTube internal runner finished job {JobId} ({VideoId}) with {Segments} Stage-B segments; {LlmCalls} LLM calls metered",
+                    request.JobId,
+                    request.VideoId,
+                    analyses.Count,
+                    CountMeteredLlmCalls(request.JobId));
+            }
+
+            outcome = "completed";
+            PipelineDiagnostics.AddJobVideoMinutes(request.Duration);
+            return new YouTubeInternalGalleryRunResult(
                 request.JobId,
                 request.VideoId,
                 analyses.Count,
-                CountMeteredLlmCalls(request.JobId));
+                outputMarkdownPath,
+                stageBPath);
         }
+        catch (Exception ex)
+        {
+            jobActivity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            throw;
+        }
+        finally
+        {
+            stopwatch.Stop();
+            PipelineDiagnostics.RecordJobDuration(stopwatch.Elapsed, outcome);
+        }
+    }
 
-        return new YouTubeInternalGalleryRunResult(
-            request.JobId,
-            request.VideoId,
-            analyses.Count,
-            outputMarkdownPath,
-            stageBPath);
+    private static StageActivityScope StartStage(string jobId, string stage, bool recordMetric = false)
+    {
+        var activity = PipelineDiagnostics.Source.StartActivity($"pipeline.stage.{stage}");
+        activity?.SetTag("mdreel.job_id", jobId);
+        activity?.SetTag("jobId", jobId);
+        activity?.SetTag("mdreel.stage", stage);
+        return new StageActivityScope(activity, stage, recordMetric);
     }
 
     // The "## Source & licence" body: attribution is mandatory for the gallery (CLAUDE.md rule 8),
@@ -265,3 +309,19 @@ public sealed record YouTubeInternalGalleryRunResult(
     int StageBSegments,
     string OutputMarkdownObject,
     string StageBRawObject);
+
+internal sealed class StageActivityScope(Activity? activity, string stage, bool recordMetric) : IDisposable
+{
+    private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
+
+    public void Dispose()
+    {
+        _stopwatch.Stop();
+        if (recordMetric)
+        {
+            PipelineDiagnostics.RecordStageDuration(stage, _stopwatch.Elapsed);
+        }
+
+        activity?.Dispose();
+    }
+}

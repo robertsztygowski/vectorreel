@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Google.Apis.Auth;
 using MdReel.Api.Features.Instrumentation;
+using MdReel.Core;
 using MdReel.Core.Providers;
 using Npgsql;
 
@@ -352,6 +353,7 @@ public sealed class WebhookDeliveryService(IWebhookDeliveryStore store, IWebhook
         var attempts = delivery.Attempts + 1;
         var status = attempts >= delivery.MaxAttempts ? "failed" : "pending";
         var nextAttemptAt = DateTimeOffset.UtcNow + WebhookBackoff.NextDelay(attempts);
+        PipelineDiagnostics.AddWebhookDeliveryFailure();
         await store.MarkAttemptFailedAsync(
             delivery.Id,
             attempts,

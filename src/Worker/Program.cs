@@ -1,10 +1,12 @@
 using MdReel.Core.Domain;
 using MdReel.Core.Pipeline.StageB;
 using MdReel.Infrastructure;
+using MdReel.Infrastructure.Telemetry;
 using MdReel.Worker;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+builder.Services.AddMdreelOpenTelemetry(builder.Configuration, "mdreel-worker");
 builder.Services.Configure<YouTubeGalleryRunnerOptions>(builder.Configuration.GetSection("YouTubeGalleryRunner"));
 builder.Services.AddSingleton<ICostLedger, InMemoryCostLedger>();
 builder.Services.AddSingleton<StageBRunner>();

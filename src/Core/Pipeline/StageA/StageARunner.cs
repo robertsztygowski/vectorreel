@@ -34,39 +34,48 @@ public sealed class StageARunner(
         CancellationToken cancellationToken)
     {
         using var scope = logger.BeginScope("job {JobId}", jobId);
+        var stageStopwatch = Stopwatch.StartNew();
 
-        var probed = await Meter(
-            jobId, "stage_a.probe", () => probe.ProbeAsync(path, cancellationToken));
-
-        var scan = await Meter(
-            jobId, "stage_a.scan", () => scanner.ScanAsync(path, probed.HasAudioStream, cancellationToken));
-
-        var staticRuns = StaticRunDetector.Detect(scan.Frames, options);
-        var cues = CueDetector.Detect(scan.Frames, scan.Silences, options);
-
-        var timeline = new ContentTimeline(
-            probed.Duration,
-            staticRuns,
-            cues,
-            StaticRunDetector.StaticFraction(staticRuns, scan.SampledSeconds));
-
-        var segments = Segmenter.Plan(timeline, options);
-
-        if (logger.IsEnabled(LogLevel.Information))
+        try
         {
-            logger.LogInformation(
-                "Stage A: {Duration:F0}s, {StaticPercent:P0} static, {Cues} block boundaries "
-                + "({PerTenMinutes:F1}/10min, worst block {Worst:F0}s), {Segments} segments, {Cheap} at low resolution",
-                probed.Duration.TotalSeconds,
-                timeline.StaticFractionInRuns,
-                cues.Count,
-                timeline.CuesPerTenMinutes,
-                timeline.LongestUncuedSpan.TotalSeconds,
-                segments.Count,
-                segments.Count(s => s.Sampling.MediaResolution == MediaResolution.Low));
-        }
+            var probed = await Meter(
+                jobId, "stage_a.probe", () => probe.ProbeAsync(path, cancellationToken));
 
-        return new PreparedVideo(probed, timeline, segments);
+            var scan = await Meter(
+                jobId, "stage_a.scan", () => scanner.ScanAsync(path, probed.HasAudioStream, cancellationToken));
+
+            var staticRuns = StaticRunDetector.Detect(scan.Frames, options);
+            var cues = CueDetector.Detect(scan.Frames, scan.Silences, options);
+
+            var timeline = new ContentTimeline(
+                probed.Duration,
+                staticRuns,
+                cues,
+                StaticRunDetector.StaticFraction(staticRuns, scan.SampledSeconds));
+
+            var segments = Segmenter.Plan(timeline, options);
+
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation(
+                    "Stage A: {Duration:F0}s, {StaticPercent:P0} static, {Cues} block boundaries "
+                    + "({PerTenMinutes:F1}/10min, worst block {Worst:F0}s), {Segments} segments, {Cheap} at low resolution",
+                    probed.Duration.TotalSeconds,
+                    timeline.StaticFractionInRuns,
+                    cues.Count,
+                    timeline.CuesPerTenMinutes,
+                    timeline.LongestUncuedSpan.TotalSeconds,
+                    segments.Count,
+                    segments.Count(s => s.Sampling.MediaResolution == MediaResolution.Low));
+            }
+
+            return new PreparedVideo(probed, timeline, segments);
+        }
+        finally
+        {
+            stageStopwatch.Stop();
+            PipelineDiagnostics.RecordStageDuration("A", stageStopwatch.Elapsed);
+        }
     }
 
     /// <summary>
