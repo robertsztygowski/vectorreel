@@ -12,19 +12,22 @@ This is the first of a series of per-competitor deep-dives; its structure is gen
 
 | Milestone | What | State |
 |---|---|---|
-| M0 | Scaffold + secrets guardrails | 🟡 in progress |
-| M1 | Company intelligence → `dossier/01-company.md` | ⬜ pending |
-| M2 | Docs corpus deep-dive → `02`, `03`, `05` | ⬜ pending |
-| M3 | Playground hands-on → `04` + `assets/` | ⬜ pending |
+| M0 | Scaffold + secrets guardrails | ✅ done |
+| M1 | Company intelligence → `dossier/01-company.md` | ✅ done |
+| M2 | Docs corpus deep-dive → `02`, `03`, `05` | ✅ done |
+| M3 | Playground hands-on → `04` + `assets/` | ✅ done |
 | M4 | API hands-on → `api-captures/`, `code-samples/` | ⬜ pending |
 | M5 | Synthesis vs mdreel → `06`, `07` | ⬜ pending |
 | M6 | Methodology template + wrap-up → `METHODOLOGY.md` | ⬜ pending |
 
 ## Account / budget state
-- Account: founder's real TwelveLabs account (free tier). Log in ONCE, keep the session.
-- Plan / credit balance: _to be recorded in M3_.
-- API keys generated this run: _0 so far_ (max 1, generated in M3).
-- Free-tier credits consumed / remaining: _to be recorded in M4_.
+- Account: founder's real TwelveLabs account (free tier). Logged in ONCE 2026-07-20, session kept.
+- Plan: **Free Plan** — Jockey Free ($0/mo, 5 GB knowledge store) + Marengo & Pegasus PAYG gated by
+  free caps: **10 video-hours** (Index + Analyze/Segment shared), **100 videos/index**, **10 hr
+  max/index**, index expires **90 days** after creation. No payment method registered.
+- Free-tier "credit" = the 10 video-hour allowance. **Consumed: 0 hr / 10 hr** as of M3 end.
+- API keys generated this run: **1** (`mdreel-research-2026-07`, 3-mo expiry) → stored in `.env.local`.
+- Free-tier consumed / remaining: **0 hr used / 10 hr remaining** (updated after M4).
 
 ## Secrets discipline (CLAUDE.md rule 1)
 - Email, password, and API key appear in **no committed file** (not even inside a documented
