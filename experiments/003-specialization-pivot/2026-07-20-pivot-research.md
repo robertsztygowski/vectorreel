@@ -19,16 +19,34 @@
 ---
 
 ## NEEDS-FOUNDER
-*(exact questions only the founder can answer; nothing in this run blocks on them — provisional
-answers are marked ASSUMPTION inline)*
+*(exact questions only the founder can answer; nothing in this run blocked on them)*
 
-- *(accumulates through the run)*
+1. **Adopt the C2 launch-positioning recommendation?** Should the Phase 5 gallery curation + one
+   landing headline variant bias toward *"turn your talk & webinar library into an agent-citable
+   knowledge base"* (§1, §3a)? This is a positioning choice, not a pivot — it reuses the wedge and
+   adds no build. **ASSUMPTION taken in this memo:** worth testing, because it costs only curation
+   hours and rides the already-funded T-LAUNCH read.
+2. **Is the .NET/architecture LinkedIn audience actually near any of these buyers?** The C2/C5
+   reachability verdicts assumed it is *not* the KM/compliance/consultancy buyer (a friendly crowd,
+   not the ICP). Only the founder knows the true composition of that following. **ASSUMPTION:** it is
+   a dev crowd, not a KM/compliance-budget crowd (DISTRIBUTION.md open question #3).
+3. **Willingness to abandon the current build for a pivot** — moot given the keep-the-wedge verdict,
+   but recorded: no candidate cleared the bar that would justify abandoning the launch-ready product.
+4. **Denmark/Poland beachhead network reality (BUSINESS_MODEL §5)** — not load-bearing for this
+   verdict (all winning candidates were killed on self-serve reachability, which the network wouldn't
+   fix without outreach). Flagged only so it isn't assumed away.
 
 ---
 
 ## Progress / run checkpoints
 - **M0** — frame + rubric — ✅
 - **M1** — candidate long-list (14) + shortlist (5) — ✅ (see §4 + §M1 below)
+- **M2** — 5 Haiku evidence passes — ✅
+- **M3** — 5 Sonnet refutations (all refuted) — ✅
+- **M4** — scored ranking (baseline wins) — ✅
+- **M5** — synthesis + verdict: **KEEP THE WEDGE** — ✅
+- **Cost contract:** 7 Haiku + 5 Sonnet + coordinator-only synthesis; no Opus/Fable worker for
+  search/fetch/extract (run-log.md).
 
 ---
 
@@ -77,7 +95,34 @@ A pivot that walks into **threat #1** (meetings) is dead on arrival — say so e
 ---
 
 ## 1. Executive verdict
-*(filled at M5)*
+
+**KEEP THE CURRENT WEDGE. Do not pivot. Launch as planned.** Of five shortlisted adjacent
+specialized tools, **none beats the baseline** on mdreel's own decision rules, and every one was
+refuted on the claim that would have justified it (M3). The one with the strongest demand tailwind —
+**C2, webinar/talk → agent-citable knowledge base** — is (a) barely a pivot at all (it is the current
+wedge with a narrower content emphasis) and (b) had *both* its load-bearing pillars refuted (buyers
+DIY rather than buy — A2; and its buyer isn't reachable through mdreel's channels — A5).
+
+**The trigger rule for "keep the wedge" is A5 (METRICS.md A5 — the top risk, which gates the other
+four).** No candidate makes distribution *easier* than the already-planned gallery-led launch:
+- the only candidate with a *better* channel (C4, DevRel/MCP) dies on A2/DIY (refuted **high**);
+- the candidates with a real buyer (C1 compliance, C5 consultancy) can only be reached through
+  **procurement or partnership — both are outreach, which the founder has ruled out** (A5);
+- C2's channel is the *same gallery mdreel is already building* — so "pivot to C2" collapses into
+  "curate the existing launch toward talks/webinars," which is a positioning choice, not a pivot.
+
+**The secondary confirming rule is SB (METRICS.md §2.2 — ship-by 2026-09-15).** Three of five
+candidates need net-new build (C1 tamper-evidence, C3 caption renderer, C5 white-label portal) that
+would blow the gate. Keeping the wedge fits SB by construction.
+
+**What this run does change (a positioning recommendation, not a pivot — founder's call):** the C2
+evidence is the one genuinely useful finding. Active RAG-for-video demand is real and rising, the
+Google Open Knowledge Format (Jun 2026) legitimizes mdreel's exact output shape, and **the pipeline's
+measured-strongest content type (slide talks, N30) is exactly what a talk/webinar library is.** So the
+recommendation is to **bias the Phase 5 launch — gallery curation and one landing/positioning
+variant — toward "turn your talk & webinar library into an agent-citable knowledge base,"** and let
+T-LAUNCH measure whether the buy-demand M3 doubted actually exists. That reuses the wedge, adds zero
+build, and rides the already-funded launch experiment (METRICS.md N27). See §5.
 
 ## 2. The ranked table (M4 — scored against the §0 rubric)
 
@@ -172,7 +217,66 @@ reachability story. C1/C4 are killed (A5 procurement / A2-DIY). C2 survives only
 option, with both pillars **speculative**. C3/C5 killed on documented facts.
 
 ## 3. Per-candidate one-pagers
-*(consolidated at M5 from M2 evidence + M3 verdicts + M4 scores)*
+
+**C2 — Conference/webinar → agent-citable knowledge base** *(rank 2; least-weak pivot)*
+- *Job:* turn an org's recorded talks/webinars into one schema-consistent, timestamped, portable
+  Markdown KB an agent can cite. *Buyer:* KM/research lead at event-heavy orgs, analyst/consulting
+  firms, associations.
+- *Demand:* real and rising (RAG-for-video tutorials, Fortune-500 shift, arXiv 2602.15859, OKF).
+- *Competition:* unoccupied for *schema-consistent slide-separated portable Markdown* — but OKF now
+  lets anyone emit that shape.
+- *Pipeline delta:* ≈ zero (this is the current output). *Scores:* A4 High, SB High; A2 Low, A5 Med-Low.
+- *Single biggest risk:* **it is not a pivot** — and its buy-demand (A2) and reachability (A5) were
+  both refuted. Adopt it as launch *positioning*, not a new product.
+
+**C4 — Product/SDK docs from demo & talk videos (DevRel)** *(rank 3; killed)*
+- *Job:* devtool demo/talk videos → agent-citable product-docs Markdown. *Buyer:* DevRel/technical PM.
+- *Why killed:* A1 moot (public content → EU residency irrelevant), A2/DIY refuted **high** (this
+  buyer wires Gemini+MCP in ~1 h), A3 backfill (bursty launch-cycle corpus). Best channel fit (A5),
+  wasted on a buyer who won't pay.
+- *Single biggest risk:* the audience most able to build it themselves — the sharpest A2 exposure.
+
+**C1 — Regulatory-training audit-trail docs** *(rank 4; killed)*
+- *Job:* verbatim timestamped audit records from compliance-training video. *Buyer:* compliance/L&D
+  in regulated EU industries.
+- *Why killed:* A5 procurement (60–120-day RFP; fails no-outreach — refuted med-high); SB (audit-grade
+  needs net-new tamper-evidence/signing). Real feature gap (LMS logs who/when, not content) that
+  **no regulator is actually asking for.**
+- *Single biggest risk:* a wedge nobody requested, behind a procurement wall.
+
+**C5 — White-label RAG-ingestion for AI consultancies** *(rank 5; killed)*
+- *Job:* per-client video→RAG ingestion consultancies resell. *Buyer:* AI consultancy/software house.
+- *Why killed:* A5 (zero self-serve demand; consultancies build in-house; needs a ruled-out
+  partnership motion); N15 (no inbound); SB (white-label portal net-new).
+- *Single biggest risk:* the reseller motion is outreach, which is off the table.
+
+**C3 — Accessibility (EAA/WCAG) docs** *(rank 6; killed)*
+- *Job:* WCAG transcripts/captions for internal video. *Why killed:* the EAA **excludes internal
+  employee training video** (scope), and shipping captions needs a **net-new WebVTT/SRT renderer**
+  (SB); generic captioning files on the €2–4/h transcription shelf (competitor test).
+- *Single biggest risk:* the regulatory hook doesn't reach the target content, and the output format
+  is wrong.
+
+## 3a. What would change this verdict — the cheapest confirming experiment
+
+Framed like a METRICS.md §1.6 gated experiment (buys evidence, not customers):
+
+**The single test:** at the Phase 5 launch, run a **positioning variant** — curate a slice of the
+already-planned gallery around **well-known conference talks the ICP knows**, and A/B one landing
+headline: *"Turn your talk & webinar library into an agent-citable knowledge base"* against the
+current wedge headline. Measure **signup-rate by referrer** (the METRICS.md §6.5 proxy, subject to
+the §2.1 floor). 
+- **Cost:** founder gallery-curation hours + the already-funded T-LAUNCH tranche (METRICS.md N27).
+  **Zero net-new build, zero extra ad spend, no pipeline change.**
+- **Confirms C2** if the webinar-KB framing lifts signup-rate on cold traffic above the wedge
+  baseline (the buy-demand M3 doubted would be real after all).
+- **Kills C2** if it doesn't — in which case the refutations stand and the general wedge is correct.
+- **Why it's safe:** it rides the launch mdreel is doing anyway; it cannot blow SB; and it resolves
+  the one open question (A2 buy-vs-DIY for this framing) that no amount of desk research could settle
+  — exactly the A1/N12-style read T-LAUNCH exists to buy.
+
+**Do NOT** pre-build any candidate's net-new features (tamper-evidence, caption renderer, white-label
+portal) before this read — that would be building product to avoid the finding (DISTRIBUTION.md).
 
 ## M1 — Candidate generation (2 Haiku sweeps → long-list → shortlist)
 
@@ -211,4 +315,7 @@ Killed on strategy/rubric (all technically pass F1–F4 unless noted):
 | **"Internal video KB / employee-onboarding handbooks" (generic)** | Too close to the **current wedge** to count as a specialization — folded into the baseline and into C2/C5. | Not a pivot (scope) |
 
 ## 5. What would change this verdict — the cheapest confirming experiment
-*(filled at M5; framed like METRICS.md §1.6 gated experiments)*
+
+**See §3a** — the launch positioning A/B for the C2 (webinar-KB) framing, riding the already-funded
+T-LAUNCH tranche (METRICS.md N27) at zero net-new build. That is the one read that would flip the
+verdict from "keep the general wedge" to "specialize toward talk/webinar libraries."
