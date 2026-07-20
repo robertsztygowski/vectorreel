@@ -17,7 +17,7 @@ This is the first of a series of per-competitor deep-dives; its structure is gen
 | M2 | Docs corpus deep-dive → `02`, `03`, `05` | ✅ done |
 | M3 | Playground hands-on → `04` + `assets/` | ✅ done |
 | M4 | API hands-on → `api-captures/`, `code-samples/` | ✅ done |
-| M5 | Synthesis vs mdreel → `06`, `07` | ⬜ pending |
+| M5 | Synthesis vs mdreel → `06`, `07` | ✅ done |
 | M6 | Methodology template + wrap-up → `METHODOLOGY.md` | ⬜ pending |
 
 ## Account / budget state
@@ -49,4 +49,8 @@ blocks on these; document from public sources and list the exact required founde
 ## Living-doc contradictions found
 _(report only — strategy docs are not rewritten autonomously, contract §5.)_
 
-- _none yet._
+- **No strategy-overturning contradictions.** The deep-dive corroborates the EU-residency wedge,
+  GDPR-as-feature, and the "not a corpus-search platform" non-goal (dossier 07 §7).
+- **One nuance (not a contradiction):** TwelveLabs' free tier (10 video-hours) is far more generous
+  than mdreel's trial credit (METRICS.md N33), creating real pressure on A2 / willingness-to-pay.
+  The founder may want to revisit N33's size against competitive free tiers. Reported only.
