@@ -185,6 +185,16 @@ gcloud services enable cloudtasks.googleapis.com --project tensile-runway-442915
 > malformed-JSON handling (400 instead of 500), Stage-A ffmpeg stdout streaming to temp file
 > (removing `ProcessRunner` full-memory buffering), and Umami memory raised to `1Gi`. Billing
 > change scope for this run was limited to the Umami memory bump; no new resources were created.
+>
+> **2026-07-20/21 — pivot run (rule 5 override).** The founder authorized, **for this run only**,
+> deploying `vectorreel-web`/`vectorreel-api` from local via `scripts/deploy.sh` after the DoD gate
+> passes, to ship the product pivot to "AI-ready knowledge collections / repositories" — landing
+> page reframe, repository-contract docs, collections + publishing system. Scope constraints:
+> pipeline/architecture unchanged, no new GCP resources, no new continuously-billing surface,
+> `PipelineModel__Mode=fake` on deployed services (zero Vertex spend), Stripe stays test mode,
+> EU-only. No CI auto-deploy; standing rule 5 unchanged. Guardrails re-verified 2026-07-20 (this
+> run): preflight 21/21 PASS, budget alert present, Cloud Run caps hold (web 3 / api 2 / worker 1,
+> all `min=0`).
 
 ### Deploy automation — `scripts/` (added 2026-07-17)
 

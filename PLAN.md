@@ -256,6 +256,15 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 > - **Cost delta:** only the pre-approved Umami memory bump; no new continuously-billing resources
 >   were introduced (fixed-base reference remains METRICS.md **N2**).
 
+> ### 🏃 Autonomous build run — 2026-07-20/21 (product pivot; founder away, rule-5 deploy override)
+> A marathon coordinator run is shipping the strategic pivot from "AI video → Markdown tool" to
+> **AI-ready knowledge collections / AI-ready repositories / research-ready video libraries** —
+> product experience + distribution narrative only; pipeline and architecture unchanged. Progress:
+> - **M0 guardrails ✅** — preflight 21/21 PASS; budget alert `mdreel-monthly-1000usd-equiv`
+>   (4000 PLN) present; Cloud Run caps hold (web 3 / api 2 / worker 1, all `min=0`); rule-5
+>   override for this run recorded in INFRA.md. Milestone todo graph M1–M8 created.
+> - **Next:** M1 — pivot definition in the living docs.
+
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages
