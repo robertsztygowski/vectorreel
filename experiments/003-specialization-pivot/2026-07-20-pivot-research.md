@@ -79,8 +79,39 @@ A pivot that walks into **threat #1** (meetings) is dead on arrival — say so e
 ## 1. Executive verdict
 *(filled at M5)*
 
-## 2. The ranked table
-*(filled at M4/M5)*
+## 2. The ranked table (M4 — scored against the §0 rubric)
+
+Scores are the coordinator's, cited to the named rule. **Every candidate is ranked against the
+baseline "keep the current wedge."** A ⛔ marks the column that kills the candidate.
+
+| Rule (cited) | **Baseline: keep the wedge** | C2 webinar-KB | C4 DevRel docs | C1 compliance | C5 white-label | C3 accessibility |
+|---|---|---|---|---|---|---|
+| **A5** distribution (top risk) | Med (gallery-led launch, planned) | Med-Low *(reachability refuted)* | High *(MCP/llms.txt/blog)* | ⛔ Low *(procurement)* | ⛔ Low *(no inbound; needs outreach)* | Low |
+| **A1** EU a purchase driver | Med | Low-Med | ⛔ Low *(public content, residency moot)* | High | High | Med *(but scope-killed)* |
+| **A2** buy vs DIY | Med | ⛔ Low *(OKF commoditizes; DIY)* | ⛔ Low *(refuted high)* | Med | Med | Med |
+| **A3** flow vs backfill | open (instrumented) | Med | ⛔ Low *(bursty backfill)* | Med | High | Med |
+| **A4** citable output | High *(N30/N31 strong)* | High *(slide talks, N30)* | Med *(some weak path)* | High | Med | Med |
+| **N1a** ~2–3 cover infra | Med (Pro/Business §6) | Med | Low-Med | Med-High | High | Low |
+| **N15** traffic-to-survival | Med *(good-post-sized)* | Med | Med | Low | ⛔ Low | Low |
+| **N23** CAC ceiling / on-ramp | Med (€398 Pro) | Med | Med | Med | High | Low *(commodity shelf)* |
+| **N16–N19** bootstrappable TAM | Med (€65M TAM) | Med | Med | Med | Med | Low |
+| **SB** fits before go-to-market | ✅ High *(no new build)* | High *(current output)* | High *(small delta)* | ⛔ Low *(tamper-evidence/signing)* | ⛔ Low *(white-label portal)* | ⛔ Low *(caption renderer)* |
+| **Competitor test (002)** | ✅ clears (portable artifact wedge) | clears | clears | clears | clears | ⛔ files on transcription shelf |
+| **Net verdict** | **BASELINE — the one to beat** | **least-weak pivot, but no verified edge** | killed A1/A2/A3 | killed A5/SB | killed A5/N15/SB | killed scope/SB |
+
+### The ranking, least-weak pivot first — **and none beats the baseline**
+
+1. **Baseline — keep the current wedge.** ✅ Only option that clears every column without a ⛔.
+2. **C2 webinar/talk → agent-citable KB** — strongest demand tailwind and best A4/SB, but its two
+   pillars (**A2 buy-vs-DIY, A5 reachability**) were both refuted, and it is barely a *pivot* at all
+   — it is the current wedge with a narrower content emphasis.
+3. **C4 DevRel docs** — best channel fit (A5) but killed on the sharpest A2/DIY exposure (refuted
+   high) + A1 moot + A3 backfill.
+4. **C1 compliance audit-trail** — real regulatory wallet, but ⛔ A5 procurement (fails no-outreach)
+   and ⛔ SB (audit-grade needs net-new tamper-evidence).
+5. **C5 white-label consultancy** — real EU/resale gap, but ⛔ A5 (zero inbound; needs a ruled-out
+   partnership motion) and ⛔ SB.
+6. **C3 accessibility** — ⛔ scope (EAA excludes internal video) and ⛔ SB (needs a caption renderer).
 
 ## M2 — Per-candidate evidence (5 Haiku evidence passes; URLs in sources.md)
 
