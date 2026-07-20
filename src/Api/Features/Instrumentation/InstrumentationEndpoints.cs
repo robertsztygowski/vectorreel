@@ -12,8 +12,22 @@ public static class InstrumentationEndpoints
             ITenantStore tenants,
             CancellationToken cancellationToken) =>
         {
-            using var body = await JsonDocument.ParseAsync(request.Body, cancellationToken: cancellationToken);
-            var root = body.RootElement;
+            JsonElement root;
+            try
+            {
+                using var body = await JsonDocument.ParseAsync(request.Body, cancellationToken: cancellationToken);
+                root = body.RootElement.Clone();
+            }
+            catch (JsonException)
+            {
+                return Results.Problem(title: "Invalid JSON", detail: "Request body is not valid JSON.", statusCode: StatusCodes.Status400BadRequest, type: "about:blank");
+            }
+
+            if (root.ValueKind != JsonValueKind.Object)
+            {
+                return Results.Problem(title: "Invalid JSON", detail: "Request body must be a JSON object.", statusCode: StatusCodes.Status400BadRequest, type: "about:blank");
+            }
+
             var name = GetString(root, "name");
             if (string.IsNullOrWhiteSpace(name) || !EventNames.Stable.Contains(name))
             {

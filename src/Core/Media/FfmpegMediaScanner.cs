@@ -52,32 +52,57 @@ public sealed partial class FfmpegMediaScanner(MediaToolOptions options) : IMedi
             ]);
         }
 
-        var result = await ProcessRunner.RunAsync(options.FfmpegPath, arguments, cancellationToken);
-        if (result.ExitCode != 0)
+        var stdoutPath = Path.Combine(Path.GetTempPath(), $"mdreel-stagea-frames-{Guid.NewGuid():N}.bin");
+        try
         {
-            throw new MediaToolException(options.FfmpegPath, result.ExitCode, ProcessRunner.Tail(result.StandardError));
+            var result = await ProcessRunner.RunToFileAsync(options.FfmpegPath, arguments, stdoutPath, cancellationToken);
+            if (result.ExitCode != 0)
+            {
+                throw new MediaToolException(options.FfmpegPath, result.ExitCode, ProcessRunner.Tail(result.StandardError));
+            }
+
+            var frames = await ReadFramesAsync(stdoutPath, path, cancellationToken);
+            var silences = ParseSilences(result.StandardError);
+
+            return new MediaScan(frames, silences);
         }
-
-        var frames = ReadFrames(result.StandardOutput, path);
-        var silences = ParseSilences(result.StandardError);
-
-        return new MediaScan(frames, silences);
+        finally
+        {
+            try
+            {
+                File.Delete(stdoutPath);
+            }
+            catch (IOException)
+            {
+                // Best effort: temp file cleanup should never hide the real scanner result.
+            }
+        }
     }
 
-    internal static List<GrayFrame> ReadFrames(byte[] stdout, string path)
+    internal static async Task<List<GrayFrame>> ReadFramesAsync(string stdoutPath, string path, CancellationToken cancellationToken)
     {
-        if (stdout.Length % MediaScan.FrameBytes != 0)
+        var length = new FileInfo(stdoutPath).Length;
+        if (length % MediaScan.FrameBytes != 0)
         {
             throw new CorruptSourceException(
                 $"ffmpeg produced a truncated frame stream for {Path.GetFileName(path)}: "
-                + $"{stdout.Length} bytes is not a whole number of {MediaScan.FrameBytes}-byte frames");
+                + $"{length} bytes is not a whole number of {MediaScan.FrameBytes}-byte frames");
         }
 
-        var count = stdout.Length / MediaScan.FrameBytes;
-        var frames = new List<GrayFrame>(count);
+        var count = length / MediaScan.FrameBytes;
+        if (count > int.MaxValue)
+        {
+            throw new CorruptSourceException(
+                $"ffmpeg produced too many frames for {Path.GetFileName(path)}: {count} exceeds supported limits");
+        }
+
+        var frames = new List<GrayFrame>((int)count);
+        await using var stream = new FileStream(stdoutPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var frameBuffer = new byte[MediaScan.FrameBytes];
         for (var i = 0; i < count; i++)
         {
-            frames.Add(new GrayFrame(i, stdout.AsSpan(i * MediaScan.FrameBytes, MediaScan.FrameBytes).ToArray()));
+            await stream.ReadExactlyAsync(frameBuffer, cancellationToken);
+            frames.Add(new GrayFrame((int)i, frameBuffer.ToArray()));
         }
 
         return frames;

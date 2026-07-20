@@ -80,6 +80,34 @@ public sealed class Phase4BackendTests
     }
 
     [Fact]
+    public async Task Events_returns_400_for_malformed_json_body()
+    {
+        await using var factory = new ApiFactory();
+        using var client = factory.CreateClient();
+
+        using var response = await client.PostAsync(
+            "/api/v1/events",
+            new StringContent("\\", Encoding.UTF8, "application/json"));
+
+        await AssertInvalidJsonProblemAsync(response);
+    }
+
+    [Theory]
+    [InlineData("\"just a string\"")]
+    [InlineData("[]")]
+    public async Task Events_returns_400_for_non_object_json_body(string body)
+    {
+        await using var factory = new ApiFactory();
+        using var client = factory.CreateClient();
+
+        using var response = await client.PostAsync(
+            "/api/v1/events",
+            new StringContent(body, Encoding.UTF8, "application/json"));
+
+        await AssertInvalidJsonProblemAsync(response);
+    }
+
+    [Fact]
     public async Task Session_correlation_middleware_sets_activity_tag_for_valid_header_only()
     {
         var app = new ApplicationBuilder(new ServiceCollection().BuildServiceProvider());
@@ -329,6 +357,16 @@ public sealed class Phase4BackendTests
         var client = factory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "test-token");
         return client;
+    }
+
+    private static async Task AssertInvalidJsonProblemAsync(HttpResponseMessage response)
+    {
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+
+        using var problem = await response.Content.ReadFromJsonAsync<JsonDocument>();
+        Assert.NotNull(problem);
+        Assert.Equal("Invalid JSON", problem.RootElement.GetProperty("title").GetString());
     }
 
     private static async Task<SignupResponse> SignupAsync(HttpClient client, string email, string utmSource, string referrer, string abArm, string occurredAt = "2026-07-01T00:00:00Z")
