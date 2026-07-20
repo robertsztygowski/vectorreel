@@ -258,7 +258,6 @@ public sealed partial class PrivatePipelineService(
         jobActivity?.SetTag("mdreel.job_id", job.Id);
         jobActivity?.SetTag("jobId", job.Id);
         jobActivity?.SetTag("mdreel.upload_id", job.UploadId);
-        jobActivity?.SetTag("mdreel.source", job.Source);
         if (!string.IsNullOrWhiteSpace(job.TenantId))
         {
             jobActivity?.SetTag("tenant_id", job.TenantId);

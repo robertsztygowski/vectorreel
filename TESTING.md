@@ -55,14 +55,15 @@ scripts/e2e.sh down              # stop (volumes kept)
 and `trace.zip` (`npx playwright show-trace <path>` for the full step-by-step timeline).
 
 **Find a trace by jobId:** open http://localhost:19888 → Traces → filter. Every pipeline run is a
-`pipeline.job` root span with `mdreel.job_id`, `mdreel.upload_id`, `mdreel.source`,
-`mdreel.cost_cents` attributes and one child span per stage. Structured logs from the api land in
+`pipeline.job` root span with `mdreel.job_id`, `mdreel.upload_id`, `mdreel.cost_cents` attributes
+and one child span per stage. Structured logs from the api land in
 the same UI (and in `scripts/e2e.sh logs api` — stage transitions log the jobId).
 Metrics from the API and worker land in the same local Aspire dashboard: job/stage duration,
 processed video minutes, Stage B runaway guard activations (METRICS.md N7), LLM tokens, runtime
 instrumentation, and webhook delivery failures. The cost ledger remains the source of truth for
 per-job product metering (METRICS.md N9).
-OTel is env-gated: no `OTEL_EXPORTER_OTLP_ENDPOINT` ⇒ no exporter, nothing phones home (rule 10).
+Local OTel is env-gated: no `OTEL_EXPORTER_OTLP_ENDPOINT` ⇒ no local exporter; production export is
+separately gated by the Cloud Run switch documented in INFRA.md.
 
 **Queryable checks** (what the E2E tests assert, runnable by hand):
 

@@ -39,6 +39,7 @@ public partial class Program
 
     private static void ConfigureTelemetry(WebApplicationBuilder builder)
     {
+        builder.Logging.AddMdreelGoogleCloudConsole(builder.Configuration);
         builder.Services.AddMdreelOpenTelemetry(
             builder.Configuration,
             "mdreel-api",

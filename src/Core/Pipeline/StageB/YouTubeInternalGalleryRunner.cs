@@ -45,7 +45,6 @@ public sealed class YouTubeInternalGalleryRunner(
             "pipeline.job", ActivityKind.Internal, parentContext: default);
         jobActivity?.SetTag("mdreel.job_id", request.JobId);
         jobActivity?.SetTag("jobId", request.JobId);
-        jobActivity?.SetTag("mdreel.source", request.SourceUri);
 
         try
         {

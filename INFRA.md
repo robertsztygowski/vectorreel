@@ -44,6 +44,34 @@ Access verified: project reachable, billing on, core APIs enabled.
   2026-07-20 for the observability run)
 - `telemetry.googleapis.com` — enabled 2026-07-20 (GCP-native OTLP telemetry ingest; no idle cost)
 
+## Telemetry stack
+
+Production telemetry is gated by one Cloud Run env switch:
+`Telemetry__GcpProjectId=tensile-runway-442915-j6`. When it is set, `vectorreel-api` and
+`vectorreel-worker` export traces and metrics directly from the process to Google Cloud's native
+OTLP ingest (`telemetry.googleapis.com`) using ADC / the runtime service account; no key files, no
+collector sidecar, and no Grafana/Prometheus. If `OTEL_EXPORTER_OTLP_ENDPOINT` is set instead
+(the docker-compose profile), the same instrumentation continues to export to the local Aspire
+OTLP endpoint. If neither switch is set, telemetry export is a no-op. If both are ever set, the GCP
+switch wins so a prod revision cannot accidentally export to the local/Aspire path.
+
+Signal routing:
+
+- **Traces** → Cloud Trace via Google OTLP ingest, service name `mdreel-api` / `mdreel-worker`
+  plus the Cloud Run revision (`K_REVISION`) as resource attributes.
+- **Metrics** → Cloud Monitoring via Google OTLP ingest, same resource attributes and the custom
+  `MdReel.Pipeline` meter.
+- **Logs** → structured JSON on stdout with `Google.Cloud.Logging.Console`; Cloud Run ingests them
+  into Cloud Logging automatically, and the formatter populates trace correlation fields from the
+  current .NET `Activity` and the configured project id.
+
+The runtime service account needs `roles/cloudtrace.agent` and `roles/monitoring.metricWriter` for
+trace/metric export; the coordinator grants these roles. Cloud Trace and Cloud Monitoring storage
+is not EU-region-pinnable, so telemetry must remain operational metadata only: job, tenant,
+session, stage, duration, token, cost, outcome, and region values are allowed; emails, filenames,
+prompts, transcripts, rendered output, source URLs, or other customer content must never be placed
+in telemetry attributes or metric labels.
+
 ## Database decision — Phase 4
 
 **One shared Postgres instance is the product source of truth** (METRICS.md §6.2): application

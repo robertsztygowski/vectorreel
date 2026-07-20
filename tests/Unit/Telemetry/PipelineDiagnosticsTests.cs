@@ -108,6 +108,9 @@ public sealed class PipelineDiagnosticsTests
 
     private sealed class MeasurementCollector : IDisposable
     {
+        // Metrics are emitted process-wide: pipeline code running in parallel test classes also
+        // hits this listener, so collection must be thread-safe and reads must snapshot.
+        private readonly System.Collections.Concurrent.ConcurrentQueue<CollectedMeasurement> _measurements = new();
         private readonly MeterListener _listener = new();
 
         private MeasurementCollector()
@@ -124,7 +127,7 @@ public sealed class PipelineDiagnosticsTests
             _listener.SetMeasurementEventCallback<long>(Record);
         }
 
-        public List<CollectedMeasurement> Measurements { get; } = [];
+        public IReadOnlyList<CollectedMeasurement> Measurements => [.. _measurements];
 
         public static MeasurementCollector Start()
         {
@@ -147,7 +150,7 @@ public sealed class PipelineDiagnosticsTests
                 static tag => tag.Key,
                 static tag => tag.Value?.ToString() ?? string.Empty,
                 StringComparer.Ordinal);
-            Measurements.Add(new CollectedMeasurement(instrument.Name, value, tagMap));
+            _measurements.Enqueue(new CollectedMeasurement(instrument.Name, value, tagMap));
         }
     }
 

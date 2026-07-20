@@ -6,6 +6,7 @@ using MdReel.Worker;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+builder.Logging.AddMdreelGoogleCloudConsole(builder.Configuration);
 builder.Services.AddMdreelOpenTelemetry(builder.Configuration, "mdreel-worker");
 builder.Services.Configure<YouTubeGalleryRunnerOptions>(builder.Configuration.GetSection("YouTubeGalleryRunner"));
 builder.Services.AddSingleton<ICostLedger, InMemoryCostLedger>();
