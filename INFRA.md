@@ -241,6 +241,11 @@ page and the TLS. **This clears the domain gate for launch — PLAN.md Phase 5, 
   | `www` | CNAME | `ghs.googlehosted.com` |
   | `@` | TXT | `google-site-verification=…` (kept DNS-only) |
 - Cert provisioned ~1 min after the records went grey (Google quotes up to 24 h).
+- **Email Routing ✅ 2026-07-20** — Cloudflare Email Routing on the zone forwards
+  `hello@mdreel.com` to the founder's personal inbox (Cloudflare manages the MX/SPF records
+  itself); founder verified delivery with a test mail. Receiving only — outbound transactional
+  mail is Brevo (pending compliance review), and replies still originate from the personal
+  address until a real mailbox / "send as" is set up.
 
 > ⚠️ The Cloud Run **service is still named `vectorreel-web`** — the code/service rename (C#
 > namespaces, assembly names, service name) is **deferred to a dedicated refactor**. Domain and

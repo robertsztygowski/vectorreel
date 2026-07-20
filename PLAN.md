@@ -204,10 +204,12 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   in the memo: REGON display, sole-trader withdrawal (Art. 38a status), whether the passive B2B
 >   notice should become an **affirmative checkbox** (KC Art. 385⁵ §11), DPO not-required, and the
 >   Google Cloud Standard DPA SCC wording.
-> - **`hello@mdreel.com` must actually receive mail** — it is the sole imprint / privacy / DPO-ish /
->   abuse / complaints contact on every legal page. Verify the mailbox is provisioned and delivers
->   (agent cannot test this).
-> - **Brevo API key** — transactional email is a no-op logging sender until set:
+> - **`hello@mdreel.com` receives mail ✅ DONE 2026-07-20** — Cloudflare Email Routing on the
+>   `mdreel.com` zone forwards `hello@` to the founder's personal inbox (MX records auto-managed by
+>   Cloudflare); founder verified with a live test mail. Replies still come from the personal
+>   address — upgrade to a real mailbox / "send as" later.
+> - **Brevo API key (pending Brevo compliance review)** — transactional email is a no-op logging
+>   sender until set:
 >   `gcloud secrets versions add mdreel-brevo-api-key --data-file=- --project tensile-runway-442915-j6`
 >   (create the secret first if absent, region europe-central2), then set `BREVO_API_KEY` on the api
 >   service. `RequireConfirmedEmail=false`, so auth works without it.
