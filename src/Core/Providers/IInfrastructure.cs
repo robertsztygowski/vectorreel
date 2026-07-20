@@ -49,6 +49,25 @@ public interface IObjectStorage
     /// <summary>Read an object.</summary>
     Task<Stream> OpenReadAsync(string bucket, string objectName, CancellationToken cancellationToken);
 
+    /// <summary>Download an object directly to a local file.</summary>
+    async Task DownloadToFileAsync(
+        string bucket,
+        string objectName,
+        string destinationPath,
+        CancellationToken cancellationToken)
+    {
+        var directory = Path.GetDirectoryName(destinationPath);
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        await using var read = await OpenReadAsync(bucket, objectName, cancellationToken);
+        await using var file = File.Create(destinationPath);
+        await read.CopyToAsync(file, cancellationToken);
+        await file.FlushAsync(cancellationToken);
+    }
+
     /// <summary>Write an object.</summary>
     Task WriteAsync(string bucket, string objectName, Stream content, CancellationToken cancellationToken);
 

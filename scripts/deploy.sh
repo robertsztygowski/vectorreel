@@ -238,6 +238,7 @@ deploy_api() {
   docker push "$AR/vectorreel-api:$TAG"
 
   echo "Deploying vectorreel-api to $RUN_REGION..."
+  # tmpfs counts against RAM; Stage A holds one full video on /tmp, so 512Mi OOMs on real recordings.
   gcloud run deploy vectorreel-api \
     --image "$AR/vectorreel-api:$TAG" \
     --region "$RUN_REGION" \
@@ -245,6 +246,7 @@ deploy_api() {
     --allow-unauthenticated \
     --min-instances=0 \
     --max-instances=2 \
+    --memory=2Gi \
     --set-env-vars "$env_vars" \
     --add-cloudsql-instances "$conn_name" \
     --set-secrets "POSTGRES_CONNECTION=$SECRET_NAME:latest,STRIPE_SECRET_KEY=mdreel-stripe-secret-key:latest,STRIPE_WEBHOOK_SECRET=mdreel-stripe-webhook-secret:latest" \

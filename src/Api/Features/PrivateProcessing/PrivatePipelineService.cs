@@ -357,15 +357,9 @@ public sealed partial class PrivatePipelineService(
 
             Directory.CreateDirectory(_uploadRoot);
             var localCopy = Path.Combine(_uploadRoot, $"{upload.Id}-stage-a{extension}");
-            await using (var read = await objectStorage.OpenReadAsync(_rawBucket, objectName, CancellationToken.None))
-            await using (var write = File.Create(localCopy))
-            {
-                await read.CopyToAsync(write, CancellationToken.None);
-                await write.FlushAsync(CancellationToken.None);
-            }
-
             try
             {
+                await objectStorage.DownloadToFileAsync(_rawBucket, objectName, localCopy, CancellationToken.None);
                 var gcsPrepared = await stageA.PrepareAsync(job.Id, localCopy, StageAOptions.Default, CancellationToken.None);
                 job.DurationSec ??= gcsPrepared.Probe.Duration.TotalSeconds;
                 return gcsPrepared;

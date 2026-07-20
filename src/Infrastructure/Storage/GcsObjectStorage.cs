@@ -29,10 +29,46 @@ public sealed class GcsObjectStorage : MdReel.Core.Providers.IObjectStorage, IDi
 
     public async Task<Stream> OpenReadAsync(string bucket, string objectName, CancellationToken cancellationToken)
     {
-        var buffer = new MemoryStream();
-        await _client.DownloadObjectAsync(bucket, objectName, buffer, cancellationToken: cancellationToken);
-        buffer.Position = 0;
-        return buffer;
+        var tempPath = Path.Combine(Path.GetTempPath(), $"mdreel-gcs-{Guid.NewGuid():N}.tmp");
+        var file = new FileStream(
+            tempPath,
+            FileMode.CreateNew,
+            FileAccess.ReadWrite,
+            FileShare.Read,
+            bufferSize: 81920,
+            FileOptions.Asynchronous | FileOptions.DeleteOnClose);
+        try
+        {
+            await _client.DownloadObjectAsync(bucket, objectName, file, cancellationToken: cancellationToken);
+            file.Position = 0;
+            return file;
+        }
+        catch
+        {
+            await file.DisposeAsync();
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+
+            throw;
+        }
+    }
+
+    public async Task DownloadToFileAsync(
+        string bucket,
+        string objectName,
+        string destinationPath,
+        CancellationToken cancellationToken)
+    {
+        var directory = Path.GetDirectoryName(destinationPath);
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        await using var file = File.Create(destinationPath);
+        await _client.DownloadObjectAsync(bucket, objectName, file, cancellationToken: cancellationToken);
     }
 
     public async Task WriteAsync(string bucket, string objectName, Stream content, CancellationToken cancellationToken)
