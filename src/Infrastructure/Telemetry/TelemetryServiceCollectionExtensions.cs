@@ -132,6 +132,11 @@ public static class TelemetryServiceCollectionExtensions
         {
             // NuGet has no GA Google Cloud OTel trace exporter for .NET today; use the GA Google
             // OTLP ingest endpoint with ADC/runtime-service-account OAuth instead.
+            // Cloud Run's front-end injects an UNSAMPLED traceparent into every request; the default
+            // ParentBased sampler would inherit that and drop every server span, so sample explicitly.
+            // MVP volume sits well inside the Cloud Trace free tier; revisit with a ratio sampler if
+            // traffic ever makes tracing a line item.
+            tracing.SetSampler(new AlwaysOnSampler());
             tracing.AddOtlpExporter(options => ConfigureGoogleCloudOtlp(options, googleCloudProjectId, "traces"));
             return;
         }
