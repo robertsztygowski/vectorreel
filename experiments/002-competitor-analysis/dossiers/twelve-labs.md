@@ -1,5 +1,9 @@
 # Twelve Labs — ring: direct · verified: 2026-07-15 · confidence: high
 
+> ➡️ **Deeper successor:** a full evidence-backed deep-dive (dossiers, screenshots, live API
+> captures, code samples, synthesis) lives in `experiments/004-twelvelabs-deep-dive/`. This shallow
+> memo is frozen; consult 004 for current detail.
+
 ## 1. Vitals
 - **HQ/jurisdiction:** San Francisco, California, USA (660 4th Street). US company; US legal jurisdiction. Korean roots (founders ex-Korea; NAVER/Korea Investment Partners on cap table).
 - **Founded:** 2021.
