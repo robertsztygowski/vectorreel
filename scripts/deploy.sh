@@ -222,7 +222,7 @@ deploy_api() {
 
   # Payments went live (test mode) 2026-07-18 — never reset PAYMENTS_MODE here. Price IDs and the
   # checkout redirect base are part of the deploy config (public, non-secret; INFRA.md).
-  env_vars="PipelineModel__Mode=fake,APP_BASE_URL=https://mdreel.com,Storage__Mode=gcs,Gcs__RawBucket=raw-videos-eu,Gcs__OutputBucket=outputs-eu,Telemetry__GcpProjectId=$PROJECT"
+  env_vars="PipelineModel__Mode=fake,APP_BASE_URL=https://mdreel.com,Storage__Mode=gcs,Gcs__RawBucket=raw-videos-eu,Gcs__OutputBucket=outputs-eu,Telemetry__GcpProjectId=$PROJECT,TELEMETRY_CLOUD_REGION=$RUN_REGION"
   env_vars="$env_vars,STRIPE_PRICE_PRO=price_1TueKDCibBXSEilRzfAaVoID"
   env_vars="$env_vars,STRIPE_PRICE_BUSINESS=price_1TueKYCibBXSEilRzQNH9IiB"
   env_vars="$env_vars,STRIPE_PRICE_STARTER=price_1TueKoCibBXSEilR6G3s5OOe"
@@ -271,7 +271,7 @@ deploy_worker() {
     --allow-unauthenticated \
     --min-instances=0 \
     --max-instances=1 \
-    --set-env-vars "PipelineModel__Mode=fake,Telemetry__GcpProjectId=$PROJECT" \
+    --set-env-vars "PipelineModel__Mode=fake,Telemetry__GcpProjectId=$PROJECT,TELEMETRY_CLOUD_REGION=$RUN_REGION" \
     --quiet
   describe_deploy "vectorreel-worker"
 }

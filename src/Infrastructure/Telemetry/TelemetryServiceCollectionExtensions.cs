@@ -108,8 +108,15 @@ public static class TelemetryServiceCollectionExtensions
         if (!string.IsNullOrWhiteSpace(googleCloudProjectId))
         {
             // telemetry.googleapis.com OTLP ingest rejects payloads without this attribute
-            // ("Resource is missing required attribute \"gcp.project_id\"", HTTP 400).
-            resource.AddAttributes([new KeyValuePair<string, object>("gcp.project_id", googleCloudProjectId)]);
+            // ("Resource is missing required attribute \"gcp.project_id\"", HTTP 400), and the
+            // metrics signal additionally rejects resources without a resolvable location
+            // ("write for resource failed: Unrecognized region or location.").
+            var region = Environment.GetEnvironmentVariable("TELEMETRY_CLOUD_REGION");
+            resource.AddAttributes(
+            [
+                new KeyValuePair<string, object>("gcp.project_id", googleCloudProjectId),
+                new KeyValuePair<string, object>("cloud.region", string.IsNullOrWhiteSpace(region) ? "europe-west1" : region),
+            ]);
         }
 
         var revision = Environment.GetEnvironmentVariable("K_REVISION");
@@ -179,17 +186,31 @@ public static class TelemetryServiceCollectionExtensions
     {
         private readonly Lazy<Task<ITokenAccess>> credential = new(CreateCredentialAsync);
 
-        protected override async Task<HttpResponseMessage> SendAsync(
+        // The OTLP HTTP exporter uses the SYNCHRONOUS HttpClient.Send path, which dispatches to
+        // Send below — an async-only override silently never runs and every export gets 403.
+        protected override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            Authorize(request, cancellationToken);
+            return base.Send(request, cancellationToken);
+        }
+
+        protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
-            var token = await (await credential.Value.ConfigureAwait(false))
+            Authorize(request, cancellationToken);
+            return base.SendAsync(request, cancellationToken);
+        }
+
+        private void Authorize(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = credential.Value
+                .ConfigureAwait(false).GetAwaiter().GetResult()
                 .GetAccessTokenForRequestAsync(cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
+                .ConfigureAwait(false).GetAwaiter().GetResult();
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             request.Headers.TryAddWithoutValidation("x-goog-user-project", projectId);
-            return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
         }
 
         private static async Task<ITokenAccess> CreateCredentialAsync()
