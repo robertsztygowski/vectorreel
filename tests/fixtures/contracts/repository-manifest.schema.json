@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mdreel.com/schemas/repository-manifest.schema.json",
+  "title": "mdreel repository manifest (metadata/manifest.json)",
+  "description": "Machine entry point of an AI-ready repository — the structured index of a set of output documents (output.schema.json) organized per the repository contract, ARCHITECTURE.md §4b. v1, 2026-07-20.",
+  "type": "object",
+  "required": ["repository", "sessions", "topics", "speakers"],
+  "additionalProperties": false,
+  "properties": {
+    "repository": {
+      "type": "object",
+      "required": ["name", "description", "generator", "generated_at", "visibility", "contract_version"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "generator": { "type": "string", "pattern": "^mdreel@[0-9A-Za-z.+-]+$" },
+        "generated_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,3})?Z$"
+        },
+        "visibility": { "enum": ["public-collection", "private"] },
+        "contract_version": { "const": "1" },
+        "licence_note": {
+          "description": "Mandatory for public-collection: the licence discipline statement (CC-licensed sources only, attributed).",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "if": {
+        "properties": { "visibility": { "const": "public-collection" } },
+        "required": ["visibility"]
+      },
+      "then": {
+        "required": ["licence_note"],
+        "properties": { "licence_note": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["slug", "file", "title", "duration", "language", "processed_at", "source", "tags"],
+        "additionalProperties": false,
+        "properties": {
+          "slug": { "$ref": "#/$defs/sessionSlug" },
+          "file": { "type": "string", "pattern": "^sessions/[a-z0-9][a-z0-9-]*\\.md$" },
+          "title": { "type": "string", "minLength": 1 },
+          "duration": { "type": "string", "pattern": "^[0-9]{2}:[0-5][0-9]:[0-5][0-9]$" },
+          "language": { "type": "string", "pattern": "^[a-z]{2}(-[A-Za-z]{2,4})?$" },
+          "processed_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,3})?Z$"
+          },
+          "recorded_at": {
+            "description": "Recording/publication date when known — the date used in the slug.",
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "source": { "type": "string", "minLength": 1 },
+          "tags": { "type": "array", "items": { "$ref": "#/$defs/slug" } },
+          "speakers": { "type": "array", "items": { "$ref": "#/$defs/slug" } },
+          "attribution": {
+            "description": "Public-collection sessions: the attribution line matching the document's Source & licence section.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "file", "label", "sessions"],
+        "additionalProperties": false,
+        "properties": {
+          "slug": { "$ref": "#/$defs/slug" },
+          "file": { "type": "string", "pattern": "^topics/[a-z0-9][a-z0-9-]*\\.md$" },
+          "label": { "type": "string", "minLength": 1 },
+          "merged_tags": {
+            "description": "Curation-time synonym merges folded into this topic (ARCHITECTURE.md §4b).",
+            "type": "array",
+            "items": { "$ref": "#/$defs/slug" }
+          },
+          "sessions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/sessionSlug" } }
+        }
+      }
+    },
+    "speakers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "file", "name", "sessions"],
+        "additionalProperties": false,
+        "properties": {
+          "slug": { "$ref": "#/$defs/slug" },
+          "file": { "type": "string", "pattern": "^speakers/[a-z0-9][a-z0-9-]*\\.md$" },
+          "name": { "type": "string", "minLength": 1 },
+          "sessions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/sessionSlug" } }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "sessionSlug": {
+      "description": "<yyyy-mm-dd>-<title-slug> per ARCHITECTURE.md §4b.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9][a-z0-9-]*$"
+    }
+  }
+}

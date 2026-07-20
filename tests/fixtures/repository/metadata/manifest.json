@@ -1,0 +1,58 @@
+{
+  "repository": {
+    "name": "Example collection — canonical AI-ready repository fixture",
+    "description": "Two sessions from the Phase-0.2 corpus fixtures organized per the repository contract (ARCHITECTURE.md §4b). The committed canonical example, validated by web/lib/repository.test.ts.",
+    "generator": "mdreel@0.0.0-fixture",
+    "generated_at": "2026-07-20T22:00:00Z",
+    "visibility": "public-collection",
+    "contract_version": "1",
+    "licence_note": "CC-licensed sources only, attributed in each session's Source & licence section and in this manifest."
+  },
+  "sessions": [
+    {
+      "slug": "2020-04-22-building-a-rust-string-splitter-lifetimes-strings-and-generics",
+      "file": "sessions/2020-04-22-building-a-rust-string-splitter-lifetimes-strings-and-generics.md",
+      "title": "Building a Rust String Splitter: Lifetimes, Strings, and Generics",
+      "duration": "01:33:23",
+      "language": "en",
+      "processed_at": "2026-07-14T19:38:48Z",
+      "recorded_at": "2020-04-22",
+      "source": "https://www.youtube.com/watch?v=rAl-9HwD858",
+      "tags": ["rust", "lifetimes", "generics", "strings", "iterator", "live-coding"],
+      "speakers": ["jon-gjengset"],
+      "attribution": "\"Crust of Rust: Lifetime Annotations\" by Jon Gjengset (https://www.youtube.com/watch?v=rAl-9HwD858), CC BY 3.0"
+    },
+    {
+      "slug": "2026-06-17-roblox-ceo-david-baszucki-on-the-creator-economy-and-future-of-gaming",
+      "file": "sessions/2026-06-17-roblox-ceo-david-baszucki-on-the-creator-economy-and-future-of-gaming.md",
+      "title": "Roblox CEO David Baszucki on the Creator Economy and Future of Gaming",
+      "duration": "00:57:56",
+      "language": "en",
+      "processed_at": "2026-07-14T19:37:23Z",
+      "recorded_at": "2026-06-17",
+      "source": "https://www.youtube.com/watch?v=KL7WBjAuTMg",
+      "tags": ["roblox", "creator-economy", "gaming", "david-baszucki", "ugc", "virtual-economy"],
+      "speakers": ["david-baszucki", "tyler-cowen"],
+      "attribution": "\"Dave Baszucki on Roblox, Teen Entrepreneurs, and the Future of Play | Conversation with Tyler\" by Conversations with Tyler (https://www.youtube.com/watch?v=KL7WBjAuTMg), CC BY 3.0"
+    }
+  ],
+  "topics": [
+    { "slug": "rust", "file": "topics/rust.md", "label": "Rust", "sessions": ["2020-04-22-building-a-rust-string-splitter-lifetimes-strings-and-generics"] },
+    { "slug": "lifetimes", "file": "topics/lifetimes.md", "label": "Lifetimes", "sessions": ["2020-04-22-building-a-rust-string-splitter-lifetimes-strings-and-generics"] },
+    { "slug": "generics", "file": "topics/generics.md", "label": "Generics", "sessions": ["2020-04-22-building-a-rust-string-splitter-lifetimes-strings-and-generics"] },
+    { "slug": "strings", "file": "topics/strings.md", "label": "Strings", "sessions": ["2020-04-22-building-a-rust-string-splitter-lifetimes-strings-and-generics"] },
+    { "slug": "iterator", "file": "topics/iterator.md", "label": "Iterator", "sessions": ["2020-04-22-building-a-rust-string-splitter-lifetimes-strings-and-generics"] },
+    { "slug": "live-coding", "file": "topics/live-coding.md", "label": "Live coding", "sessions": ["2020-04-22-building-a-rust-string-splitter-lifetimes-strings-and-generics"] },
+    { "slug": "roblox", "file": "topics/roblox.md", "label": "Roblox", "sessions": ["2026-06-17-roblox-ceo-david-baszucki-on-the-creator-economy-and-future-of-gaming"] },
+    { "slug": "creator-economy", "file": "topics/creator-economy.md", "label": "Creator economy", "sessions": ["2026-06-17-roblox-ceo-david-baszucki-on-the-creator-economy-and-future-of-gaming"] },
+    { "slug": "gaming", "file": "topics/gaming.md", "label": "Gaming", "sessions": ["2026-06-17-roblox-ceo-david-baszucki-on-the-creator-economy-and-future-of-gaming"] },
+    { "slug": "david-baszucki", "file": "topics/david-baszucki.md", "label": "David Baszucki", "sessions": ["2026-06-17-roblox-ceo-david-baszucki-on-the-creator-economy-and-future-of-gaming"] },
+    { "slug": "ugc", "file": "topics/ugc.md", "label": "UGC", "sessions": ["2026-06-17-roblox-ceo-david-baszucki-on-the-creator-economy-and-future-of-gaming"] },
+    { "slug": "virtual-economy", "file": "topics/virtual-economy.md", "label": "Virtual economy", "sessions": ["2026-06-17-roblox-ceo-david-baszucki-on-the-creator-economy-and-future-of-gaming"] }
+  ],
+  "speakers": [
+    { "slug": "jon-gjengset", "file": "speakers/jon-gjengset.md", "name": "Jon Gjengset", "sessions": ["2020-04-22-building-a-rust-string-splitter-lifetimes-strings-and-generics"] },
+    { "slug": "david-baszucki", "file": "speakers/david-baszucki.md", "name": "David Baszucki", "sessions": ["2026-06-17-roblox-ceo-david-baszucki-on-the-creator-economy-and-future-of-gaming"] },
+    { "slug": "tyler-cowen", "file": "speakers/tyler-cowen.md", "name": "Tyler Cowen", "sessions": ["2026-06-17-roblox-ceo-david-baszucki-on-the-creator-economy-and-future-of-gaming"] }
+  ]
+}

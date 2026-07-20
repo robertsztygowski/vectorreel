@@ -282,6 +282,63 @@ Rules (each learned from real drift in the Phase-0.2 outputs — see the Phase 2
   can strip or keep it deterministically.
 - **No hallucinated names** — unknown speakers stay "Speaker N".
 
+## 4b. Repository contract (v1) — the product surface above the file 🆕 2026-07-20 (pivot, additive)
+
+> **Additive.** §4 (per-file output) and §5 (API) stay frozen and unchanged. This section defines
+> how a *set* of §4 documents is organized into the thing the customer actually owns — an
+> **AI-ready repository** (BUSINESS_MODEL §1/§3). It is a **deterministic derivation**: given the
+> same §4 documents + curation metadata (`corpus.json` for public collections, tenant metadata for
+> private exports), the same repository bytes come out. No pipeline change, no new compute — the
+> indexer is a rendering step, same category as Stage D's renderer.
+
+**Normative artifacts:** the manifest schema is
+`tests/fixtures/contracts/repository-manifest.schema.json`; the committed canonical example is
+`tests/fixtures/repository/` (validated by `web/lib/repository.test.ts`). This section is the
+human-readable statement of the same contract.
+
+### Layout
+
+```
+README.md            — human entry point: what this repository covers, session count, how to cite
+sessions/            — one §4 document per processed video: <session-slug>.md
+topics/              — generated topic indexes: <topic-slug>.md
+speakers/            — generated speaker indexes: <speaker-slug>.md
+timeline/            — chronological index: index.md (per-year files may be added, additive)
+metadata/
+  manifest.json      — the machine-readable index (repository-manifest.schema.json)
+```
+
+### Rules
+
+- **Sessions are the only content; indexes cite, never restate.** Every topic/speaker/timeline
+  entry is a link + timestamp into a session document — no prose appears in an index that is not
+  in a session. (The "one fact, one home" doc rule, applied to the deliverable itself: an index
+  that copies content can contradict it.)
+- **Session slugs:** `<yyyy-mm-dd>-<title-slug>` — date is the recording/publication date when
+  known, else the `processed_at` date; title slug is lowercase-hyphenated ASCII. Deterministic and
+  collision-suffixed (`-2`, `-3`) on ties.
+- **Citation grammar** — every index entry has the form
+  `- [hh:mm:ss](../sessions/<slug>.md#<anchor>) — <section heading>` grouped under a session
+  heading. `<anchor>` is the GitHub auto-anchor of the §4 section heading (lowercase, brackets/
+  colons stripped, spaces to hyphens: `## [00:03:40] Invoice workflow walkthrough` →
+  `#000340-invoice-workflow-walkthrough`). **The visible timestamp is mandatory** so a citation is
+  verifiable against the video even where anchors don't resolve.
+- **Speakers come from curation metadata only** (corpus attribution / tenant-entered names) —
+  never from model output. This extends §4's "no hallucinated names": unknown speakers stay
+  "Speaker N" *inside* documents and get **no** speaker index file.
+- **Topics** are the frontmatter `tags` union, one index per tag that appears in ≥1 session;
+  curation metadata may merge synonyms (manifest records the mapping).
+- **Portability is the contract's point:** relative links only, LF + trailing newline, plain
+  CommonMark, no HTML required — the repository must render as-is on GitHub, Obsidian, VS Code,
+  or a plain file tree, and remain useful to an agent doing nothing smarter than reading files.
+- **`metadata/manifest.json`** is the machine entry point: session/topic/speaker inventories with
+  cross-references (schema-enforced). Agents that can parse JSON start there; agents that can't
+  start at `README.md`. Both describe the same repository — neither adds facts of its own.
+- **Public collections** (DISTRIBUTION.md) use this same contract with
+  `visibility: "public-collection"` and a mandatory licence note; private exports use
+  `visibility: "private"`. One contract, both surfaces — the public collection *is* the demo of
+  the private deliverable.
+
 ## 5. API (v1, REST) — ❄️ MVP subset frozen 2026-07-16 (Phase 2.5)
 
 Base: `/api/v1`, auth: `Authorization: Bearer <api_key>`.

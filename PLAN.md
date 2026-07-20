@@ -272,7 +272,16 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   section rewritten (collections = the demo, funnel updated, channel 2 = collections as
 >   SEO + GitHub asset); this STATUS "bet" paragraph pivoted. Architecture, pipeline, pricing,
 >   and every METRICS number untouched.
-> - **Next:** M2 — the AI-ready repository contract v1 (ARCHITECTURE.md product-surface addition).
+> - **M2 repository contract v1 ✅** — ARCHITECTURE.md gained **§4b Repository contract (v1)**,
+>   additive (the §4 file contract and §5 API stay frozen): canonical layout (`README.md`,
+>   `sessions/`, `topics/`, `speakers/`, `timeline/`, `metadata/manifest.json`), session slug
+>   rule, the citation grammar (timestamp + GitHub anchor; indexes cite, never restate),
+>   curation-only speakers, portability rules, one contract for public collections and private
+>   exports. Normative artifacts: `tests/fixtures/contracts/repository-manifest.schema.json` +
+>   the canonical example `tests/fixtures/repository/` (two corpus sessions, 12 topics,
+>   3 speakers, timeline), all validated by `web/lib/repository.test.ts` (22 tests).
+>   Derivation is deterministic from §4 documents + curation metadata — no pipeline change.
+> - **Next:** M3 (collections package) + M4 (landing pivot, in flight) in parallel.
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
