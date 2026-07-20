@@ -622,8 +622,12 @@ Both contracts already exist as drafts — the work is **ratification, not inven
 >   `raw-videos-eu` via `IObjectStorage`, hands Stage B the resulting `gs://` URI, and erases the
 >   object after Stage D (ARCHITECTURE §3/§7). Gated by `PipelineModel:StageRawUploadsToObjectStorage`
 >   (null ⇒ stage iff mode ≠ fake). Covered by an offline integration test (spy storage asserts the
->   raw object is written then erased). **Manual founder step remains:** one real `live` end-to-end
->   run with a short clip (real Vertex spend — record it in the ledger).
+>   raw object is written then erased). **✅ Live run DONE 2026-07-20** — pre-flight `tests/Live`
+>   smoke green, then the full private path ran locally (`PipelineModel__Mode=live`, real GCS via
+>   ADC) on the 90 s CC NASA fixture: signup → signed upload → job → A→B→C→D in ~75 s →
+>   real `output.md`/`.json` in `gs://outputs-eu/private/job_…/`, `raw-videos-eu` staged then
+>   erased, and the ledger metered all four steps (`stage_a.probe`, `stage_a.scan`,
+>   `stage_b.analyze`, `stage_c.fuse` — rule 6).
 > - **Gallery metering + attribution (done).** The internal YouTube gallery runner now records its
 >   LLM calls in the ledger (rule 6) and threads per-video attribution (title/author/licence/source)
 >   into the output's "## Source & licence" section. **Manual founder step remains:** the deliberate
