@@ -52,5 +52,10 @@
 - White-label AI video is sales-gated/rare — https://playcut.ai/blog/white-label-ai-video/ — 2026
 - Cloudglue MCP server — https://mcpservers.org/servers/aviaryhq/cloudglue-mcp-server — 2026
 
-## M3 adversarial verdicts
-- *(appended after M3)*
+## M3 adversarial verdicts (Sonnet skeptics, prompted to refute)
+- C1 reachability — REFUTED (med-high) — regulated ICP is RFP/procurement; self-serve only for full LMS — https://konstantly.com/blog/compliance-training-software-comparison
+- C2 willingness-to-pay — REFUTED (med) — DIY-demand not buy-demand; OKF commoditizes schema — https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing/
+- C2 reachability — REFUTED (med) — dev audience ≠ KM buyer; KM procurement-gated; transcript-gallery derivative-content risk — https://www.cloudnuro.ai/blog/top-10-enterprise-knowledge-management-tools-for-governance-in-2025
+- C4 agent-citable-preference — REFUTED (med) — revealed market preference is human how-to guides — https://www.docsie.io/solutions/documentation-from-video/
+- C4 DIY-survivable — REFUTED (high) — EU residency moot for public content; bursty corpus = backfill — (no URL; reasoned against A2/A3)
+- C3, C5 — no Sonnet pass (deliberate cost cut); killed on documented facts (EAA excludes internal video; zero self-serve consultancy demand).

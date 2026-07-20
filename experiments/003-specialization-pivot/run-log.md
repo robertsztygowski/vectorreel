@@ -22,8 +22,8 @@
 |---|---|---|---|
 | M1 discovery | 2 | 0 | dedupe+shortlist |
 | M2 evidence | 5 | 0 | 1 per candidate |
-| M3 verification | | | |
-| **total** | | | |
+| M3 verification | 0 | 5 | C2×2, C4×2, C1×1 |
+| **total** | **7** | **5** | **coordinator: Fable (this session)** |
 
 ## Checkpoints
 - **M0** — frame + rubric — folder + memo skeleton + this log created. ✅
@@ -35,3 +35,9 @@
     skeptics — their killing facts are already documented (EAA excludes internal video; zero
     self-serve consultancy demand). Sonnet budget concentrated on the contenders C2/C4 and on C1's
     reachability, per the cost cap. This is a deliberate cut, not silent truncation.
+- **M3** — 5 Sonnet skeptics (C2×2, C4×2, C1×1), all prompted to refute. **All 5 claims refuted.**
+  No verified demand-AND-reachability story for any candidate. ✅
+- **Cost contract held:** all discovery/fetch/extraction ran on Haiku (7 calls); all verification on
+  Sonnet (5 calls); the coordinator (Fable) did only sequencing, scoring and synthesis. **Zero
+  Opus/Fable sub-agents spawned for search/fetch/extract** — the cost bug this run was designed to
+  avoid did not occur.

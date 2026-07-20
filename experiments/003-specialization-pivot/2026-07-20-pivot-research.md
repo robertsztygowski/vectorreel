@@ -122,6 +122,24 @@ Load-bearing claims carried to M3 for adversarial verification are tagged **[→
 - **Pipeline delta:** net-new white-label portal + wholesale licensing + multi-tenant sub-accounts.
 - **Verdict-hint (worker):** real EU/resale gap, but **zero inbound demand + needs a ruled-out sales motion.** Killed on A5.
 
+## M3 — Adversarial verification (5 Sonnet skeptics, prompted to refute)
+
+Methodology: a claim that **survives** a genuine refutation is *verified*; one that does **not** is
+downgraded to *speculative*. Skeptics defaulted to `refuted=true` on thin evidence. C3 and C5 got no
+Sonnet pass (deliberate cost cut, logged in run-log) — their killing facts are already documented.
+
+| Candidate | Load-bearing claim tested | Verdict | Conf. | The refutation that stuck |
+|---|---|---|---|---|
+| **C1** | Compliance buyer reachable self-serve, no outreach | **REFUTED** | med-high | Regulated-industry ICP sits in the RFP/procurement tier; self-serve pricing exists only for full-suite LMS, not point-tool add-ons. **Fails the no-outreach constraint outright.** |
+| **C2** | Buyers will **pay** vs DIY | **REFUTED** | med | Evidence is DIY "how-to-build" tutorials, not buy-demand; Google OKF (free, vendor-neutral) **commoditizes** the schema-Markdown output mdreel would charge for. |
+| **C2** | Buyer reachable inbound/self-serve | **REFUTED** | med | Founder's .NET/architecture audience ≠ KM buyers; KM tooling skews committee/procurement (SSO/RBAC/residency gates); gallery ranking on processed transcripts is unproven (derivative-content risk). |
+| **C4** | Buyers prefer **agent-citable** over human how-to | **REFUTED** | med | Funded competitors (Docsie/Vidocu/Castify) all target human-facing guides — the revealed preference; agent-citable demand is only indirect. |
+| **C4** | DIY threat survivable (A2 holds) | **REFUTED** | **high** | For public DevRel content EU residency is moot → pitch collapses to DIY-able chunking; bursty launch-cycle corpus = A3 **backfill**, not subscription. |
+
+**Result: every tested load-bearing claim was refuted.** No candidate has a *verified* demand-AND-
+reachability story. C1/C4 are killed (A5 procurement / A2-DIY). C2 survives only as the least-weak
+option, with both pillars **speculative**. C3/C5 killed on documented facts.
+
 ## 3. Per-candidate one-pagers
 *(consolidated at M5 from M2 evidence + M3 verdicts + M4 scores)*
 
