@@ -20,10 +20,11 @@
 ## Model-call tally (proof the contract held)
 | Milestone | Haiku calls | Sonnet calls | Coordinator (Fable) |
 |---|---|---|---|
-| M1 discovery | | | |
+| M1 discovery | 2 | 0 | dedupe+shortlist |
 | M2 evidence | | | |
 | M3 verification | | | |
 | **total** | | | |
 
 ## Checkpoints
-- **M0** — frame + rubric — folder + memo skeleton + this log created. ⏳
+- **M0** — frame + rubric — folder + memo skeleton + this log created. ✅
+- **M1** — 2 Haiku sweeps (pipeline-out + demand-in), 14 long-list → 5 shortlist (C1–C5), 8 killed. ✅

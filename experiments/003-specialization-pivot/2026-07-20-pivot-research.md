@@ -27,7 +27,8 @@ answers are marked ASSUMPTION inline)*
 ---
 
 ## Progress / run checkpoints
-- **M0** — frame + rubric — ⏳ in progress
+- **M0** — frame + rubric — ✅
+- **M1** — candidate long-list (14) + shortlist (5) — ✅ (see §4 + §M1 below)
 
 ---
 
@@ -84,8 +85,41 @@ A pivot that walks into **threat #1** (meetings) is dead on arrival — say so e
 ## 3. Per-candidate one-pagers
 *(filled at M2–M5)*
 
-## 4. Candidates killed by the constraint filter
-*(filled at M1)*
+## M1 — Candidate generation (2 Haiku sweeps → long-list → shortlist)
+
+Two Haiku discovery sweeps ran (pipeline-outward; demand-inward with URLs). Combined long-list = **14**
+candidates. A useful finding up front: **the F1–F4 constraint filter passes almost everything** — nearly
+every candidate reuses the pipeline, is EU-hostable, needs no YouTube bytes, and isn't meetings. So the
+real cuts are **strategic**, made against the competitor test (002) and the weak-path fact (screen
+recordings are the pipeline's weakest category — METRICS.md N32/N7b). Kills are in §4.
+
+### The shortlist (5) — carried to M2 evidence
+
+| # | Candidate | The one specialized job | Buyer | Main content type | Nearest competitor |
+|---|---|---|---|---|---|
+| **C1** | **Regulatory-training audit-trail docs** | Timestamped, speaker-attributed, verbatim-on-screen proof-of-content records from recorded compliance/regulatory training, for audit | Compliance officer / L&D in regulated EU industries (finance, health, pharma, insurance) | slide talk, talking head (**strong path**) | LMS + manual transcript; no purpose-built product found |
+| **C2** | **Conference/webinar → agent-citable knowledge base** | Turn an org's recorded talks/webinars into one schema-consistent, timestamped Markdown KB an agent can cite | Knowledge/research manager at event-heavy orgs, analyst/consulting firms, associations | slide talk (**pipeline's strongest, N30**) | ScreenApp, DistillNote, DigestAI (summarizers) |
+| **C3** | **Accessibility (EAA/WCAG) docs for internal video libraries** | WCAG-compliant transcript + captions + on-screen-text records for internal video, meeting the EU Accessibility Act | Accessibility/compliance coordinator, HR/IT, public sector | mixed / any | 3Play Media, Rev, Amberscript (transcription shelf) |
+| **C4** | **Product/SDK docs from demo & talk videos (DevRel)** | Convert devtool demo/talk recordings into agent-citable product-docs + code-sample Markdown | DevRel / technical PM at devtool & SaaS companies | demo + slide (**mixed; some weak-path**) | Docsie, Vidocu, Castify (human-facing how-to) |
+| **C5** | **White-label RAG-ingestion for AI consultancies** | Sell the pipeline as a per-client video→RAG-corpus ingestion step consultancies resell inside delivery | AI consultancy / software house building client RAG (ICP #3, sharpened) | mixed | Cloudglue/Twelve Labs (platform, not white-label) |
+
+**Baseline to beat:** *"keep the current wedge"* (video→Markdown for any EU AI KB, launch as planned).
+A candidate only wins if it beats that baseline on the rubric (§0). The null result is valid (M4).
+
+## 4. Candidates killed at M1 (long-list → shortlist)
+
+Killed on strategy/rubric (all technically pass F1–F4 unless noted):
+
+| Killed candidate | Why killed | Rule it fails |
+|---|---|---|
+| **Screencast → illustrated how-to guides** (Docsie/Vidocu/Castify/ScreenApp cluster) | Output is a **human-facing** how-to with screenshots — abandons the agent-citable-Markdown wedge — and rides the **weakest content type** (screen recording, N32). Crowded with funded US tools. | Competitor test (wedge); A4 (weak path) |
+| **Customer-support FAQ from demos** | Same cluster; human-facing help articles, weak path, US-tool-dense. | Competitor test; A4 |
+| **Internal process runbooks from screencasts** | Same how-to-guide shape; screen-recording path (N32); no EU driver. | A4; A1 |
+| **User-research / ResOps session indexing** | Entrenched US incumbents (Dovetail, UserTesting); screen-recording heavy (weak); EU not a purchase driver for this buyer. | A1; A4; A2 |
+| **Sales-pitch / enablement documentation** | Drifts toward call-recording (Gong) territory adjacent to the meetings no-go; sales-ops buys platforms not documents (A2). | A2; competitor-test proximity to threat #1 |
+| **Patent-disclosure timestamping** | Buyers are consultant-/lawyer-mediated, not self-serve inbound; niche too thin for N15. | **A5**; N15 |
+| **Video accessibility as generic transcription** (merged into C3, kept only in its regulated/EAA framing) | Generic captioning files us on the €2–4/h transcription shelf (002 §3) where we lose on price; only the **regulatory (EAA)** framing survives. | Competitor test (shelf); N23 |
+| **"Internal video KB / employee-onboarding handbooks" (generic)** | Too close to the **current wedge** to count as a specialization — folded into the baseline and into C2/C5. | Not a pivot (scope) |
 
 ## 5. What would change this verdict — the cheapest confirming experiment
 *(filled at M5; framed like METRICS.md §1.6 gated experiments)*
