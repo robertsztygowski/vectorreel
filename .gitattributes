@@ -2,4 +2,5 @@
 # fixtures — and their committed mirror inside web/ — must survive a Windows checkout unmangled.
 tests/fixtures/output/** text eol=lf
 tests/fixtures/contracts/** text eol=lf
+tests/fixtures/repository/** text eol=lf
 web/fixtures/** text eol=lf
