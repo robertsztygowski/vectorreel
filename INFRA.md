@@ -39,6 +39,10 @@ Access verified: project reachable, billing on, core APIs enabled.
 - `artifactregistry.googleapis.com` — container images
 - `cloudbuild.googleapis.com` — Cloud Run source deploys (web)
 - `secretmanager.googleapis.com` — enabled 2026-07-17 (DB connection secret; later Stripe keys)
+- `cloudtrace.googleapis.com` / `monitoring.googleapis.com` / `logging.googleapis.com` — Cloud
+  Trace / Monitoring / Logging (observability backend; trace+monitoring verified enabled
+  2026-07-20 for the observability run)
+- `telemetry.googleapis.com` — enabled 2026-07-20 (GCP-native OTLP telemetry ingest; no idle cost)
 
 ## Database decision — Phase 4
 
@@ -106,6 +110,18 @@ gcloud services enable cloudtasks.googleapis.com --project tensile-runway-442915
 > definition-of-done gate passes, to ship the B2B legal pack (`mdreel.com/legal/*`). The run touched
 > **only `web/` + docs and created no new GCP resources** — a redeploy of the existing web service in
 > `europe-west1` was the sole infra action. No CI auto-deploy was enabled; standing rule 5 unchanged.
+>
+> **2026-07-20 — observability run (rule 5 override).** The founder authorized, **for this run
+> only**, deploying `vectorreel-api`/`vectorreel-worker` from local via `scripts/deploy.sh` after
+> the definition-of-done gate passes, to ship production observability (OTel → Cloud
+> Trace/Monitoring/Logging, session correlation, admin dashboard, SLO alerts). Pre-approved
+> billing surface: `cloudtrace.googleapis.com` + `monitoring.googleapis.com` (already enabled) and
+> `telemetry.googleapis.com` (**enabled 2026-07-20** — GCP-native OTLP ingest option; no idle
+> cost, free tiers cover MVP volume), an EU log bucket, alert policies, uptime checks. No new
+> continuously-billing resources; `PipelineModel__Mode=fake` everywhere (zero Vertex spend);
+> Stripe stays test mode. No CI auto-deploy; standing rule 5 unchanged. Guardrails re-verified
+> 2026-07-20: preflight 21/21 PASS, budget alert present, Cloud Run caps hold (web 3 / api 2 /
+> worker 1, all `min=0`).
 
 ### Deploy automation — `scripts/` (added 2026-07-17)
 
