@@ -211,6 +211,49 @@ anyone will buy it.
 > LinkedIn traffic **convert**, by letting a skeptic verify the output on a talk they already know.
 > Build it for that. Any SEO that arrives is a bonus that pays out only if the box is extended.
 
+## UTM playbook — attribution without pixels
+
+Attribution is **UTM + first-party only**. No ad-platform pixels, ever (CLAUDE.md rule 10);
+conversions are read from our own data: the web app stores first-touch `utm_*` on the tenant at
+signup, payments join against it, and ad spend enters the ledger manually (METRICS.md N29 owns why
+spend must be in the contribution math). The admin **sources** panel
+(`/app/admin`, `GET /api/v1/admin/overview`) joins tenants × payments × `ad_spend` on these tags —
+so a link without UTM tags is a conversion we can never attribute. **Every link we place anywhere
+carries all three tags.**
+
+### The convention
+
+- `utm_source` — where the click physically happens: `google`, `reddit`, `facebook`, `linkedin`,
+  `hn`, `blog`, `newsletter`.
+- `utm_medium` — the mechanism: `cpc` (paid), `community` (organic posts/comments in someone
+  else's forum), `social` (own-profile broadcast), `referral`.
+- `utm_campaign` — one slug per experiment or venue, lowercase-hyphenated. For community posts
+  name the venue: `r-rag`, `r-localllama`, `r-dotnet`, `hn-launch`. For paid: the experiment name
+  from the METRICS.md §1.6 gate, e.g. `a1-eu-wedge`. **One campaign = one question**, so the
+  sources panel row answers it directly.
+
+### Link recipes
+
+| Where | Link |
+|---|---|
+| Google Ads (A1 probe) | `https://mdreel.com/?utm_source=google&utm_medium=cpc&utm_campaign=a1-eu-wedge` |
+| Reddit comment/post in r/RAG | `https://mdreel.com/?utm_source=reddit&utm_medium=community&utm_campaign=r-rag` |
+| HN Show HN | `https://mdreel.com/?utm_source=hn&utm_medium=community&utm_campaign=hn-launch` |
+| LinkedIn founder post | `https://mdreel.com/?utm_source=linkedin&utm_medium=social&utm_campaign=<post-slug>` |
+| Blog article CTA | `https://mdreel.com/?utm_source=blog&utm_medium=referral&utm_campaign=<article-slug>` |
+
+### Reading the sources panel
+
+Each row of the sources table is one `(source, medium, campaign)` tuple: tenants acquired, paying
+tenants, revenue, ad spend logged against that campaign, and CAC (spend ÷ paying tenants — blank
+until the first conversion, which is normal, not an error). Reddit communities each get their own
+row via `utm_campaign`, so "which subreddit converts" is a table read, not a query. Log every euro
+of paid spend the day it happens via the ad-spend form on `/app/admin` (or
+`POST /api/v1/admin/ad-spend`) with the **same campaign slug as the ad's link** — a mismatched
+slug silently breaks the CAC join. Umami (stats.mdreel.com) shows the same traffic by UTM for
+top-of-funnel volume; the admin panel is authoritative for conversion and CAC because it joins to
+payments.
+
 ## Kill criteria — **a deadline, not a cash threshold**
 
 **→ METRICS.md A5 + §2.2 (the time-box).** If N15 has not been reached by **T** after a *sustained*

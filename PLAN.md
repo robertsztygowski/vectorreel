@@ -195,6 +195,48 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   the attempt, and the row flipped to **delivered (HTTP 202)**. `smoke-remote.sh` gained a queue
 >   RUNNING + OIDC-enforced check and stays green (**25 passed / 0 failed**).
 
+> ### 🏃 Autonomous build run — 2026-07-20 (observability; founder away, rule-5 deploy override)
+> Production observability end-to-end: unified OTel, GCP-native export, first-party session
+> correlation, a founder admin dashboard, SLO alerts, and the UTM playbook. All six milestones
+> shipped; nothing failed.
+> - **M0 guardrails ✅** (`bedec5d`) — preflight 21/21; budget alert + Cloud Run caps re-verified;
+>   `telemetry.googleapis.com` enabled (GCP-native OTLP ingest, no idle cost).
+> - **M1 OTel unified + pipeline metrics ✅** (`6bd7cd9`) — shared `AddMdreelOpenTelemetry` helper
+>   wires Api **and** Worker; new `MdReel.Pipeline` meter: job duration/outcome, video minutes,
+>   per-stage durations, Stage B runaway counter (feeds METRICS.md N7), LLM tokens, webhook
+>   delivery failures; spans carry `mdreel.job_id`/`tenant_id`/`mdreel.stage`.
+> - **M2 prod export → Cloud Trace/Monitoring/Logging ✅** (`30e987d` + fixes `f9508ce`,`4fc96df`,
+>   `1dd0012`,`39d0d50`) — one env switch (`Telemetry__GcpProjectId`) turns on direct OTLP export
+>   with ADC (no collector, no Grafana); logs are structured stdout with trace correlation and land
+>   in the **EU log bucket `mdreel-logs-eu`** (`europe-central2`, 30 d). The ingest quirks found
+>   empirically are documented in INFRA.md (Telemetry stack). Deployed api+worker; verified in
+>   prod: traces queryable by `mdreel.job_id`, `mdreel.*` metric descriptors live.
+> - **M3 first-party session correlation ✅** (`3247ccb`) — the existing sessionStorage
+>   `mdreel_session_id` (no cookie — the no-consent-banner claim holds) now flows as an
+>   `X-Mdreel-Session` header on all web API calls (sanitized server-side), is stamped on API spans
+>   as `mdreel.session_id`, backfills `events.session_id`, and rides Umami funnel events as `sid`.
+>   Deployed (api 00018, web 00011); verified live: a prod span carries the session id.
+> - **M4 admin overview ✅** (`9ac2a28`) — `GET /api/v1/admin/overview` + `POST /api/v1/admin/
+>   ad-spend` behind an `Admin__Emails` allowlist (**empty ⇒ 404 for everyone, fail closed** —
+>   prod is currently fail-closed, see NEEDS-FOUNDER); `/app/admin` page: funnel per window, usage,
+>   retention cohorts, per-source conversion with CAC from the `ad_spend` join, ad-spend entry
+>   form, Umami link. Deployed (api 00019, web 00012); prod returns 404 as designed.
+> - **M5 SLO alerts ✅** (`f66de70`) — email channel `hello@mdreel.com`; uptime checks on
+>   `api.mdreel.com/health` + `mdreel.com` (global checker pool — Monitoring requires ≥3 regions;
+>   probes carry no customer data); 7 alert policies: api 5xx rate, api p95 latency, **N9**
+>   wall-clock ratio (PromQL), **N7** Stage B runaway rate (PromQL), webhook delivery failures,
+>   2× uptime. Verified: uptime probes passing from all regions. Details in INFRA.md (Alerting).
+> - **M6 UTM playbook ✅** (this commit) — DISTRIBUTION.md gained the UTM convention, per-channel
+>   link recipes, and the sources-panel reading guide; attribution stays UTM + first-party only
+>   (rule 10 — no pixels).
+> - **Cost delta:** ≈ €0 fixed — no new continuously-billing resources; Cloud Trace/Monitoring/
+>   Logging free tiers cover MVP volume; the EU log bucket bills only per ingested GiB after the
+>   free allotment; uptime checks and alert policies are free at this count. Vertex stayed fake all
+>   run; Stripe stayed test-mode.
+> - **Next-run backlog:** per-tenant usage rollup on the admin page (stretch not reached); wire the
+>   `/app` library table to real `/api/v1/jobs` (carried over); Worker-side prod trace spot-check
+>   under real load; consider a log-based alert on ERROR rate in `mdreel-logs-eu`.
+
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages
@@ -214,6 +256,13 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   (create the secret first if absent, region europe-central2), then set `BREVO_API_KEY` on the api
 >   service. `RequireConfirmedEmail=false`, so auth works without it.
 > - *(accumulates as later milestones land.)*
+> - **Set `Admin__Emails` on the prod api (2026-07-20)** — the admin overview (`/app/admin`) is
+>   deployed but **fail-closed (404) until the allowlist is set**. One command:
+>   `gcloud run services update vectorreel-api --region europe-west1 --project tensile-runway-442915-j6 --update-env-vars Admin__Emails=<your-login-email>`
+>   — use the email you sign in to mdreel.com with.
+> - **Confirm the first Cloud Monitoring alert email arrives (2026-07-20)** — the notification
+>   channel emails `hello@mdreel.com` (Cloudflare routing forwards it). No verification step was
+>   required at creation; just confirm delivery when the first (or a test) alert fires.
 > - **Cloud Tasks binding flip (M5) ✅ DONE 2026-07-18** — founder approved the continuously-billing
 >   resource; the flip shipped. `cloudtasks.googleapis.com` enabled, `webhook-deliveries` queue live
 >   in `europe-west1`, `GoogleCloudTasksTransport` (`Google.Cloud.Tasks.V2`) wired as the real
