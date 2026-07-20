@@ -1,0 +1,32 @@
+{
+  "endpoint": "GET /tasks/6a5e85e073d98e8a6ca42725",
+  "request_headers": {
+    "x-api-key": "tlk_***REDACTED***",
+    "Content-Type": "application/json"
+  },
+  "request_body": null,
+  "response_status": 200,
+  "latency_seconds": 0.514,
+  "response_body": {
+    "_id": "6a5e85e073d98e8a6ca42725",
+    "index_id": "6a5e85dea51eb9c9b9c8006a",
+    "video_id": "6a5e85e073d98e8a6ca42725",
+    "status": "ready",
+    "system_metadata": {
+      "filename": "bbb-60s.mp4",
+      "duration": 60,
+      "width": 854,
+      "height": 480
+    },
+    "created_at": "2026-07-20T20:32:32.418Z",
+    "updated_at": "2026-07-20T20:33:14.068Z",
+    "hls": {
+      "video_url": "https://deuqpmn4rs7j5.cloudfront.net/6a5e7d40d914e3b1be6697e6/assets/6a5e85e073d98e8a6ca42725/hlses/playlist.m3u8",
+      "thumbnail_urls": [
+        "https://deuqpmn4rs7j5.cloudfront.net/6a5e7d40d914e3b1be6697e6/assets/6a5e85e073d98e8a6ca42725/thumbnails/5.jpeg"
+      ],
+      "status": "COMPLETE",
+      "updated_at": "2026-07-20T20:33:17.087692515Z"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "endpoint": "POST /embed",
+  "request_headers": {
+    "x-api-key": "tlk_***REDACTED***",
+    "Content-Type": "application/json"
+  },
+  "request_body": {
+    "model_name": "Marengo-retrieval-2.7",
+    "text": "a rabbit in a forest"
+  },
+  "response_status": 400,
+  "latency_seconds": 0.528,
+  "response_body": {
+    "code": "parameter_invalid",
+    "message": "The model_name parameter is invalid. Marengo-retrieval-2.7 is no longer supported. Please use marengo3.0 instead."
+  }
+}

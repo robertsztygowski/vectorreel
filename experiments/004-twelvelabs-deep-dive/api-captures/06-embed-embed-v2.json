@@ -1,0 +1,17 @@
+{
+  "endpoint": "POST /embed-v2",
+  "request_headers": {
+    "x-api-key": "tlk_***REDACTED***",
+    "Content-Type": "application/json"
+  },
+  "request_body": {
+    "model_name": "marengo3.0",
+    "text": "a rabbit in a forest"
+  },
+  "response_status": 400,
+  "latency_seconds": 0.501,
+  "response_body": {
+    "code": "parameter_invalid",
+    "message": "The text parameter is invalid. received string, but expected object"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "endpoint": "POST /search",
+  "request_headers": {
+    "x-api-key": "tlk_***REDACTED***",
+    "Content-Type": "application/json"
+  },
+  "request_body": {
+    "index_id": "6a5e85dea51eb9c9b9c8006a",
+    "query_text": "a bunny in a green meadow",
+    "search_options": "visual",
+    "group_by": "clip",
+    "page_limit": "5"
+  },
+  "response_status": 200,
+  "latency_seconds": 0.708,
+  "response_body": {
+    "search_pool": {
+      "total_count": 1,
+      "total_duration": 60,
+      "index_id": "6a5e85dea51eb9c9b9c8006a"
+    },
+    "data": [
+      {
+        "rank": 1,
+        "start": 12.899999618530273,
+        "end": 22.5,
+        "video_id": "6a5e85e073d98e8a6ca42725"
+      },
+      {
+        "rank": 2,
+        "start": 37.599998474121094,
+        "end": 46,
+        "video_id": "6a5e85e073d98e8a6ca42725"
+      },
+      {
+        "rank": 3,
+        "start": 30.100000381469727,
+        "end": 37.599998474121094,
+        "video_id": "6a5e85e073d98e8a6ca42725"
+      },
+      {
+        "rank": 4,
+        "start": 0,
+        "end": 5.699999809265137,
+        "video_id": "6a5e85e073d98e8a6ca42725"
+      },
+      {
+        "rank": 5,
+        "start": 53.70000076293945,
+        "end": 60,
+        "video_id": "6a5e85e073d98e8a6ca42725"
+      }
+    ],
+    "page_info": {
+      "limit_per_page": 5,
+      "total_results": 9,
+      "page_expires_at": "2026-07-20T20:50:35Z",
+      "next_page_token": "d9fb71d027aa4b99a54865e45f42019a-1"
+    }
+  }
+}

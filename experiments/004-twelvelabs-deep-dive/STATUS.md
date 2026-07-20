@@ -16,7 +16,7 @@ This is the first of a series of per-competitor deep-dives; its structure is gen
 | M1 | Company intelligence → `dossier/01-company.md` | ✅ done |
 | M2 | Docs corpus deep-dive → `02`, `03`, `05` | ✅ done |
 | M3 | Playground hands-on → `04` + `assets/` | ✅ done |
-| M4 | API hands-on → `api-captures/`, `code-samples/` | ⬜ pending |
+| M4 | API hands-on → `api-captures/`, `code-samples/` | ✅ done |
 | M5 | Synthesis vs mdreel → `06`, `07` | ⬜ pending |
 | M6 | Methodology template + wrap-up → `METHODOLOGY.md` | ⬜ pending |
 
@@ -27,7 +27,9 @@ This is the first of a series of per-competitor deep-dives; its structure is gen
   max/index**, index expires **90 days** after creation. No payment method registered.
 - Free-tier "credit" = the 10 video-hour allowance. **Consumed: 0 hr / 10 hr** as of M3 end.
 - API keys generated this run: **1** (`mdreel-research-2026-07`, 3-mo expiry) → stored in `.env.local`.
-- Free-tier consumed / remaining: **0 hr used / 10 hr remaining** (updated after M4).
+- Free-tier consumed / remaining: **240 s used / 36,000 s (10 h) — ~0.7%**; 1 video / 100;
+  9.93 h remaining. Well under the contract §3 50% stop threshold. One M4 index retained as
+  evidence (`mdreel-m4-1784579548`); orphaned empty index from a failed first attempt was deleted.
 
 ## Secrets discipline (CLAUDE.md rule 1)
 - Email, password, and API key appear in **no committed file** (not even inside a documented

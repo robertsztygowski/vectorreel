@@ -1,0 +1,31 @@
+{
+  "endpoint": "POST /indexes",
+  "request_headers": {
+    "x-api-key": "tlk_***REDACTED***",
+    "Content-Type": "application/json"
+  },
+  "request_body": {
+    "index_name": "mdreel-m4-1784579548",
+    "models": [
+      {
+        "model_name": "marengo3.0",
+        "model_options": [
+          "visual",
+          "audio"
+        ]
+      },
+      {
+        "model_name": "pegasus1.2",
+        "model_options": [
+          "visual",
+          "audio"
+        ]
+      }
+    ]
+  },
+  "response_status": 201,
+  "latency_seconds": 0.601,
+  "response_body": {
+    "_id": "6a5e85dea51eb9c9b9c8006a"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "endpoint": "POST /tasks",
+  "request_headers": {
+    "x-api-key": "tlk_***REDACTED***",
+    "Content-Type": "application/json"
+  },
+  "request_body": {
+    "index_id": "6a5e85dea51eb9c9b9c8006a",
+    "video_file": "<bbb-60s.mp4 binary omitted>"
+  },
+  "response_status": 201,
+  "latency_seconds": 1.861,
+  "response_body": {
+    "_id": "6a5e85e073d98e8a6ca42725",
+    "video_id": "6a5e85e073d98e8a6ca42725"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "endpoint": "POST /analyze",
+  "request_headers": {
+    "x-api-key": "tlk_***REDACTED***",
+    "Content-Type": "application/json"
+  },
+  "request_body": {
+    "video_id": "6a5e85e073d98e8a6ca42725",
+    "prompt": "Summarize this video in 3 sentences, then list the main visual chapters with start and end timestamps.",
+    "temperature": 0.2,
+    "stream": false
+  },
+  "response_status": 200,
+  "latency_seconds": 12.839,
+  "response_body": {
+    "id": "13d4c81c-f2c7-4674-b7c3-fec50f8b21ec",
+    "data": "The video opens with a tranquil scene of a grassy field, a flowing stream, and a tree, setting a calm and natural atmosphere. A small gray bird perches on a branch and sings, followed by the appearance of the title \"The Peach Open Movie Project Presents Big Buck Bunny,\" after which the focus shifts to a large gray rabbit awakening in its burrow, stretching, and exploring its surroundings by sniffing flowers. The rabbit’s playful and curious behavior continues throughout the scene, culminating in a moment of quiet observation as it pauses, seemingly reacting to something unseen.\n\nMain Visual Chapters:  \n1. [00:00~00:05] Introduction to the grassy field and stream.  \n2. [00:05~00:11] The bird singing and the title card.  \n3. [00:12~00:22] The rabbit's burrow and the title \"Big Buck Bunny.\"  \n4. [00:23~00:37] The rabbit waking up and stretching.  \n5. [00:38~01:00] The rabbit interacting with its environment, including sniffing flowers.",
+    "finish_reason": "stop",
+    "usage": {
+      "output_tokens": 249,
+      "input_tokens": 22
+    }
+  }
+}

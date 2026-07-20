@@ -98,7 +98,33 @@ Rate limits are applied across multiple dimensions: DPD (Duration Per Day in min
 
 ## 4. Observed limits & latency (from M4 hands-on)
 
-_TBD (M4) — indexing latency, real quota decrements, discrepancies vs documented._
+Hands-on 2026-07-20, free tier, one 60-second Big Buck Bunny clip (854×480, CC-BY). Full evidence
+in `api-captures/` + `code-samples/README.md`. Source grade **O** (observed).
+
+**Latency (single 60 s clip):**
+- Indexing (upload → `ready`): **~45 s** end-to-end (states: uploading → queued → indexing →
+  ready), i.e. roughly **0.75× real-time** to index on the free tier. `api-captures/03-task-ready.json`.
+- Search: **~0.7 s**; Analyze (Pegasus, `stream:false`): **~12.8 s**; text Embed: **~0.6 s**.
+
+**Real quota decrement (from `GET /tl/billing/usage` after the run):** indexing the 60 s clip
+consumed **60 s Marengo + 60 s Pegasus indexing** and the one Analyze call consumed **120 s
+Pegasus** — **240 s total of the 36,000 s (10 h) hard cap (~0.7 %)**; `video_count 1/100`,
+`duration 60 s / 36,000 s`, `is_hard_limit: true`. So the "10 hour" free allowance is **metered
+per engine-family and per operation**, not a single wall-clock pool — indexing a video into an
+index with two models draws down *both* families, and each Analyze call draws Pegasus-seconds on
+top. `api-captures/00-run-summary.json` (+ live usage read, STATUS.md).
+
+**Observed behaviours vs documentation (discrepancies / clarifications):**
+- `/search` and `/embed` **require `multipart/form-data`** and reject `application/json`
+  (`content_type_invalid`) — the docs' JSON-body framing is misleading for these two.
+- `/analyze` **streams NDJSON by default**; needs `"stream": false` for a single JSON body.
+- Upload rejects video **< 360×360** (`video_resolution_too_low`) — the classic 320×180 sample fails.
+- Embedding **`Marengo-retrieval-2.7` is rejected** ("no longer supported, use marengo3.0") —
+  live confirmation of the Marengo 2.7 sunset (dossier 03 #11).
+- Auth header is **`x-api-key`** (confirmed), not `Authorization: Bearer`.
+- Text embedding dimensionality: **512** (`marengo3.0`). Analyze `usage`: 22 input / 249 output tokens.
+- Search response returns **ranked clips with float start/end timestamps**, a `page_info` with
+  `total_results` and a `next_page_token`, and `page_expires_at` (~15 min TTL on the result page).
 
 ## 5. Effective €/video-hour (cite METRICS.md names, never restate figures)
 
