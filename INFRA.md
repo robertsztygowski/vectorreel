@@ -80,6 +80,26 @@ session, stage, duration, token, cost, outcome, and region values are allowed; e
 prompts, transcripts, rendered output, source URLs, or other customer content must never be placed
 in telemetry attributes or metric labels.
 
+### Alerting (created 2026-07-20)
+
+Notification channel: email `hello@mdreel.com` (`mdreel founder email`). Two HTTPS uptime checks
+(300 s period): `api.mdreel.com/health` and `mdreel.com/` — Cloud Monitoring requires ≥3 checker
+regions, so probes run from the global checker pool; the probes carry no customer data, only the
+public endpoints are touched, so EU residency (rule 2) is unaffected. Alert policies (all email
+the channel above):
+
+| Policy | Condition | Watches |
+|---|---|---|
+| mdreel api 5xx rate | Cloud Run `request_count` 5xx rate > 0.02/s over 5 min | prod API errors |
+| mdreel api p95 latency | Cloud Run `request_latencies` p95 > 2 s for 10 min | prod API latency |
+| mdreel N9 wall-clock per video-hour | PromQL: `mdreel.job.duration` sum ÷ video seconds over 1 h vs the N9 SLO ratio | METRICS.md **N9** |
+| mdreel N7 Stage B runaway rate | PromQL: `mdreel.stageb.runaway` ÷ Stage B call count over 1 h vs the N7 threshold | METRICS.md **N7** |
+| mdreel webhook delivery failures | any `mdreel.webhook.delivery_failures` increase in 30 min | webhook path |
+| mdreel uptime … (×2) | ≥2 failed probes in 20 min, sustained 10 min | availability |
+
+The runaway and webhook-failure counters were seeded with a one-off zero-valued OTLP point so
+their `prometheus.googleapis.com` descriptors exist and PromQL policy validation passes.
+
 ## Database decision — Phase 4
 
 **One shared Postgres instance is the product source of truth** (METRICS.md §6.2): application
