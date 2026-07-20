@@ -1,0 +1,8 @@
+# Secrets — the TwelveLabs API key and any credentials live here, never committed (CLAUDE.md rule 1).
+.env.local
+
+# Local test media — CC clips are downloaded to temp, never committed.
+tmp/
+*.mp4
+*.mov
+*.webm
