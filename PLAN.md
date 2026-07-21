@@ -281,7 +281,13 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   the canonical example `tests/fixtures/repository/` (two corpus sessions, 12 topics,
 >   3 speakers, timeline), all validated by `web/lib/repository.test.ts` (22 tests).
 >   Derivation is deterministic from §4 documents + curation metadata — no pipeline change.
-> - **Next:** M3 (collections package) + M4 (landing pivot, in flight) in parallel.
+> - **M3 first public collections ✅** — DISTRIBUTION.md gained "First public collections": three
+>   launch collections with explicit rationale (**AI Engineering** — the buyer's own subject and
+>   the harshest A2 test; **.NET** — lands the LinkedIn workhorse on home turf; **Kubernetes/
+>   CNCF** — the largest CC-licensed ICP-adjacent corpus), per-collection question types (the
+>   proof), shared inclusion criteria, the per-video attribution/licensing checklist, and the
+>   second-wave backlog (Rust, Python, conference one-offs).
+> - **Next:** M4 (landing pivot) verification + M5 (GitHub distribution model).
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)

@@ -154,6 +154,58 @@ whether GDPR is a genuine blocker or a form field, **because we were the ones wh
 **unprompted** GDPR mention in an inbound reply is a strictly stronger A1 signal than the A/B.
 **Log those separately.**
 
+## First public collections — the launch package (M3, 2026-07-20)
+
+Three collections at launch, chosen for one reason each, all inside the ICP (BUSINESS_MODEL §5 —
+dev teams building AI assistants; Markdown/Git/docs-as-code-native early adopters). Every
+collection follows the repository contract (ARCHITECTURE.md §4b) with
+`visibility: "public-collection"`.
+
+| Collection | Why this one | The question types it answers (the proof) |
+|---|---|---|
+| **AI Engineering** (RAG, agents, LLM ops talks) | The buyer's own subject. A team building an AI assistant browsing a repository *about building AI assistants* is the tightest possible loop between demo and job-to-be-done — and this audience is the harshest A2 test (the people most able to DIY). | "What did anyone say about chunking strategies, across all these talks?" · "Show me every eval-methodology discussion, with timestamps." · "What was on the benchmark slide in that talk?" |
+| **.NET** (conference talks, deep-dives) | The founder's LinkedIn audience — the workhorse channel (portfolio table below) lands directly on home turf, and the "friendly crowd or real ICP?" open question gets its first data. | "Every time GC tuning came up, which talk and when?" · "What code was on screen during the minimal-API demo?" · "Track this speaker's argument across three conference years." |
+| **Kubernetes / CNCF** (KubeCon-style talks) | The largest CC-licensed, ICP-adjacent public corpus in existence (CNCF publishes under CC); platform teams are exactly the "internal AI assistant" buyer, and the volume proves the schema holds at scale. | "Which talks cover operator patterns, and what YAML was shown?" · "Summarize how the community's take on service meshes shifted over time." · "Find the incident-review talks and what dashboards they showed." |
+
+### Inclusion criteria (all collections)
+
+1. **Licence first:** CC-licensed on the source platform, verified per video (the `corpus.json`
+   audit-trail pattern), attribution line recorded before processing. No exceptions, no
+   "fair-use" reasoning — CLAUDE.md rule 8.
+2. **The ICP already knows it** — well-known talks, well-known speakers, or well-known
+   conferences. The skeptic must hold ground truth in their head (the proof-burden rule in the
+   core-insight section above).
+3. **Asset video only:** talks, demos, deep-dives, screencasts. Never meeting recordings, never
+   podcasts-with-nothing-on-screen *only* — each collection needs sessions where the on-screen
+   content carries answers speech doesn't (that is the differentiator being demonstrated).
+4. **Human-selected, one by one.** A collection grows by curation decisions, not by channel
+   scraping. Target size per collection: enough to make cross-session structure obviously useful
+   (roughly 5–10 sessions at launch, growing weekly — the publishing cadence section owns the
+   rhythm).
+5. **Embeddable + public** on the source platform (the collection page embeds the original;
+   ingestion stays Vertex `fileUri`-only — CLAUDE.md rule 8).
+
+### Attribution & licensing checklist (per video, before processing)
+
+- [ ] Licence field on the source platform says CC (record licence type + retrieval date)
+- [ ] `privacy: public` and `embeddable: true`
+- [ ] Attribution line composed: `"<title>" by <channel> (<url>), <licence>`
+- [ ] Entry appended to the collection's corpus audit trail (`corpus.json` pattern)
+- [ ] Attribution rendered in the session document's `## Source & licence` section AND the
+      repository manifest (`attribution` field, ARCHITECTURE.md §4b)
+- [ ] Original video embedded on the session's web page
+
+### Backlog (not at launch)
+
+- **Rust / systems programming** — strong CC corpus (e.g. live-coding streams), very
+  Git/Markdown-native audience; second wave.
+- **Python / data engineering** — EuroPython publishes CC; large audience, weaker overlap with
+  the "internal AI assistant" buyer than K8s; second wave.
+- **Conference-specific one-offs** (a single FOSDEM/KubeCon year as its own repository) — cheap
+  to produce once the pipeline of a parent collection exists; good release-cadence material.
+- A collection is *retired* (archived, kept online) if its sessions stop being curated — an
+  abandoned-looking collection is worse proof than a small fresh one.
+
 ## The launch artifact (PLAN.md Phase 5) — already written
 
 Side-by-side: **plain transcript vs. mdreel Markdown**, plus a RAG answering a question that
