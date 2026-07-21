@@ -307,7 +307,14 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   distribution touch), a per-session quality threshold (licence gate, 3-timestamp
 >   spot-verify, contract validation), conversion hooks folded into every batch, and a
 >   one-sitting founder runbook with an explicit cut rule (batch size shrinks, gates never).
-> - **Next:** M7 (consume→convert), then M8 (assumption test pack) + final report.
+> - **M7 consume→convert flow ✅** — the hop from browsing public collections to starting your
+>   own repository is now an explicit, instrumented product path: shared `ConvertCta` component
+>   ("build your own repository →") on the collection index + every session page; first-party
+>   Umami events `collection_session_view` (per-session, with videoId) and
+>   `collection_convert_click` (with `from` context) added to `lib/umami.ts` — no third-party
+>   pixels (rule 10). BUSINESS_MODEL §7.1 + DISTRIBUTION sources-panel now name the measured
+>   funnel. web unit 83/83, Playwright E2E 17/17 green.
+> - **Next:** deploy web, then M8 (assumption test pack) + final report.
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)

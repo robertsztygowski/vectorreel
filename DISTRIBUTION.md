@@ -446,7 +446,9 @@ of paid spend the day it happens via the ad-spend form on `/app/admin` (or
 `POST /api/v1/admin/ad-spend`) with the **same campaign slug as the ad's link** — a mismatched
 slug silently breaks the CAC join. Umami (stats.mdreel.com) shows the same traffic by UTM for
 top-of-funnel volume; the admin panel is authoritative for conversion and CAC because it joins to
-payments.
+payments. The consume→convert hop itself is readable in Umami as
+`collection_session_view` → `collection_convert_click` → `signup_view` (M7 — every collection
+surface fires the convert event with its `from` context and session `videoId`).
 
 ## Kill criteria — **a deadline, not a cash threshold**
 

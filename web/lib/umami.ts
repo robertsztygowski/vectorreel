@@ -22,5 +22,19 @@ export function trackUmamiFunnelView(pathname: string): void {
     '/gallery': 'gallery_view',
     '/docs': 'docs_view',
   }[pathname];
-  if (eventName) trackUmami(eventName);
+  if (eventName) {
+    trackUmami(eventName);
+    return;
+  }
+  // Collection session pages (/gallery/<videoId>) — the consume side of consume→convert.
+  if (pathname.startsWith('/gallery/')) {
+    trackUmami('collection_session_view', { videoId: pathname.slice('/gallery/'.length) });
+  }
+}
+
+// The convert click — a visitor moves from consuming a public collection to starting their own
+// repository. Fired from collection CTAs only, so the sources panel can attribute signups to the
+// consume→convert path without any third-party pixel (CLAUDE.md rule 10).
+export function trackConvertClick(from: string, videoId?: string): void {
+  trackUmami('collection_convert_click', videoId ? { from, videoId } : { from });
 }

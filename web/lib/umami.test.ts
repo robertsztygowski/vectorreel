@@ -1,6 +1,6 @@
 import { beforeEach, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { trackUmami, trackUmamiFunnelView } from './umami';
+import { trackConvertClick, trackUmami, trackUmamiFunnelView } from './umami';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -50,4 +50,31 @@ test('trackUmamiFunnelView maps public funnel pages only', () => {
   trackUmamiFunnelView('/app');
 
   assert.deepEqual(calls, ['pricing_view', 'gallery_view', 'docs_view', 'signup_view']);
+});
+
+test('trackUmamiFunnelView maps collection session pages with the videoId', () => {
+  const calls: Array<{ name: string; data?: Record<string, unknown> }> = [];
+  installBrowser((name, data) => calls.push({ name, data }));
+
+  trackUmamiFunnelView('/gallery/abc123XYZ');
+
+  assert.deepEqual(calls, [
+    { name: 'collection_session_view', data: { videoId: 'abc123XYZ', sid: 'sid_umami' } },
+  ]);
+});
+
+test('trackConvertClick records the consume→convert hop', () => {
+  const calls: Array<{ name: string; data?: Record<string, unknown> }> = [];
+  installBrowser((name, data) => calls.push({ name, data }));
+
+  trackConvertClick('collection_index');
+  trackConvertClick('collection_session', 'abc123XYZ');
+
+  assert.deepEqual(calls, [
+    { name: 'collection_convert_click', data: { from: 'collection_index', sid: 'sid_umami' } },
+    {
+      name: 'collection_convert_click',
+      data: { from: 'collection_session', videoId: 'abc123XYZ', sid: 'sid_umami' },
+    },
+  ]);
 });

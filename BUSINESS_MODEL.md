@@ -243,7 +243,11 @@ hard ship-by gate (METRICS.md §2.2 SB). → DISTRIBUTION.md for the reasoning.
    per visitor: a skeptic explores a real repository built from talks they already know, no
    signup, no trust required — which still avoids *"upload your confidential internal recording
    to a stranger's website"* as the first ask. Then: *"get this for your own recordings"* →
-   trial credit (METRICS.md N33) → two-plan checkout (§6).
+   trial credit (METRICS.md N33) → two-plan checkout (§6). **The consume→convert hop is an
+   explicit, instrumented product path** *(M7, 2026-07-21)*: every collection surface carries
+   the same "build your own repository" CTA, and the hop is measured first-party only —
+   `collection_session_view` → `collection_convert_click` → `signup_view` (self-hosted Umami,
+   CLAUDE.md r10; source attribution via the UTM playbook in DISTRIBUTION.md).
 2. **Curated public collections** — 10–25 processed CC-licensed talks organized into 3+ themed
    collections (DISTRIBUTION.md owns the list); a compounding SEO asset and a permanent live demo.
    **Curated, attributed — never a scaled transcript farm** (CLAUDE.md r8).

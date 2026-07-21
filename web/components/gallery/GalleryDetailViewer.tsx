@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { highlightMarkdownLines } from '@/components/CodeCard/highlightMarkdown';
+import { ConvertCta } from '@/components/ConvertCta';
 import type { LicenceBlock, OutputDocument } from '@/lib/corpus';
 
 function tsToSeconds(ts: string): number {
@@ -66,7 +67,7 @@ export function GalleryDetailViewer({
       <section className="rule-section">
         <div className="wrap" style={{ padding: '36px 32px 40px' }}>
           <p className="micro" style={{ margin: '0 0 14px' }}>
-            <Link href="/gallery">← gallery</Link>
+            <Link href="/gallery">← collections</Link>
           </p>
           <p className="kicker" style={{ marginBottom: 12 }}>
             ## {categoryLabel} · specimen {specimenNumber}
@@ -250,11 +251,17 @@ export function GalleryDetailViewer({
 
       <section className="gallery-cta-section">
         <div className="wrap gallery-cta-inner">
-          <h2 className="gallery-cta-title">This is what your own footage comes back as.</h2>
-          <p className="micro gallery-cta-kicker">no credit card · one portable .md file per video</p>
-          <Link href="/signup" className="btn btn-primary gallery-cta-button">
-            start free — 1 hour
-          </Link>
+          <h2 className="gallery-cta-title">This is what your own archive comes back as.</h2>
+          <p className="micro gallery-cta-kicker">
+            first hour free · no credit card · same repository shape, your private videos
+          </p>
+          <ConvertCta
+            from="collection_session"
+            videoId={videoId}
+            className="btn btn-primary gallery-cta-button"
+          >
+            build your own repository →
+          </ConvertCta>
           <p className="micro gallery-cta-api">
             <Link href="/docs" style={{ color: 'var(--accent)' }}>
               do this via API →

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getVideoMeta, loadCorpusIndex, type CorpusEntry } from '@/lib/corpus';
 import { GalleryCard, type GalleryPreview } from '@/components/GalleryCard/GalleryCard';
+import { ConvertCta } from '@/components/ConvertCta';
 
 export const metadata: Metadata = { title: 'Public collections — mdreel' };
 
@@ -101,13 +102,13 @@ export default function GalleryPage() {
           <p className="micro" style={{ margin: '0 0 32px', color: 'var(--ink-faint)' }}>
             first hour free · no credit card · same repository shape, your private videos
           </p>
-          <Link
-            href="/signup"
+          <ConvertCta
+            from="collection_index"
             className="btn btn-primary"
             style={{ height: 48, padding: '0 26px', fontSize: 13.5 }}
           >
             build your own repository →
-          </Link>
+          </ConvertCta>
           <p className="micro" style={{ margin: '26px 0 0' }}>
             <Link href="/docs" style={{ color: 'var(--accent)' }}>
               do this via API →
