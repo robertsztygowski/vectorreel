@@ -463,9 +463,15 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 > path, a §4b v1.1 contract with structurally-enforced publication tiers, contract-derived site
 > pages, a repository generator, and three **private** repos under `github.com/mdreel`.
 >
-> **3. 🚩 The batch was slow, and the cause was OUR CLIENT, not Vertex's capacity.** The constraint
-> is **not cost** — every session measured around or below METRICS.md **N4c**, and the whole corpus
-> projects to a few euro. It looked like throughput: 429s in both EU regions. But we sit at **~1% of
+> **3. 🚩 The batch was slow, and the cause was OUR CLIENT, not Vertex's capacity.**
+> **23 of 25 sessions produced** (2 failed on capacity, retryable, still in the corpus).
+> Cost is cheap in absolute terms — **€4.65** — but ⚠️ **above METRICS.md N4c**: 16 sessions spanned
+> 14–89 cents/video-hour and averaged ~45. *An earlier reading in this run said "below N4c"; that was
+> the first five sessions generalised too soon, and it is corrected here.* Part of the overage is
+> self-inflicted — retries were raised 3 → 8 to buy throughput and a failed segment that reaches the
+> model still bills, so **retry aggressiveness trades euros for wall-clock** (evidence and the
+> caveat in the measurements memo). Nothing approached **N4d** or the **N8** guardrail.
+> It looked like throughput: 429s in both EU regions. But we sit at **~1% of
 > our own (non-adjustable) limit**, and measurement showed the **429 success rate is flat at ~25% at
 > every concurrency level** — so we are not the cause and pushing harder does not make it worse.
 > **Throughput is purely a function of attempts in flight** (INFRA.md has the table).
@@ -477,6 +483,10 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 > matters: a customer's 30-minute video is 3–6 segments run concurrently — **1–2 minutes**, well
 > inside the METRICS.md **N9** SLO. *The earlier "bounded by wall-clock, not euros" reading was
 > half right: it is bounded by wall-clock, and the wall-clock was ours to fix.*
+> ⚠️ **But a batch's elapsed time is dominated by its worst sources, not its average one:** 16
+> sessions took **65 min of production inside 243 min of wall clock**, and nearly all of the gap was
+> two videos failing all 8 attempts. *Production is fast; failure handling is what costs hours.*
+> ⇒ the lever for a weekly batch is a **cheaper give-up**, not more speed on the happy path.
 >
 > **4. Four defects found, all invisible to the existing tests** — the cost ledger recorded calls
 > but never euros; the rule-9 timeout was below the YouTube path's real latency; Stage C emitted

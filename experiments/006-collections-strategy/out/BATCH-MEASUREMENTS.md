@@ -15,12 +15,27 @@
 This was the run that finally spent real inference money, and the two things it was supposed to
 settle came out in opposite directions.
 
-**Cost — comfortably better than assumed.** Every produced session measured **below METRICS.md
-N4c**, consistently, across sources of different length and density. Nothing came close to the
-METRICS.md **N4d** over-segmentation failure mode, and the per-session abort ceiling never fired.
-The full corpus projects to a few euro. **Cost engineering on this path would be procrastination in
-a lab coat** — PLAN.md already said that about the pipeline generally, and this run confirms it for
-collection production specifically.
+**Cost — cheap in absolute terms, but ABOVE N4c on the full batch.**
+
+⚠️ **Correcting an earlier reading in this same run.** After the first five sessions the figures were
+all under METRICS.md **N4c** and that was reported as the result. Across the completed batch it does
+not hold: **16 sessions spanned 14 → 89 cents/video-hour and averaged ~45**, which is meaningfully
+**above N4c**. The early number was a favourable sample generalised too soon — precisely the failure
+the one-number-one-home discipline exists to prevent.
+
+In absolute terms it is still cheap: **€4.65 for 16 sessions**, far below the METRICS.md **N8**
+all-in guardrail, and the **N4d** per-session ceiling never fired.
+
+🚩 **Part of the overage is self-inflicted, and it is a dial rather than a fact.** Retry attempts
+were raised from 3 to 8 to buy throughput, and **a failed segment that reached the model still
+bills**. The correlation supports it: the two most expensive sessions (89 and 75 c/video-hour) are
+also the two slowest (8m31s, 7m30s) — the ones that retried most. Content density is the other
+candidate cause and this batch cannot separate them, so treat it as **a hypothesis with supporting
+evidence, not a measured attribution.**
+
+⇒ **Retry aggressiveness trades euros for wall-clock.** At this scale the trade is clearly worth it.
+At a hundred times the volume it is a number someone should choose deliberately, and the experiment
+that separates retry-waste from content-density is worth running before that day.
 
 **Throughput — looked like a capacity wall, was actually our own client.** Vertex returns
 `429 RESOURCE_EXHAUSTED` in *both* EU regions under batch load. That is **Dynamic Shared Quota
@@ -37,8 +52,15 @@ single rejection arriving in under a second stops the whole pipeline and then sl
 | | before (sequential) | after (concurrent, 5 s backoff) |
 |---|---|---|
 | successful calls/min | ~0.8 | ~8.0 at 24-way |
-| per session | 8–40 min, with stalls | **~3.5 min** |
+| per session, production time | 8–40 min, with stalls | **~4 min** |
 | sessions previously *given up on* | 2 | **both completed, <4 min each** |
+
+⚠️ **But do not read ~4 min/session as ~4 min × N for a batch.** The completed run produced 16
+sessions in **65 minutes of production time inside 243 minutes of wall clock**. The ~3-hour gap is
+almost entirely **two videos that failed all 8 attempts**, plus retries on others. *Production is
+fast; failure handling is what costs hours.* A batch's elapsed time is dominated by its worst
+sources, not its average one — so the useful lever for a weekly batch is a cheaper give-up, not more
+speed on the happy path.
 
 ⇒ **The weekly batch is bounded by wall-clock — and the wall-clock was ours to fix.** The honest
 version of the earlier conclusion: sizing cadence against *spend* would still optimise the wrong
