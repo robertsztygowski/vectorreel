@@ -301,7 +301,13 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   (Correction = ground-truth QA + inbound conversation; Request = A2 demand signal),
 >   discoverability metadata (topics/description/pins/website+UTM), and a no-automation weekly
 >   operating checklist. Reusable issue forms shipped in `templates/collection-repo/`.
-> - **Next:** M6 (weekly publishing system), then M7 (consume→convert).
+> - **M6 weekly publishing system ✅** — DISTRIBUTION.md gained "The weekly publishing system":
+>   the batch (1–3 sessions into one rotating collection) as the publishing unit, the four
+>   weekly artifacts (sessions, regenerated indexes, changelog+release, one anchored
+>   distribution touch), a per-session quality threshold (licence gate, 3-timestamp
+>   spot-verify, contract validation), conversion hooks folded into every batch, and a
+>   one-sitting founder runbook with an explicit cut rule (batch size shrinks, gates never).
+> - **Next:** M7 (consume→convert), then M8 (assumption test pack) + final report.
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)

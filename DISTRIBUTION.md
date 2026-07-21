@@ -278,6 +278,61 @@ Each collection repo ships two issue forms (reusable copies live in
 No CI, no bots, no schedulers in collection repos — one founder, one checklist. Automation is
 earned when volume hurts, not before.
 
+## The weekly publishing system (M6, 2026-07-21)
+
+The rhythm that keeps collections alive. One founder, one batch per week, no roles, no tooling
+beyond the checklists already in this doc. **The unit of publishing is the batch, not the video** —
+a batch is 1–3 new sessions landing in *one* collection (rotating collections week to week beats
+spreading thin across all three).
+
+### What ships each week
+
+| # | Artifact | Where |
+|---|---|---|
+| 1 | 1–3 new sessions in one collection (processed, contract-validated) | mdreel.com collection page + the collection's GitHub repo |
+| 2 | Regenerated indexes (topics/speakers/timeline/manifest) for that collection | same |
+| 3 | CHANGELOG entry + GitHub Release `v<yyyy.ww>` | collection repo |
+| 4 | One distribution touch: a LinkedIn post *or* community comment anchored on something a new session actually answers (a real cross-session question, not an announcement) | channel 1 / 4 |
+
+A week with zero new sessions is allowed **only** if item 4 still happens and open
+Corrections/Requests are answered — responsiveness is the freshness that matters (the retirement
+rule keys off curation stopping, and answered issues are curation).
+
+### Quality threshold (per session, before it ships)
+
+1. The M3 **attribution & licensing checklist** passes — this is the legal gate, no exceptions.
+2. **Spot-verify 3 timestamps** against the original video: one spoken claim, one on-screen
+   detail, one section heading. Any miss → fix or drop the session; never ship a known miss (a
+   skeptic verifying against ground truth is the funnel — one caught error costs more than ten
+   missing sessions).
+3. Contract validation green (`web/lib/repository.test.ts` against the collection tree).
+4. Indexes cite, never restate (§4b) — eyeball one topic page for drift.
+
+### Conversion hooks (built into every batch, no extra work)
+
+- Every session page ends with the same dual CTA as the site (explore more / build your own) —
+  already the M4 surface.
+- The GitHub README footer + repo website field carry UTM (`utm_source=github`) so collection →
+  signup shows up in the first-party sources panel (UTM playbook below).
+- The weekly LinkedIn/community post links to the *collection page*, not the homepage — the demo
+  converts, the homepage explains.
+- Answered Requests get a changelog credit + a reply — the requester is a warm, self-selected
+  lead (channel 6 rules apply: log unprompted GDPR/compliance mentions separately for A1).
+
+### The runbook (one sitting, in order)
+
+1. Pick the week's collection; pull 1–3 candidates from the backlog/Requests.
+2. Per video: attribution checklist → process → spot-verify 3 timestamps.
+3. Regenerate indexes; run the contract validator.
+4. Publish: site page(s) live → git commit to collection repo → CHANGELOG → tag + release.
+5. Answer every open Correction/Request.
+6. Write the distribution touch (item 4) anchored on a real question the batch answers.
+7. Log ledgered costs for the batch (CLAUDE.md rule 6 — processing compute is COGS even for
+   public collections; it's marketing spend and it goes in the ledger like ad spend does).
+
+If the sitting runs long, cut from the top of the list (fewer sessions), never from the bottom
+(quality gates and responses are non-negotiable; batch size is).
+
 ## The launch artifact (PLAN.md Phase 5) — already written
 
 Side-by-side: **plain transcript vs. mdreel Markdown**, plus a RAG answering a question that
