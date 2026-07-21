@@ -358,6 +358,28 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >    the living docs during that run — until then this bullet is the pointer.
 
 
+> ### 🏃 Autonomous build run — 2026-07-21 (first real collection; rule-5 override + bounded Vertex spend)
+> **This is the run that finally spends real inference money.** The last four runs shipped product
+> surface and narrative; every deployed service still runs `PipelineModel__Mode=fake`. The top risk
+> is **A5 — distribution**, and the single artifact that moves it is a real, browsable collection.
+> Prompt: `experiments/006-collections-strategy/launch-prompt-first-collection.md`.
+>
+> > 🏭 **TWO FACTORIES — the scope guard for this run and the next six months.**
+> > **Factory A (`video → session document`) is the product**: deterministic, contract-frozen
+> > (ARCHITECTURE §4/§4b), cost measured (METRICS.md **N4c**), quality gate exists.
+> > **Factory B (`many session documents → editorial knowledge artifact`) is an experiment**:
+> > editorial, its cost is **founder-hours** (the scarcest input in the company and the one nothing
+> > meters), it has no quality gate, and its legality is open. Strategy conversations drift toward B
+> > because it is more exciting. The ordering is also enforced by dependency — **B's raw material is
+> > A's output.**
+>
+> - **M0 guardrails ✅** — `scripts/preflight.sh` 21/21 PASS; budget alert
+>   `mdreel-monthly-1000usd-equiv` present; Cloud Run caps hold (web 3 / api 2 / worker 1, all
+>   `min=0`); `gh auth status` reaches the **`mdreel` org** (it exists — that NEEDS-FOUNDER item is
+>   done); ADC reaches Vertex `gemini-2.5-flash` @ `europe-central2` with a live round-trip. Rule-5
+>   override, the **bounded Vertex authorization**, and the **public-artifact boundary** (nothing
+>   public this run) recorded in INFRA.md. M1–M8 todo graph created.
+
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages
 >   were AI-drafted from primary sources (memo `experiments/legal/2026-07-18-legal-pack-research.md`)

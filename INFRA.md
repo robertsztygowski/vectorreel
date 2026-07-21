@@ -195,6 +195,30 @@ gcloud services enable cloudtasks.googleapis.com --project tensile-runway-442915
 > EU-only. No CI auto-deploy; standing rule 5 unchanged. Guardrails re-verified 2026-07-20 (this
 > run): preflight 21/21 PASS, budget alert present, Cloud Run caps hold (web 3 / api 2 / worker 1,
 > all `min=0`).
+>
+> **2026-07-21 — first-collection run (rule 5 override + 🚨 bounded Vertex authorization).** The
+> founder authorized, **for this run only**: (a) deploying from local via `scripts/deploy.sh` after
+> the DoD gate passes, and (b) **real Vertex inference spend** to produce **20–25 CC-BY sessions**
+> for the first public collection. Conditions, all mandatory: every LLM call *and* compute step
+> recorded in the ledger (rule 6); **calibrate on the first 2 sessions**, reconcile actual
+> €/video-hour against METRICS.md **N4c**, extrapolate the batch, and **shrink the batch** (never
+> the quality gates) if the projection exceeds the budget guardrail above; **hard stop** if any
+> single session approaches METRICS.md **N4d** (that is the over-segmentation failure mode, not a
+> price) — fix segmentation per rule 9 or drop the video; production runs use the
+> low-media-resolution path (METRICS.md **N4b**/**N4c**). **Deployed services stay
+> `PipelineModel__Mode=fake`** — the batch runs from local. No new continuously-billing resources;
+> Vertex is usage-based, not a new fixed base (METRICS.md **N2**). Stripe stays test mode. EU only.
+> No CI auto-deploy; standing rule 5 unchanged.
+>
+> **Public-artifact boundary for this run (founder, 2026-07-21):** nothing becomes publicly
+> visible. Collection repos are pushed **private** to `github.com/mdreel`; mdreel.com collection
+> pages ship **behind a flag that is OFF in prod**; no post, no ad, no release announcement, and
+> **T0 (METRICS.md §2.2) is not set**. Flipping any of these is a founder decision (NEEDS-FOUNDER).
+>
+> Guardrails verified at M0 (2026-07-21): `scripts/preflight.sh` **21/21 PASS**; budget alert
+> `mdreel-monthly-1000usd-equiv` (4000 PLN) present; Cloud Run caps hold (web 3 / api 2 / worker 1,
+> all `min=0`); `gh auth status` reaches the **`mdreel`** org; ADC reaches Vertex
+> `gemini-2.5-flash` @ `europe-central2` (live round-trip, 8 tokens).
 
 ### Deploy automation — `scripts/` (added 2026-07-17)
 
