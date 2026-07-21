@@ -29,10 +29,16 @@ public sealed record CollectionSource(
 /// <item><c>AbortOverCentsPerVideoHour</c> — abort the whole batch if any single session exceeds
 /// this. The <b>N4d</b> guard.</item>
 /// <item><c>RetryAttempts</c> / <c>RetryBackoff</c> — Vertex returns <c>429 RESOURCE_EXHAUSTED</c>
-/// in <em>both</em> EU regions under sustained load, so an unattended 25-video batch will meet it.
-/// A quota blip must not end the run or silently shrink the collection.</item>
-/// <item><c>PaceBetweenSessions</c> — deliberate idle between sessions. Slower is cheaper than
-/// retrying: a 429'd call still costs wall-clock, and pacing avoids provoking it.</item>
+/// in <em>both</em> EU regions under contention, so an unattended batch will meet it. A quota blip
+/// must not end the run or silently shrink the collection. <b>Keep the backoff short</b>: a 429
+/// arrives in well under a second and costs nothing, so a long sleep buys nothing and forfeits
+/// throughput.</item>
+/// <item><c>MaxConcurrentSegments</c> — 🚩 the single biggest throughput lever on this path.
+/// Measured 2026-07-21: the 429 success rate is a flat ~25% at every concurrency level, because the
+/// contention is not ours (we run at ~1% of our own limit). Throughput therefore scales with
+/// attempts in flight — ~0.8 successful calls/min sequential vs ~8.0 at 24-way concurrency.</item>
+/// <item><c>PaceBetweenSessions</c> — deliberate idle between sessions. Now default OFF: it was
+/// added on the assumption we were provoking the throttling, and the measurement says we are not.</item>
 /// </list>
 /// </remarks>
 public sealed record CollectionBatchRequest(
@@ -48,7 +54,8 @@ public sealed record CollectionBatchRequest(
     int? AbortOverCentsPerVideoHour = null,
     int RetryAttempts = 3,
     TimeSpan? RetryBackoff = null,
-    TimeSpan? PaceBetweenSessions = null);
+    TimeSpan? PaceBetweenSessions = null,
+    int MaxConcurrentSegments = 6);
 
 /// <summary>
 /// What happened to one source. <see cref="Failed"/> is deliberately distinct from a source that

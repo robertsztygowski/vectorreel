@@ -463,13 +463,20 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 > path, a §4b v1.1 contract with structurally-enforced publication tiers, contract-derived site
 > pages, a repository generator, and three **private** repos under `github.com/mdreel`.
 >
-> **3. 🚩 The batch did not finish, and the reason matters.** 5 of 25 sessions produced. The
-> constraint is **not cost** — every session measured below METRICS.md **N4c**, and the whole
-> corpus projects to a few euro. It is **throughput**: Vertex returns 429 in both EU regions under
-> sustained load, the binding limit is **non-adjustable**, and we sit at ~1% of it, so this is
-> shared-capacity contention (INFRA.md). It refreshes per minute with no daily cap, so **nothing is
-> blocked — only slowed**, and the batch resumes for free. *This inverts the planning assumption:
-> the weekly batch is bounded by wall-clock, not by euros.*
+> **3. 🚩 The batch was slow, and the cause was OUR CLIENT, not Vertex's capacity.** The constraint
+> is **not cost** — every session measured around or below METRICS.md **N4c**, and the whole corpus
+> projects to a few euro. It looked like throughput: 429s in both EU regions. But we sit at **~1% of
+> our own (non-adjustable) limit**, and measurement showed the **429 success rate is flat at ~25% at
+> every concurrency level** — so we are not the cause and pushing harder does not make it worse.
+> **Throughput is purely a function of attempts in flight** (INFRA.md has the table).
+> The production path had been built **strictly sequential with multi-minute backoff** — the
+> pathological client for a contention limit, where one rejection arriving in under a second halts
+> everything. After running segments concurrently and cutting backoff to seconds: **~3.5 min per
+> session instead of 8–40**, and **two sessions the sequential batch had given up on entirely
+> completed in under 4 minutes each**. Implication for the paid path, which is the question that
+> matters: a customer's 30-minute video is 3–6 segments run concurrently — **1–2 minutes**, well
+> inside the METRICS.md **N9** SLO. *The earlier "bounded by wall-clock, not euros" reading was
+> half right: it is bounded by wall-clock, and the wall-clock was ours to fix.*
 >
 > **4. Four defects found, all invisible to the existing tests** — the cost ledger recorded calls
 > but never euros; the rule-9 timeout was below the YouTube path's real latency; Stage C emitted

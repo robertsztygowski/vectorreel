@@ -166,6 +166,37 @@ console and the Cloud Quotas API actually say about that:
    price. Any path that calls Vertex must survive a 429 storm by backing off and resuming, never by
    failing the job. See ARCHITECTURE.md §3 (Stage B capacity handling).
 
+### 🚩 Concurrency is the throughput lever — sequential processing is the pathological case
+
+Measured 2026-07-21 on the real workload shape (10-minute low-res video segments, both EU regions):
+
+| Concurrency | Successful calls/min | Success rate |
+|---|---|---|
+| 1 (sequential) | **0.8** | 25% |
+| 4 | 1.4 | 25% |
+| 12 | 3.7 | 25% |
+| 24 | **8.0** | 29% |
+
+**The success rate is flat.** Pushing harder does not increase the rejection rate, because the
+contention is not ours — so throughput is purely a function of how many attempts are in flight, and
+sequential processing is the worst possible client: one rejection, which arrives in **under a
+second**, halts everything.
+
+Three consequences, all now implemented in the collection production path:
+
+- **Run segments concurrently.** A first-collection batch went from *hours* to ~3.5 min/session, and
+  two sessions the sequential batch had **given up on entirely** completed in under 4 minutes each.
+- **Keep backoff short** (seconds, not minutes). Sleeping through contention forfeits throughput
+  without reducing it. A long backoff is only correct when *you* are the cause; we are not.
+- **Do not pace.** Deliberate idle between units was added on the assumption we were provoking the
+  throttling. We are not.
+
+⚠️ **Where our own limit does start to bind.** At ~40k video tokens per 10-minute low-res segment
+against the per-minute video-input limit, roughly **60 segments/min** is where *we* become the
+constraint — about **20–25 concurrent in-flight calls** at the observed latency. Past that, the
+honest answer is Provisioned Throughput, and that is a founder decision about buying guaranteed
+capacity, not a tuning knob.
+
 🚨 The **`global` Vertex endpoint** has much larger capacity and would make the 429s disappear.
 **It is a hard stop:** global routing sends inference outside the EU, inside a company that sells EU
 residency to DPOs (CLAUDE.md rule 2). Do not reach for it, and do not re-propose it.

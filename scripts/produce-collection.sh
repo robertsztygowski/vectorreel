@@ -95,14 +95,22 @@ export CollectionProduction__StageB__TimeoutSeconds="${STAGE_B_TIMEOUT_SECONDS:-
 # aborts the batch rather than paying for overflow retries across every remaining video.
 export CollectionProduction__AbortOverCentsPerVideoHour="${ABORT_OVER_CENTS_PER_VIDEO_HOUR:-200}"
 
-# Gemini 2.5 on Vertex uses Dynamic Shared Quota: a 429 means the EU region is busy right now,
-# shared across every customer, not that a per-project allowance is spent. Measured 2026-07-21:
-# every quota that binds this path refreshes PER MINUTE and there is no daily cap on the EU
-# endpoint. So persistence always wins and wall-clock is the only price — retry generously.
+# 🚩 Gemini 2.5 on Vertex uses Dynamic Shared Quota: a 429 means the EU region is busy right now,
+# shared across every customer — NOT that our allowance is spent. Measured 2026-07-21: we run at
+# ~1% of our own (non-adjustable) limit, and the success rate is a flat ~25% at every concurrency
+# level tried. So we are not the cause, pushing harder does not make it worse, and throughput is
+# purely a function of how many attempts are in flight:
+#
+#     sequential          ~0.8 successful calls/min
+#     24-way concurrency  ~8.0 successful calls/min
+#
+# Hence: concurrency high, backoff SHORT (a 429 arrives in under a second and costs nothing, so
+# sleeping through contention forfeits throughput without reducing it), pacing OFF.
 # (The `global` endpoint has more headroom and is a HARD STOP: it routes outside the EU, rule 2.)
-export CollectionProduction__RetryAttempts="${RETRY_ATTEMPTS:-6}"
-export CollectionProduction__RetryBackoff="${RETRY_BACKOFF:-00:01:30}"
-export CollectionProduction__PaceBetweenSessions="${PACE_BETWEEN_SESSIONS:-00:00:30}"
+export CollectionProduction__RetryAttempts="${RETRY_ATTEMPTS:-8}"
+export CollectionProduction__RetryBackoff="${RETRY_BACKOFF:-00:00:05}"
+export CollectionProduction__PaceBetweenSessions="${PACE_BETWEEN_SESSIONS:-00:00:00}"
+export CollectionProduction__MaxConcurrentSegments="${MAX_CONCURRENT_SEGMENTS:-8}"
 
 [[ -n "$CALIBRATE" ]] && export CollectionProduction__CalibrationCount="$CALIBRATE"
 if [[ -n "$ONLY" ]]; then

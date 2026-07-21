@@ -22,16 +22,32 @@ The full corpus projects to a few euro. **Cost engineering on this path would be
 a lab coat** — PLAN.md already said that about the pipeline generally, and this run confirms it for
 collection production specifically.
 
-**Throughput — the real constraint, and it was not on anyone's list.** Vertex returns
-`429 RESOURCE_EXHAUSTED` in *both* EU regions under sustained batch load. INFRA.md owns the
-measurements; the short version is that this is **Dynamic Shared Quota contention, not an exhausted
-allowance** (we run at ~1% of our own limit), the binding limit is **non-adjustable**, and it
-refreshes per minute with no daily cap. So a batch is never blocked, only slowed — but "only
-slowed" turned a projected 1.5-hour job into a multi-hour one.
+**Throughput — looked like a capacity wall, was actually our own client.** Vertex returns
+`429 RESOURCE_EXHAUSTED` in *both* EU regions under batch load. That is **Dynamic Shared Quota
+contention, not an exhausted allowance**: we run at ~1% of our own (non-adjustable) limit, and it
+refreshes per minute with no daily cap (INFRA.md).
 
-⇒ **The weekly batch is bounded by wall-clock, not by euros.** That inverts the planning
-assumption. DISTRIBUTION.md's cut rule ("batch size shrinks, quality gates never") is the right
-lever, and the thing it should be sized against is elapsed time, not spend.
+The tempting conclusion — *"Vertex cannot do the volume"* — is wrong, and the measurement that
+disproves it is that **the 429 success rate is flat at ~25% at every concurrency level tried**
+(1, 4, 12, 24). We are not causing the rejections, and pushing harder does not increase them. So
+throughput scales with attempts in flight, and **the production path had been built strictly
+sequential with multi-minute backoff** — the pathological client for a contention limit, where a
+single rejection arriving in under a second stops the whole pipeline and then sleeps.
+
+| | before (sequential) | after (concurrent, 5 s backoff) |
+|---|---|---|
+| successful calls/min | ~0.8 | ~8.0 at 24-way |
+| per session | 8–40 min, with stalls | **~3.5 min** |
+| sessions previously *given up on* | 2 | **both completed, <4 min each** |
+
+⇒ **The weekly batch is bounded by wall-clock — and the wall-clock was ours to fix.** The honest
+version of the earlier conclusion: sizing cadence against *spend* would still optimise the wrong
+variable, but the elapsed-time figure to size against is the one after this fix, not before it.
+
+⇒ **For the paid path** — the question this actually raised — a customer's 30-minute video is 3–6
+segments run concurrently: **1–2 minutes**, comfortably inside the METRICS.md **N9** SLO. Our own
+limit does not bind until roughly 60 segments/min (~20–25 concurrent in flight), which is where
+Provisioned Throughput becomes a real decision rather than a premature one.
 
 ---
 

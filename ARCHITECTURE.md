@@ -218,10 +218,21 @@ decide the design:
 ⇒ **Waiting always works, and wall-clock is the only price.** So capacity handling is a design
 requirement, not error handling:
 
+0. 🚩 **Run segments concurrently, and keep the backoff short.** This is the throughput lever, and
+   getting it wrong is the difference between a usable pipeline and an unusable one. The 429 success
+   rate is **flat at ~25% regardless of how hard we push** (INFRA.md), so throughput is purely a
+   function of attempts in flight — sequential processing is the pathological client, because one
+   rejection arriving in under a second halts everything. A long backoff is correct only when *we*
+   are the cause of the throttling; here we are not.
 1. **Retry with backoff until it clears** — across both EU regions (`europe-central2` →
    `europe-west3`), then simply wait. A job must not fail because a region was busy.
 2. **Checkpoint per segment.** A video that dies at segment 5 must resume at segment 5, never
    restart at 0 — otherwise every retry re-buys work already paid for (rule 6).
+   ⚠️ **A failing segment must not cancel its siblings.** The obvious concurrent construct
+   (`Parallel.ForEachAsync`) cancels outstanding work on the first exception, which discards
+   in-flight segments that were about to be checkpointed — throwing away exactly what checkpointing
+   exists to keep. Let every segment finish and record its own outcome, then fail the job if any
+   did, so the retry pays only for what actually failed.
 3. **Pace rather than hammer.** A 429'd call buys nothing and still costs wall-clock, so deliberate
    idle between units is cheaper than the retry it avoids.
 4. **Distinguish a capacity failure from a quality failure.** A 429 is retried and the item stays in

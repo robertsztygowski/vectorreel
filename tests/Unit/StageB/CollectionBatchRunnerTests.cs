@@ -221,22 +221,43 @@ public sealed class CollectionBatchRunnerTests
         }
     }
 
+    // Stage B segments now run concurrently, so every counter here is guarded. A test double that
+    // is not thread-safe under a concurrent subject does not fail honestly — it hangs or lies.
     private sealed class RecordingAnalyzer(HashSet<string> failVideoIds, int? failOnceAtSegment = null)
         : IVideoAnalyzer
     {
+        private readonly Lock _sync = new();
         private readonly Dictionary<string, int> _attempts = [];
         private readonly Dictionary<int, int> _segmentCalls = [];
+        private readonly List<string> _analyzedSources = [];
+        private readonly List<MediaResolution> _resolutions = [];
+        private readonly List<string> _producedVideoIds = [];
         private bool _segmentFailureUsed;
 
-        public List<string> AnalyzedSources { get; } = [];
+        public IReadOnlyList<string> AnalyzedSources
+        {
+            get { lock (_sync) { return [.. _analyzedSources]; } }
+        }
 
-        public List<MediaResolution> Resolutions { get; } = [];
+        public IReadOnlyList<MediaResolution> Resolutions
+        {
+            get { lock (_sync) { return [.. _resolutions]; } }
+        }
 
-        public List<string> ProducedVideoIds { get; } = [];
+        public IReadOnlyList<string> ProducedVideoIds
+        {
+            get { lock (_sync) { return [.. _producedVideoIds]; } }
+        }
 
-        public int AttemptsFor(string videoId) => _attempts.GetValueOrDefault(videoId);
+        public int AttemptsFor(string videoId)
+        {
+            lock (_sync) { return _attempts.GetValueOrDefault(videoId); }
+        }
 
-        public int CallsForSegment(int index) => _segmentCalls.GetValueOrDefault(index);
+        public int CallsForSegment(int index)
+        {
+            lock (_sync) { return _segmentCalls.GetValueOrDefault(index); }
+        }
 
         public Task<StageBModelResponse> AnalyzeAsync(
             string sourceUri,
@@ -244,30 +265,35 @@ public sealed class CollectionBatchRunnerTests
             StageBCallOptions callOptions,
             CancellationToken cancellationToken)
         {
-            _segmentCalls[segment.Index] = _segmentCalls.GetValueOrDefault(segment.Index) + 1;
-
-            if (failOnceAtSegment == segment.Index && !_segmentFailureUsed)
-            {
-                _segmentFailureUsed = true;
-                throw new HttpRequestException(
-                    "Vertex generateContent returned 429 RESOURCE_EXHAUSTED in all EU regions.");
-            }
-
             var videoId = sourceUri.Split('=')[^1];
-            if (failVideoIds.Contains(videoId))
+
+            lock (_sync)
             {
-                if (segment.Index == 0)
+                _segmentCalls[segment.Index] = _segmentCalls.GetValueOrDefault(segment.Index) + 1;
+
+                if (failOnceAtSegment == segment.Index && !_segmentFailureUsed)
                 {
-                    _attempts[videoId] = _attempts.GetValueOrDefault(videoId) + 1;
+                    _segmentFailureUsed = true;
+                    throw new HttpRequestException(
+                        "Vertex generateContent returned 429 RESOURCE_EXHAUSTED in all EU regions.");
                 }
 
-                throw new HttpRequestException(
-                    "Vertex generateContent returned 429 RESOURCE_EXHAUSTED in all EU regions.");
-            }
+                if (failVideoIds.Contains(videoId))
+                {
+                    // Count one attempt per pass over the video, not per segment.
+                    if (segment.Index == 0)
+                    {
+                        _attempts[videoId] = _attempts.GetValueOrDefault(videoId) + 1;
+                    }
 
-            AnalyzedSources.Add(sourceUri);
-            Resolutions.Add(segment.Sampling.MediaResolution);
-            ProducedVideoIds.Add(videoId);
+                    throw new HttpRequestException(
+                        "Vertex generateContent returned 429 RESOURCE_EXHAUSTED in all EU regions.");
+                }
+
+                _analyzedSources.Add(sourceUri);
+                _resolutions.Add(segment.Sampling.MediaResolution);
+                _producedVideoIds.Add(videoId);
+            }
 
             // Stage B reports offsets within the segment, not absolute video positions.
             static string Stamp(TimeSpan t) => $"{(int)t.TotalHours:00}:{t.Minutes:00}:{t.Seconds:00}";
@@ -322,7 +348,8 @@ public sealed class CollectionBatchRunnerTests
 
     private sealed class InMemoryStorage : IObjectStorage
     {
-        public Dictionary<(string Bucket, string ObjectName), string> Writes { get; } = [];
+        // Concurrent segments write checkpoints concurrently.
+        public System.Collections.Concurrent.ConcurrentDictionary<(string Bucket, string ObjectName), string> Writes { get; } = new();
 
         public Task<Stream> OpenReadAsync(string bucket, string objectName, CancellationToken cancellationToken)
         {
@@ -341,7 +368,7 @@ public sealed class CollectionBatchRunnerTests
 
         public Task DeleteAsync(string bucket, string objectName, CancellationToken cancellationToken)
         {
-            Writes.Remove((bucket, objectName));
+            Writes.TryRemove((bucket, objectName), out _);
             return Task.CompletedTask;
         }
     }

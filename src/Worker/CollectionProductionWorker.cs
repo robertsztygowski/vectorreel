@@ -61,7 +61,8 @@ public sealed class CollectionProductionWorker(
                     AbortOverCentsPerVideoHour: cfg.AbortOverCentsPerVideoHour,
                     RetryAttempts: cfg.RetryAttempts,
                     RetryBackoff: cfg.RetryBackoff,
-                    PaceBetweenSessions: cfg.PaceBetweenSessions),
+                    PaceBetweenSessions: cfg.PaceBetweenSessions,
+                    MaxConcurrentSegments: cfg.MaxConcurrentSegments),
                 stoppingToken);
 
             var remainingHours = totalHours - result.Produced.Sum(s => s.VideoDuration.TotalHours)

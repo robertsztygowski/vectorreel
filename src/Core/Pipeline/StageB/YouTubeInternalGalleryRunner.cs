@@ -61,39 +61,88 @@ public sealed class YouTubeInternalGalleryRunner(
             List<SegmentAnalysis> analyses = [];
             using (StartStage(request.JobId, "B"))
             {
-                foreach (var segment in segments)
+                // 🚩 Segments run CONCURRENTLY, and that is the difference between a usable pipeline
+                // and an unusable one. Vertex 429s here are Dynamic Shared Quota *contention*, not
+                // our own allowance being spent — measured 2026-07-21, we sit at ~1% of our limit
+                // and the success rate is a flat ~25% at every concurrency level tried. So the only
+                // lever on throughput is how many attempts are in flight: sequential managed ~0.8
+                // successful calls/min, 24-way concurrency managed ~8.0 (INFRA.md).
+                //
+                // Sequential processing against a contention limit is the pathological case: one
+                // rejection stalls the whole job, and a rejection arrives in under a second.
+                var buckets = new SegmentAnalysis[segments.Count][];
+                var failures = new List<Exception>();
+                using var gate = new SemaphoreSlim(Math.Max(1, request.MaxConcurrentSegments));
+
+                // ⚠️ Deliberately NOT Parallel.ForEachAsync: it cancels sibling tasks on the first
+                // exception, so one failing segment would discard in-flight work that was about to
+                // be checkpointed — throwing away exactly what checkpointing exists to keep. Every
+                // segment is allowed to finish and record its own outcome; the job fails afterwards
+                // if any did, and the retry then only pays for the ones that actually failed.
+                var tasks = segments.Select(async (segment, index) =>
                 {
-                    // Segment-level checkpointing. Vertex returns 429 in both EU regions under
-                    // shared-quota contention, so a long video can fail at segment 5 having already
-                    // paid for segments 0-4. Without this, the retry buys them a second time
-                    // (CLAUDE.md rule 6 — the cheapest euro is the one not spent twice).
-                    var checkpoint = $"{prefix}/segments/{segment.Index:D3}.json";
-                    if (request.CheckpointSegments
-                        && await TryReadSegmentAsync(request.OutputBucket, checkpoint, cancellationToken)
-                            is { } cached)
+                    await gate.WaitAsync(cancellationToken);
+                    try
                     {
-                        analyses.AddRange(cached);
-                        continue;
+                        var checkpoint = $"{prefix}/segments/{segment.Index:D3}.json";
+                        if (request.CheckpointSegments
+                            && await TryReadSegmentAsync(request.OutputBucket, checkpoint, cancellationToken)
+                                is { } cached)
+                        {
+                            buckets[index] = [.. cached];
+                            return;
+                        }
+
+                        var analyzed = await stageB.AnalyzeAsync(
+                            request.SourceUri,
+                            segment,
+                            StageAOptions.Default,
+                            stageBOptions,
+                            cancellationToken,
+                            request.JobId);
+
+                        if (request.CheckpointSegments)
+                        {
+                            await WriteUtf8Async(
+                                request.OutputBucket,
+                                checkpoint,
+                                JsonSerializer.Serialize(analyzed, DocumentJson),
+                                cancellationToken);
+                        }
+
+                        buckets[index] = [.. analyzed];
                     }
-
-                    var analyzed = await stageB.AnalyzeAsync(
-                        request.SourceUri,
-                        segment,
-                        StageAOptions.Default,
-                        stageBOptions,
-                        cancellationToken,
-                        request.JobId);
-
-                    if (request.CheckpointSegments)
+                    catch (Exception ex) when (ex is not OperationCanceledException)
                     {
-                        await WriteUtf8Async(
-                            request.OutputBucket,
-                            checkpoint,
-                            JsonSerializer.Serialize(analyzed, DocumentJson),
-                            cancellationToken);
+                        lock (failures)
+                        {
+                            failures.Add(ex);
+                        }
                     }
+                    finally
+                    {
+                        gate.Release();
+                    }
+                }).ToList();
 
-                    analyses.AddRange(analyzed);
+                await Task.WhenAll(tasks);
+
+                if (failures.Count > 0)
+                {
+                    // Surface the first cause directly — the batch runner's retry logic and the
+                    // per-session report both read the message.
+                    throw failures.Count == 1
+                        ? failures[0]
+                        : new AggregateException(
+                            $"{failures.Count} of {segments.Count} Stage B segments failed.", failures);
+                }
+
+                // Collected by index, so the concurrency above cannot reorder the document. The
+                // explicit sort below still runs — it orders by segment START, which is what the
+                // fusion contract cares about.
+                foreach (var bucket in buckets)
+                {
+                    analyses.AddRange(bucket ?? []);
                 }
             }
 
@@ -354,7 +403,8 @@ public sealed record YouTubeInternalGalleryRunRequest(
     TimeSpan SegmentOverlap,
     GalleryAttribution? Attribution = null,
     MediaResolution MediaResolution = MediaResolution.Default,
-    bool CheckpointSegments = false);
+    bool CheckpointSegments = false,
+    int MaxConcurrentSegments = 1);
 
 /// <summary>
 /// Curated attribution for a gallery source (CLAUDE.md rule 8 — every gallery output is

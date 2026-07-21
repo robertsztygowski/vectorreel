@@ -44,8 +44,18 @@ public sealed record CollectionProductionOptions
     /// <summary>Base backoff between attempts; multiplied by the attempt number.</summary>
     public TimeSpan RetryBackoff { get; init; } = TimeSpan.FromSeconds(60);
 
-    /// <summary>Idle between sessions, to stay under the Vertex quota rather than retry past it.</summary>
-    public TimeSpan PaceBetweenSessions { get; init; } = TimeSpan.FromSeconds(20);
+    /// <summary>
+    /// Idle between sessions. **Zero by default.** It was 20 s on the assumption that we were
+    /// provoking the throttling; the 2026-07-21 measurement says we are not (we run at ~1% of our
+    /// own limit), so pacing only forfeited throughput.
+    /// </summary>
+    public TimeSpan PaceBetweenSessions { get; init; } = TimeSpan.Zero;
+
+    /// <summary>
+    /// Stage B calls in flight per session. The biggest throughput lever on this path — see
+    /// <see cref="MdReel.Core.Pipeline.StageB.CollectionBatchRequest"/>.
+    /// </summary>
+    public int MaxConcurrentSegments { get; init; } = 6;
 
     /// <summary>Process only these video ids (empty ⇒ all). Used to retry a single dropped session.</summary>
     public IReadOnlyList<string> OnlyVideoIds { get; init; } = [];
