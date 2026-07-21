@@ -285,6 +285,16 @@ GitHub is a **product channel**, not a code host: the ICP (BUSINESS_MODEL §5) l
 repository they can clone, grep and point their agent at is a demo in their own workflow. This
 section owns how that channel operates.
 
+> 🌐 **mdreel.com is the destination; GitHub is an export target** *(founder decision, 2026-07-21)*.
+> The decisive argument is measurement: **you cannot instrument a GitHub repo.** No Umami, no
+> `collection_convert_click`, no funnel at all — and distribution is the top risk (A5). Making the
+> primary surface the unmeasurable one is a straightforward error.
+>
+> GitHub earns its place as **portability proof** — clone it, open it in Cursor or Claude Code, it
+> is yours, no walled garden — which matters a great deal to a docs-as-code ICP and counts for
+> nothing against A5. **Consequence for sequencing: when a run is short on time, the site pages
+> ship and the repo push slips, never the other way round.**
+
 ### Repo taxonomy — collections vs product
 
 | Repo | Visibility | Contents | What it must never contain |

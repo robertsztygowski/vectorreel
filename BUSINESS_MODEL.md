@@ -259,6 +259,25 @@ hard ship-by gate (METRICS.md §2.2 SB). → DISTRIBUTION.md for the reasoning.
    **Gated on A1** — if the EU headline arm loses the A/B, this stops being the lead message.
 5. **Later:** connectors marketplace as the expansion wedge; self-hosted enterprise edition on top.
 
+> ### 🪞 The asymmetry that makes publishing safe *(founder decision, 2026-07-21)*
+>
+> **The public collection shows the shape, and the shape is only complete on video you own.**
+> Public artifacts **demonstrate**; private repositories **monetize**. The subscription buys access
+> to the factory — **never** access to the published collections. Publishing is therefore a
+> *distribution* model here, not a revenue one, and it must never drift into a media business
+> (sponsorship and audience revenue are explicitly rejected).
+>
+> Consequence for where things live: **mdreel.com is the destination and GitHub is an export
+> target.** The site is where the funnel is instrumented — a GitHub repo cannot carry Umami, a
+> `collection_convert_click`, or any funnel at all — and distribution is the top risk. GitHub earns
+> its place as **portability proof**: clone it, open it in Cursor or Claude Code, it is yours, no
+> walled garden. That matters to a docs-as-code ICP, and it is worth nothing to A5.
+>
+> And the promise is **checkable** answers, never *correct* ones: every claim carries a timestamp
+> into footage the reader can open. Correctness is A4, it is open, and METRICS.md **N32** says where
+> it is weakest. Keep the two sentences separate and concrete — **the repository is the artifact;
+> checkable answers are what it gives you.**
+
 ## 8. Key risks & mitigations
 
 > **The five open assumptions (A1–A5), their evidence, and their decision rules live in

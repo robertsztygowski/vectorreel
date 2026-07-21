@@ -450,6 +450,73 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   > The lesson is reusable: *a contract is only worth having if the thing we actually ship is held
 >   > to it, not just the example.*
 
+> #### 📦 FINAL REPORT — first-collection run, 2026-07-21
+>
+> **1. Milestones.** M0 `76e8919` · M1 `2daa23b` · M2 `533180f` · M5 + M3-hardening `77d66f1` ·
+> M4 `814ee93` · this report. **M3 partially complete** (see 3). **M6 and M7 not reached** — the
+> batch's wall-clock consumed the run; M7's two doc-only decisions (D7, D8) were landed anyway.
+> No deploys: this run touched no deployed service, and `PipelineModel__Mode=fake` still holds
+> everywhere in prod.
+>
+> **2. What exists now that did not before.** A real, contract-valid, browsable collection —
+> licence-audited corpus (25 CC-BY sources verified twice, independently), a resumable production
+> path, a §4b v1.1 contract with structurally-enforced publication tiers, contract-derived site
+> pages, a repository generator, and three **private** repos under `github.com/mdreel`.
+>
+> **3. 🚩 The batch did not finish, and the reason matters.** 5 of 25 sessions produced. The
+> constraint is **not cost** — every session measured below METRICS.md **N4c**, and the whole
+> corpus projects to a few euro. It is **throughput**: Vertex returns 429 in both EU regions under
+> sustained load, the binding limit is **non-adjustable**, and we sit at ~1% of it, so this is
+> shared-capacity contention (INFRA.md). It refreshes per minute with no daily cap, so **nothing is
+> blocked — only slowed**, and the batch resumes for free. *This inverts the planning assumption:
+> the weekly batch is bounded by wall-clock, not by euros.*
+>
+> **4. Four defects found, all invisible to the existing tests** — the cost ledger recorded calls
+> but never euros; the rule-9 timeout was below the YouTube path's real latency; Stage C emitted
+> §4-violating documents; GitHub anchors were losing hyphens. Measurements and the *why no test
+> caught it* analysis: `experiments/006-collections-strategy/out/BATCH-MEASUREMENTS.md`.
+> The pattern: three hid behind a fixture that was correct but unrepresentative, one behind a mode
+> that never runs in anger.
+>
+> **5. ⚠️ The quality gate is built and its reading is UNUSABLE.** The 3-timestamp spot-verify
+> (independent re-probe, content-blind sampling) graded **1 of 12 checks — the other 11 were 429s**.
+> That is a quota result, not a quality one. **No session should be published on it.** Re-run when
+> the batch is not competing for capacity.
+>
+> **6. The licence funnel (Q2), answered — and it changed the plan.** Eligible CC-BY material is
+> plentiful (~15–20× what a collection consumes), but its *supply* is a low single-digit share and
+> skews to **infrastructure**, because the CC-rich publishers are foundations. The canonical
+> application-layer talks of any hot topic are standard licence, essentially without exception.
+> ⇒ **canon-bound, not corpus-bound**, and the `reference` tier is what makes a collection
+> recognisable to its own ICP rather than a licence workaround. In DISTRIBUTION.md.
+>
+> **7. The intent funnel, honestly scoped.** The chain is: legally publishable → worth clicking →
+> worth sharing → *"I wish I had this for my company."* **Only the last step is instrumented**
+> (`collection_convert_click` → signup), and it is the one that matters. With nothing public and no
+> traffic this run, the middle steps are **unmeasurable** — no metric was invented for them, and
+> share counts were deliberately not added (they would land on METRICS.md §7's anti-metric list).
+>
+> **8. Cost delta.** No new continuously-billing resources. Vertex spend this run is a few euro of
+> usage-based inference, well inside the guardrail; the fixed base (METRICS.md **N2**) is unchanged.
+> No ad spend. Stripe untouched.
+>
+> **9. Input to the deferred cadence session** (observations only, not a recommendation): a weekly
+> batch's real cost is **founder-minutes plus wall-clock, not euros**. Manufacturing is cheap and
+> slow; curation and licence verification are the parts that need a person, and re-verification is
+> cheap enough to repeat before every publish. A weekly batch of 1–3 sessions is comfortably
+> affordable and comfortably schedulable; a 25-session batch is neither, and sizing the cadence
+> against spend would optimise the wrong variable.
+>
+> **10. Next run, ranked.** ① finish the batch (resumable, free for what is done) and re-run the
+> quality gate on a quiet quota; ② M6 weekly-batch rehearsal through the DISTRIBUTION.md runbook;
+> ③ M7 the answer-shaped artifact draft, now specified in Phase 5 item 4; ④ founder review → the
+> visibility flip and the site flag; ⑤ carried backlog: `/app` library table on real `/api/v1/jobs`.
+>
+> **11. Bullet 7 of the pivot-run report is now discharged** — the 2026-07-21 decisions D1–D8 have
+> landed in DISTRIBUTION / ARCHITECTURE / BUSINESS_MODEL / PLAN, so
+> `experiments/006-collections-strategy/DECISIONS.md` is history and the living docs win.
+> D9–D11 (Factory B's editorial workflow) landed as the Phase 5 item 4 specification.
+
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages
 >   were AI-drafted from primary sources (memo `experiments/legal/2026-07-18-legal-pack-research.md`)
@@ -1076,12 +1143,35 @@ Work:
      wedge**, and all positioning moves to the capability story. Directional, not significant.
 3. **Gallery goes public** — the 10–25 talks processed in Phase 3, curated, attributed, originals
    embedded.
-4. **The artifact post** — the single best inbound asset, and it's already written: side-by-side
-   *plain transcript vs. mdreel Markdown*, plus a RAG answering a question that is **only**
-   answerable from on-screen content. ✅ **The material exists and is legally shareable:**
-   `experiments/001-*/out/corpus_md/JvbBFwlqxeI_full.md` — the FOSDEM talk, CC BY, processed
-   end-to-end, attribution inside the file. Channels: LinkedIn (existing .NET/architecture audience
-   — the cheapest traffic source available, by an order of magnitude), HN, r/RAG, r/LocalLLaMA.
+4. **The artifact post — 🔄 REDEFINED 2026-07-21 (founder decision).** It was a side-by-side
+   *plain transcript vs. mdreel Markdown* format demo. It is now an **answer-shaped artifact**:
+   **"The State of &lt;topic&gt; &lt;year&gt; — based on N hours of talks from M public events"** —
+   key themes, a timeline, where speakers disagree, how positions moved, **every claim carrying a
+   timestamp link into the footage**, with the repository offered as the downloadable, portable
+   evidence behind it. **The format demo becomes a section inside it, not the headline.**
+   *Why:* people wake up wanting answers, not repositories. *"The State of MCP 2026"* beats
+   *"MCP Knowledge Pack"* and it isn't close — same asset, better framing, costs nothing.
+   The repository is what makes the answer **checkable**, which is the promise (BUSINESS_MODEL §7).
+   ✅ Material exists and is legally shareable: the CC-BY corpus in
+   `experiments/006-collections-strategy/out/corpus.json`, processed end-to-end with attribution
+   inside every file. Channels: LinkedIn (existing .NET/architecture audience — the cheapest traffic
+   source available, by an order of magnitude), HN, r/RAG, r/LocalLLaMA.
+   > ⚠️ **Authorship is a three-stage editorial workflow** — not "the model writes it" and not "the
+   > founder types it": the model extracts candidate observations with evidence and timestamps →
+   > claims are **verified** → the model turns *verified observations only* into prose. **Invariant:
+   > the prose may not contain a claim absent from the verified list.**
+   > **Split candidates by verification technology, not confidence.** *Quantitative* claims (counts,
+   > coverage, first-appearance, timeline shifts — *"mentioned in 14 sessions, up from 3"*) verify
+   > **programmatically against the §4b corpus** at ~zero cost and full coverage, are the legally
+   > safest layer (facts, not expression), and are **only possible because the corpus is
+   > structured** — a competitor with a transcript pile cannot produce them. **Lead with these.**
+   > *Interpretive* claims (themes, disagreements) cost founder minutes and assert an opinion in
+   > mdreel's name; keep them few and heavily checked.
+   > 🚨 **Never verify only the interesting claims.** Surprising and fabricated correlate — a
+   > hallucinated trend is more interesting than a real one, because reality is usually boring.
+   > Verify everything intended for publication **plus a random sample of the discards**, and report
+   > the observed error rate. That rate is what decides whether this becomes a product line at all;
+   > without it the exercise produces a nice draft and zero knowledge.
 5. **Ad tranche T-LAUNCH** (METRICS.md N27): one-time, Google Search, long-tail exact/phrase.
    **Buys evidence, not customers** — real CPCs, cost per signup, a clean A1 verdict on *cold*
    traffic, and **measured N12**. Hard stop at budget. Per-keyword kill rule per METRICS.md §6.7.

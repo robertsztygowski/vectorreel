@@ -1,0 +1,117 @@
+{
+  "collection": "ai-engineering",
+  "sessions": 4,
+  "graded": 1,
+  "passed": 1,
+  "failed": 0,
+  "errored": 3,
+  "total_checks": 12,
+  "anchored_checks": 1,
+  "results": [
+    {
+      "video_id": "1B9WZ6H0cn4",
+      "title": "Deep Dive into AI Agent Observability",
+      "sections": 10,
+      "sampled": 3,
+      "graded": 1,
+      "anchored": 1,
+      "on_screen_contradicted": 0,
+      "verdict": "pass",
+      "checks": [
+        {
+          "timestamp": "00:01:37",
+          "heading": "The Evolving AI Agent Stack: From LLMs to Multi-Agent Systems",
+          "observation": {
+            "spoken_gist": "The speaker introduces a background overview, stating that 2023 was the year of LLMs, with ChatGPT launching and many models like GPT-3.5, GPT-4, and GPT-4o emerging. He then mentions that 2024 was focused on Retrieval Augmented Generation.",
+            "on_screen_text": "Background\nYear of the LLM\nYear of GenAI Applications\nYear of GenAI Agents\n2023\n2024\n2025\nOpenAI GPT\nIBM Granite\nLlama2\nMistral\nGPTs\nDiscover and explore open-source and commercial GPTs for summarization, extractions, knowledge graphs, Q&A, and conversational AI.\nFeatured\nLangChain\nLlamaIndex\nHayStack\nThe Agent Stack\nObservability\nHosting\nModel Context Protocol\nFrameworks\nLLM Proxy\nMemory\nSandboxes\nModel Serving\nStorage\nKubeCon + CloudNativeCon\nEurope 2025",
+            "visual": "A man is standing on a stage, speaking into a microphone. Behind him is a large screen displaying a presentation slide. The slide has a dark background with a timeline across the top, showing years 2023, 2024, and 2025, each labeled with a theme. Below the timeline, there are lists of items related to LLMs, GPTs, and an 'Agent Stack'. The bottom right corner of the screen shows the KubeCon + CloudNativeCon Europe 2025 logo."
+          },
+          "anchored": true,
+          "on_screen_supported": "yes",
+          "contradiction": "",
+          "confidence": "high"
+        },
+        {
+          "timestamp": "00:06:30",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        },
+        {
+          "timestamp": "00:09:50",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        }
+      ]
+    },
+    {
+      "video_id": "5DolW1_24IY",
+      "title": "Agentic AI Patterns for Enterprise Java with LangChain4j",
+      "sections": 9,
+      "sampled": 3,
+      "graded": 0,
+      "anchored": 0,
+      "on_screen_contradicted": 0,
+      "verdict": "error",
+      "checks": [
+        {
+          "timestamp": "00:01:09",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        },
+        {
+          "timestamp": "00:03:57",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        },
+        {
+          "timestamp": "00:06:17",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        }
+      ]
+    },
+    {
+      "video_id": "DPx-MVsXcns",
+      "title": "Unlocking Foundation Model Ops/LLM Ops using Apache Airflow",
+      "sections": 8,
+      "sampled": 3,
+      "graded": 0,
+      "anchored": 0,
+      "on_screen_contradicted": 0,
+      "verdict": "error",
+      "checks": [
+        {
+          "timestamp": "00:03:03",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        },
+        {
+          "timestamp": "00:04:33",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        },
+        {
+          "timestamp": "00:07:00",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        }
+      ]
+    },
+    {
+      "video_id": "KIRUbaUjEKw",
+      "title": "Production-Ready LLMs on Kubernetes: Patterns, Pitfalls, and Performance",
+      "sections": 9,
+      "sampled": 3,
+      "graded": 0,
+      "anchored": 0,
+      "on_screen_contradicted": 0,
+      "verdict": "error",
+      "checks": [
+        {
+          "timestamp": "00:07:37",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        },
+        {
+          "timestamp": "00:17:19",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        },
+        {
+          "timestamp": "00:22:06",
+          "error": "429 b'{\\n  \"error\": {\\n    \"code\": 429,\\n    \"message\": \"Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.\",\\n   '"
+        }
+      ]
+    }
+  ]
+}

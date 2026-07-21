@@ -54,8 +54,18 @@ def token() -> str:
     return _token["value"]
 
 
+MAX_ROUNDS = 6
+
+
 def call_vertex(parts: list[dict], max_tokens: int = 1200) -> dict:
-    """One bounded Vertex call, EU regions only, with the rule-9 guards on every call."""
+    """One bounded Vertex call, EU regions only, with the rule-9 guards on every call.
+
+    🚩 Retries hard on 429. Vertex runs on Dynamic Shared Quota: a 429 means the region is busy
+    this minute, not that an allowance is spent, and the limit refreshes per minute with no daily
+    cap (INFRA.md). A single pass over both regions gives up far too early — the first run of this
+    gate graded 1 of 12 checks and every failure was a 429, which produces an inconclusive result
+    that could be mistaken for a quality signal. Waiting is the correct behaviour; giving up is not.
+    """
     body = {
         "contents": [{"role": "user", "parts": parts}],
         "generationConfig": {
@@ -67,34 +77,37 @@ def call_vertex(parts: list[dict], max_tokens: int = 1200) -> dict:
         },
     }
     last = None
-    for region in REGIONS:
-        url = (f"https://{region}-aiplatform.googleapis.com/v1/projects/{PROJECT}"
-               f"/locations/{region}/publishers/google/models/{MODEL}:generateContent")
-        req = urllib.request.Request(
-            url, data=json.dumps(body).encode(),
-            headers={"Authorization": f"Bearer {token()}", "Content-Type": "application/json"},
-        )
-        try:
-            with urllib.request.urlopen(req, timeout=300) as r:
-                payload = json.load(r)
-            text = "".join(
-                p.get("text", "")
-                for p in payload["candidates"][0]["content"]["parts"]
+    for round_index in range(MAX_ROUNDS):
+        for region in REGIONS:
+            url = (f"https://{region}-aiplatform.googleapis.com/v1/projects/{PROJECT}"
+                   f"/locations/{region}/publishers/google/models/{MODEL}:generateContent")
+            req = urllib.request.Request(
+                url, data=json.dumps(body).encode(),
+                headers={"Authorization": f"Bearer {token()}", "Content-Type": "application/json"},
             )
-            return {"ok": True, "data": json.loads(text), "region": region,
-                    "usage": payload.get("usageMetadata", {})}
-        except urllib.error.HTTPError as e:
-            last = f"{e.code} {e.read()[:200]!r}"
-            if e.code != 429:
-                break
-            time.sleep(20)
-        except Exception as e:  # noqa: BLE001 - a probe failure must not kill the gate
-            last = str(e)
-            break
+            try:
+                with urllib.request.urlopen(req, timeout=300) as r:
+                    payload = json.load(r)
+                text = "".join(
+                    p.get("text", "")
+                    for p in payload["candidates"][0]["content"]["parts"]
+                )
+                return {"ok": True, "data": json.loads(text), "region": region,
+                        "usage": payload.get("usageMetadata", {})}
+            except urllib.error.HTTPError as e:
+                last = f"{e.code} {e.read()[:200]!r}"
+                if e.code != 429:
+                    return {"ok": False, "error": last}
+            except Exception as e:  # noqa: BLE001 - a probe failure must not kill the whole gate
+                return {"ok": False, "error": str(e)}
+        # Both EU regions were busy. Back off and come round again; never leave the EU (rule 2).
+        time.sleep(30 * (round_index + 1))
     return {"ok": False, "error": last}
 
 
-SECTION_RE = re.compile(r"^## (\d{2}:\d{2}:\d{2}) (.+)$", re.M)
+# The §4 grammar is `## [hh:mm:ss] Heading`. The brackets are optional here only so this also reads
+# the older Phase-0.2 corpus documents, which predate them.
+SECTION_RE = re.compile(r"^## \[?(\d{2}:\d{2}:\d{2})\]? (.+)$", re.M)
 
 
 def parse_document(md: str) -> dict:
@@ -217,7 +230,8 @@ def main() -> int:
     for path in docs:
         video_id = path.parent.name
         doc = parse_document(path.read_text(encoding="utf-8"))
-        source = doc["frontmatter"].get("source_filename", "")
+        # §4 frontmatter uses `source`; the Phase-0.2 corpus used `source_filename`.
+        source = doc["frontmatter"].get("source") or doc["frontmatter"].get("source_filename", "")
         sections = doc["sections"]
         if not sections or not source:
             results.append({"video_id": video_id, "verdict": "unparseable"})

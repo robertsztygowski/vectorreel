@@ -8,6 +8,16 @@
 > says where. **Once it has landed, the living doc wins and this file is history.** If you are
 > reading this after that run, read the living docs first and use this file only for *why*.
 >
+> ## ✅ SUPERSEDED 2026-07-21 — D1–D11 have landed. This file is now history.
+>
+> The first-collection run landed every decision below into the living docs: **D1, D2, D4** →
+> DISTRIBUTION.md · **D3** → ARCHITECTURE §4b v1.1 · **D5** → DISTRIBUTION.md + PLAN.md ·
+> **D6** → PLAN.md STATUS · **D7** → BUSINESS_MODEL §7 · **D8–D11** → PLAN.md Phase 5 item 4 ·
+> **D12** was a guard only and was respected (nothing renamed).
+> **Read the living docs. Use this file only for the reasoning, and above all for the
+> "Rejected — do not re-propose" table**, which is the part that lives nowhere else.
+> Q2 is answered (see `out/SOURCES.md`); Q1, Q3 and Q4 remain open.
+>
 > Companion file: [`launch-prompt-first-collection.md`](./launch-prompt-first-collection.md) — the
 > coordinator prompt these decisions were folded into.
 
