@@ -464,7 +464,13 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 > pages, a repository generator, and three **private** repos under `github.com/mdreel`.
 >
 > **3. 🚩 The batch was slow, and the cause was OUR CLIENT, not Vertex's capacity.**
-> **23 of 25 sessions produced** (2 failed on capacity, retryable, still in the corpus).
+> **✅ 25 of 25 sessions produced** — the two that failed the main batch were retried on quieter
+> capacity and completed in **3m25s and 1m48s at 14–15 cents/video-hour, the cheapest in the batch**.
+> Same videos, same segmentation; only the timing differed. That rules out content density as the
+> cause of the expensive sessions and **proves the overage was retry waste** — paying for rejected
+> work. ⇒ **give up cheaply and defer** (DISTRIBUTION.md); eight attempts against contention burned
+> ~3 hours and ~€3 to produce nothing that two attempts plus a deferral would not have produced
+> later, faster and cheaper.
 > Cost is cheap in absolute terms — **€4.65** — but ⚠️ **above METRICS.md N4c**: 16 sessions spanned
 > 14–89 cents/video-hour and averaged ~45. *An earlier reading in this run said "below N4c"; that was
 > the first five sessions generalised too soon, and it is corrected here.* Part of the overage is

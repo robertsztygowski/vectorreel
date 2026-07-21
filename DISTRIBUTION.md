@@ -381,6 +381,19 @@ A week with zero new sessions is allowed **only** if item 4 still happens and op
 Corrections/Requests are answered — responsiveness is the freshness that matters (the retirement
 rule keys off curation stopping, and answered issues are curation).
 
+### 🚩 Batch elapsed time is set by the worst sources, not the average one
+
+Measured on the first real batch (2026-07-21): 16 sessions took **65 minutes of production inside
+243 minutes of wall clock**. Almost the entire gap was **two videos exhausting every retry** against
+a busy region. Retried a few minutes later they completed in under 4 minutes each — and came in as
+the *cheapest* sessions in the batch, because they were no longer paying for rejected work.
+
+⇒ **Give up cheaply and defer.** A source that will not produce on the second or third attempt is
+not a hard source, it is an unlucky one; it costs hours and euros to insist, and minutes to retry it
+in the next batch. Production is resumable and already keeps completed segments, so a deferral is
+nearly free. **When a weekly batch runs long, the thing to cut is retry persistence — not batch size
+and never the quality gates.**
+
 ### Quality threshold (per session, before it ships)
 
 1. The M3 **attribution & licensing checklist** passes — this is the legal gate, no exceptions.

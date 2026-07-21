@@ -26,16 +26,30 @@ the one-number-one-home discipline exists to prevent.
 In absolute terms it is still cheap: **€4.65 for 16 sessions**, far below the METRICS.md **N8**
 all-in guardrail, and the **N4d** per-session ceiling never fired.
 
-🚩 **Part of the overage is self-inflicted, and it is a dial rather than a fact.** Retry attempts
-were raised from 3 to 8 to buy throughput, and **a failed segment that reached the model still
-bills**. The correlation supports it: the two most expensive sessions (89 and 75 c/video-hour) are
-also the two slowest (8m31s, 7m30s) — the ones that retried most. Content density is the other
-candidate cause and this batch cannot separate them, so treat it as **a hypothesis with supporting
-evidence, not a measured attribution.**
+🚩 **The overage is retry waste, and the natural experiment that proves it ran by accident.**
+Retry attempts were raised from 3 to 8 to buy throughput, and **a failed segment that reached the
+model still bills**. The first evidence was only correlational — the two most expensive sessions
+(89 and 75 c/video-hour) were also the two slowest — with content density an equally plausible
+cause.
 
-⇒ **Retry aggressiveness trades euros for wall-clock.** At this scale the trade is clearly worth it.
-At a hundred times the volume it is a number someone should choose deliberately, and the experiment
-that separates retry-waste from content-density is worth running before that day.
+**Then the two sessions that failed all 8 attempts were retried a few minutes later, on quieter
+capacity, and became the two CHEAPEST in the batch:**
+
+| Session | During the contended batch | Retried later |
+|---|---|---|
+| `OtgOdjQM-yo` (8 segments) | failed all 8 attempts | **3m 25s · 15 c/video-hour** |
+| `6G_OptYhxJ4` (3 segments) | failed all 8 attempts | **1m 48s · 14 c/video-hour** |
+
+Same videos, same segmentation, same prompts, ~90% cheaper and minutes instead of hours. **Content
+density is ruled out**: an 8-segment video came in at 15 c/video-hour. What differed was only *when*
+they ran. So the expensive sessions were expensive because they paid for rejected work, not because
+they were hard.
+
+⇒ **Retry aggressiveness trades euros for wall-clock, and past a point it buys neither.** Eight
+attempts against sustained contention burned ~3 hours and ~€3 to produce nothing; two attempts and
+a deferral would have cost minutes and produced the same result later, cheaper. **The right policy
+is a cheap give-up plus a resumable retry** — which the batch already supports (`--only`), and which
+this run demonstrated by accident rather than by design.
 
 **Throughput — looked like a capacity wall, was actually our own client.** Vertex returns
 `429 RESOURCE_EXHAUSTED` in *both* EU regions under batch load. That is **Dynamic Shared Quota
