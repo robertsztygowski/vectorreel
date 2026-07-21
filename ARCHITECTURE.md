@@ -282,7 +282,7 @@ Rules (each learned from real drift in the Phase-0.2 outputs — see the Phase 2
   can strip or keep it deterministically.
 - **No hallucinated names** — unknown speakers stay "Speaker N".
 
-## 4b. Repository contract (v1) — the product surface above the file 🆕 2026-07-20 (pivot, additive)
+## 4b. Repository contract (v1.1) — the product surface above the file 🆕 2026-07-20 (pivot, additive)
 
 > **Additive.** §4 (per-file output) and §5 (API) stay frozen and unchanged. This section defines
 > how a *set* of §4 documents is organized into the thing the customer actually owns — an
@@ -338,6 +338,39 @@ metadata/
   `visibility: "public-collection"` and a mandatory licence note; private exports use
   `visibility: "private"`. One contract, both surfaces — the public collection *is* the demo of
   the private deliverable.
+
+### Publication tiers — `inclusion` 🆕 v1.1, 2026-07-21 (additive)
+
+Every entry in `sessions[]` carries `inclusion: "full" | "reference"`. **Absent ⇒ `full`, so every
+v1 manifest stays valid and keeps its meaning**; `contract_version` accepts `"1"` or `"1.1"`.
+
+| Tier | What exists | Licence bar | Where it renders |
+|---|---|---|---|
+| **`full`** | The complete §4 session document — structured timestamped Markdown, verbatim on-screen text. A **near-complete derivative** of the talk. | **CC-BY only** (DISTRIBUTION.md owns the rule) | `sessions/` + every index |
+| **`reference`** | An index entry only: title, speaker, event, year, tags, and hand-curated deep-link timestamps. **No derived text, no summary, nothing processed** — and therefore zero inference cost. | any publicly available video | indexes only, always linking **out** to the original |
+
+**Why the tier exists:** it is the §4b rule *indexes cite, never restate* applied to material we may
+not render. A citation is not a reproduction, so a collection can cover its **subject** rather than
+covering **its licences** — without that escape hatch, a CC-BY-only corpus makes most topics
+uncoverable.
+
+The contract makes the distinction structural rather than a matter of discipline:
+
+- A `reference` entry **may not carry** `file`, `duration`, `language` or `processed_at`. Each of
+  those asserts that a document was produced; their presence fails schema validation.
+- A `reference` entry **must carry** `event`, `year` and at least one `citations[]` deep link.
+  Citation `label`s are pointers, capped at 120 characters — a label that grows into prose is
+  derived text wearing a label's clothes, and fails.
+- A `full` entry **may not carry** `citations[]`: a real session's citations live in its document.
+- In a `public-collection`, **every** entry must carry `licence`, `licence_verified_via` and
+  `attribution`. The licence audit trail travels with the entry instead of living in a spreadsheet.
+- Index files render the two forms differently, and a reader can tell them apart on every line:
+  `full` cites `- [hh:mm:ss](../sessions/<slug>.md#<anchor>) — <section heading>`;
+  `reference` cites `- [hh:mm:ss](<original-url>&t=<n>s) — <label> · reference`. A reference entry
+  can never point at `sessions/` because no document exists to point at.
+
+Reference entries are **hand-curated metadata** — there is no reference-ingestion pipeline, by
+design. `web/lib/repository.test.ts` is the acceptance oracle for all of the above.
 
 ## 5. API (v1, REST) — ❄️ MVP subset frozen 2026-07-16 (Phase 2.5)
 

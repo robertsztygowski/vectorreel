@@ -379,6 +379,23 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   done); ADC reaches Vertex `gemini-2.5-flash` @ `europe-central2` with a live round-trip. Rule-5
 >   override, the **bounded Vertex authorization**, and the **public-artifact boundary** (nothing
 >   public this run) recorded in INFRA.md. M1–M8 todo graph created.
+> - **M1 topic-first source list + §4b v1.1 ✅** — **ARCHITECTURE §4b is now v1.1**: every manifest
+>   session carries `inclusion: "full" | "reference"`, additive (a v1 manifest stays valid and reads
+>   as `full`). The tier is enforced *structurally*, not by discipline: a `reference` entry carrying
+>   `file`/`duration`/`language`/`processed_at` fails validation because each asserts a document was
+>   produced, and every public-collection entry must carry `licence` + `licence_verified_via` +
+>   `attribution`. Validator grew 22 → 33 tests. DISTRIBUTION.md's per-video inclusion criteria were
+>   replaced by the **five selection properties** (is this *topic* worth a collection?) plus the
+>   licence-first funnel and the CC-BY-only rule for `full`.
+>   **Corpus:** 25 CC-BY sessions (12 channels, 13 events, 15.6 video-hours) + 35 reference entries,
+>   audit trail in `experiments/006-collections-strategy/out/corpus.json`; all 25 independently
+>   re-verified against the YouTube Data API by the coordinator before acceptance.
+>   🚩 **Q2 is answered, and the answer changed the plan: the constraint is canon-bound, not
+>   corpus-bound.** There is far more eligible CC-BY material than a collection consumes, but CC-BY
+>   supply skews to infrastructure because the CC-rich publishers are foundations — the canonical
+>   application-layer talks of any hot topic are standard licence, essentially without exception.
+>   ⇒ the `reference` tier is not a licence workaround, it is what makes a collection recognisable
+>   to its own ICP. Recorded in DISTRIBUTION.md.
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages

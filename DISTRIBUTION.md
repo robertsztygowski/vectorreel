@@ -156,44 +156,112 @@ whether GDPR is a genuine blocker or a form field, **because we were the ones wh
 
 ## First public collections — the launch package (M3, 2026-07-20)
 
-Three collections at launch, chosen for one reason each, all inside the ICP (BUSINESS_MODEL §5 —
-dev teams building AI assistants; Markdown/Git/docs-as-code-native early adopters). Every
-collection follows the repository contract (ARCHITECTURE.md §4b) with
-`visibility: "public-collection"`.
+> 🧭 **The unit of a collection is a TOPIC, not a conference or an event** (founder decision,
+> 2026-07-21). Nobody wakes up needing "KubeCon 2026"; they need *"how are people building
+> agents"*. A collection is assembled **across sources** — many events, many speakers, many years —
+> and that cross-source assembly is the thing no single conference channel can offer. **Conference
+> names are provenance metadata on a session** (`event`/`year` in the manifest), never the
+> top-level object. This is a curation and naming decision only: §4b already carries `topics/`,
+> `speakers/` and `timeline/`, and the pipeline is unchanged.
 
-| Collection | Why this one | The question types it answers (the proof) |
+Three collections at launch, chosen for one reason each, all inside the ICP (BUSINESS_MODEL §5 —
+dev teams building AI assistants; Markdown/Git/docs-as-code-native early adopters). Each is a
+**topic assembled cross-source**; the events named below are where the eligible material tends to
+be found, not what the collection is *about*. Every collection follows the repository contract
+(ARCHITECTURE.md §4b) with `visibility: "public-collection"`.
+
+| Collection (topic) | Why this one | The question types it answers (the proof) |
 |---|---|---|
 | **AI Engineering** (RAG, agents, LLM ops talks) | The buyer's own subject. A team building an AI assistant browsing a repository *about building AI assistants* is the tightest possible loop between demo and job-to-be-done — and this audience is the harshest A2 test (the people most able to DIY). | "What did anyone say about chunking strategies, across all these talks?" · "Show me every eval-methodology discussion, with timestamps." · "What was on the benchmark slide in that talk?" |
 | **.NET** (conference talks, deep-dives) | The founder's LinkedIn audience — the workhorse channel (portfolio table below) lands directly on home turf, and the "friendly crowd or real ICP?" open question gets its first data. | "Every time GC tuning came up, which talk and when?" · "What code was on screen during the minimal-API demo?" · "Track this speaker's argument across three conference years." |
 | **Kubernetes / CNCF** (KubeCon-style talks) | The largest CC-licensed, ICP-adjacent public corpus in existence (CNCF publishes under CC); platform teams are exactly the "internal AI assistant" buyer, and the volume proves the schema holds at scale. | "Which talks cover operator patterns, and what YAML was shown?" · "Summarize how the community's take on service meshes shifted over time." · "Find the incident-review talks and what dashboards they showed." |
 
-### Inclusion criteria (all collections)
+### Is this topic worth a collection? — the five selection properties
 
-1. **Licence first:** CC-licensed on the source platform, verified per video (the `corpus.json`
-   audit-trail pattern), attribution line recorded before processing. No exceptions, no
-   "fair-use" reasoning — CLAUDE.md rule 8.
-2. **The ICP already knows it** — well-known talks, well-known speakers, or well-known
-   conferences. The skeptic must hold ground truth in their head (the proof-burden rule in the
-   core-insight section above).
-3. **Asset video only:** talks, demos, deep-dives, screencasts. Never meeting recordings, never
-   podcasts-with-nothing-on-screen *only* — each collection needs sessions where the on-screen
-   content carries answers speech doesn't (that is the differentiator being demonstrated).
-4. **Human-selected, one by one.** A collection grows by curation decisions, not by channel
-   scraping. Target size per collection: enough to make cross-session structure obviously useful
-   (roughly 5–10 sessions at launch, growing weekly — the publishing cadence section owns the
-   rhythm).
-5. **Embeddable + public** on the source platform (the collection page embeds the original;
-   ingestion stays Vertex `fileUri`-only — CLAUDE.md rule 8).
+The old criteria asked whether an individual *video* belonged. These ask whether the **collection**
+is worth existing. All five must hold.
+
+1. **Licence-feasible** — enough CC-BY material exists to cover the topic honestly at `full` tier.
+   If a topic has too little for a credible `full` core, **pick a different topic and record why**:
+   a collection that is 90% reference entries is a link list, not a demo of the manufacturing
+   process.
+2. **Impossible to consume manually** — *if someone could watch it in an afternoon, it is not a
+   collection.* This is the property that makes the artifact valuable rather than merely tidy.
+3. **Evergreen** — a subject, not a schedule. "Swift Concurrency", never "WWDC Day 2".
+4. **Naturally expandable** — next month's batch has an obvious home in it (the weekly publishing
+   system depends on this).
+5. **Cross-source** — a minimum of **three distinct events or channels** represented, or it is a
+   conference index wearing a topic's name.
+
+Two criteria from the per-video list survive unchanged and still gate every individual session:
+**asset video only** (talks, demos, deep-dives, screencasts — never meeting recordings; the
+on-screen content must carry answers speech doesn't, since that is the differentiator being
+demonstrated) and **human-selected, one by one** (a collection grows by curation decisions, never
+by channel scraping).
+
+### 🚨 Licence is the FIRST filter, not the final check
+
+**Work the funnel in this order: licence → topic fit → ICP recognition.** Start from CC-BY archives
+and find the topic they can honestly cover; do not start from a wish-list of famous talks and hope
+the licences work out. Expect to discard a lot — **the discards are the evidence behind the topic
+choice**, so count and keep them.
+
+**`full` tier is CC-BY only.** `NC` is disqualified (our use is commercial), `ND` is disqualified
+(we publish a derivative), and `SA` is disqualified for v1 because share-alike conflicts with the
+CC-BY-4.0 we publish derived content under. Standard-YouTube-licence material — vendor keynotes,
+most product channels, most paid conferences — **is not eligible for `full` at any volume, however
+good it is**, and is `reference` tier at best. Do not argue fair use; do not process "pending a
+check". A YouTube-ToS or copyright fight inside a company that sells compliance to DPOs is
+existential, not a nit (CLAUDE.md rule 8).
+
+> This is a **conservative default under review, not a settled truth.** Whether generated
+> summaries, extracted metadata, and cross-source synthesis relax it is with the lawyer queued in
+> PLAN.md NEEDS-FOUNDER. A relaxation **widens every future collection**. Until it is answered,
+> CC-BY-only stands.
+
+**`reference` tier** (ARCHITECTURE.md §4b v1.1) is what lets a topic be covered honestly: an index
+entry with deep-link timestamps, no derived text, no processing, zero inference cost — eligible for
+any publicly available video. Reference entries are hand-curated; there is no reference-ingestion
+pipeline, by design.
+
+### 🚩 The constraint is **canon-bound**, not corpus-bound (measured 2026-07-21)
+
+The first licence audit measured the funnel that nobody had measured. Two facts change how
+collections get planned:
+
+- **There is plenty of eligible material.** For collection #1's topic, roughly 15–20× more CC-BY
+  candidates existed than the collection consumed. Volume is not the binding constraint; the
+  budget is not the binding constraint.
+- **But CC-BY material is not the material people cite.** The unbiased CC-BY share of the topic's
+  public supply is a low single-digit percentage, and what survives skews hard to **infrastructure**
+  — because the CC-BY-rich publishers are *foundations*, whose subject is infrastructure. The
+  canonical application-layer talks of any hot topic are standard licence, essentially without
+  exception. Vendor and commercial-conference channels audit at **zero** CC-BY.
+
+⇒ **`reference` is not a licence workaround; it is what makes a collection recognisable to its own
+ICP.** A `full`-only collection is a technically impressive corpus about the plumbing of a field
+that no practitioner would recognise as a map of it. Plan every collection expecting the
+recognisable names to arrive as reference entries and the `full` core to be infrastructure-shaped.
+
+⇒ **Channel licence reputation is folklore; the API field is the evidence.** Four channels widely
+believed to be CC-friendly audited at zero. Verify per video, per run — licences can change
+under us, so re-verify before manufacturing *and* before publishing.
 
 ### Attribution & licensing checklist (per video, before processing)
 
-- [ ] Licence field on the source platform says CC (record licence type + retrieval date)
+- [ ] **YouTube Data API** `videos.list?part=status` returns `status.license == "creativeCommon"`
+      — the API field is the evidence. A conference's website saying "we publish under CC" is not.
+      (Read-only metadata; never bytes — rule 8.)
 - [ ] `privacy: public` and `embeddable: true`
 - [ ] Attribution line composed: `"<title>" by <channel> (<url>), <licence>`
-- [ ] Entry appended to the collection's corpus audit trail (`corpus.json` pattern)
+- [ ] Entry appended to the collection's corpus audit trail (`corpus.json` pattern), including the
+      verification method and date
 - [ ] Attribution rendered in the session document's `## Source & licence` section AND the
-      repository manifest (`attribution` field, ARCHITECTURE.md §4b)
+      repository manifest (`attribution` + `licence` + `licence_verified_via`, ARCHITECTURE.md §4b —
+      a public-collection entry missing any of the three fails schema validation)
 - [ ] Original video embedded on the session's web page
+
+An **unverifiable licence means the video is dropped**, never processed "pending check".
 
 ### Backlog (not at launch)
 
@@ -201,8 +269,13 @@ collection follows the repository contract (ARCHITECTURE.md §4b) with
   Git/Markdown-native audience; second wave.
 - **Python / data engineering** — EuroPython publishes CC; large audience, weaker overlap with
   the "internal AI assistant" buyer than K8s; second wave.
-- **Conference-specific one-offs** (a single FOSDEM/KubeCon year as its own repository) — cheap
-  to produce once the pipeline of a parent collection exists; good release-cadence material.
+- ⛔ **Conference-specific one-offs** (a single FOSDEM/KubeCon year as its own repository) —
+  **removed 2026-07-21, do not re-propose.** Superseded by the topic-first unit above: conferences
+  are provenance, not products, and a single-event repository fails selection properties 3 and 5 by
+  construction. A conference year is a *source* for a topic collection, or it is nothing.
+- ⛔ **Company-first / "everything about X"** (a vendor's whole archive) — **rejected 2026-07-21.**
+  Almost entirely standard-YouTube-licence: great products, unlicensable ones. Available as
+  `reference` tier only.
 - A collection is *retired* (archived, kept online) if its sessions stop being curated — an
   abandoned-looking collection is worse proof than a small fresh one.
 

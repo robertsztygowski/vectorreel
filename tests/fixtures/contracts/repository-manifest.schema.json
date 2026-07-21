@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mdreel.com/schemas/repository-manifest.schema.json",
   "title": "mdreel repository manifest (metadata/manifest.json)",
-  "description": "Machine entry point of an AI-ready repository — the structured index of a set of output documents (output.schema.json) organized per the repository contract, ARCHITECTURE.md §4b. v1, 2026-07-20.",
+  "description": "Machine entry point of an AI-ready repository — the structured index of a set of output documents (output.schema.json) organized per the repository contract, ARCHITECTURE.md §4b. v1 2026-07-20; v1.1 2026-07-21 adds the additive per-session `inclusion` publication tier (full | reference).",
   "type": "object",
   "required": ["repository", "sessions", "topics", "speakers"],
   "additionalProperties": false,
@@ -20,7 +20,10 @@
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,3})?Z$"
         },
         "visibility": { "enum": ["public-collection", "private"] },
-        "contract_version": { "const": "1" },
+        "contract_version": {
+          "description": "\"1\" = the 2026-07-20 contract. \"1.1\" = additive, adds sessions[].inclusion. A v1 manifest stays valid; every session in it means inclusion=\"full\".",
+          "enum": ["1", "1.1"]
+        },
         "licence_note": {
           "description": "Mandatory for public-collection: the licence discipline statement (CC-licensed sources only, attributed).",
           "type": "string",
@@ -41,10 +44,14 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["slug", "file", "title", "duration", "language", "processed_at", "source", "tags"],
+        "required": ["slug", "title", "source", "tags"],
         "additionalProperties": false,
         "properties": {
           "slug": { "$ref": "#/$defs/sessionSlug" },
+          "inclusion": {
+            "description": "Publication tier (v1.1, ARCHITECTURE.md §4b). \"full\" = a complete derived session document exists — CC-BY sources only. \"reference\" = an index entry only: no derived text, no processing, no session document. Absent ⇒ \"full\" (v1 compatibility).",
+            "enum": ["full", "reference"]
+          },
           "file": { "type": "string", "pattern": "^sessions/[a-z0-9][a-z0-9-]*\\.md$" },
           "title": { "type": "string", "minLength": 1 },
           "duration": { "type": "string", "pattern": "^[0-9]{2}:[0-5][0-9]:[0-5][0-9]$" },
@@ -58,13 +65,73 @@
             "type": "string",
             "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
           },
-          "source": { "type": "string", "minLength": 1 },
+          "source": {
+            "description": "The original video URL. For a reference entry this is the only place its content lives.",
+            "type": "string",
+            "minLength": 1
+          },
+          "event": {
+            "description": "Provenance metadata: the event/channel the talk came from. A collection's unit is a topic, never an event (DISTRIBUTION.md).",
+            "type": "string",
+            "minLength": 1
+          },
+          "year": { "type": "integer", "minimum": 1990, "maximum": 2100 },
+          "licence": {
+            "description": "The verified source licence. A `full` entry in a public collection must be CC-BY; a `reference` entry may be any publicly available video.",
+            "type": "string",
+            "minLength": 1
+          },
+          "licence_verified_via": { "type": "string", "minLength": 1 },
+          "citations": {
+            "description": "Reference tier only: hand-curated deep links into the original video. Labels are pointers, never derived text — §4b \"indexes cite, never restate\", applied to material we may not render.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["timestamp", "label"],
+              "additionalProperties": false,
+              "properties": {
+                "timestamp": { "type": "string", "pattern": "^[0-9]{2}:[0-5][0-9]:[0-5][0-9]$" },
+                "label": { "type": "string", "minLength": 1, "maxLength": 120 }
+              }
+            }
+          },
           "tags": { "type": "array", "items": { "$ref": "#/$defs/slug" } },
           "speakers": { "type": "array", "items": { "$ref": "#/$defs/slug" } },
           "attribution": {
             "description": "Public-collection sessions: the attribution line matching the document's Source & licence section.",
             "type": "string",
             "minLength": 1
+          }
+        },
+        "if": {
+          "type": "object",
+          "properties": { "inclusion": { "const": "reference" } },
+          "required": ["inclusion"]
+        },
+        "then": {
+          "description": "A reference entry is metadata only. The four fields below all assert that a document was produced, so their presence is a contract violation — this is what makes 'no derived text' structural rather than a matter of discipline.",
+          "type": "object",
+          "required": ["event", "year", "citations"],
+          "properties": {
+            "event": { "type": "string", "minLength": 1 },
+            "year": { "type": "integer" },
+            "citations": { "type": "array", "minItems": 1 },
+            "file": false,
+            "duration": false,
+            "language": false,
+            "processed_at": false
+          }
+        },
+        "else": {
+          "type": "object",
+          "required": ["file", "duration", "language", "processed_at"],
+          "properties": {
+            "file": { "type": "string", "minLength": 1 },
+            "duration": { "type": "string", "minLength": 1 },
+            "language": { "type": "string", "minLength": 1 },
+            "processed_at": { "type": "string", "minLength": 1 },
+            "citations": false
           }
         }
       }
@@ -99,6 +166,35 @@
           "file": { "type": "string", "pattern": "^speakers/[a-z0-9][a-z0-9-]*\\.md$" },
           "name": { "type": "string", "minLength": 1 },
           "sessions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/sessionSlug" } }
+        }
+      }
+    }
+  },
+  "if": {
+    "type": "object",
+    "properties": {
+      "repository": {
+        "type": "object",
+        "properties": { "visibility": { "const": "public-collection" } },
+        "required": ["visibility"]
+      }
+    },
+    "required": ["repository"]
+  },
+  "then": {
+    "description": "Public collections carry their licence audit trail in the manifest. Nothing may be published from a source whose licence was not verified and attributed — the evidence travels with the entry rather than living in a spreadsheet (DISTRIBUTION.md, CLAUDE.md rule 8).",
+    "type": "object",
+    "properties": {
+      "sessions": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["licence", "licence_verified_via", "attribution"],
+          "properties": {
+            "licence": { "type": "string", "minLength": 1 },
+            "licence_verified_via": { "type": "string", "minLength": 1 },
+            "attribution": { "type": "string", "minLength": 1 }
+          }
         }
       }
     }

@@ -1,0 +1,89 @@
+{
+  "_comment": [
+    "M1a curation decisions for collection #1 (ai-engineering). Human-curated selection layer.",
+    "Licence facts NEVER live here — they come from out/candidates.json (videos.list) at build time.",
+    "'speaker' is curation metadata taken from the video title only when unambiguous (single named",
+    "presenter); multi-speaker or unnamed sessions are null. Never inferred (ARCHITECTURE 4b).",
+    "'event' is set only when the title states it; otherwise the build falls back to the channel."
+  ],
+
+  "full": {
+    "9wk7mGB_Gp4": {"event": "EuroPython", "speaker": "Sara Zanzottera", "topic_tags": ["rag", "evals", "vector-search"]},
+    "ZjjgMiCU8s4": {"event": "EuroPython", "speaker": "Ines Montani", "topic_tags": ["llm-ops", "prompt-engineering"]},
+    "bE7YaasiotE": {"event": "EuroPython", "speaker": "Paolo Melchiorre", "topic_tags": ["vector-search", "rag"]},
+    "rPnhJ8uNoJg": {"event": "EuroPython", "speaker": null, "topic_tags": ["prompt-engineering", "evals"]},
+
+    "CDfpJp8IpV8": {"event": null, "speaker": "Laurie Voss", "topic_tags": ["rag", "vector-search"]},
+    "Uodf6I7yWC8": {"event": null, "speaker": "Alison Cossette", "topic_tags": ["rag", "observability", "llm-ops"]},
+    "unnqhKmMo68": {"event": null, "speaker": "Divyansh Chaurasia", "topic_tags": ["evals", "llm-ops"]},
+    "o3yCS422_-Y": {"event": null, "speaker": "Prasad Mujumdar", "topic_tags": ["agents", "observability", "llm-ops"]},
+
+    "KIRUbaUjEKw": {"event": null, "speaker": null, "topic_tags": ["llm-ops", "inference-serving"]},
+    "1B9WZ6H0cn4": {"event": null, "speaker": null, "topic_tags": ["agents", "observability"]},
+    "kpQh35r3d24": {"event": null, "speaker": null, "topic_tags": ["rag", "fine-tuning"]},
+
+    "X309ka9p4YA": {"event": "DevConf.IN 2025", "speaker": null, "topic_tags": ["evals", "inference-serving"]},
+    "ap00KU1f95M": {"event": "DevConf.CZ 2025", "speaker": null, "topic_tags": ["inference-serving", "llm-ops"]},
+
+    "rqU2pPGK6jM": {"event": null, "speaker": null, "topic_tags": ["rag", "evals"]},
+    "ZHjulqB-4A0": {"event": null, "speaker": null, "topic_tags": ["evals"]},
+    "UcbtEaVzh5c": {"event": null, "speaker": null, "topic_tags": ["fine-tuning"]},
+
+    "YxWKJdLqCcQ": {"event": "SCaLE", "speaker": null, "topic_tags": ["rag", "evals"]},
+    "FKw0IA_VyHU": {"event": "SCaLE", "speaker": null, "topic_tags": ["vector-search"]},
+    "mt-CAWubAFg": {"event": "SCaLE", "speaker": null, "topic_tags": ["agents", "llm-ops"]},
+
+    "AzQM1bTLvpI": {"event": null, "speaker": "Petr Polezhaev", "topic_tags": ["evals"]},
+    "5DolW1_24IY": {"event": null, "speaker": "Kevin Dubois", "topic_tags": ["agents"]},
+    "6G_OptYhxJ4": {"event": null, "speaker": "Saksham Aggarwal", "topic_tags": ["evals", "rag"]},
+    "DPx-MVsXcns": {"event": null, "speaker": null, "topic_tags": ["llm-ops"]},
+    "OtgOdjQM-yo": {"event": null, "speaker": null, "topic_tags": ["vector-search", "rag"]},
+    "GyHY4g93kPk": {"event": "FOSSASIA Summit 2025", "speaker": null, "topic_tags": ["llm-ops", "evals"]}
+  },
+
+  "reference": {
+    "nbZzSC5A6hs": {"event": "AI Engineer Summit", "speaker": "Aparna Dhinkaran", "topic_tags": ["evals"]},
+    "kQmXtrmQ5Zg": {"event": "AI Engineer", "speaker": "Mahesh Murag", "topic_tags": ["agents", "mcp"]},
+    "D7_ipDqhtwk": {"event": "AI Engineer", "speaker": "Barry Zhang", "topic_tags": ["agents"]},
+    "kPL-6-9MVyA": {"event": "AI Engineer", "speaker": "Douwe Kiela", "topic_tags": ["rag", "agents"]},
+    "8kMaTybvDUw": {"event": "AI Engineer World's Fair", "speaker": "Dex Horthy", "topic_tags": ["agents", "llm-ops"]},
+    "spvXj9tnWAQ": {"event": "AI Engineer World's Fair", "speaker": null, "topic_tags": ["evals"]},
+    "9iN-cPnp7xg": {"event": "AI Engineer World's Fair", "speaker": null, "topic_tags": ["evals"]},
+    "89NuzmKokIk": {"event": "AI Engineer World's Fair", "speaker": "Taylor Jordan Smith", "topic_tags": ["evals"]},
+    "CEvIs9y1uog": {"event": "AI Engineer", "speaker": null, "topic_tags": ["agents"]},
+
+    "spamOhG7BOA": {"event": "LLMs in Production Conference", "speaker": "Chip Huyen", "topic_tags": ["llm-ops"]},
+    "pRhXoEXhWAM": {"event": "AI in Production Conference", "speaker": "Jerry Liu", "topic_tags": ["rag"]},
+    "YuRFba27_1w": {"event": "LLMs in Production Conference", "speaker": null, "topic_tags": ["rag", "llm-ops"]},
+    "I7zMJJlHdxQ": {"event": "LLMs in Production Conference", "speaker": "Daniel Campos", "topic_tags": ["inference-serving"]},
+    "F5t2XJaSpVY": {"event": "AI in Production Conference", "speaker": "Austin Bell", "topic_tags": ["evals"]},
+    "GJDN8u3Y-T4": {"event": "LLMs in Production Conference", "speaker": "Samuel Partee", "topic_tags": ["vector-search"]},
+
+    "la4kc57F6jU": {"event": "GOTO 2024", "speaker": "Thomas Vitale", "topic_tags": ["llm-ops", "rag"]},
+    "yMDw0nlWd7s": {"event": "GOTO 2025", "speaker": "Rod Johnson", "topic_tags": ["agents"]},
+    "b2qel03SU4I": {"event": "NDC", "speaker": "Mete Atamel", "topic_tags": ["evals", "llm-ops"]},
+    "7IZqnDX2HRk": {"event": "PyData", "speaker": null, "topic_tags": ["rag"]},
+    "ZJM-MfUijkU": {"event": null, "speaker": "Jerry Liu", "topic_tags": ["rag"]},
+    "BsWxPI9UM4c": {"event": null, "speaker": null, "topic_tags": ["evals"]},
+    "WpdHng1pzzY": {"event": "Haystack EU 2025", "speaker": "Matthias Krüger", "topic_tags": ["rag", "vector-search"]},
+    "3vrLk7Zp8E0": {"event": "Haystack EU 2022", "speaker": "James Briggs", "topic_tags": ["vector-search", "fine-tuning"]},
+    "YO9jYy-HIRY": {"event": null, "speaker": null, "topic_tags": ["rag", "llm-ops"]},
+    "efbn-3tPI_M": {"event": null, "speaker": null, "topic_tags": ["llm-ops", "rag"]},
+    "2CIIQ5KZWUM": {"event": null, "speaker": null, "topic_tags": ["evals"]},
+    "owmJyKVu5f8": {"event": "The Pragmatic Summit", "speaker": "Simon Willison", "topic_tags": ["agents"]},
+    "i1tZN41VKcE": {"event": "The Pragmatic Summit", "speaker": null, "topic_tags": ["agents", "llm-ops"]},
+    "GvEkCBvvA_g": {"event": "DjangoCon US", "speaker": "Kumar Shivendu", "topic_tags": ["vector-search"]},
+    "Q_slEpNuhMc": {"event": "North Bay Python 2024", "speaker": "Pamela Fox", "topic_tags": ["vector-search"]},
+    "cNiLFSylDVM": {"event": null, "speaker": null, "topic_tags": ["rag"]},
+    "041gk0N8gPA": {"event": "Toronto Machine Learning Summit", "speaker": null, "topic_tags": ["evals", "llm-ops"]},
+    "_Pq9ZJIyTWk": {"event": "WeAreDevelopers", "speaker": "Phil Nash", "topic_tags": ["rag"]},
+    "Yf4f5bk0rH4": {"event": "Fwdays Highload", "speaker": "Kevin Goedecke", "topic_tags": ["rag", "llm-ops"]},
+    "96jN2OCOfLs": {"event": null, "speaker": "Andrej Karpathy", "topic_tags": ["agents"]}
+  },
+
+  "rejected": [
+    {"video_id": "hg2QaM89xxE", "reason": "topic fit ok, licence=youtube — full tier denied; not distinctive enough for reference"},
+    {"video_id": "TqC1qOfiVcQ", "reason": "licence=youtube (vendor workshop) — full tier denied (D4)"},
+    {"video_id": "kwSVtQ7dziU", "reason": "not in the AI-engineering topic scope"}
+  ]
+}

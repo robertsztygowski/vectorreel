@@ -1,12 +1,23 @@
 # Example collection — canonical AI-ready repository fixture
 
 > **Fixture.** The committed canonical example of the repository contract
-> (ARCHITECTURE.md §4b), validated by `web/lib/repository.test.ts`. Two sessions drawn from the
-> Phase-0.2 corpus fixtures (`tests/fixtures/output/`), organized exactly as a shipped repository
-> would be. Update this fixture and the schema and §4b together — never separately.
+> (ARCHITECTURE.md §4b), validated by `web/lib/repository.test.ts`. Two `full` sessions drawn from
+> the Phase-0.2 corpus fixtures (`tests/fixtures/output/`) plus one `reference` entry, organized
+> exactly as a shipped repository would be. Update this fixture and the schema and §4b together —
+> never separately.
 
 This repository contains **2 sessions** of processed video knowledge — structured, timestamped
-Markdown an AI assistant can explore and cite.
+Markdown an AI assistant can explore and cite — plus **1 reference entry**.
+
+## Two publication tiers
+
+| Tier | What it is | Where it appears |
+|---|---|---|
+| **`full`** | A complete mdreel session document: structured, timestamped Markdown with verbatim on-screen text. A near-complete derivative, so **CC-BY sources only**. | `sessions/` + every index |
+| **`reference`** | An index entry only — title, speaker, event, year, tags, and deep links into the original. **No derived text, nothing processed.** | indexes only, always linking out |
+
+An index entry that links to `sessions/…` is `full`; one that links to the original video and is
+marked `· reference` was never processed. The distinction is visible on every line on purpose.
 
 ## How to navigate
 
