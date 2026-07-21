@@ -350,6 +350,12 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >    contract (today the gallery renders per-file specimens, not topic/speaker/timeline
 >    indexes); ③ first weekly batch through the M6 runbook end-to-end; ④ launch prep per
 >    Phase 5 (T0 set on first publication); ⑤ read E3/E4 dashboards only after §2.1 floors.
+> 7. **➡️ The next run is already specified.** A 2026-07-21 founder strategy session reworked what a
+>    collection *is* (topic-first, two publication tiers, CC-BY-only for full documents, site over
+>    GitHub, Factory A vs Factory B) and produced a ready coordinator prompt:
+>    **`experiments/006-collections-strategy/launch-prompt-first-collection.md`**, with the
+>    reasoning and the rejected alternatives in `DECISIONS.md` beside it. Those decisions land in
+>    the living docs during that run — until then this bullet is the pointer.
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
