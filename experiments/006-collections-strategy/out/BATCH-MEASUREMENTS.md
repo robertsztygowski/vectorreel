@@ -93,6 +93,14 @@ Every one of these was invisible until the pipeline met a real video. All four a
 regression-tested; they are recorded here because the *pattern* matters more than the individual
 bugs.
 
+> 🚨 **A fifth defect was found by the founder AFTER this list was written, and it is the worst of
+> them: Stage C fuses segment-relative timestamps as absolute, so every multi-segment session
+> collapses onto its first ten minutes and its citations point at the wrong moments.** PLAN.md
+> carries the full analysis. It belongs in the table below as the purest instance of the pattern:
+> **`FakeTextFuser` computes timestamps from `SegmentStart` and therefore gets it right, while the
+> real fuser does not** — so the entire test suite, which runs on fake and replay, is structurally
+> incapable of seeing it. Not "no test covered this", but *no test **could***.
+
 | # | Defect | Why no test caught it |
 |---|---|---|
 | 1 | **The cost ledger recorded calls but never euros.** Every `CostEntry.Cents` was `null` across Stages A, B and C. | The ledger was *structurally* correct and every test asserted on entry counts. "Reconcile against N4c" would have returned **zero and looked fine** — worse than an error, because a confident wrong number does not prompt investigation. |

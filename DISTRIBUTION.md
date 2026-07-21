@@ -193,11 +193,24 @@ is worth existing. All five must hold.
 5. **Cross-source** — a minimum of **three distinct events or channels** represented, or it is a
    conference index wearing a topic's name.
 
-Two criteria from the per-video list survive unchanged and still gate every individual session:
-**asset video only** (talks, demos, deep-dives, screencasts — never meeting recordings; the
-on-screen content must carry answers speech doesn't, since that is the differentiator being
-demonstrated) and **human-selected, one by one** (a collection grows by curation decisions, never
-by channel scraping).
+Three criteria from the per-video list survive unchanged and still gate every individual session:
+
+- **The ICP already knows it** — well-known talks, well-known speakers, or well-known conferences.
+  🚩 **Restored 2026-07-21 after being lost in a rewrite**, and the loss showed immediately: the
+  first batch shipped a 2023 talk with a few hundred views. The reason this criterion exists is the
+  proof burden — *the skeptic must be able to hold ground truth in their own head*. A session they
+  have never heard of demonstrates nothing, however well processed.
+- **Asset video only** — talks, demos, deep-dives, screencasts; never meeting recordings. The
+  on-screen content must carry answers speech doesn't, since that is the differentiator being shown.
+- **Human-selected, one by one** — a collection grows by curation decisions, never by channel
+  scraping. 🚩 The 2026-07-21 batch **broke this**: the corpus was assembled by an automated
+  licence-first search with no recognition signal, and nobody chose the talks.
+
+⚠️ **These pull against the licence funnel, and that tension is the real work.** CC-BY supply skews
+to obscure infrastructure talks *precisely because* the recognisable ones are standard-licence
+(below). A `full` core assembled on licence alone is unrecognisable by construction. **Licence is
+the first filter, but recognition is a gate, not a preference** — if a topic cannot field a
+recognisable CC-BY core, that is the signal to pick a different topic, not to lower the bar.
 
 ### 🚨 Licence is the FIRST filter, not the final check
 

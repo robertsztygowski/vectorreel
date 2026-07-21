@@ -450,6 +450,62 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   > The lesson is reusable: *a contract is only worth having if the thing we actually ship is held
 >   > to it, not just the example.*
 
+> ### 🚨 KNOWN DEFECT — the produced collection is NOT publishable (founder review, 2026-07-21)
+>
+> **Stage C fuses segment-relative block timestamps as if they were absolute video time.** Every
+> multi-segment session is affected, which is effectively the whole collection, and the visible
+> symptom is exactly what the founder spotted: **a video is 3–4× longer than its last timestamp**
+> (segments are 10 minutes, so a 40-minute video is 4 segments and all four collapse onto the first
+> ten).
+>
+> Worked example — *Reducing Hallucinations and Evaluating LLMs for Production*: frontmatter says
+> `duration: 00:25:49`, the last section is `[00:09:16]`. Stage B captured all four segments and
+> 40 blocks; nothing was lost in analysis.
+>
+> **Root cause.** `AnalyzedBlock.At` is an offset *within its segment* (`StageBRunner` sets it from
+> the normalizer, and the coverage guard divides by segment duration). Nothing anywhere adds
+> `SegmentStart` — it is used only for **ordering**, never arithmetic. `VertexTextFuser.BuildPrompt`
+> then tells the model *"timestamps are global video time"* and hands it raw offsets. The model
+> believes the prompt, and merges what look like duplicate early timestamps across segments — so
+> later content is not merely mis-stamped, some of it is **destroyed as a false duplicate**.
+>
+> 🚩 **This is worse than truncation: the citations are wrong.** A reader clicking `05:00` gets
+> content that was actually at `15:00` or `25:00`. "Checkable answers — every claim carries a
+> timestamp into footage you can open" (BUSINESS_MODEL §7) is the product promise this breaks, and
+> METRICS.md **N30–N32** timestamp-anchoring accuracy was measured on a *single-segment* path.
+>
+> ⚠️ **`PrivatePipelineService` feeds the same fuser the same way — the PAID path has the identical
+> bug.** It has never been observed because deployed services all run `PipelineModel__Mode=fake`.
+>
+> 💡 **Why no test caught it, and this is the important part:** `FakeTextFuser` computes section
+> timestamps from `segment.SegmentStart`, so the fake accidentally does the right thing while the
+> real implementation does not. Every unit, integration and E2E test runs on fake or replay, so the
+> suite is **structurally incapable** of seeing this. Any fix must come with a test that does not
+> use the fake fuser.
+>
+> **Do not publish, do not flip visibility, do not re-run the spot-verify gate until this is fixed**
+> — and note the gate would likely have passed anyway, since it samples sections that exist rather
+> than checking that the document covers the video.
+>
+> ### 🚩 KNOWN DEFECT — curation did not apply an ICP-recognition filter (founder review, 2026-07-21)
+>
+> The founder's second objection: *"why did you take some video from 2023 with 600 views?"* Fair, and
+> two things went wrong.
+>
+> 1. **A criterion was dropped in a doc rewrite.** The old per-video inclusion criteria included
+>    *"The ICP already knows it — well-known talks, speakers or conferences"*, whose purpose was that
+>    a skeptic must hold ground truth in their head for the demo to prove anything. Replacing them
+>    with the five **collection**-level selection properties kept "asset video only" and
+>    "human-selected" but **silently lost recognition**. Restored in DISTRIBUTION.md.
+> 2. **"Human-selected, one by one" did not happen.** The corpus was assembled by an automated
+>    licence-first search with no recognition or popularity signal. That is a stated rule the run
+>    broke, not a rule that was missing.
+>
+> The licence funnel finding still stands and makes this harder, not easier: CC-BY supply skews to
+> obscure infrastructure talks precisely because the recognisable ones are standard-licence. **A
+> `full` core assembled on licence alone will be unrecognisable by construction** — which is the
+> canon-bound problem arriving in practice rather than in theory.
+>
 > #### 📦 FINAL REPORT — first-collection run, 2026-07-21
 >
 > **1. Milestones.** M0 `76e8919` · M1 `2daa23b` · M2 `533180f` · M5 + M3-hardening `77d66f1` ·
@@ -530,10 +586,17 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 > affordable and comfortably schedulable; a 25-session batch is neither, and sizing the cadence
 > against spend would optimise the wrong variable.
 >
-> **10. Next run, ranked.** ① finish the batch (resumable, free for what is done) and re-run the
-> quality gate on a quiet quota; ② M6 weekly-batch rehearsal through the DISTRIBUTION.md runbook;
-> ③ M7 the answer-shaped artifact draft, now specified in Phase 5 item 4; ④ founder review → the
-> visibility flip and the site flag; ⑤ carried backlog: `/app` library table on real `/api/v1/jobs`.
+> **10. Next run, ranked.** ① 🚨 **fix the absolute-timestamp defect** (see the KNOWN DEFECT block
+> above) — it breaks the product's core promise on **both** the public and the paid path, and it
+> needs a test that does not use `FakeTextFuser`; then **re-produce the whole corpus**, since every
+> multi-segment document is wrong; ② 🚩 **re-curate the source list against the restored
+> ICP-recognition criterion** — machine licence-first selection produced an unrecognisable core;
+> ③ re-run the spot-verify gate on quiet quota (and extend it to check *coverage*, not only that
+> sampled sections are anchored — it would have passed this defect); ④ M6 weekly-batch rehearsal;
+> ⑤ M7 answer-shaped artifact draft; ⑥ founder review → visibility flip and site flag;
+> ⑦ carried backlog: `/app` library table on real `/api/v1/jobs`.
+> **Also cheap and worth doing:** the batch report file is overwritten per run rather than
+> timestamped, so an all-runs spend total cannot be reconstructed from it.
 >
 > **11. Bullet 7 of the pivot-run report is now discharged** — the 2026-07-21 decisions D1–D8 have
 > landed in DISTRIBUTION / ARCHITECTURE / BUSINESS_MODEL / PLAN, so
