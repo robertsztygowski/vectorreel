@@ -80,6 +80,8 @@ services:
         # Keep the analytics script out of the E2E build — tests must not call the Umami origin.
         NEXT_PUBLIC_UMAMI_SCRIPT_URL: ""
         NEXT_PUBLIC_UMAMI_WEBSITE_ID: ""
+        # Collection pages are prod-OFF but must ship tested — E2E runs them with the flag ON.
+        NEXT_PUBLIC_SHOW_COLLECTIONS: "true"
     environment:
       # Server-side rewrites proxy target (next.config.mjs). In-network hostname so the Identity
       # auth cookie stays first-party: browser → web:/api/v1/* → api. Runtime env (standalone).

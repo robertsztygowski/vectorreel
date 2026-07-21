@@ -136,6 +136,40 @@ from env/config, EU-pinned per CLAUDE.md rule 2:
   so they meter nothing). `PipelineModel__StageRawUploadsToObjectStorage` gates whether the private
   path stages raw bytes into `raw-videos-eu` (null ⇒ stage iff `Mode != fake`).
 
+## 🚦 Vertex capacity — Dynamic Shared Quota, not a per-project allowance (measured 2026-07-21)
+
+The first real collection batch hit `429 RESOURCE_EXHAUSTED` in **both** EU regions. What the
+console and the Cloud Quotas API actually say about that:
+
+| Fact | Value |
+|---|---|
+| Where the limit lives in the console | **Agent Platform API**, *not* "Vertex AI API" — filter by that service or you will not find it |
+| The limit that binds video production | *Generate content requests with video input per minute per project per region per base model and resolution*, `region: europe-central2`, `base_model_id_and_resolution: gemini-2.5-flash-ga-low_res` |
+| Type | **System limit** — **`Adjustable: No`** |
+| Our usage against it | **~1.3%** |
+| Refresh interval | **per minute**, on every quota that binds this path |
+| Any daily cap? | **None on the EU endpoint.** The only per-day quota on the service is `GlobalGenerateContentInputTokensPerDayPerBaseModel`, which belongs to the `global` endpoint |
+
+**Three consequences, and they change how the pipeline must be built:**
+
+1. **A 429 is contention, not exhaustion.** At ~1.3% of our own limit we are nowhere near it —
+   Gemini 2.5 on Vertex runs on **Dynamic Shared Quota**, so capacity is shared across all
+   customers in the region and a 429 means *the region is busy this minute*.
+2. **There is no quota to request.** The binding limit is a non-adjustable system limit. Filing an
+   increase does not fail for lack of usage history — for this limit there is nothing to file.
+   (The adjustable per-project quotas all report `NOT_ENOUGH_USAGE_HISTORY`, but raising them would
+   not help: they are not what we are hitting.) **Provisioned Throughput is the only way to buy
+   guaranteed capacity, and it is a continuously-billing commitment — founder decision, and hard to
+   justify before A5 has produced a visitor.**
+3. **⇒ Retry-until-available is a design requirement, not error handling.** Since the limit refreshes
+   every minute and there is no daily ceiling, waiting always works and wall-clock is the only
+   price. Any path that calls Vertex must survive a 429 storm by backing off and resuming, never by
+   failing the job. See ARCHITECTURE.md §3 (Stage B capacity handling).
+
+🚨 The **`global` Vertex endpoint** has much larger capacity and would make the 429s disappear.
+**It is a hard stop:** global routing sends inference outside the EU, inside a company that sells EU
+residency to DPOs (CLAUDE.md rule 2). Do not reach for it, and do not re-propose it.
+
 ## APIs enabled for the queue flip (M5, 2026-07-17)
 - `cloudtasks.googleapis.com` — **enabled**; backs the live `webhook-deliveries` queue (see the
   `vectorreel-api` “Task queue / webhooks” row below). Founder-approved this continuously-billing

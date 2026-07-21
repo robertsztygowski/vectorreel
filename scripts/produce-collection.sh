@@ -55,6 +55,17 @@ REPORT="$(to_native "$REPO_ROOT/$REPORT")"
 
 export PipelineModel__Mode="$MODE"
 export Gcs__Project="${GCP_PROJECT_ID:-tensile-runway-442915-j6}"
+
+# Where produced documents land. Local by default, and that is deliberate: M4 builds a git
+# repository out of these files, so a round-trip through GCS buys nothing, and this is public
+# CC-BY material — the EU-residency reason `outputs-eu` exists is customer footage, which never
+# touches this path. Resumability reads back through the same seam either way.
+# Set STORAGE_MODE=gcs to write to the bucket instead.
+if [[ "${STORAGE_MODE:-local}" == "gcs" ]]; then
+  export Storage__Mode=gcs
+else
+  export Storage__LocalRoot="$(to_native "$REPO_ROOT/.local-state/collections")"
+fi
 # Config section is `Vertex` (VertexOptions.SectionName) — not `VertexOptions`. Getting this wrong
 # is silent: binding simply finds nothing and the defaults apply.
 export Vertex__Project="${GCP_PROJECT_ID:-tensile-runway-442915-j6}"
@@ -70,13 +81,28 @@ export CollectionProduction__OutputPrefix="collections"
 export CollectionProduction__LowMediaResolution=true          # METRICS.md N4b
 export CollectionProduction__SegmentLength="00:10:00"
 export CollectionProduction__SegmentOverlap="00:00:20"
-# Rule 9: no Stage B call is ever unguarded.
+# Rule 9: no Stage B call is ever unguarded. The bound stays; only its size is calibrated.
+#
+# 🚩 Measured 2026-07-21: a real 10-minute YouTube segment takes 24–70 s, because Google fetches
+# the video itself on the fileUri path. The 90 s default (StageBCallOptions.Default, sized for the
+# private path) leaves no room for the 429 → europe-west3 fallback chain, so the guard fired mid-
+# fallback and every segment failed. Timed-out calls are pure waste. 300 s covers two calls plus
+# backoff and still bounds a runaway.
 export CollectionProduction__StageB__MaxOutputTokens=12000
 export CollectionProduction__StageB__ThinkingBudget=4096
-export CollectionProduction__StageB__TimeoutSeconds=90
+export CollectionProduction__StageB__TimeoutSeconds="${STAGE_B_TIMEOUT_SECONDS:-300}"
 # The N4d guard. Not a price ceiling — the signature of naive over-segmentation. Breaching it
 # aborts the batch rather than paying for overflow retries across every remaining video.
 export CollectionProduction__AbortOverCentsPerVideoHour="${ABORT_OVER_CENTS_PER_VIDEO_HOUR:-200}"
+
+# Gemini 2.5 on Vertex uses Dynamic Shared Quota: a 429 means the EU region is busy right now,
+# shared across every customer, not that a per-project allowance is spent. Measured 2026-07-21:
+# every quota that binds this path refreshes PER MINUTE and there is no daily cap on the EU
+# endpoint. So persistence always wins and wall-clock is the only price — retry generously.
+# (The `global` endpoint has more headroom and is a HARD STOP: it routes outside the EU, rule 2.)
+export CollectionProduction__RetryAttempts="${RETRY_ATTEMPTS:-6}"
+export CollectionProduction__RetryBackoff="${RETRY_BACKOFF:-00:01:30}"
+export CollectionProduction__PaceBetweenSessions="${PACE_BETWEEN_SESSIONS:-00:00:30}"
 
 [[ -n "$CALIBRATE" ]] && export CollectionProduction__CalibrationCount="$CALIBRATE"
 if [[ -n "$ONLY" ]]; then

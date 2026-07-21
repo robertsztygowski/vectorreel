@@ -200,6 +200,36 @@ Public videos only. See §1. Three requirements are specific to this path (all m
 - **Ask for more than you expect.** Over-requesting a window is free (you are billed only for the
   overlap with the real video), and the response tells you the true duration. **No YouTube Data API
   call and no metadata scrape is needed** — rule 8 stays intact.
+- 🚩 **Size the wall-clock timeout for THIS path, not the private one.** Measured 2026-07-21: a real
+  10-minute YouTube segment takes **24–70 s**, because Google fetches the video itself. The 90 s
+  default left no room for the 429 fallback below, so the rule-9 guard fired *mid-fallback* and
+  every segment failed. The bound stays mandatory; its size is per-path.
+
+#### 🚦 Capacity: a 429 is a wait, never a failure
+
+Gemini 2.5 on Vertex runs on **Dynamic Shared Quota** (INFRA.md owns the measurements). Three facts
+decide the design:
+
+- We sit at **~1% of our own limit** when the 429s arrive — this is *contention for shared regional
+  capacity*, not an allowance we have spent.
+- The binding limit is a **non-adjustable system limit**. There is no increase to request.
+- It refreshes **every minute**, and the EU endpoint has **no daily cap**.
+
+⇒ **Waiting always works, and wall-clock is the only price.** So capacity handling is a design
+requirement, not error handling:
+
+1. **Retry with backoff until it clears** — across both EU regions (`europe-central2` →
+   `europe-west3`), then simply wait. A job must not fail because a region was busy.
+2. **Checkpoint per segment.** A video that dies at segment 5 must resume at segment 5, never
+   restart at 0 — otherwise every retry re-buys work already paid for (rule 6).
+3. **Pace rather than hammer.** A 429'd call buys nothing and still costs wall-clock, so deliberate
+   idle between units is cheaper than the retry it avoids.
+4. **Distinguish a capacity failure from a quality failure.** A 429 is retried and the item stays in
+   the corpus; a quality-gate failure drops the session. Conflating them either loses good material
+   or ships bad material.
+
+This is why the pipeline already has the right shape — jobs, a queue, and backoff — and why a
+Vertex-calling job should be **re-queued, not failed**, on region exhaustion.
 
 ### Stage C — Fusion pass (Vertex Gemini, text-only)
 - Input: ordered segment JSONs.
@@ -371,6 +401,24 @@ The contract makes the distinction structural rather than a matter of discipline
 
 Reference entries are **hand-curated metadata** — there is no reference-ingestion pipeline, by
 design. `web/lib/repository.test.ts` is the acceptance oracle for all of the above.
+
+### The site surface is derived from this contract, not authored beside it
+
+`mdreel.com/collections/*` renders **from the same `metadata/manifest.json` that ships inside the
+repository** (`web/lib/collectionRepository.ts`). That is the point rather than a convenience: if
+the page and the repository could disagree, the public collection would stop being a demo of the
+private deliverable. Session, topic, speaker and timeline pages are all projections of the manifest;
+none of them holds a fact of its own.
+
+Consequences the pages must honour, and which `tests/E2E/specs/collections.spec.ts` enforces:
+
+- **A `reference` slug has no session page — it 404s.** Rendering a thin page for an unprocessed
+  talk is exactly the tier-blurring the contract exists to prevent.
+- **Every index entry carries a visible tier marker**, and reference citations link only to the
+  original video with a `t=` offset — never back into `sessions/`.
+- Instrumentation reuses the shipped `collection_session_view` / `collection_convert_click` events
+  rather than minting new ones: the series' continuity was preserved through the pivot on purpose,
+  and a rename would split the measurement in two (DISTRIBUTION.md).
 
 ## 5. API (v1, REST) — ❄️ MVP subset frozen 2026-07-16 (Phase 2.5)
 

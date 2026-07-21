@@ -38,6 +38,15 @@ public sealed record CollectionProductionOptions
     /// <summary>Per-session N4d guard. Breaching it aborts the batch.</summary>
     public int? AbortOverCentsPerVideoHour { get; init; }
 
+    /// <summary>Attempts per session before it is reported as failed and the batch moves on.</summary>
+    public int RetryAttempts { get; init; } = 3;
+
+    /// <summary>Base backoff between attempts; multiplied by the attempt number.</summary>
+    public TimeSpan RetryBackoff { get; init; } = TimeSpan.FromSeconds(60);
+
+    /// <summary>Idle between sessions, to stay under the Vertex quota rather than retry past it.</summary>
+    public TimeSpan PaceBetweenSessions { get; init; } = TimeSpan.FromSeconds(20);
+
     /// <summary>Process only these video ids (empty ⇒ all). Used to retry a single dropped session.</summary>
     public IReadOnlyList<string> OnlyVideoIds { get; init; } = [];
 

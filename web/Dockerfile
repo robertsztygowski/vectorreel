@@ -21,6 +21,11 @@ ARG NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://stats.mdreel.com
 ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID=d146675e-e289-439b-baba-901a21560db0
 ENV NEXT_PUBLIC_UMAMI_SCRIPT_URL=$NEXT_PUBLIC_UMAMI_SCRIPT_URL
 ENV NEXT_PUBLIC_UMAMI_WEBSITE_ID=$NEXT_PUBLIC_UMAMI_WEBSITE_ID
+# Contract-derived collection pages (/collections/*). OFF by default so a production build 404s
+# them until the founder has reviewed licensing and attribution on real corpus material
+# (founder decision, 2026-07-21). The e2e profile turns it ON, so the pages ship fully tested.
+ARG NEXT_PUBLIC_SHOW_COLLECTIONS=false
+ENV NEXT_PUBLIC_SHOW_COLLECTIONS=$NEXT_PUBLIC_SHOW_COLLECTIONS
 RUN npm run build
 
 FROM node:20-alpine AS runtime

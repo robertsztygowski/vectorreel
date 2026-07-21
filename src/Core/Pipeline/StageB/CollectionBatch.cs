@@ -28,6 +28,11 @@ public sealed record CollectionSource(
 /// calibrated before it is committed.</item>
 /// <item><c>AbortOverCentsPerVideoHour</c> — abort the whole batch if any single session exceeds
 /// this. The <b>N4d</b> guard.</item>
+/// <item><c>RetryAttempts</c> / <c>RetryBackoff</c> — Vertex returns <c>429 RESOURCE_EXHAUSTED</c>
+/// in <em>both</em> EU regions under sustained load, so an unattended 25-video batch will meet it.
+/// A quota blip must not end the run or silently shrink the collection.</item>
+/// <item><c>PaceBetweenSessions</c> — deliberate idle between sessions. Slower is cheaper than
+/// retrying: a 429'd call still costs wall-clock, and pacing avoids provoking it.</item>
 /// </list>
 /// </remarks>
 public sealed record CollectionBatchRequest(
@@ -40,19 +45,50 @@ public sealed record CollectionBatchRequest(
     TimeSpan SegmentOverlap,
     MediaResolution MediaResolution = MediaResolution.Low,
     int? CalibrationCount = null,
-    int? AbortOverCentsPerVideoHour = null);
+    int? AbortOverCentsPerVideoHour = null,
+    int RetryAttempts = 3,
+    TimeSpan? RetryBackoff = null,
+    TimeSpan? PaceBetweenSessions = null);
+
+/// <summary>
+/// What happened to one source. <see cref="Failed"/> is deliberately distinct from a source that
+/// was never attempted: a transport or quota failure is <b>not</b> a reason to drop a session from
+/// the collection — it is a reason to retry it later with <c>--only</c>. Quality failures are the
+/// ones that get dropped (DISTRIBUTION.md publishing threshold), and they are a different decision
+/// made by a human looking at the output.
+/// </summary>
+public enum CollectionSessionOutcome
+{
+    Produced,
+    AlreadyPresent,
+    Failed,
+}
 
 public sealed record CollectionSessionResult(
     string VideoId,
-    bool WasProduced,
+    CollectionSessionOutcome Outcome,
     long Microcents,
     TimeSpan VideoDuration,
     TimeSpan WallClock,
     int StageBSegments,
-    string? OutputMarkdownObject)
+    string? OutputMarkdownObject,
+    string? FailureReason = null)
 {
+    public bool WasProduced => Outcome == CollectionSessionOutcome.Produced;
+
     public static CollectionSessionResult Skipped(CollectionSource source) =>
-        new(source.VideoId, false, 0, source.Duration, TimeSpan.Zero, 0, null);
+        new(source.VideoId, CollectionSessionOutcome.AlreadyPresent, 0, source.Duration, TimeSpan.Zero, 0, null);
+
+    public static CollectionSessionResult Failed(CollectionSource source, string reason, long microcents) =>
+        new(
+            source.VideoId,
+            CollectionSessionOutcome.Failed,
+            microcents,
+            source.Duration,
+            TimeSpan.Zero,
+            0,
+            null,
+            reason);
 
     public static CollectionSessionResult Produced(
         CollectionSource source,
@@ -61,7 +97,7 @@ public sealed record CollectionSessionResult(
         TimeSpan wallClock) =>
         new(
             source.VideoId,
-            true,
+            CollectionSessionOutcome.Produced,
             microcents,
             source.Duration,
             wallClock,
@@ -81,9 +117,15 @@ public sealed record CollectionBatchResult(
     string Collection,
     IReadOnlyList<CollectionSessionResult> Sessions)
 {
-    public IEnumerable<CollectionSessionResult> Produced => Sessions.Where(static s => s.WasProduced);
+    public IEnumerable<CollectionSessionResult> Produced =>
+        Sessions.Where(static s => s.Outcome == CollectionSessionOutcome.Produced);
 
-    public IEnumerable<CollectionSessionResult> SkippedSessions => Sessions.Where(static s => !s.WasProduced);
+    public IEnumerable<CollectionSessionResult> SkippedSessions =>
+        Sessions.Where(static s => s.Outcome == CollectionSessionOutcome.AlreadyPresent);
+
+    /// <summary>Sources worth retrying — pass these to <c>--only</c>, do not silently lose them.</summary>
+    public IEnumerable<CollectionSessionResult> FailedSessions =>
+        Sessions.Where(static s => s.Outcome == CollectionSessionOutcome.Failed);
 
     public long TotalMicrocents => Produced.Sum(static s => s.Microcents);
 

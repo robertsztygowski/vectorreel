@@ -65,35 +65,30 @@ public sealed class CollectionBatchRunner(
                 continue;
             }
 
+            if (produced > 0 && request.PaceBetweenSessions is { } pace && pace > TimeSpan.Zero)
+            {
+                // Slower is cheaper than retrying: a 429'd call buys nothing and still burns
+                // wall-clock, so it is better not to provoke one.
+                await Task.Delay(pace, cancellationToken);
+            }
+
             var jobId = $"collection_{request.Collection}_{source.VideoId}";
             var before = LedgerMicrocentsFor(jobId);
-            var stopwatch = Stopwatch.StartNew();
-
-            var run = await runner.RunAsync(
-                new YouTubeInternalGalleryRunRequest(
-                    JobId: jobId,
-                    VideoId: source.VideoId,
-                    SourceUri: source.SourceUri,
-                    Duration: source.Duration,
-                    OutputBucket: request.OutputBucket,
-                    OutputPrefix: request.OutputPrefix,
-                    // Dense slide content is segmented shorter UP FRONT rather than halved and
-                    // re-run after an overflow — the naive reactive fix is the expensive one.
-                    SegmentLength: source.SegmentLength ?? request.SegmentLength,
-                    SegmentOverlap: request.SegmentOverlap,
-                    Attribution: source.Attribution,
-                    MediaResolution: request.MediaResolution),
-                request.StageBOptions,
-                cancellationToken);
-
-            stopwatch.Stop();
-
-            var result = CollectionSessionResult.Produced(
-                source,
-                run,
-                LedgerMicrocentsFor(jobId) - before,
-                stopwatch.Elapsed);
+            var result = await ProduceWithRetriesAsync(request, source, jobId, before, cancellationToken);
             results.Add(result);
+
+            if (result.Outcome == CollectionSessionOutcome.Failed)
+            {
+                // Not a drop. The source stays in the corpus and is reported for a targeted retry;
+                // only a *quality* failure removes a session from a collection, and that is a
+                // human decision made while looking at the output.
+                logger.LogWarning(
+                    "Giving up on {VideoId} for now: {Reason}. It stays in the corpus — retry it with --only.",
+                    source.VideoId,
+                    result.FailureReason);
+                continue;
+            }
+
             produced++;
 
             if (logger.IsEnabled(LogLevel.Information))
@@ -120,6 +115,79 @@ public sealed class CollectionBatchRunner(
         }
 
         return new CollectionBatchResult(request.Collection, results);
+    }
+
+    private async Task<CollectionSessionResult> ProduceWithRetriesAsync(
+        CollectionBatchRequest request,
+        CollectionSource source,
+        string jobId,
+        long ledgerBefore,
+        CancellationToken cancellationToken)
+    {
+        var backoff = request.RetryBackoff ?? TimeSpan.FromSeconds(60);
+        string lastFailure = "unknown";
+
+        for (var attempt = 1; attempt <= Math.Max(1, request.RetryAttempts); attempt++)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            try
+            {
+                var run = await runner.RunAsync(
+                    new YouTubeInternalGalleryRunRequest(
+                        JobId: jobId,
+                        VideoId: source.VideoId,
+                        SourceUri: source.SourceUri,
+                        Duration: source.Duration,
+                        OutputBucket: request.OutputBucket,
+                        OutputPrefix: request.OutputPrefix,
+                        // Dense slide content is segmented shorter UP FRONT rather than halved and
+                        // re-run after an overflow — the naive reactive fix is the expensive one.
+                        SegmentLength: source.SegmentLength ?? request.SegmentLength,
+                        SegmentOverlap: request.SegmentOverlap,
+                        Attribution: source.Attribution,
+                        MediaResolution: request.MediaResolution,
+                        // A 429 storm can kill a video half-way through; without this, the retry
+                        // re-buys every segment it already paid for.
+                        CheckpointSegments: true),
+                    request.StageBOptions,
+                    cancellationToken);
+
+                stopwatch.Stop();
+                return CollectionSessionResult.Produced(
+                    source,
+                    run,
+                    LedgerMicrocentsFor(jobId) - ledgerBefore,
+                    stopwatch.Elapsed);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                stopwatch.Stop();
+                lastFailure = ex.Message;
+
+                if (attempt >= Math.Max(1, request.RetryAttempts))
+                {
+                    break;
+                }
+
+                // Backs off linearly on attempt number. Quota windows recover on a timescale of
+                // minutes, so the useful move is to wait, not to hammer a second region.
+                var wait = backoff * attempt;
+                if (logger.IsEnabled(LogLevel.Warning))
+                {
+                    logger.LogWarning(
+                        "{VideoId} attempt {Attempt}/{Total} failed ({Reason}); waiting {Wait} before retrying.",
+                        source.VideoId,
+                        attempt,
+                        request.RetryAttempts,
+                        ex.Message,
+                        wait);
+                }
+
+                await Task.Delay(wait, cancellationToken);
+            }
+        }
+
+        return CollectionSessionResult.Failed(source, lastFailure, LedgerMicrocentsFor(jobId) - ledgerBefore);
     }
 
     private static string BuildPrefix(string outputPrefix, string videoId)

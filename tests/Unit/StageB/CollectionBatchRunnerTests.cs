@@ -109,6 +109,66 @@ public sealed class CollectionBatchRunnerTests
         Assert.Equal(6, harness.Analyzer.Resolutions.Count);
     }
 
+    [Fact]
+    public async Task A_failing_source_is_retried_then_reported_but_does_not_end_the_batch()
+    {
+        // Vertex returns 429 in both EU regions under sustained load, so an unattended 25-video
+        // batch will meet it. A quota blip must not end the run.
+        var harness = new Harness { FailVideoIds = { "vid-2" } };
+        var request = Harness.Request(Sources(3)) with
+        {
+            RetryAttempts = 2,
+            RetryBackoff = TimeSpan.Zero,
+        };
+
+        var result = await harness.RunAsync(request);
+
+        Assert.Equal(["vid-1", "vid-3"], result.Produced.Select(s => s.VideoId));
+        var failed = Assert.Single(result.FailedSessions);
+        Assert.Equal("vid-2", failed.VideoId);
+        Assert.Equal(2, harness.Analyzer.AttemptsFor("vid-2"));
+    }
+
+    [Fact]
+    public async Task A_failed_source_does_not_consume_the_calibration_budget()
+    {
+        var harness = new Harness { FailVideoIds = { "vid-1" } };
+        var request = Harness.Request(Sources(4)) with
+        {
+            CalibrationCount = 2,
+            RetryAttempts = 1,
+            RetryBackoff = TimeSpan.Zero,
+        };
+
+        var result = await harness.RunAsync(request);
+
+        // Calibration measures cost. A session that produced nothing measured nothing.
+        Assert.Equal(["vid-2", "vid-3"], result.Produced.Select(s => s.VideoId));
+    }
+
+    [Fact]
+    public async Task A_retry_does_not_re_pay_for_segments_that_already_succeeded()
+    {
+        // The expensive failure mode: a 429 storm kills a video at segment 2, and the retry buys
+        // segments 0 and 1 a second time. A 30-minute video is 3 segments, so that is a third of
+        // the bill, per retry, across the batch.
+        var harness = new Harness { FailOnceAtSegment = 2 };
+        var request = Harness.Request(Sources(1)) with
+        {
+            RetryAttempts = 2,
+            RetryBackoff = TimeSpan.Zero,
+        };
+
+        var result = await harness.RunAsync(request);
+
+        Assert.Single(result.Produced);
+        // 3 segments; segment 2 was attempted twice, 0 and 1 exactly once each — they were
+        // restored from their checkpoints rather than re-analysed.
+        Assert.Equal(1, harness.Analyzer.CallsForSegment(0));
+        Assert.Equal(1, harness.Analyzer.CallsForSegment(1));
+        Assert.Equal(2, harness.Analyzer.CallsForSegment(2));
+    }
+
     private static IReadOnlyList<CollectionSource> Sources(int count) =>
         [.. Enumerable.Range(1, count).Select(i => new CollectionSource(
             $"vid-{i}",
@@ -123,7 +183,11 @@ public sealed class CollectionBatchRunnerTests
     {
         public int CentsPerSession { get; init; } = 10;
 
-        public RecordingAnalyzer Analyzer { get; } = new();
+        public HashSet<string> FailVideoIds { get; } = [];
+
+        public int? FailOnceAtSegment { get; init; }
+
+        public RecordingAnalyzer Analyzer => field ??= new RecordingAnalyzer(FailVideoIds, FailOnceAtSegment);
 
         public InMemoryStorage Storage { get; } = new();
 
@@ -157,13 +221,22 @@ public sealed class CollectionBatchRunnerTests
         }
     }
 
-    private sealed class RecordingAnalyzer : IVideoAnalyzer
+    private sealed class RecordingAnalyzer(HashSet<string> failVideoIds, int? failOnceAtSegment = null)
+        : IVideoAnalyzer
     {
+        private readonly Dictionary<string, int> _attempts = [];
+        private readonly Dictionary<int, int> _segmentCalls = [];
+        private bool _segmentFailureUsed;
+
         public List<string> AnalyzedSources { get; } = [];
 
         public List<MediaResolution> Resolutions { get; } = [];
 
         public List<string> ProducedVideoIds { get; } = [];
+
+        public int AttemptsFor(string videoId) => _attempts.GetValueOrDefault(videoId);
+
+        public int CallsForSegment(int index) => _segmentCalls.GetValueOrDefault(index);
 
         public Task<StageBModelResponse> AnalyzeAsync(
             string sourceUri,
@@ -171,9 +244,30 @@ public sealed class CollectionBatchRunnerTests
             StageBCallOptions callOptions,
             CancellationToken cancellationToken)
         {
+            _segmentCalls[segment.Index] = _segmentCalls.GetValueOrDefault(segment.Index) + 1;
+
+            if (failOnceAtSegment == segment.Index && !_segmentFailureUsed)
+            {
+                _segmentFailureUsed = true;
+                throw new HttpRequestException(
+                    "Vertex generateContent returned 429 RESOURCE_EXHAUSTED in all EU regions.");
+            }
+
+            var videoId = sourceUri.Split('=')[^1];
+            if (failVideoIds.Contains(videoId))
+            {
+                if (segment.Index == 0)
+                {
+                    _attempts[videoId] = _attempts.GetValueOrDefault(videoId) + 1;
+                }
+
+                throw new HttpRequestException(
+                    "Vertex generateContent returned 429 RESOURCE_EXHAUSTED in all EU regions.");
+            }
+
             AnalyzedSources.Add(sourceUri);
             Resolutions.Add(segment.Sampling.MediaResolution);
-            ProducedVideoIds.Add(sourceUri.Split('=')[^1]);
+            ProducedVideoIds.Add(videoId);
 
             // Stage B reports offsets within the segment, not absolute video positions.
             static string Stamp(TimeSpan t) => $"{(int)t.TotalHours:00}:{t.Minutes:00}:{t.Seconds:00}";

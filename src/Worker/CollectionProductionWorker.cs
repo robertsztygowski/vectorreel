@@ -58,7 +58,10 @@ public sealed class CollectionProductionWorker(
                     SegmentOverlap: cfg.SegmentOverlap,
                     MediaResolution: cfg.LowMediaResolution ? MediaResolution.Low : MediaResolution.Default,
                     CalibrationCount: cfg.CalibrationCount,
-                    AbortOverCentsPerVideoHour: cfg.AbortOverCentsPerVideoHour),
+                    AbortOverCentsPerVideoHour: cfg.AbortOverCentsPerVideoHour,
+                    RetryAttempts: cfg.RetryAttempts,
+                    RetryBackoff: cfg.RetryBackoff,
+                    PaceBetweenSessions: cfg.PaceBetweenSessions),
                 stoppingToken);
 
             var remainingHours = totalHours - result.Produced.Sum(s => s.VideoDuration.TotalHours)
@@ -67,15 +70,18 @@ public sealed class CollectionProductionWorker(
             if (logger.IsEnabled(LogLevel.Information))
             {
                 logger.LogInformation(
-                    "Batch done: {Produced} produced, {Skipped} already present, {Cents} cents total, "
-                    + "{Rate} cents/video-hour measured. Projected cost for the remaining {Remaining:F2} "
-                    + "video-hours at that rate: {Projection} cents. Reconcile against METRICS.md N4c.",
+                    "Batch done: {Produced} produced, {Skipped} already present, {Failed} failed, "
+                    + "{Cents} cents total, {Rate} cents/video-hour measured. Projected cost for the "
+                    + "remaining {Remaining:F2} video-hours at that rate: {Projection} cents. "
+                    + "Reconcile against METRICS.md N4c. Retry failures with: --only {RetryList}",
                     result.Produced.Count(),
                     result.SkippedSessions.Count(),
+                    result.FailedSessions.Count(),
                     result.TotalCents,
                     result.CentsPerVideoHour,
                     remainingHours,
-                    result.ProjectedCentsFor(remainingHours));
+                    result.ProjectedCentsFor(remainingHours),
+                    string.Join(',', result.FailedSessions.Select(s => s.VideoId)));
             }
 
             await WriteReportAsync(cfg, result, totalHours, remainingHours, stoppingToken);
@@ -118,6 +124,10 @@ public sealed class CollectionProductionWorker(
             corpus_video_hours = Math.Round(totalHours, 3),
             produced = result.Produced.Count(),
             skipped_already_present = result.SkippedSessions.Count(),
+            failed = result.FailedSessions.Count(),
+            retry_command = result.FailedSessions.Any()
+                ? $"scripts/produce-collection.sh {result.Collection} --only {string.Join(',', result.FailedSessions.Select(s => s.VideoId))}"
+                : null,
             total_cents = result.TotalCents,
             produced_video_hours = Math.Round(result.VideoHours, 3),
             cents_per_video_hour = result.CentsPerVideoHour,

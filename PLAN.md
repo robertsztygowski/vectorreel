@@ -416,6 +416,19 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   > output, and the ledger carries **microcents** — one Stage B call is worth a fraction of a
 >   > cent, and a batch summed from rounded cents reads zero. This is the difference between M3
 >   > measuring something and M3 fabricating it.
+> - **M5 contract-derived collection pages ✅ (flag-gated, prod-OFF)** — `/collections/*` on
+>   mdreel.com renders from the **same `metadata/manifest.json` that ships inside the repository**
+>   (`web/lib/collectionRepository.ts`): collection overview, session, topic, speaker and timeline
+>   pages, all projections of the manifest, none holding a fact of its own. **Both tiers render and
+>   are distinguishable on every line**: a `full` entry links to its session document, a `reference`
+>   entry links out to the original at a `t=` offset and **404s if anyone asks for a session page**,
+>   because none exists. Reuses the shipped `ConvertCta` and the existing
+>   `collection_session_view` / `collection_convert_click` events — no new instrumentation, no
+>   third-party pixels. Behind `NEXT_PUBLIC_SHOW_COLLECTIONS`, **OFF by default** (a flag is on only
+>   for the exact string `"true"`, so an ambiguous value resolves to the safe state); E2E builds it
+>   ON so the pages ship fully exercised. web unit 108, E2E collections spec 7/7.
+>   M5 was sequenced **ahead of M4** on the settled decision that private repos carry zero
+>   distribution value while the site is where the funnel is instrumented.
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages
@@ -434,6 +447,15 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   `gcloud secrets versions add mdreel-brevo-api-key --data-file=- --project tensile-runway-442915-j6`
 >   (create the secret first if absent, region europe-central2), then set `BREVO_API_KEY` on the api
 >   service. `RequireConfirmedEmail=false`, so auth works without it.
+> - **Vertex capacity — a decision to be aware of, NOT a blocker (2026-07-21).** Real batch
+>   production hits `429 RESOURCE_EXHAUSTED` in both EU regions. **There is nothing to request:** the
+>   limit that binds video production is a **non-adjustable system limit** (console → Quotas →
+>   service **Agent Platform API**, not "Vertex AI API"), and we run at ~1% of it — the 429s are
+>   Dynamic Shared Quota contention. It refreshes per minute with no daily cap, so **waiting always
+>   works**; the pipeline now retries, paces and checkpoints accordingly (ARCHITECTURE §3, INFRA.md).
+>   The only founder decision here is **Provisioned Throughput** — guaranteed capacity, but a
+>   continuously-billing commitment, and hard to justify before A5 has produced a visitor. Revisit
+>   only if throughput becomes the thing blocking a weekly batch.
 > - *(accumulates as later milestones land.)*
 > - **Create the `mdreel` GitHub org (M5, 2026-07-21)** — collections publish as public repos under
 >   a dedicated org (DISTRIBUTION.md "GitHub distribution" section). Steps: create org `mdreel`

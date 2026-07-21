@@ -56,11 +56,26 @@ public sealed class YouTubeInternalGalleryRunner(
                 request.SegmentOverlap,
                 request.MediaResolution);
 
+            var prefix = BuildPrefix(request.OutputPrefix, request.VideoId);
+
             List<SegmentAnalysis> analyses = [];
             using (StartStage(request.JobId, "B"))
             {
                 foreach (var segment in segments)
                 {
+                    // Segment-level checkpointing. Vertex returns 429 in both EU regions under
+                    // shared-quota contention, so a long video can fail at segment 5 having already
+                    // paid for segments 0-4. Without this, the retry buys them a second time
+                    // (CLAUDE.md rule 6 — the cheapest euro is the one not spent twice).
+                    var checkpoint = $"{prefix}/segments/{segment.Index:D3}.json";
+                    if (request.CheckpointSegments
+                        && await TryReadSegmentAsync(request.OutputBucket, checkpoint, cancellationToken)
+                            is { } cached)
+                    {
+                        analyses.AddRange(cached);
+                        continue;
+                    }
+
                     var analyzed = await stageB.AnalyzeAsync(
                         request.SourceUri,
                         segment,
@@ -68,6 +83,16 @@ public sealed class YouTubeInternalGalleryRunner(
                         stageBOptions,
                         cancellationToken,
                         request.JobId);
+
+                    if (request.CheckpointSegments)
+                    {
+                        await WriteUtf8Async(
+                            request.OutputBucket,
+                            checkpoint,
+                            JsonSerializer.Serialize(analyzed, DocumentJson),
+                            cancellationToken);
+                    }
+
                     analyses.AddRange(analyzed);
                 }
             }
@@ -87,7 +112,6 @@ public sealed class YouTubeInternalGalleryRunner(
 
             var markdown = OutputMarkdownRenderer.Render(document);
 
-            var prefix = BuildPrefix(request.OutputPrefix, request.VideoId);
             var stageBPath = $"{prefix}/stage-b.json";
             var outputMarkdownPath = $"{prefix}/output.md";
             var outputJsonPath = $"{prefix}/output.json";
@@ -270,6 +294,35 @@ public sealed class YouTubeInternalGalleryRunner(
         }
     }
 
+    /// <summary>
+    /// Reads a checkpointed segment back. A checkpoint that cannot be read is treated as absent and
+    /// re-analysed: paying for one segment again is cheap, and trusting a half-written file is not.
+    /// </summary>
+    private async Task<IReadOnlyList<SegmentAnalysis>?> TryReadSegmentAsync(
+        string bucket,
+        string objectName,
+        CancellationToken cancellationToken)
+    {
+        if (!await objectStorage.ExistsAsync(bucket, objectName, cancellationToken))
+        {
+            return null;
+        }
+
+        try
+        {
+            await using var stream = await objectStorage.OpenReadAsync(bucket, objectName, cancellationToken);
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            var json = await reader.ReadToEndAsync(cancellationToken);
+            var cached = JsonSerializer.Deserialize<List<SegmentAnalysis>>(json);
+            return cached is { Count: > 0 } ? cached : null;
+        }
+        catch (JsonException)
+        {
+            logger.LogWarning("Segment checkpoint {Object} was unreadable; re-analysing it.", objectName);
+            return null;
+        }
+    }
+
     private async Task WriteUtf8Async(string bucket, string objectName, string content, CancellationToken cancellationToken)
     {
         await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
@@ -300,7 +353,8 @@ public sealed record YouTubeInternalGalleryRunRequest(
     TimeSpan SegmentLength,
     TimeSpan SegmentOverlap,
     GalleryAttribution? Attribution = null,
-    MediaResolution MediaResolution = MediaResolution.Default);
+    MediaResolution MediaResolution = MediaResolution.Default,
+    bool CheckpointSegments = false);
 
 /// <summary>
 /// Curated attribution for a gallery source (CLAUDE.md rule 8 — every gallery output is
