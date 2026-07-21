@@ -314,7 +314,42 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   `collection_convert_click` (with `from` context) added to `lib/umami.ts` — no third-party
 >   pixels (rule 10). BUSINESS_MODEL §7.1 + DISTRIBUTION sources-panel now name the measured
 >   funnel. web unit 83/83, Playwright E2E 17/17 green.
-> - **Next:** deploy web, then M8 (assumption test pack) + final report.
+> - **M8 assumption test pack ✅** — `experiments/005-pivot-assumption-tests/TESTS.md`: five
+>   minimal-engineering experiments (E1 collections→N15 traffic; E2 GitHub-as-channel via the
+>   `utm_source=github` row; E3 headline A/B on the pivoted arms; E4 consume→convert funnel to
+>   the A2 rule; E5 repository-structure trust proxy → `upload_repeat`), each with hypothesis,
+>   METRICS trigger name, smallest build (mostly "already shipped"), and the stop/go rule cited
+>   verbatim by name. A3 deliberately excluded (no honest pre-launch experiment exists — §2.1).
+>
+> **📦 FINAL REPORT — pivot run 2026-07-20/21**
+>
+> 1. **Milestones: 9/9 complete.** M0 `1e24936` · M1 `ea79afb` · M2 `02cca35`+`9f9d846` ·
+>    M3 `a52a058` · M4 `32453de` · M5 `0229aa4` · M6 `ae97b2f` · M7 `6ffac1b` · M8 (this
+>    commit). Deploys (rule-5 override, recorded in INFRA.md): web `vectorreel-web-00013-rkx`
+>    (M4) and `vectorreel-web-00014-kb2` (M4+M7), both smoke-verified 25/0 via
+>    `scripts/smoke-remote.sh`; api/worker untouched.
+> 2. **Shipped pivot assets.** *Docs:* BUSINESS_MODEL/DISTRIBUTION/ARCHITECTURE(§4b)/INFRA/PLAN
+>    pivoted to "AI-ready knowledge repository"; collections launch package; GitHub operating
+>    model; weekly publishing runbook; assumption pack. *Product:* repository contract v1
+>    (schema + canonical fixture + 22-test validator); landing/gallery pivot with dual CTA;
+>    consume→convert instrumentation (`collection_session_view`, `collection_convert_click`).
+>    *GitHub surfaces:* `templates/collection-repo/` issue forms, ready to push when the org
+>    exists.
+> 3. **Failures:** the delegated M4 sub-agent returned empty after a long run — landing pivot
+>    was re-implemented directly by the coordinator (cost: elapsed time, no scope loss). One
+>    web build break (ESLint no-html-link-for-pages) caught by the gate, fixed pre-commit.
+> 4. **NEEDS-FOUNDER:** see the list below — new item this run: **create the `mdreel` GitHub
+>    org**. Everything else carried over (Brevo key, `Admin__Emails`, lawyer review, alert-mail
+>    confirm).
+> 5. **Cost delta:** zero new continuously-billing resources; deployed services still run
+>    `PipelineModel__Mode=fake` (no Vertex spend); no ad spend (N29 untouched); Cloud Run
+>    caps/scale-to-zero unchanged, inside the founder-approved budget guardrail (INFRA.md).
+> 6. **Next-run backlog, ranked (A5 first):** ① produce + publish the first real collection
+>    (AI Engineering, 5–10 sessions — needs real Vertex runs, ledgered) and push the three
+>    GitHub repos once the org exists; ② derive collection pages on mdreel.com from the §4b
+>    contract (today the gallery renders per-file specimens, not topic/speaker/timeline
+>    indexes); ③ first weekly batch through the M6 runbook end-to-end; ④ launch prep per
+>    Phase 5 (T0 set on first publication); ⑤ read E3/E4 dashboards only after §2.1 floors.
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
