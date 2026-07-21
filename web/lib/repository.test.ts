@@ -13,7 +13,11 @@ import { Ajv2020 } from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import { parseDocument } from './outputDocument';
 
-const REPO_DIR = join(process.cwd(), '..', 'tests', 'fixtures', 'repository');
+// Defaults to the canonical fixture. Point MDREEL_REPOSITORY_DIR at a GENERATED repository to run
+// this same oracle against real output — the contract is only worth having if the thing we actually
+// ship is held to it, not just the example.
+const REPO_DIR = process.env.MDREEL_REPOSITORY_DIR
+  ?? join(process.cwd(), '..', 'tests', 'fixtures', 'repository');
 const CONTRACTS_DIR = join(process.cwd(), '..', 'tests', 'fixtures', 'contracts');
 
 const ajv = new Ajv2020({ allErrors: true, strict: true });

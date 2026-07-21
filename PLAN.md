@@ -429,6 +429,26 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   ON so the pages ship fully exercised. web unit 108, E2E collections spec 7/7.
 >   M5 was sequenced **ahead of M4** on the settled decision that private repos carry zero
 >   distribution value while the site is where the funnel is instrumented.
+> - **M4 repository generator + private push ✅** — `RepositoryRenderer` (in `src/Core/Output`,
+>   because §4b calls the indexer *a rendering step, same category as Stage D's renderer*) turns §4
+>   documents plus curation metadata into a §4b repository: README, `sessions/`, `topics/`,
+>   `speakers/`, `timeline/`, `metadata/manifest.json`. Pure function — same inputs, same bytes, so a
+>   regenerated collection can be **diffed rather than re-reviewed**. `scripts/generate-collection-repo.sh`
+>   builds it from the **intersection** of the corpus (what we intended) and the bucket (what we
+>   produced), reporting what is missing rather than half-linking it: *a collection that lists
+>   sessions it does not contain is worse than a smaller one.*
+>   **Three repos pushed PRIVATE to `github.com/mdreel`** — `ai-engineering` (real corpus),
+>   `dotnet` and `kubernetes-cncf` (scaffolds). `scripts/push-collection-repo.sh` creates private and
+>   then **asserts** visibility, failing loudly otherwise; flipping to public is a founder decision,
+>   never a script's side effect.
+>   > 🚩 **Pointing the existing §4b oracle at real generated output immediately found a bug the
+>   > fixture could not.** `web/lib/repository.test.ts` now accepts `MDREEL_REPOSITORY_DIR`, and run
+>   > against the generated repo it failed: GitHub auto-anchors **keep existing hyphens**
+>   > (`AI-Infused` → `ai-infused`), and the renderer was stripping them, producing citation anchors
+>   > that silently did not resolve. The canonical fixture happened to contain no hyphenated heading.
+>   > Fixed, regression-tested, and the generated repository now passes all **78** oracle checks.
+>   > The lesson is reusable: *a contract is only worth having if the thing we actually ship is held
+>   > to it, not just the example.*
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages
@@ -456,6 +476,16 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   The only founder decision here is **Provisioned Throughput** — guaranteed capacity, but a
 >   continuously-billing commitment, and hard to justify before A5 has produced a visitor. Revisit
 >   only if throughput becomes the thing blocking a weekly batch.
+> - 🚩 **Licence + attribution review, then the visibility flip (2026-07-21).** Three repos exist
+>   under `github.com/mdreel`, all **PRIVATE**: `ai-engineering` (real corpus), `dotnet` and
+>   `kubernetes-cncf` (scaffolds). Nothing about them is public and nothing links to them. Before
+>   any of that changes, review: (a) the per-session attribution lines and `Source & licence`
+>   sections in `mdreel/ai-engineering`; (b) that every `full` entry really is CC-BY (the manifest
+>   carries `licence` + `licence_verified_via` per entry); (c) that no `reference` entry reproduces
+>   content. Then, and only then: `gh repo edit mdreel/<name> --visibility public --accept-visibility-change-consequences`,
+>   set the org profile README to the dual CTA, and pin the repos. **Separately** flip the site
+>   pages on by deploying web with `NEXT_PUBLIC_SHOW_COLLECTIONS=true` — the two are independent
+>   decisions, and the site is the one that carries the funnel.
 > - *(accumulates as later milestones land.)*
 > - **Create the `mdreel` GitHub org (M5, 2026-07-21)** — collections publish as public repos under
 >   a dedicated org (DISTRIBUTION.md "GitHub distribution" section). Steps: create org `mdreel`

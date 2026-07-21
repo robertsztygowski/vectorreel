@@ -40,8 +40,8 @@
       }
     },
     "sessions": {
+      "description": "May be empty: a scaffolded collection is a legitimate state — the repository exists, its conventions are in place, and its first batch has not landed yet. What stops a collection sitting empty is the weekly publishing cadence (DISTRIBUTION.md), not the schema; an empty repo that fails validation would just be generated outside the contract instead.",
       "type": "array",
-      "minItems": 1,
       "items": {
         "type": "object",
         "required": ["slug", "title", "source", "tags"],

@@ -10,6 +10,7 @@ builder.Logging.AddMdreelGoogleCloudConsole(builder.Configuration);
 builder.Services.AddMdreelOpenTelemetry(builder.Configuration, "mdreel-worker");
 builder.Services.Configure<YouTubeGalleryRunnerOptions>(builder.Configuration.GetSection("YouTubeGalleryRunner"));
 builder.Services.Configure<CollectionProductionOptions>(builder.Configuration.GetSection("CollectionProduction"));
+builder.Services.Configure<RepositoryBuildOptions>(builder.Configuration.GetSection("RepositoryBuild"));
 builder.Services.AddSingleton<ICostLedger, InMemoryCostLedger>();
 builder.Services.AddSingleton<StageBRunner>();
 builder.Services.AddSingleton<YouTubeInternalGalleryRunner>();
@@ -20,6 +21,7 @@ builder.Services.AddPipelineInfrastructure(
 builder.Services.AddHostedService<HealthListener>();
 builder.Services.AddHostedService<PipelineWorker>();
 builder.Services.AddHostedService<CollectionProductionWorker>();
+builder.Services.AddHostedService<RepositoryBuildWorker>();
 
 var host = builder.Build();
 host.Run();
