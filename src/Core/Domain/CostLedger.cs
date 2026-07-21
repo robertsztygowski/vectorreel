@@ -34,6 +34,12 @@ public enum CostKind
 /// call was made, so it doubles as the record that the <c>429 RESOURCE_EXHAUSTED</c> fallback to
 /// <c>europe-west3</c> fired (INFRA.md). EU regions only (CLAUDE.md rule 2); <c>null</c> for compute.
 /// </param>
+/// <param name="Microcents">
+/// The same cost in hundredths of a cent. This unit exists because Stage B fires many small calls
+/// per video: rounding each to a whole cent first loses most of the bill — a 25-video batch summed
+/// from rounded cents can read zero. <b>Sum this field</b>; <paramref name="Cents"/> is the
+/// human-facing rounding of the same figure.
+/// </param>
 public sealed record CostEntry(
     string JobId,
     CostKind Kind,
@@ -41,7 +47,8 @@ public sealed record CostEntry(
     double Quantity,
     string Unit,
     int? Cents = null,
-    string? Region = null);
+    string? Region = null,
+    long? Microcents = null);
 
 /// <summary>
 /// Where metered steps go. Persistence is Phase 2 (ARCHITECTURE.md §6, <c>job_segments</c> /

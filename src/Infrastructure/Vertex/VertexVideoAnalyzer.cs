@@ -166,7 +166,8 @@ public sealed class VertexVideoAnalyzer(
             region,
             usage?.PromptTokenCount,
             usage?.CandidatesTokenCount,
-            usage?.ThoughtsTokenCount);
+            usage?.ThoughtsTokenCount,
+            VertexUsage.ToTokenUsage(usage));
 
     private async Task<VertexRegionResponse> PostAsync(
         GenerateContentRequest request,

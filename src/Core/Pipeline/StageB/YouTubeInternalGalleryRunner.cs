@@ -53,7 +53,8 @@ public sealed class YouTubeInternalGalleryRunner(
             var segments = PlanSegments(
                 request.Duration,
                 request.SegmentLength,
-                request.SegmentOverlap);
+                request.SegmentOverlap,
+                request.MediaResolution);
 
             List<SegmentAnalysis> analyses = [];
             using (StartStage(request.JobId, "B"))
@@ -194,7 +195,8 @@ public sealed class YouTubeInternalGalleryRunner(
     internal static IReadOnlyList<Segment> PlanSegments(
         TimeSpan duration,
         TimeSpan segmentLength,
-        TimeSpan overlap)
+        TimeSpan overlap,
+        MediaResolution mediaResolution = MediaResolution.Default)
     {
         if (duration <= TimeSpan.Zero)
         {
@@ -236,7 +238,7 @@ public sealed class YouTubeInternalGalleryRunner(
                 Start: start,
                 End: end,
                 OverlapBefore: overlapBefore,
-                Sampling: new SamplingPlan(MediaResolution.Default, 0),
+                Sampling: new SamplingPlan(mediaResolution, 0),
                 Cues: []));
 
             index++;
@@ -281,6 +283,13 @@ public sealed class YouTubeInternalGalleryRunner(
     }
 }
 
+/// <remarks>
+/// <c>MediaResolution</c> is the request-level cost lever on this path (METRICS.md <b>N4b</b>).
+/// Stage A's per-segment static routing is impossible without the bytes, but media resolution needs
+/// no local analysis — so internal gallery/collection production runs blanket-low, which is what
+/// METRICS.md <b>N4c</b> assumes. Defaults to <see cref="Domain.MediaResolution.Default"/> so
+/// nothing changes for callers that have not opted in.
+/// </remarks>
 public sealed record YouTubeInternalGalleryRunRequest(
     string JobId,
     string VideoId,
@@ -290,7 +299,8 @@ public sealed record YouTubeInternalGalleryRunRequest(
     string OutputPrefix,
     TimeSpan SegmentLength,
     TimeSpan SegmentOverlap,
-    GalleryAttribution? Attribution = null);
+    GalleryAttribution? Attribution = null,
+    MediaResolution MediaResolution = MediaResolution.Default);
 
 /// <summary>
 /// Curated attribution for a gallery source (CLAUDE.md rule 8 — every gallery output is

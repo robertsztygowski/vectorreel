@@ -73,6 +73,12 @@ public sealed record StageBModelOutput(
 /// <param name="InputTokens">Provider-reported prompt/input tokens, when available.</param>
 /// <param name="OutputTokens">Provider-reported candidate/output tokens, when available.</param>
 /// <param name="ThinkingTokens">Provider-reported thinking tokens, when available.</param>
+/// <param name="Usage">
+/// Prompt tokens split by modality, which is how the provider bills them. Audio costs several times
+/// video per token, and at low media resolution — the setting production runs on — audio dominates
+/// the input bill, so a blended rate would misprice the configuration we actually use. Null when no
+/// real call was made or the provider reported no breakdown.
+/// </param>
 public sealed record StageBModelResponse(
     StageBFinishReason FinishReason,
     StageBModelOutput? Output,
@@ -80,7 +86,8 @@ public sealed record StageBModelResponse(
     string? Region = null,
     int? InputTokens = null,
     int? OutputTokens = null,
-    int? ThinkingTokens = null);
+    int? ThinkingTokens = null,
+    LlmTokenUsage? Usage = null);
 
 /// <summary>Stage B's validated output for one segment.</summary>
 public sealed record SegmentAnalysis(

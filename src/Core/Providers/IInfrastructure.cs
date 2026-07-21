@@ -68,6 +68,30 @@ public interface IObjectStorage
         await file.FlushAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// Does the object already exist?
+    ///
+    /// Batch collection production is resumable on this: a source whose <c>output.md</c> is already
+    /// in the bucket is skipped rather than re-produced. A batch that dies half-way must never
+    /// re-pay for what it already bought — the cheapest euro is the one not spent twice
+    /// (CLAUDE.md rule 6).
+    ///
+    /// The default probes via <see cref="OpenReadAsync"/>; backends with a native metadata lookup
+    /// should override it so existence costs a HEAD, not a download.
+    /// </summary>
+    async Task<bool> ExistsAsync(string bucket, string objectName, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await using var stream = await OpenReadAsync(bucket, objectName, cancellationToken);
+            return true;
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return false;
+        }
+    }
+
     /// <summary>Write an object.</summary>
     Task WriteAsync(string bucket, string objectName, Stream content, CancellationToken cancellationToken);
 

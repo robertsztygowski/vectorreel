@@ -107,8 +107,9 @@ public sealed class StageBRunner(IVideoAnalyzer analyzer, ICostLedger? ledger = 
                 Step: "stage_b.analyze",
                 Quantity: 1,
                 Unit: "calls",
-                Cents: null,
-                Region: response.Region));
+                Cents: response.Usage is null ? null : LlmPricing.Cents(response.Usage),
+                Region: response.Region,
+                Microcents: response.Usage is null ? null : LlmPricing.Microcents(response.Usage)));
         }
 
         RecordTokenMetrics(response);

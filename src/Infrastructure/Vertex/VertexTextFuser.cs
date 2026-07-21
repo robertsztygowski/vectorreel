@@ -46,14 +46,16 @@ public sealed partial class VertexTextFuser(
 
         // The fusion call bills too (CLAUDE.md rule 6); record which EU region served it after any
         // 429 fallback (INFRA.md). Stage B is metered by the runner; this is the Stage C counterpart.
+        var tokenUsage = VertexUsage.ToTokenUsage(usage);
         ledger.Record(new CostEntry(
             JobId: request.JobId,
             Kind: CostKind.Llm,
             Step: "stage_c.fuse",
             Quantity: 1,
             Unit: "calls",
-            Cents: null,
-            Region: region));
+            Cents: tokenUsage is null ? null : LlmPricing.Cents(tokenUsage),
+            Region: region,
+            Microcents: tokenUsage is null ? null : LlmPricing.Microcents(tokenUsage)));
         RecordTokenMetrics(region, usage);
 
         var language = ResolveLanguage(payload.Language, segments);

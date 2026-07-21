@@ -396,6 +396,26 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   application-layer talks of any hot topic are standard licence, essentially without exception.
 >   ⇒ the `reference` tier is not a licence workaround, it is what makes a collection recognisable
 >   to its own ICP. Recorded in DISTRIBUTION.md.
+> - **M2 collection production path ✅** — `scripts/produce-collection.sh <slug>` is the one command
+>   that turns a licence-verified corpus into §4 documents through the **real** pipeline. Properties
+>   that are not incidental: **resumable** (a source whose `output.md` exists is skipped, never
+>   re-paid for), **calibrate-before-commit** (`--calibrate N` produces N and stops), **blanket low
+>   media resolution** (METRICS.md **N4b**), rule-9 guards on every Stage B call, per-source segment
+>   shortening for dense content *up front*, and a per-session ceiling that aborts the batch rather
+>   than paying the METRICS.md **N4d** rate twenty-five times. `--dry-run` proved the whole path at
+>   zero spend, including resumability. Loading the corpus is itself a licence gate: a `full` entry
+>   that is not `creativeCommon`, or lacks verification evidence or an attribution line, is a hard
+>   stop at load time — nothing is ever processed "pending a check", and `reference` entries are
+>   never loaded at all.
+>   > 🚩 **A gap found before it cost anything: the cost ledger recorded calls but never euros.**
+>   > Every `CostEntry.Cents` was `null`, so "reconcile measured €/video-hour against N4c" — the
+>   > point of the calibration step — could not have been done at all; it would have reported zero
+>   > and looked fine. Fixed: usage is now priced **per modality** (audio costs several times video
+>   > per token, and at low media resolution audio *dominates* the input bill, so a blended rate
+>   > would misprice precisely the configuration production runs on), thinking tokens bill as
+>   > output, and the ledger carries **microcents** — one Stage B call is worth a fraction of a
+>   > cent, and a batch summed from rounded cents reads zero. This is the difference between M3
+>   > measuring something and M3 fabricating it.
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
 > - **Polish lawyer review of the legal pack (2026-07-18)** — the six `mdreel.com/legal/*` pages

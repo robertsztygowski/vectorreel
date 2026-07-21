@@ -71,6 +71,21 @@ public sealed class GcsObjectStorage : MdReel.Core.Providers.IObjectStorage, IDi
         await _client.DownloadObjectAsync(bucket, objectName, file, cancellationToken: cancellationToken);
     }
 
+    // Native metadata lookup — resumability must not cost a full download per already-produced
+    // session (the default interface probe would).
+    public async Task<bool> ExistsAsync(string bucket, string objectName, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _client.GetObjectAsync(bucket, objectName, cancellationToken: cancellationToken);
+            return true;
+        }
+        catch (GoogleApiException ex) when (ex.HttpStatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return false;
+        }
+    }
+
     public async Task WriteAsync(string bucket, string objectName, Stream content, CancellationToken cancellationToken)
     {
         if (_isEmulator)
