@@ -294,7 +294,14 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   ("gallery"→"collections", hrefs unchanged so Umami event mapping is intact); site + gallery
 >   metadata pivoted. No auth/payments/pipeline wiring touched. web unit 81/81, Playwright E2E
 >   17/17 green.
-> - **Next:** deploy web (rule-5 override), then M5 (GitHub distribution model) + M6.
+> - **M5 GitHub distribution operating model ✅** — DISTRIBUTION.md gained "GitHub distribution —
+>   the operating model": repo taxonomy (one public repo per collection under an `mdreel` org,
+>   product repo stays private), per-repo conventions (README shape, CHANGELOG as freshness
+>   proof, weekly `v<yyyy.ww>` releases, CC-BY-4.0 for derived content), two issue forms
+>   (Correction = ground-truth QA + inbound conversation; Request = A2 demand signal),
+>   discoverability metadata (topics/description/pins/website+UTM), and a no-automation weekly
+>   operating checklist. Reusable issue forms shipped in `templates/collection-repo/`.
+> - **Next:** M6 (weekly publishing system), then M7 (consume→convert).
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)
@@ -315,6 +322,12 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   (create the secret first if absent, region europe-central2), then set `BREVO_API_KEY` on the api
 >   service. `RequireConfirmedEmail=false`, so auth works without it.
 > - *(accumulates as later milestones land.)*
+> - **Create the `mdreel` GitHub org (M5, 2026-07-21)** — collections publish as public repos under
+>   a dedicated org (DISTRIBUTION.md "GitHub distribution" section). Steps: create org `mdreel`
+>   (free tier is fine) at https://github.com/organizations/plan → set org profile README to the
+>   dual CTA (explore collections / build your own) → once the first three collection repos are
+>   pushed, pin them. Nothing blocks on this: repos are generated locally from the §4b contract
+>   and pushed the day the org exists.
 > - **Set `Admin__Emails` on the prod api (2026-07-20)** — the admin overview (`/app/admin`) is
 >   deployed but **fail-closed (404) until the allowlist is set**. One command:
 >   `gcloud run services update vectorreel-api --region europe-west1 --project tensile-runway-442915-j6 --update-env-vars Admin__Emails=<your-login-email>`

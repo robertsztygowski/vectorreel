@@ -1,0 +1,29 @@
+name: Collection / session request
+description: Ask for a talk to be processed into this collection, or propose a new collection.
+title: "[request] <talk or collection name>"
+labels: ["request"]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Video URL
+      description: Public link to the talk (must be publicly embeddable).
+    validations:
+      required: true
+  - type: dropdown
+    id: licence
+    attributes:
+      label: Licence on the source platform
+      options:
+        - CC (Creative Commons) — shown on the video page
+        - Not sure
+        - Standard licence (probably not eligible)
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why this one?
+      description: What questions would you ask this session (or collection) once it's in here?
+    validations:
+      required: true

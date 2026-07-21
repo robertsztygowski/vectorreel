@@ -206,6 +206,78 @@ collection follows the repository contract (ARCHITECTURE.md §4b) with
 - A collection is *retired* (archived, kept online) if its sessions stop being curated — an
   abandoned-looking collection is worse proof than a small fresh one.
 
+## GitHub distribution — the operating model (M5, 2026-07-21)
+
+GitHub is a **product channel**, not a code host: the ICP (BUSINESS_MODEL §5) lives there, and a
+repository they can clone, grep and point their agent at is a demo in their own workflow. This
+section owns how that channel operates.
+
+### Repo taxonomy — collections vs product
+
+| Repo | Visibility | Contents | What it must never contain |
+|---|---|---|---|
+| `mdreel/<collection-slug>` (e.g. `mdreel/ai-engineering`) | Public, one repo per collection | Exactly the repository contract (ARCHITECTURE.md §4b): README, `sessions/`, `topics/`, `speakers/`, `timeline/`, `metadata/manifest.json` | Code, scripts, product marketing beyond the README footer, anything not derived from a licence-checked video |
+| `robertsztygowski/vectorreel` (this repo) | Private | Product code, living docs | Collection content |
+
+One collection = one repo. Never a monorepo of collections — stars, watches, clones and topics
+attach per-repo, and a collection retires (archives) independently.
+
+**Org account:** collections publish under a dedicated `mdreel` GitHub org (founder action —
+NEEDS-FOUNDER). Until it exists, nothing blocks: repos are generated locally from the contract
+and pushed the day the org lands.
+
+### Conventions per collection repo
+
+- **README** (top → bottom): what this collection is (one paragraph, outcome-first) → how to use
+  it with an agent (three concrete prompts mirroring the collection's "question types" in the
+  launch-package table above) → session index table (title / speaker / date / link) →
+  licence & attribution statement → *"built with mdreel — build one from your own videos"* footer
+  (the **only** product plug; UTM per the playbook below).
+- **CHANGELOG.md**: one entry per publishing batch — sessions added, topics touched, corrections.
+  The changelog *is* the proof of freshness (the retirement rule above keys off it).
+- **Releases**: one GitHub Release per weekly batch (the publishing-cadence section owns the
+  rhythm), tag `v<yyyy.ww>`, release notes = that batch's changelog entry. Releases give
+  watchers a notification channel we don't own the credentials for — free retention surface.
+- **Licence**: repo licence = CC-BY-4.0 for the derived Markdown, with per-video attribution in
+  each session document and the manifest (the M3 checklist above). Never MIT/Apache — this is
+  content, not code.
+
+### Issue templates — corrections are a conversation channel
+
+Each collection repo ships two issue forms (reusable copies live in
+`templates/collection-repo/.github/ISSUE_TEMPLATE/`):
+
+- **Correction** — "this line doesn't match the video": session file, timestamp, what's wrong.
+  Every correction is ground-truth QA on the pipeline *and* an inbound conversation (channel 6) —
+  the same person verifying our output against a talk they know is the skeptical ICP in the act
+  of being converted.
+- **Collection / session request** — "process this talk / start this collection": URL, licence
+  status, why. Requests are demand signal for A2 at zero survey cost; a requested-then-published
+  session gets a reply and credit in the changelog.
+
+### Discoverability metadata (per repo, at creation)
+
+- Topics: `markdown`, `knowledge-base`, `ai`, `rag`, `llm`, plus the domain
+  (`dotnet` / `kubernetes` / `ai-engineering`).
+- Description: "<domain> talks as an AI-ready knowledge repository — timestamped, citable,
+  built with mdreel" + link to the collection's page on mdreel.com.
+- Org profile: pin the three launch collections; org README points at mdreel.com with the same
+  dual CTA as the site (explore / build your own).
+- Repo website field: the collection's mdreel.com page with UTM (`utm_source=github`,
+  `utm_medium=repo`, per the UTM playbook below).
+
+### Operating checklist (per weekly batch — automation-free by design)
+
+1. Run the M3 attribution checklist for each new video.
+2. Process; validate the repo against the contract (the `web/lib/repository.test.ts` validator
+   runs against any §4b tree).
+3. Commit to the collection repo, update CHANGELOG.md, tag + release `v<yyyy.ww>`.
+4. Answer open Corrections/Requests before publishing new sessions — freshness of *responses*
+   outranks freshness of content.
+
+No CI, no bots, no schedulers in collection repos — one founder, one checklist. Automation is
+earned when volume hurts, not before.
+
 ## The launch artifact (PLAN.md Phase 5) — already written
 
 Side-by-side: **plain transcript vs. mdreel Markdown**, plus a RAG answering a question that

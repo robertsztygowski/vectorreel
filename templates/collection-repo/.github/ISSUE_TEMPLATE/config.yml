@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Build a repository from your own videos
+    url: https://mdreel.com/?utm_source=github&utm_medium=issue_template
+    about: mdreel turns your private recordings into the same repository shape.

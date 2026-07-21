@@ -1,0 +1,28 @@
+name: Correction
+description: A line in a session document doesn't match the original video.
+title: "[correction] <session>: <short description>"
+labels: ["correction"]
+body:
+  - type: input
+    id: session
+    attributes:
+      label: Session file
+      description: Path under sessions/, e.g. sessions/2026-03-12-title.md
+      placeholder: sessions/....md
+    validations:
+      required: true
+  - type: input
+    id: timestamp
+    attributes:
+      label: Timestamp
+      description: The [hh:mm:ss] heading the problem sits under.
+      placeholder: "[00:14:32]"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What doesn't match the video?
+      description: Quote the line(s) and say what the video actually shows or says.
+    validations:
+      required: true
