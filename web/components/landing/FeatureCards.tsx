@@ -14,8 +14,8 @@ const CLAIMS: { idx: string; paths: string[]; title: ReactNode; body: string }[]
   {
     idx: '01',
     paths: ['M6 2.5h7l3.5 3.5v13.5h-10.5z', 'M13 2.5v3.5h3.5', 'M8.5 11h5', 'M8.5 14.5h5'],
-    title: 'One portable file, no lock-in',
-    body: 'Plain Markdown — not a proprietary retrieval index. The thing platform vendors structurally won’t give you.',
+    title: 'A portable repository, no lock-in',
+    body: 'Plain Markdown files in a plain folder structure — not a proprietary retrieval index. The thing platform vendors structurally won’t give you.',
   },
   {
     idx: '02',
@@ -27,7 +27,7 @@ const CLAIMS: { idx: string; paths: string[]; title: ReactNode; body: string }[]
     idx: '03',
     paths: ['M7 4.5 3 11l4 6.5', 'M15 4.5 19 11l-4 6.5', 'M12.5 4 9.5 18'],
     title: 'Built for agents',
-    body: 'One deterministic schema across thousands of files — designed to be cited by an LLM, not skimmed by a human.',
+    body: 'One deterministic contract across every session, topic and timeline index — designed to be explored and cited by an LLM, not skimmed by a human.',
   },
   {
     idx: '04',
@@ -54,7 +54,7 @@ export function FeatureCards() {
     <section id="features" className="section">
       <div className="claims-head wrap">
         <p className="eyebrow">## why it holds up</p>
-        <h2>Not a transcript. A knowledge-base document.</h2>
+        <h2>Not a pile of transcripts. An AI-ready knowledge repository.</h2>
       </div>
       <div className="claims">
         <div className="claims-grid">

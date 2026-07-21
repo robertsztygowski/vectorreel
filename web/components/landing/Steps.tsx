@@ -20,11 +20,11 @@ const STEPS = [
   },
   {
     num: '03',
-    label: 'markdown',
+    label: 'repository',
     body: (
       <>
-        <strong>Get one timestamped document</strong> per video — consistent structure, YAML frontmatter. Drop it into
-        any repo, vector DB or wiki.
+        <strong>Your repository grows</strong> — every video becomes a timestamped session, cross-linked by topic,
+        speaker and timeline. Plain Markdown files inside: drop them into any repo, vector DB or wiki.
       </>
     ),
   },
@@ -36,7 +36,7 @@ export function Steps() {
       <div className="wrap steps-grid">
         <div className="steps-title">
           <p className="eyebrow">## how it works</p>
-          <h2>Video in. One document out.</h2>
+          <h2>Video in. An explorable repository out.</h2>
         </div>
         <div className="steps-list">
           {STEPS.map((s) => (

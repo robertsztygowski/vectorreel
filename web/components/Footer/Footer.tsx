@@ -35,11 +35,11 @@ export function Footer() {
             <Link className="brand" href="/">
               <BrandMark />
             </Link>
-            <p>The portable Markdown file your AI agents can cite — from the video they can&apos;t see. Processed in the EU.</p>
+            <p>AI-ready knowledge repositories built from the video your agents can&apos;t see. Plain Markdown inside. Processed in the EU.</p>
           </div>
           <nav className="footer-col" aria-label="Product">
             <h4>product</h4>
-            <Link href="/gallery">Gallery</Link>
+            <Link href="/gallery">Public collections</Link>
             <Link href="/pricing">Pricing</Link>
             <Link href="/signup">Get started</Link>
           </nav>

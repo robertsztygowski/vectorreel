@@ -287,7 +287,14 @@ real Vertex. Full definition of done passed, including a live Vertex smoke. See 
 >   CNCF** — the largest CC-licensed ICP-adjacent corpus), per-collection question types (the
 >   proof), shared inclusion criteria, the per-video attribution/licensing checklist, and the
 >   second-wave backlog (Rust, Python, conference one-offs).
-> - **Next:** M4 (landing pivot) verification + M5 (GitHub distribution model).
+> - **M4 landing pivot ✅** — landing + gallery reframed outcome-first: hero (both A/B arms) now
+>   sells "an AI-ready knowledge repository your agent can explore and cite"; dual CTA (primary
+>   → public collections at `/gallery`, secondary → `/signup` "build one from your videos");
+>   Steps step 03 upload→analyze→**repository**; FeatureCards + FinalCta + Header/Footer labels
+>   ("gallery"→"collections", hrefs unchanged so Umami event mapping is intact); site + gallery
+>   metadata pivoted. No auth/payments/pipeline wiring touched. web unit 81/81, Playwright E2E
+>   17/17 green.
+> - **Next:** deploy web (rule-5 override), then M5 (GitHub distribution model) + M6.
 
 
 > #### 📋 NEEDS-FOUNDER — actions only the founder can take (nothing blocks on these)

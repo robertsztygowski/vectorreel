@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { href: '/#features', label: 'product' },
   { href: '/pricing', label: 'pricing' },
   { href: '/docs', label: 'docs' },
-  { href: '/gallery', label: 'gallery' },
+  { href: '/gallery', label: 'collections' },
 ];
 
 export function Header() {

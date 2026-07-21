@@ -4,12 +4,15 @@ export function FinalCta() {
   return (
     <section id="waitlist" className="section">
       <div className="wrap cta-final">
-        <h2>Your first hour of video is free.</h2>
-        <p className="micro">no credit card · no lock-in</p>
-        <Link className="btn btn-primary" href="/signup">
-          start free — 1 hour
+        <h2>See it working, then build your own.</h2>
+        <p className="micro">public collections are real output — every line verifiable against the original video</p>
+        <Link className="btn btn-primary" href="/gallery">
+          explore the public collections
         </Link>
-        <p className="micro micro-foot">plain Markdown out · EU-only · source deleted after processing</p>
+        <p className="micro micro-foot">
+          or <Link href="/signup">start your own repository</Link> — first hour free · no credit card · EU-only · source
+          deleted after processing
+        </p>
       </div>
     </section>
   );

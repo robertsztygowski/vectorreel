@@ -32,19 +32,21 @@ const mono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'mdreel — Turn company video into Markdown your AI agents can cite',
+  title: 'mdreel — AI-ready knowledge repositories from your video',
   description:
-    "mdreel turns demos, trainings and walkthroughs into one portable, timestamped Markdown file — separating what's said from what's shown on screen. No lock-in, processed entirely in the EU.",
+    'mdreel turns hundreds of hours of demos, trainings and talks into an AI-ready knowledge repository your agents can explore and cite — sessions, topics, speakers, timeline. Plain Markdown inside, no lock-in, processed entirely in the EU.',
   openGraph: {
-    title: 'mdreel — video to Markdown for AI knowledge bases',
-    description: 'One portable Markdown file your agent owns — no lock-in, processed in the EU.',
+    title: 'mdreel — AI-ready knowledge repositories from video',
+    description:
+      'An explorable, citable knowledge repository your agent owns — plain Markdown inside, no lock-in, processed in the EU.',
     type: 'website',
     images: [{ url: '/og-card.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'mdreel — video to Markdown for AI knowledge bases',
-    description: 'One portable Markdown file your agent owns — no lock-in, processed in the EU.',
+    title: 'mdreel — AI-ready knowledge repositories from video',
+    description:
+      'An explorable, citable knowledge repository your agent owns — plain Markdown inside, no lock-in, processed in the EU.',
     images: ['/og-card.png'],
   },
   icons: {

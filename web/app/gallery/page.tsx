@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getVideoMeta, loadCorpusIndex, type CorpusEntry } from '@/lib/corpus';
 import { GalleryCard, type GalleryPreview } from '@/components/GalleryCard/GalleryCard';
 
-export const metadata: Metadata = { title: 'Gallery — mdreel' };
+export const metadata: Metadata = { title: 'Public collections — mdreel' };
 
 const CATEGORY_LABELS: Record<CorpusEntry['category'], string> = {
   slide_talk: 'slide talk',
@@ -51,14 +51,14 @@ export default function GalleryPage() {
     <>
       <section className="rule-section">
         <div className="wrap" style={{ padding: '72px 32px 56px' }}>
-          <p className="kicker"># gallery</p>
+          <p className="kicker"># public collections</p>
           <h1 className="display-l" style={{ marginBottom: 20, maxWidth: '22ch' }}>
-            Talks you already know, processed end-to-end.
+            Talks you already know, as an AI-ready repository.
           </h1>
           <p className="lead" style={{ maxWidth: '56ch' }}>
-            You can&apos;t paste your own URL here — so check ours instead. Each specimen is the single portable Markdown
-            file your agent would cite, shown next to the original recording so you can verify every line against ground
-            truth you already hold.
+            You can&apos;t paste your own URL here — so explore ours instead. Every recording below is a session your
+            agent could cite, shown next to the original video so you can verify each line against ground truth you
+            already hold. Your own footage comes back in exactly the same shape.
           </p>
         </div>
       </section>
@@ -96,17 +96,17 @@ export default function GalleryPage() {
       <section className="rule-section">
         <div className="wrap" style={{ padding: '88px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <h2 style={{ margin: '0 0 18px', fontSize: 'clamp(28px, 3.4vw, 44px)', lineHeight: 1.06, letterSpacing: '-0.012em', fontWeight: 500, fontVariationSettings: "'opsz' 64", maxWidth: '24ch' }}>
-            This is what your own footage comes back as.
+            This is what your own archive comes back as.
           </h2>
           <p className="micro" style={{ margin: '0 0 32px', color: 'var(--ink-faint)' }}>
-            no credit card · one portable .md file per video
+            first hour free · no credit card · same repository shape, your private videos
           </p>
           <Link
             href="/signup"
             className="btn btn-primary"
             style={{ height: 48, padding: '0 26px', fontSize: 13.5 }}
           >
-            start free — 1 hour
+            build your own repository →
           </Link>
           <p className="micro" style={{ margin: '26px 0 0' }}>
             <Link href="/docs" style={{ color: 'var(--accent)' }}>
